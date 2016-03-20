@@ -1,0 +1,14 @@
+pacman:
+  build: pacman/
+  ports:
+    - "80:80"
+  links:
+    - db
+  volumes:
+    - ../handsontable:/var/www/html/sites/all/modules/handsontable
+    - ../rit-pacman:/var/www/html/sites/all/modules/pacman
+db:
+  image: mysql:5.6
+  environment:
+    MYSQL_DATABASE: pacman
+    MYSQL_ROOT_PASSWORD: foobar
