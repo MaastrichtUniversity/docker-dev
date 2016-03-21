@@ -7,8 +7,22 @@ pacman:
   volumes:
     - ../handsontable:/var/www/html/sites/all/modules/handsontable
     - ../rit-pacman:/var/www/html/sites/all/modules/pacman
+irods:
+  build: irods/
+  ports:
+    - "1247:1247"
+    - "1248:1248"
+  links:
+    - irods-db
+  environment:
+    RODS_PASSWORD: irods
+    PGPASSWORD: foobar
 db:
   image: mysql:5.6
   environment:
     MYSQL_DATABASE: pacman
     MYSQL_ROOT_PASSWORD: foobar
+irods-db:
+  image: postgres:9.4
+  environment:
+    POSTGRES_PASSWORD: foobar
