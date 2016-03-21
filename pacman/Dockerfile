@@ -42,4 +42,6 @@ RUN curl -fSL http://files.drush.org/drush.phar -o /usr/bin/drush \
 VOLUME ["/var/www/html/sites/all/modules/pacman", "/var/www/html/sites/all/modules/handsontable"]
 
 ADD bootstrap.sh /var/www/html/
+RUN chmod +x /var/www/html/bootstrap.sh
+
 CMD /var/www/html/bootstrap.sh
