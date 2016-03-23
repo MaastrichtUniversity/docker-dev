@@ -8,6 +8,7 @@ pacman:
   volumes:
     - ../handsontable:/var/www/html/sites/all/modules/handsontable
     - ../rit-pacman:/var/www/html/sites/all/modules/pacman
+    - ../rit_forms:/var/www/html/sites/all/modules/rit_forms
 irods:
   build: irods/
   ports:

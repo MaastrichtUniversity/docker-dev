@@ -18,6 +18,9 @@ cd /var/www/html && drush en \
 	--yes \
 	xml_forms \
 	pacman \
-	handsontable
+	handsontable \
+	rit_forms
+
+cd /var/www/html && drush add-rit-forms
 
 apache2-foreground

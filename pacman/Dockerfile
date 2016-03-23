@@ -39,7 +39,7 @@ RUN npm install -g bower
 RUN curl -fSL http://files.drush.org/drush.phar -o /usr/bin/drush \
 	&& chmod +x /usr/bin/drush
 
-VOLUME ["/var/www/html/sites/all/modules/pacman", "/var/www/html/sites/all/modules/handsontable"]
+VOLUME [ "/var/www/html/sites/all/modules/pacman", "/var/www/html/sites/all/modules/handsontable", "/var/www/html/sites/all/modules/rit_forms" ]
 
 ADD bootstrap.sh /var/www/html/
 RUN chmod +x /var/www/html/bootstrap.sh
