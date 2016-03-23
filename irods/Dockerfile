@@ -13,7 +13,8 @@ RUN apt-get update \
     python-psutil \
     python-requests \
     python-jsonschema \
-    lsof
+    lsof \
+    make
 
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
@@ -36,8 +37,11 @@ ADD ./genresp.sh /opt/irods/genresp.sh
 ADD ./setupdb.sh /opt/irods/setupdb.sh
 ADD ./config.sh /opt/irods/config.sh
 ADD ./bootstrap.sh /opt/irods/bootstrap.sh
-RUN chmod a+x /opt/irods/*.sh
+ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
+RUN chmod a+x /opt/irods/*
 
 EXPOSE 1248 1247
+
+VOLUME [ "/rules", "/helpers" ]
 
 ENTRYPOINT [ "/opt/irods/bootstrap.sh" ]

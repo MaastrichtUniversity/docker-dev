@@ -19,6 +19,9 @@ irods:
   environment:
     RODS_PASSWORD: irods
     PGPASSWORD: foobar
+  volumes:
+    - ../irods-ruleset:/rules
+    - ../irods-helper-cmd:/helpers
 db:
   image: mysql:5.6
   environment:

@@ -5,6 +5,12 @@ until psql -h irods-db -U postgres -c '\l'; do
   sleep 1
 done
 
+# Update RIT helpers
+cp /helpers/* /var/lib/irods/iRODS/server/bin/cmd/.
+
+# Update RIT rules
+cd /rules && make install
+
 # Check if this is a first run of this container
 if [[ ! -e /etc/irods/setup_responses ]]; then
 
@@ -25,6 +31,9 @@ if [[ ! -e /etc/irods/setup_responses ]]; then
 
     # change irods user's irodsEnv file to point to localhost, since it was configured with a transient Docker container's $
     sed -i 's/^irodsHost.*/irodsHost localhost/' /var/lib/irods/.irods/.irodsEnv
+
+    # Add the ruleset-rit to server config
+    /opt/irods/prepend_ruleset.py /etc/irods/server_config.json ruleset-rit
 else
     service irods start
 fi
