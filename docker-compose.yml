@@ -4,6 +4,7 @@ pacman:
     - "80:80"
   links:
     - db
+    - irods
   volumes:
     - ../handsontable:/var/www/html/sites/all/modules/handsontable
     - ../rit-pacman:/var/www/html/sites/all/modules/pacman
