@@ -1,5 +1,10 @@
 #!/bin/bash
 
+until mysql -h db -uroot -pfoobar &> /dev/null; do
+  >&2 echo "MySQL is unavailable - sleeping"
+  sleep 1
+done
+
 cd /var/www/html/sites/all/modules/pacman && composer update
 
 cd /var/www/html/sites/all/modules/handsontable && bower install --allow-root
