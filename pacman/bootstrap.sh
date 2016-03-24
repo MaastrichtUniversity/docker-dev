@@ -28,4 +28,9 @@ cd /var/www/html && drush en \
 
 cd /var/www/html && drush add-rit-forms
 
+cd /var/www/html && drush user-create p.vanschayck --password="foobar"
+cd /var/www/html && drush user-create m.coonen --password="foobar"
+cd /var/www/html && drush user-create d.theunissen --password="foobar"
+cd /var/www/html && drush user-create p.suppers --password="foobar"
+
 apache2-foreground

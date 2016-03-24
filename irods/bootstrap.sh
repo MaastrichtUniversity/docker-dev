@@ -14,7 +14,7 @@ cp /helpers/* /var/lib/irods/iRODS/server/bin/cmd/.
 cd /rules && make install
 
 # Mount ingest zone
-mount -t cifs ${INGEST_MOUNT} /mnt/ingestZone -o user=${INGEST_USER},password=${INGEST_PASSWORD}
+mount -t cifs ${INGEST_MOUNT} /mnt/ingestZone -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999
 
 # Check if this is a first run of this container
 if [[ ! -e /etc/irods/setup_responses ]]; then
@@ -27,7 +27,6 @@ if [[ ! -e /etc/irods/setup_responses ]]; then
         sed -i "14s/.*/$RODS_PASSWORD/" /etc/irods/setup_responses
     fi
 
-
     # set up the iCAT database
     /opt/irods/setupdb.sh /etc/irods/setup_responses
 
@@ -39,6 +38,20 @@ if [[ ! -e /etc/irods/setup_responses ]]; then
 
     # Add the ruleset-rit to server config
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json ruleset-rit
+
+    # iRODS settings
+    su - irods -c "imkdir /ritZone/ingestZone"
+    su - irods -c "imkdir /ritZone/archive"
+
+    # TODO: pam_ldap needs to be implemented
+    su - irods -c "iadmin mkuser p.vanschayck rodsuser"
+    su - irods -c "iadmin mkuser m.coonen rodsuser"
+    su - irods -c "iadmin mkuser d.theunissen rodsuser"
+    su - irods -c "iadmin mkuser p.suppers rodsuser"
+
+    # TODO: Do this with a group
+    su - irods -c "ichmod own p.vanschayck /ritZone/ingestZone"
+    su - irods -c "ichmod own p.vanschayck /ritZone/archive"
 else
     service irods start
 fi

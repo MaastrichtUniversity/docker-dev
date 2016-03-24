@@ -13,6 +13,7 @@ RUN apt-get update \
     python-psutil \
     python-requests \
     python-jsonschema \
+    python-ldap \
     lsof \
     make \
     cifs-utils

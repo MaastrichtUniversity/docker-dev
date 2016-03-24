@@ -21,6 +21,7 @@ irods:
     PGPASSWORD: foobar
     INGEST_MOUNT: //fhml-srv002/ingest
     INGEST_USER: p.vanschayck
+    LDAP_USER: M4i-nano-wiki
   volumes:
     - ./irods.secrets.cfg:/etc/secrets:ro
     - ../irods-ruleset:/rules
