@@ -19,9 +19,16 @@ irods:
   environment:
     RODS_PASSWORD: irods
     PGPASSWORD: foobar
+    INGEST_MOUNT: //fhml-srv002/ingest
+    INGEST_USER: p.vanschayck
   volumes:
+    - ./irods.secrets.cfg:/etc/secrets:ro
     - ../irods-ruleset:/rules
     - ../irods-helper-cmd:/helpers
+  cap_add:
+    - SYS_ADMIN
+  security_opt:
+    - apparmor:unconfined
 db:
   image: mysql:5.6
   environment:

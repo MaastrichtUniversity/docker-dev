@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source /etc/secrets
+
 until psql -h irods-db -U postgres -c '\l'; do
   >&2 echo "Postgres is unavailable - sleeping"
   sleep 1
@@ -10,6 +12,9 @@ cp /helpers/* /var/lib/irods/iRODS/server/bin/cmd/.
 
 # Update RIT rules
 cd /rules && make install
+
+# Mount ingest zone
+mount -t cifs ${INGEST_MOUNT} /mnt/ingestZone -o user=${INGEST_USER},password=${INGEST_PASSWORD}
 
 # Check if this is a first run of this container
 if [[ ! -e /etc/irods/setup_responses ]]; then
@@ -40,4 +45,3 @@ fi
 
 # this script must end with a persistent foreground process
 tail -f /var/lib/irods/iRODS/server/log/rodsLog.*
-

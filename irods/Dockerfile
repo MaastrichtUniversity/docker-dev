@@ -14,7 +14,8 @@ RUN apt-get update \
     python-requests \
     python-jsonschema \
     lsof \
-    make
+    make \
+    cifs-utils
 
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
@@ -31,7 +32,7 @@ RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/ubuntu14/irods-
     && dpkg -i /tmp/irods-dbplugin.deb
 
 
-RUN mkdir /opt/irods
+RUN mkdir /opt/irods && mkdir /mnt/ingestZone
 
 ADD ./genresp.sh /opt/irods/genresp.sh
 ADD ./setupdb.sh /opt/irods/setupdb.sh
