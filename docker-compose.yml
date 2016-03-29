@@ -19,7 +19,7 @@ irods:
   environment:
     RODS_PASSWORD: irods
     PGPASSWORD: foobar
-    INGEST_MOUNT: //fhml-srv002/ingest
+    INGEST_MOUNT: //fhml-srv002.unimaas.nl/ingest
     INGEST_USER: p.vanschayck
     LDAP_USER: M4i-nano-wiki
   volumes:
@@ -28,8 +28,8 @@ irods:
     - ../irods-helper-cmd:/helpers
   cap_add:
     - SYS_ADMIN
-  security_opt:
-    - apparmor:unconfined
+#  security_opt:
+#    - apparmor:unconfined
 db:
   image: mysql:5.6
   environment:
