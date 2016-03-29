@@ -45,13 +45,24 @@ if [[ ! -e /etc/irods/setup_responses ]]; then
 
     # TODO: pam_ldap needs to be implemented
     su - irods -c "iadmin mkuser p.vanschayck rodsuser"
+    su - irods -c "iadmin moduser p.vanschayck password foobar"
     su - irods -c "iadmin mkuser m.coonen rodsuser"
+    su - irods -c "iadmin moduser m.coonen password foobar"
     su - irods -c "iadmin mkuser d.theunissen rodsuser"
+    su - irods -c "iadmin moduser d.theunissen password foobar"
     su - irods -c "iadmin mkuser p.suppers rodsuser"
+    su - irods -c "iadmin moduser p.suppers password foobar"
 
-    # TODO: Do this with a group
-    su - irods -c "ichmod own p.vanschayck /ritZone/ingestZone"
-    su - irods -c "ichmod own p.vanschayck /ritZone/archive"
+    # Make group
+    su - irods -c "iadmin mkgroup ingest-zone"
+    su - irods -c "iadmin atg ingest-zone p.vanschayck"
+    su - irods -c "iadmin atg ingest-zone m.coonen"
+    su - irods -c "iadmin atg ingest-zone d.theunissen"
+    su - irods -c "iadmin atg ingest-zone p.suppers"
+
+    # Set rights
+    su - irods -c "ichmod own ingest-zone /ritZone/ingestZone"
+    su - irods -c "ichmod own ingest-zone /ritZone/archive"
 else
     service irods start
 fi
