@@ -19,3 +19,4 @@ if __name__ == '__main__':
     path_to_server_config = sys.argv[1]
     name_of_new_rule_to_add = sys.argv[2]
     main(path_to_server_config, name_of_new_rule_to_add)
+	
