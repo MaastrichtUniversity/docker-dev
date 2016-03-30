@@ -26,10 +26,8 @@ irods:
     - ./irods.secrets.cfg:/etc/secrets:ro
     - ../irods-ruleset:/rules
     - ../irods-helper-cmd:/helpers
-  cap_add:
-    - SYS_ADMIN
-#  security_opt:
-#    - apparmor:unconfined
+  # Required for CIFS mounting. cap-add not enough in Windows for some reason.
+  privileged: true
 db:
   image: mysql:5.6
   environment:
