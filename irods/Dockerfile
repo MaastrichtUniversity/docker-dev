@@ -58,6 +58,10 @@ RUN tar xvf /tmp/apache-tomcat-8.0.33.tar.gz -C /tmp/ && mv /tmp/apache-tomcat-8
 RUN mv /tmp/irods-rest.war /var/lib/tomcat8/webapps/ && mkdir /etc/irods-ext
 ADD ./irods-rest.properties /etc/irods-ext/irods-rest.properties
 
+# Install Cloud-Browser backend
+RUN wget -P /var/lib/tomcat8/webapps/ https://code.renci.org/gf/download/frsrelease/239/2717/irods-cloud-backend.war
+ADD ./irods-cloud-backend-config.groovy /etc/irods-cloud-backend-config.groovy
+
 EXPOSE 1248 1247
 
 VOLUME [ "/rules", "/helpers" ]
