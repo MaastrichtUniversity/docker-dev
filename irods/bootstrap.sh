@@ -70,8 +70,6 @@ else
     service irods start
 fi
 
-# Start Tomcat8 service
-/var/lib/tomcat8/bin/startup.sh
 
 # this script must end with a persistent foreground process
 tail -f /var/lib/irods/iRODS/server/log/rodsLog.*

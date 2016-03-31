@@ -14,7 +14,6 @@ irods:
   ports:
     - "1247:1247"
     - "1248:1248"
-    - "8080:8080"
   links:
     - irods-db
   environment:
@@ -38,3 +37,9 @@ irods-db:
   image: postgres:9.4
   environment:
     POSTGRES_PASSWORD: foobar
+irods-tomcat:
+  build: irods-tomcat/
+  ports:
+    - "8080:8080"
+  links:
+    - irods
