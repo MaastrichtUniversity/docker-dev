@@ -63,9 +63,15 @@ if [[ ! -e /etc/irods/setup_responses ]]; then
     # Set rights
     su - irods -c "ichmod own ingest-zone /ritZone/ingestZone"
     su - irods -c "ichmod own ingest-zone /ritZone/archive"
+
+    # Create target folder
+    su - irods -c "imkdir /ritZone/home/rods/mirth_hl7_flow/"
 else
     service irods start
 fi
+
+# Start Tomcat8 service
+/var/lib/tomcat8/bin/startup.sh
 
 # this script must end with a persistent foreground process
 tail -f /var/lib/irods/iRODS/server/log/rodsLog.*
