@@ -39,6 +39,9 @@ if [[ ! -e /etc/irods/setup_responses ]]; then
     # Add the ruleset-rit to server config
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json ruleset-rit
 
+    # Dirty temp.password workaround (TODO: NEEDS TO BE FIXED PROPERLY)
+    sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 1200\,/' /etc/irods/server_config.json
+
     # iRODS settings
     su - irods -c "imkdir /ritZone/ingestZone"
     su - irods -c "imkdir /ritZone/archive"
