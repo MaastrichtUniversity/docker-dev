@@ -16,7 +16,8 @@ RUN apt-get update \
     python-ldap \
     lsof \
     make \
-    cifs-utils
+    cifs-utils 
+
 
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
