@@ -33,4 +33,7 @@ cd /var/www/html && drush user-create m.coonen --password="foobar"
 cd /var/www/html && drush user-create d.theunissen --password="foobar"
 cd /var/www/html && drush user-create p.suppers --password="foobar"
 
+#set homepage to pacman/info
+cd /var/www/html && drush vset site_frontpage pacman/info
+
 apache2-foreground
