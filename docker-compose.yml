@@ -37,8 +37,8 @@ irods-db:
   image: postgres:9.4
   environment:
     POSTGRES_PASSWORD: foobar
-irods-tomcat:
-  build: irods-tomcat/
+irods-frontend:
+  build: irods-frontend/
   ports:
     - "8080:8080"
   links:

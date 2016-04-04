@@ -2,15 +2,6 @@ FROM ubuntu:14.04
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    wget \
-    python \
-    python-psutil \
-    python-requests \
-    python-jsonschema \
-    python-ldap \
-    lsof \
-    make \
-    cifs-utils \
     software-properties-common \
     python-software-properties
 
@@ -26,10 +17,11 @@ ENV LC_ALL en_US.UTF-8
 ADD ./bootstrap.sh /opt/bootstrap.sh 
 
 # Install iRODS-REST
-RUN wget -P /tmp/ http://apache.mirror1.spango.com/tomcat/tomcat-8/v8.0.33/bin/apache-tomcat-8.0.33.tar.gz
-RUN wget -P /tmp/ https://code.renci.org/gf/download/frsrelease/243/2742/irods-rest.war
-RUN tar xvf /tmp/apache-tomcat-8.0.33.tar.gz -C /tmp/ && mv /tmp/apache-tomcat-8.0.33/ /var/lib/tomcat8
-RUN mv /tmp/irods-rest.war /var/lib/tomcat8/webapps/ && mkdir /etc/irods-ext
+RUN wget -P /tmp/ http://apache.mirror1.spango.com/tomcat/tomcat-8/v8.0.33/bin/apache-tomcat-8.0.33.tar.gz \
+    && tar xvf /tmp/apache-tomcat-8.0.33.tar.gz -C /tmp/ && mv /tmp/apache-tomcat-8.0.33/ /var/lib/tomcat8
+RUN wget -P /tmp/ https://code.renci.org/gf/download/frsrelease/243/2742/irods-rest.war \
+    && mv /tmp/irods-rest.war /var/lib/tomcat8/webapps/ \
+    && mkdir /etc/irods-ext
 ADD ./irods-rest.properties /etc/irods-ext/irods-rest.properties
 
 # Install Cloud-Browser backend
