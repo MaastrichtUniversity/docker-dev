@@ -41,6 +41,7 @@ if [[ ! -e /etc/irods/setup_responses ]]; then
 
     # iRODS settings
     su - irods -c "imkdir /ritZone/ingestZone"
+    su - irods -c "imkdir /ritZone/rawdata"
     su - irods -c "imkdir /ritZone/archive"
 
     # TODO: pam_ldap needs to be implemented
@@ -63,6 +64,10 @@ if [[ ! -e /etc/irods/setup_responses ]]; then
     # Set rights
     su - irods -c "ichmod own ingest-zone /ritZone/ingestZone"
     su - irods -c "ichmod own ingest-zone /ritZone/archive"
+    su - irods -c "ichmod own ingest-zone /ritZone/rawdata"
+
+    # Mounted collection
+    su - irods -c "imcoll -m filesystem /mnt/ingestZone/rawdata /ritZone/rawdata"
 else
     service irods start
 fi
