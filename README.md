@@ -1,1 +1,11 @@
-This is a branch for experimenting with iRODS-REST in docker
+## Config
+Add irods.secrets.cfg
+
+## Run
+```
+docker-compose build
+docker-compose down
+docker-compose up
+```
+
+
