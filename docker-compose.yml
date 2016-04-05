@@ -9,8 +9,8 @@ pacman:
     - ../handsontable:/var/www/html/sites/all/modules/handsontable
     - ../rit-pacman:/var/www/html/sites/all/modules/pacman
     - ../rit_forms:/var/www/html/sites/all/modules/rit_forms
-	- ../cloudbrowser_module:/var/www/html/sites/all/modules/cloudbrowser_module
-	- ../fhml_um_theme_demo:/var/www/html/sites/all/themes/fhml_um_theme_demo
+    - ../cloudbrowser_module:/var/www/html/sites/all/modules/cloudbrowser_module
+    - ../fhml_um_theme_demo:/var/www/html/sites/all/themes/fhml_um_theme_demo
 irods:
   build: irods/
   ports:

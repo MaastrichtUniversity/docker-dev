@@ -25,7 +25,8 @@ cd /var/www/html && drush en \
 	pacman \
 	handsontable \
 	rit_forms \
-	cloudbrowser
+	cloudbrowser \
+	fhml_um
 
 cd /var/www/html && drush add-rit-forms
 
@@ -34,11 +35,10 @@ cd /var/www/html && drush user-create m.coonen --password="foobar"
 cd /var/www/html && drush user-create d.theunissen --password="foobar"
 cd /var/www/html && drush user-create p.suppers --password="foobar"
 
-#set homepage to pacman/info
+# Set homepage to pacman/info
 cd /var/www/html && drush vset site_frontpage pacman/info
 
-#enable and make theme default
-cd /var/www/html && drush en fhml_um
+# Enable and make theme default
 cd /var/www/html && drush vset theme_default fhml_um
 
 
