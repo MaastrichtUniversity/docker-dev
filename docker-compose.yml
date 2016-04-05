@@ -47,6 +47,6 @@ irods-frontend:
   links:
     - irods
   environment:
-    FQDN_HOST: http://fhml-srv018.unimaas.nl
+    FQDN_HOST: fhml-srv018.unimaas.nl
 #  volumes:
 #    - ../irods-cloud-frontend_html:/var/www/html/irods-cloud-frontend
