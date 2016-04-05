@@ -1,7 +1,5 @@
 pacman:
   build: pacman/
-  ports:
-    - "80:80"
   links:
     - db
     - irods
@@ -9,6 +7,8 @@ pacman:
     - ../handsontable:/var/www/html/sites/all/modules/handsontable
     - ../rit-pacman:/var/www/html/sites/all/modules/pacman
     - ../rit_forms:/var/www/html/sites/all/modules/rit_forms
+  environment:
+      VIRTUAL_HOST: pacman.rit.local
 irods:
   build: irods/
   ports:
@@ -39,7 +39,13 @@ irods-db:
     POSTGRES_PASSWORD: foobar
 irods-frontend:
   build: irods-frontend/
-  ports:
-    - "8080:8080"
   links:
     - irods
+  environment:
+    VIRTUAL_HOST: frontend.rit.local
+proxy:
+  image: jwilder/nginx-proxy
+  ports:
+    - "80:80"
+  volumes:
+    - /var/run/docker.sock:/tmp/docker.sock:ro

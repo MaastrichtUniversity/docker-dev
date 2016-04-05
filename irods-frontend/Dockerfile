@@ -28,6 +28,6 @@ ADD ./irods-rest.properties /etc/irods-ext/irods-rest.properties
 RUN wget -P /var/lib/tomcat8/webapps/ https://code.renci.org/gf/download/frsrelease/239/2717/irods-cloud-backend.war
 ADD ./irods-cloud-backend-config.groovy /etc/irods-cloud-backend-config.groovy
 
-EXPOSE 8080
+EXPOSE 80
 
 ENTRYPOINT [ "/opt/bootstrap.sh" ]
