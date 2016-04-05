@@ -5,8 +5,10 @@ RUN apt-get update \
     software-properties-common \
     python-software-properties \
     apache2 \
-    php5 \
-    unzip
+    unzip \
+    nodejs \    
+    npm 
+
 
 RUN echo "oracle-java8-installer shared/accepted-oracle-license-v1-1 select true" | /usr/bin/debconf-set-selections
 RUN apt-add-repository ppa:webupd8team/java && apt-get update && apt-get install oracle-java8-installer -y
@@ -34,7 +36,9 @@ ADD ./irods-cloud-backend-config.groovy /etc/irods-cloud-backend-config.groovy
 # Install Cloud-Browser frontend
 RUN wget -P /tmp/ https://code.renci.org/gf/download/frsrelease/239/2712/irods-cloud-frontend.zip \
     && unzip /tmp/irods-cloud-frontend.zip -d /var/www/html/
-ADD ./globals.js /var/www/html/irods-cloud-frontend/app/components/globals.js
+
+# Install bower dependency manager through npm
+# RUN npm install -g bower
 
 EXPOSE 8080 80
 
