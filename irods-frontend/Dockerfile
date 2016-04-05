@@ -3,7 +3,10 @@ FROM ubuntu:14.04
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     software-properties-common \
-    python-software-properties
+    python-software-properties \
+    apache2 \
+    php5 \
+    unzip
 
 RUN echo "oracle-java8-installer shared/accepted-oracle-license-v1-1 select true" | /usr/bin/debconf-set-selections
 RUN apt-add-repository ppa:webupd8team/java && apt-get update && apt-get install oracle-java8-installer -y
@@ -28,6 +31,11 @@ ADD ./irods-rest.properties /etc/irods-ext/irods-rest.properties
 RUN wget -P /var/lib/tomcat8/webapps/ https://code.renci.org/gf/download/frsrelease/239/2717/irods-cloud-backend.war
 ADD ./irods-cloud-backend-config.groovy /etc/irods-cloud-backend-config.groovy
 
-EXPOSE 8080
+# Install Cloud-Browser frontend
+RUN wget -P /tmp/ https://code.renci.org/gf/download/frsrelease/239/2712/irods-cloud-frontend.zip \
+    && unzip /tmp/irods-cloud-frontend.zip -d /var/www/html/
+ADD ./globals.js /var/www/html/irods-cloud-frontend/app/components/globals.js
+
+EXPOSE 8080 80
 
 ENTRYPOINT [ "/opt/bootstrap.sh" ]

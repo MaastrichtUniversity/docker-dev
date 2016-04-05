@@ -43,5 +43,10 @@ irods-frontend:
   build: irods-frontend/
   ports:
     - "8080:8080"
+    - "83:80"
   links:
     - irods
+  environment:
+    FQDN_HOST: http://fhml-srv018.unimaas.nl
+#  volumes:
+#    - ../irods-cloud-frontend_html:/var/www/html/irods-cloud-frontend
