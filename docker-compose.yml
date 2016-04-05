@@ -1,7 +1,5 @@
 pacman:
   build: pacman/
-  ports:
-    - "80:80"
   links:
     - db
     - irods
@@ -13,6 +11,8 @@ pacman:
     - ../rit_forms:/var/www/html/sites/all/modules/rit_forms
     - ../cloudbrowser_module:/var/www/html/sites/all/modules/cloudbrowser_module
     - ../fhml_um_theme_demo:/var/www/html/sites/all/themes/fhml_um_theme_demo
+  environment:
+      VIRTUAL_HOST: pacman.rit.local
 irods:
   build: irods/
   ports:
@@ -51,3 +51,13 @@ irods-frontend:
   environment:
     # Indicate the FQDN of the Docker host that is going to run this container.
     FQDN_HOST: fhml-srv019.unimaas.nl
+  links:
+    - irods
+  environment:
+    VIRTUAL_HOST: frontend.rit.local
+proxy:
+  image: jwilder/nginx-proxy
+  ports:
+    - "80:80"
+  volumes:
+    - /var/run/docker.sock:/tmp/docker.sock:ro
