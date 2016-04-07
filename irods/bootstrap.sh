@@ -45,7 +45,8 @@ if [[ ! -e /etc/irods/setup_responses ]]; then
     # iRODS settings
     su - irods -c "imkdir /ritZone/ingestZone"
     su - irods -c "imkdir /ritZone/rawdata"
-    su - irods -c "imkdir /ritZone/archive"
+    su - irods -c "imkdir /ritZone/demo_mdl"
+    su - irods -c "imkdir /ritZone/demo_ingest"
 
     # TODO: pam_ldap needs to be implemented
     su - irods -c "iadmin mkuser p.vanschayck rodsuser"
@@ -69,22 +70,9 @@ if [[ ! -e /etc/irods/setup_responses ]]; then
 
     # Set rights
     su - irods -c "ichmod own ingest-zone /ritZone/ingestZone"
-    su - irods -c "ichmod own ingest-zone /ritZone/archive"
-
-    # Create DEMO groups and target folders and set rights
-    su - irods -c "iadmin mkgroup rit-demo"
-    su - irods -c "iadmin atg rit-demo p.vanschayck"
-    su - irods -c "iadmin atg rit-demo m.coonen"
-    su - irods -c "iadmin atg rit-demo d.theunissen"
-    su - irods -c "iadmin atg rit-demo p.suppers"
-
-    su - irods -c "imkdir /ritZone/demo_mdl/"
-    su - irods -c "imkdir /ritZone/demo_ingest/"
-
-    # Set rights
-    su - irods -c "ichmod write rit-demo /ritZone/demo_mdl"
+    su - irods -c "ichmod write ingest-zone /ritZone/demo_mdl"
     su - irods -c "ichmod inherit /ritZone/demo_mdl"
-    su - irods -c "ichmod write rit-demo /ritZone/demo_ingest"
+    su - irods -c "ichmod write ingest-zone /ritZone/demo_ingest"
     su - irods -c "ichmod inherit /ritZone/demo_ingest"
     su - irods -c "ichmod own ingest-zone /ritZone/rawdata"
 
