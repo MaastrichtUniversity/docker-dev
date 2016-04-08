@@ -37,9 +37,6 @@ ADD ./irods-cloud-backend-config.groovy /etc/irods-cloud-backend-config.groovy
 RUN wget -P /tmp/ https://code.renci.org/gf/download/frsrelease/239/2712/irods-cloud-frontend.zip \
     && unzip /tmp/irods-cloud-frontend.zip -d /var/www/html/
 
-# Install bower dependency manager through npm
-# RUN npm install -g bower
-
 EXPOSE 8080 80
 
 ENTRYPOINT [ "/opt/bootstrap.sh" ]
