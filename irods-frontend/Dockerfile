@@ -35,7 +35,7 @@ ADD ./irods-cloud-backend-config.groovy /etc/irods-cloud-backend-config.groovy
 
 # Install Cloud-Browser frontend
 ADD ./irods-cloud-frontend-1.0.0-RELEASE_MUMC.zip /tmp/irods-cloud-frontend-1.0.0-RELEASE_MUMC.zip
-RUN unzip /tmp/irods-cloud-frontend-1.0.0-RELEASE_MUMC.zip -d /var/www/html/ 
+RUN unzip /tmp/irods-cloud-frontend-1.0.0-RELEASE_MUMC.zip -d /var/www/html/
 
 EXPOSE 8080 80
 
