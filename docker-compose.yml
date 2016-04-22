@@ -5,6 +5,7 @@ pacman:
   links:
     - db
     - irods
+    - irods-frontend
   volumes:
     - ../handsontable:/var/www/html/sites/all/modules/handsontable
     - ../rit-pacman:/var/www/html/sites/all/modules/pacman
@@ -46,3 +47,6 @@ irods-frontend:
     - "83:80"
   links:
     - irods
+  environment:
+    # Indicate the FQDN of the Docker host that is going to run this container.
+    FQDN_HOST: fhml-srv019.unimaas.nl

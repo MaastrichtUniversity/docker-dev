@@ -33,9 +33,6 @@ if [[ ! -e /etc/irods/setup_responses ]]; then
     # set up iRODS
     /opt/irods/config.sh /etc/irods/setup_responses
 
-    # change irods user's irodsEnv file to point to localhost, since it was configured with a transient Docker container's $
-    sed -i 's/^irodsHost.*/irodsHost localhost/' /var/lib/irods/.irods/.irodsEnv
-
     # Add the ruleset-rit to server config
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json ruleset-rit
 
@@ -43,10 +40,27 @@ if [[ ! -e /etc/irods/setup_responses ]]; then
     sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 1200\,/' /etc/irods/server_config.json
 
     # iRODS settings
+    ## Add resources
+    ## TODO: Actual NFS mounts to HNAS storage need to be realized
+    mkdir /mnt/hnasResc-UM-4k
+    chown irods:irods /mnt/hnasResc-UM-4k
+    mkdir /mnt/hnasResc-UM-32k
+    chown irods:irods /mnt/hnasResc-UM-32k
+    su - irods -c "iadmin mkresc hnasResc-UM-4k unixfilesystem ${HOSTNAME}:/mnt/hnasResc-UM-4k"
+    su - irods -c "iadmin mkresc hnasResc-UM-32k unixfilesystem ${HOSTNAME}:/mnt/hnasResc-UM-32k"
+    ## Create collections
     su - irods -c "imkdir /ritZone/ingestZone"
     su - irods -c "imkdir /ritZone/rawdata"
     su - irods -c "imkdir /ritZone/demo_mdl"
     su - irods -c "imkdir /ritZone/demo_ingest"
+    su - irods -c "imkdir -p /ritZone/demo_ingest/Crohn"
+    su - irods -c "imkdir -p /ritZone/demo_ingest/Melanoma"
+    su - irods -c "imkdir -p /ritZone/demo_ingest/mol3dm"
+    ## Specify ingest2resource as AVU for this collection
+    su - irods -c "imeta add -C /ritZone/demo_ingest/Crohn resource hnasResc-UM-4k"
+    su - irods -c "imeta add -C /ritZone/demo_ingest/Melanoma resource hnasResc-UM-32k"
+    su - irods -c "imeta add -C /ritZone/demo_ingest/mol3dm resource hnasResc-UM-32k"
+
 
     # TODO: pam_ldap needs to be implemented
     su - irods -c "iadmin mkuser p.vanschayck rodsuser"
@@ -69,12 +83,12 @@ if [[ ! -e /etc/irods/setup_responses ]]; then
     su - irods -c "iadmin atg ingest-zone p.suppers"
 
     # Set rights
-    su - irods -c "ichmod own ingest-zone /ritZone/ingestZone"
-    su - irods -c "ichmod write ingest-zone /ritZone/demo_mdl"
-    su - irods -c "ichmod inherit /ritZone/demo_mdl"
-    su - irods -c "ichmod write ingest-zone /ritZone/demo_ingest"
-    su - irods -c "ichmod inherit /ritZone/demo_ingest"
-    su - irods -c "ichmod own ingest-zone /ritZone/rawdata"
+    su - irods -c "ichmod -r own ingest-zone /ritZone/ingestZone"
+    su - irods -c "ichmod -r write ingest-zone /ritZone/demo_mdl"
+    su - irods -c "ichmod -r inherit /ritZone/demo_mdl"
+    su - irods -c "ichmod -r write ingest-zone /ritZone/demo_ingest"
+    su - irods -c "ichmod -r inherit /ritZone/demo_ingest"
+    su - irods -c "ichmod -r own ingest-zone /ritZone/rawdata"
 
     # Mounted collection
     su - irods -c "imcoll -m filesystem /mnt/ingestZone/rawdata /ritZone/rawdata"
