@@ -42,24 +42,24 @@ if [[ ! -e /etc/irods/setup_responses ]]; then
     # iRODS settings
     ## Add resources
     ## TODO: Actual NFS mounts to HNAS storage need to be realized
-    mkdir /mnt/hnasResc-UM-4k
-    chown irods:irods /mnt/hnasResc-UM-4k
-    mkdir /mnt/hnasResc-UM-32k
-    chown irods:irods /mnt/hnasResc-UM-32k
-    su - irods -c "iadmin mkresc hnasResc-UM-4k unixfilesystem ${HOSTNAME}:/mnt/hnasResc-UM-4k"
-    su - irods -c "iadmin mkresc hnasResc-UM-32k unixfilesystem ${HOSTNAME}:/mnt/hnasResc-UM-32k"
+    mkdir /mnt/UM-hnas-4k
+    chown irods:irods /mnt/UM-hnas-4k
+    mkdir /mnt/UM-hnas-32k
+    chown irods:irods /mnt/UM-hnas-32k
+    su - irods -c "iadmin mkresc UM-hnas-4k unixfilesystem ${HOSTNAME}:/mnt/UM-hnas-4k"
+    su - irods -c "iadmin mkresc UM-hnas-32k unixfilesystem ${HOSTNAME}:/mnt/UM-hnas-32k"
     ## Create collections
     su - irods -c "imkdir /ritZone/ingestZone"
     su - irods -c "imkdir /ritZone/rawdata"
-    su - irods -c "imkdir /ritZone/demo_mdl"
-    su - irods -c "imkdir /ritZone/demo_ingest"
-    su - irods -c "imkdir -p /ritZone/demo_ingest/Crohn"
-    su - irods -c "imkdir -p /ritZone/demo_ingest/Melanoma"
-    su - irods -c "imkdir -p /ritZone/demo_ingest/mol3dm"
+#    su - irods -c "imkdir /ritZone/demo_mdl"
+    su - irods -c "imkdir /ritZone/projects"
+    su - irods -c "imkdir -p /ritZone/projects/Crohn"
+    su - irods -c "imkdir -p /ritZone/projects/Melanoma"
+    su - irods -c "imkdir -p /ritZone/projects/mol3dm"
     ## Specify ingest2resource as AVU for this collection
-    su - irods -c "imeta add -C /ritZone/demo_ingest/Crohn resource hnasResc-UM-4k"
-    su - irods -c "imeta add -C /ritZone/demo_ingest/Melanoma resource hnasResc-UM-32k"
-    su - irods -c "imeta add -C /ritZone/demo_ingest/mol3dm resource hnasResc-UM-32k"
+    su - irods -c "imeta add -C /ritZone/projects/Crohn resource UM-hnas-4k"
+    su - irods -c "imeta add -C /ritZone/projects/Melanoma resource UM-hnas-32k"
+    su - irods -c "imeta add -C /ritZone/projects/mol3dm resource UM-hnas-32k"
 
 
     # TODO: pam_ldap needs to be implemented
@@ -84,10 +84,10 @@ if [[ ! -e /etc/irods/setup_responses ]]; then
 
     # Set rights
     su - irods -c "ichmod -r own ingest-zone /ritZone/ingestZone"
-    su - irods -c "ichmod -r write ingest-zone /ritZone/demo_mdl"
-    su - irods -c "ichmod -r inherit /ritZone/demo_mdl"
-    su - irods -c "ichmod -r write ingest-zone /ritZone/demo_ingest"
-    su - irods -c "ichmod -r inherit /ritZone/demo_ingest"
+#    su - irods -c "ichmod -r write ingest-zone /ritZone/demo_mdl"
+#    su - irods -c "ichmod -r inherit /ritZone/demo_mdl"
+    su - irods -c "ichmod -r write ingest-zone /ritZone/projects"
+    su - irods -c "ichmod -r inherit /ritZone/projects"
     su - irods -c "ichmod -r own ingest-zone /ritZone/rawdata"
 
     # Mounted collection
