@@ -37,6 +37,11 @@ RUN curl -fSL "https://github.com/islandora/objective_forms/archive/7.x-${ISLAND
 	&& rm objective_forms.zip \
 	&& chown -R www-data:www-data .
 
+RUN curl -fSL "https://github.com/Michigan-State-University/islandora_xml_form_builder_states/archive/master.zip" -o islandora_xml_form_builder_states.zip \
+	&& unzip islandora_xml_form_builder_states.zip \
+	&& rm islandora_xml_form_builder_states.zip \
+	&& chown -R www-data:www-data .
+
 RUN curl -fSL https://getcomposer.org/download/1.0.0-beta1/composer.phar -o /usr/bin/composer \
 	&& chmod +x /usr/bin/composer
 

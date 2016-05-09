@@ -26,7 +26,8 @@ cd /var/www/html && drush en \
 	handsontable \
 	rit_forms \
 	cloudbrowser \
-	fhml_um
+	fhml_um \
+	islandora_xml_form_builder_states
 
 cd /var/www/html && drush add-rit-forms
 
