@@ -27,7 +27,9 @@ cd /var/www/html && drush en \
 	rit_forms \
 	cloudbrowser \
 	fhml_um \
-	islandora_xml_form_builder_states
+	islandora_xml_form_builder_states \
+	islandora_ontology_autocomplete \
+	jquery_update
 
 cd /var/www/html && drush add-rit-forms
 

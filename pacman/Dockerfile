@@ -50,7 +50,13 @@ RUN npm install -g bower
 RUN curl -fSL http://files.drush.org/drush.phar -o /usr/bin/drush \
 	&& chmod +x /usr/bin/drush
 
-VOLUME [ "/var/www/html/sites/all/modules/pacman", "/var/www/html/sites/all/modules/handsontable", "/var/www/html/sites/all/modules/rit_forms" ,"/var/www/html/sites/all/themes/fhml_um_theme_demo","/var/www/html/sites/all/modules/cloudbrowser_module" ]
+# Get jquery update for Drupal
+RUN cd /var/www/html \
+    && drush dl jquery_update
+
+VOLUME [ "/var/www/html/sites/all/modules/pacman", "/var/www/html/sites/all/modules/handsontable", "/var/www/html/sites/all/modules/rit_forms" ,"/var/www/html/sites/all/themes/fhml_um_theme_demo","/var/www/html/sites/all/modules/cloudbrowser_module", "/var/www/html/sites/all/modules/islandora_ontology_autocomplete" ]
+
+WORKDIR /var/www/html
 
 ADD bootstrap.sh /var/www/html/
 RUN chmod +x /var/www/html/bootstrap.sh

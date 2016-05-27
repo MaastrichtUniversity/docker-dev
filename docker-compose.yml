@@ -8,6 +8,7 @@ pacman:
     - irods-frontend
   volumes:
     - ../handsontable:/var/www/html/sites/all/modules/handsontable
+    - ../islandora_ontology_autocomplete:/var/www/html/sites/all/modules/islandora_ontology_autocomplete
     - ../rit-pacman:/var/www/html/sites/all/modules/pacman
     - ../rit_forms:/var/www/html/sites/all/modules/rit_forms
     - ../cloudbrowser_module:/var/www/html/sites/all/modules/cloudbrowser_module
