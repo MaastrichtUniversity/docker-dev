@@ -40,7 +40,7 @@ RUN wget -P /tmp/ https://code.renci.org/gf/download/frsrelease/239/2712/irods-c
     && unzip /tmp/irods-cloud-frontend.zip -d /var/www/html/
 ### MUMC-modified version of Cloud browser. Uncomment the following lines if necessary. ###
 #ADD ./irods-cloud-frontend-1.0.0-RELEASE_MUMC.zip /tmp/irods-cloud-frontend-1.0.0-RELEASE_MUMC.zip
-#RUN unzip /tmp/irods-cloud-frontend-1.0.0-RELEASE_MUMC.zip -d /var/www/html/
+#RUN unzip -o /tmp/irods-cloud-frontend-1.0.0-RELEASE_MUMC.zip -d /var/www/html/
 
 EXPOSE 8080 80
 
