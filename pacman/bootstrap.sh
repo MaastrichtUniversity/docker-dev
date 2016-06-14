@@ -9,6 +9,8 @@ cd /var/www/html/sites/all/modules/pacman && composer update
 
 cd /var/www/html/sites/all/modules/handsontable && bower install --allow-root
 
+cd /var/www/html/sites/all/modules/islandora_ontology_autocomplete && bower install --allow-root
+
 # Only re-install when in a fresh container
 if [[ ! -e /var/www/html/sites/default/settings.php ]]; then
     cd /var/www/html && drush site-install \
