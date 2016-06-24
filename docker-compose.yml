@@ -45,6 +45,7 @@ irods-db:
     POSTGRES_PASSWORD: foobar
 irods-frontend:
   build: irods-frontend/
+<<<<<<< HEAD
   ports:
     - "8080:8080"
     - "83:80"
@@ -57,6 +58,8 @@ irods-frontend:
     - irods
   environment:
     VIRTUAL_HOST: frontend.dev.rit.unimaas.nl
+  links:
+    - irods
 proxy:
   image: jwilder/nginx-proxy
   ports:
