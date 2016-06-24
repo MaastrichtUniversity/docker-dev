@@ -45,7 +45,7 @@ ADD ./irods-cloud-backend-config.groovy /etc/irods-cloud-backend-config.groovy
 # Install DICE-UNC Cloud-Browser frontend and replace :8080 URL to reverse proxy location
 RUN wget -P /tmp/ https://code.renci.org/gf/download/frsrelease/239/2712/irods-cloud-frontend.zip \
     && unzip /tmp/irods-cloud-frontend.zip -d /var/www/html/ \
-    && sed -i "s|\"+location.hostname+\":8080|\"location.hostname+\"|" /var/www/html/irods-cloud-frontend/app/components/globals.js
+    && sed -i "s|\"+location.hostname+\":8080|\"+location.hostname+\"|" /var/www/html/irods-cloud-frontend/app/components/globals.js
 
 ### MUMC-modified version of Cloud browser. Uncomment the following lines if necessary. ###
 #ADD ./irods-cloud-frontend-1.0.0-RELEASE_MUMC.zip /tmp/irods-cloud-frontend-1.0.0-RELEASE_MUMC.zip
