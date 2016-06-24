@@ -18,6 +18,13 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
+## Setup Apache reverse proxy for Tomcat
+# Enable proxy modules
+RUN a2enmod proxy_http
+# Add modified apache site-configuration
+ADD ./000-default.conf /etc/apache2/sites-available/000-default.conf
+
+
 # Add bootstrap script
 ADD ./bootstrap.sh /opt/bootstrap.sh 
 
@@ -35,13 +42,15 @@ ADD ./irods-rest.properties /etc/irods-ext/irods-rest.properties
 RUN wget -P /var/lib/tomcat8/webapps/ https://code.renci.org/gf/download/frsrelease/239/2717/irods-cloud-backend.war
 ADD ./irods-cloud-backend-config.groovy /etc/irods-cloud-backend-config.groovy
 
-# Install Cloud-Browser frontend
+# Install DICE-UNC Cloud-Browser frontend and replace :8080 URL to reverse proxy location
 RUN wget -P /tmp/ https://code.renci.org/gf/download/frsrelease/239/2712/irods-cloud-frontend.zip \
-    && unzip /tmp/irods-cloud-frontend.zip -d /var/www/html/
+    && unzip /tmp/irods-cloud-frontend.zip -d /var/www/html/ \
+    && sed -i "s|\"+location.hostname+\":8080|\"location.hostname+\"|" /var/www/html/irods-cloud-frontend/app/components/globals.js
+
 ### MUMC-modified version of Cloud browser. Uncomment the following lines if necessary. ###
 #ADD ./irods-cloud-frontend-1.0.0-RELEASE_MUMC.zip /tmp/irods-cloud-frontend-1.0.0-RELEASE_MUMC.zip
 #RUN unzip -o /tmp/irods-cloud-frontend-1.0.0-RELEASE_MUMC.zip -d /var/www/html/
 
-EXPOSE 8080 80
+EXPOSE 80
 
 ENTRYPOINT [ "/opt/bootstrap.sh" ]

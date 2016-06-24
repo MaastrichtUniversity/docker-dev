@@ -12,7 +12,7 @@ pacman:
     - ../cloudbrowser_module:/var/www/html/sites/all/modules/cloudbrowser_module
     - ../fhml_um_theme_demo:/var/www/html/sites/all/themes/fhml_um_theme_demo
   environment:
-      VIRTUAL_HOST: pacman.dev.rit.unimaas.nl
+    VIRTUAL_HOST: pacman.dev.rit.unimaas.nl
 irods:
   build: irods/
   ports:
@@ -26,14 +26,13 @@ irods:
     INGEST_MOUNT: //fhml-srv002.unimaas.nl/ingest
     INGEST_USER: p.vanschayck
     LDAP_USER: M4i-nano-wiki
+    VIRTUAL_HOST: irods.dev.rit.unimaas.nl
   volumes:
     - ./irods.secrets.cfg:/etc/secrets:ro
     - ../irods-ruleset:/rules
     - ../irods-helper-cmd:/helpers
   # Required for CIFS mounting. cap-add not enough in Windows for some reason.
   privileged: true
-  environment:
-      VIRTUAL_HOST: irods.dev.rit.unimaas.nl
 db:
   image: mysql:5.6
   environment:
@@ -45,15 +44,13 @@ irods-db:
     POSTGRES_PASSWORD: foobar
 irods-frontend:
   build: irods-frontend/
-  ports:
-    - "8080:8080"
-    - "83:80"
+#  ports:
+#    - "80:80"
   links:
     - irods
   environment:
     # Indicate the FQDN of the Docker host that is going to run this container.
-    FQDN_HOST: fhml-srv019.unimaas.nl
-  environment:
+#    FQDN_HOST: fhml-srv019.unimaas.nl
     VIRTUAL_HOST: frontend.dev.rit.unimaas.nl
 proxy:
   image: jwilder/nginx-proxy
