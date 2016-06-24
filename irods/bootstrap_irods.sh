@@ -109,6 +109,3 @@ done
 
 # Mounted collection for rawdata
 imcoll -m filesystem /mnt/ingestZone/rawData /nlmumc/rawdata
-
-# Mounted collection for ingestZone
-imcoll -m filesystem /mnt/ingestZone /nlmumc/ingestZone
