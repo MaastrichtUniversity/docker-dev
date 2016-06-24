@@ -45,7 +45,6 @@ irods-db:
     POSTGRES_PASSWORD: foobar
 irods-frontend:
   build: irods-frontend/
-<<<<<<< HEAD
   ports:
     - "8080:8080"
     - "83:80"
@@ -54,12 +53,8 @@ irods-frontend:
   environment:
     # Indicate the FQDN of the Docker host that is going to run this container.
     FQDN_HOST: fhml-srv019.unimaas.nl
-  links:
-    - irods
   environment:
     VIRTUAL_HOST: frontend.dev.rit.unimaas.nl
-  links:
-    - irods
 proxy:
   image: jwilder/nginx-proxy
   ports:
