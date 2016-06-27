@@ -53,6 +53,7 @@ irods-frontend:
     VIRTUAL_HOST: frontend.dev.rit.unimaas.nl
 proxy:
   image: jwilder/nginx-proxy
+  log_driver: none
   ports:
     - "80:80"
   volumes:
