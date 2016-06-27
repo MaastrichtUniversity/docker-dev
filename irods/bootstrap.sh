@@ -40,58 +40,13 @@ if [[ ! -e /etc/irods/setup_responses ]]; then
     sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 1200\,/' /etc/irods/server_config.json
 
     # iRODS settings
-    ## Add resources
-    ## TODO: Actual NFS mounts to HNAS storage need to be realized
+    ## Add resource vaults
     mkdir /mnt/UM-hnas-4k
     chown irods:irods /mnt/UM-hnas-4k
     mkdir /mnt/UM-hnas-32k
     chown irods:irods /mnt/UM-hnas-32k
-    su - irods -c "iadmin mkresc UM-hnas-4k unixfilesystem ${HOSTNAME}:/mnt/UM-hnas-4k"
-    su - irods -c "iadmin mkresc UM-hnas-32k unixfilesystem ${HOSTNAME}:/mnt/UM-hnas-32k"
-    ## Create collections
-    su - irods -c "imkdir /ritZone/ingestZone"
-    su - irods -c "imkdir /ritZone/rawdata"
-#    su - irods -c "imkdir /ritZone/demo_mdl"
-    su - irods -c "imkdir /ritZone/projects"
-    su - irods -c "imkdir -p /ritZone/projects/Crohn"
-    su - irods -c "imkdir -p /ritZone/projects/Melanoma"
-    su - irods -c "imkdir -p /ritZone/projects/mol3dm"
-    ## Specify ingest2resource as AVU for this collection
-    su - irods -c "imeta add -C /ritZone/projects/Crohn resource UM-hnas-4k"
-    su - irods -c "imeta add -C /ritZone/projects/Melanoma resource UM-hnas-32k"
-    su - irods -c "imeta add -C /ritZone/projects/mol3dm resource UM-hnas-32k"
 
-
-    # TODO: pam_ldap needs to be implemented
-    su - irods -c "iadmin mkuser p.vanschayck rodsuser"
-    su - irods -c "iadmin moduser p.vanschayck password foobar"
-    su - irods -c "iadmin mkuser m.coonen rodsuser"
-    su - irods -c "iadmin moduser m.coonen password foobar"
-    su - irods -c "iadmin mkuser d.theunissen rodsuser"
-    su - irods -c "iadmin moduser d.theunissen password foobar"
-    su - irods -c "iadmin mkuser p.suppers rodsuser"
-    su - irods -c "iadmin moduser p.suppers password foobar"
-
-    # Make sure that all users (=members of group public) can browse to directories for which they have rights
-    su - irods -c "ichmod read public /ritZone"
-
-    # Make group
-    su - irods -c "iadmin mkgroup ingest-zone"
-    su - irods -c "iadmin atg ingest-zone p.vanschayck"
-    su - irods -c "iadmin atg ingest-zone m.coonen"
-    su - irods -c "iadmin atg ingest-zone d.theunissen"
-    su - irods -c "iadmin atg ingest-zone p.suppers"
-
-    # Set rights
-    su - irods -c "ichmod -r own ingest-zone /ritZone/ingestZone"
-#    su - irods -c "ichmod -r write ingest-zone /ritZone/demo_mdl"
-#    su - irods -c "ichmod -r inherit /ritZone/demo_mdl"
-    su - irods -c "ichmod -r write ingest-zone /ritZone/projects"
-    su - irods -c "ichmod -r inherit /ritZone/projects"
-    su - irods -c "ichmod -r own ingest-zone /ritZone/rawdata"
-
-    # Mounted collection
-    su - irods -c "imcoll -m filesystem /mnt/ingestZone/rawdata /ritZone/rawdata"
+    su - irods -c "/opt/irods/bootstrap_irods.sh"
 else
     service irods start
 fi

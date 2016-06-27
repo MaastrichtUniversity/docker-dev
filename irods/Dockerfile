@@ -44,6 +44,7 @@ ADD ./genresp.sh /opt/irods/genresp.sh
 ADD ./setupdb.sh /opt/irods/setupdb.sh
 ADD ./config.sh /opt/irods/config.sh
 ADD ./bootstrap.sh /opt/irods/bootstrap.sh
+ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
 ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
 RUN chmod a+x /opt/irods/*
 
