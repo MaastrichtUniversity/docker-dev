@@ -23,7 +23,7 @@ ENV LC_ALL en_US.UTF-8
 RUN a2enmod proxy_http
 # Add modified apache site-configuration
 ADD ./000-default.conf /etc/apache2/sites-available/000-default.conf
-
+ADD ./index.html /var/www/html/index.html
 
 # Add bootstrap script
 ADD ./bootstrap.sh /opt/bootstrap.sh 
