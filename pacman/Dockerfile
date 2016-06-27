@@ -1,4 +1,4 @@
-FROM drupal:7.43-apache
+FROM drupal:7.44-apache
 
 RUN apt-get update && apt-get install -y \
 	unzip \
