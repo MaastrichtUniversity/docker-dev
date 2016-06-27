@@ -23,4 +23,4 @@ fi
 shift
 
 # Execute rest of arguments as command
-eval $*
+exec "$@"
