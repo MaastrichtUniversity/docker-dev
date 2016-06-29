@@ -31,6 +31,7 @@ irods:
     - ./irods.secrets.cfg:/etc/secrets:ro
     - ../irods-ruleset:/rules
     - ../irods-helper-cmd:/helpers
+    - ../irods-microservices:/microservices
   # Required for CIFS mounting. cap-add not enough in Windows for some reason.
   privileged: true
 db:

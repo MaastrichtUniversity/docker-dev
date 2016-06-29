@@ -16,7 +16,9 @@ RUN apt-get update \
     python-ldap \
     lsof \
     make \
-    cifs-utils 
+    cifs-utils  \
+    g++ \
+    libssl-dev
 
 
 RUN locale-gen en_US.UTF-8
@@ -33,6 +35,8 @@ RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/ubuntu14/irods-
 RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/ubuntu14/irods-database-plugin-postgres-1.8-ubuntu14-x86_64.deb -O /tmp/irods-dbplugin.deb \
     && dpkg -i /tmp/irods-dbplugin.deb
 
+RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/ubuntu14/irods-dev-${IRODS_VERSION}-ubuntu14-x86_64.deb -O /tmp/irods-dev.deb \
+    && dpkg -i /tmp/irods-dev.deb
 
 RUN mkdir /opt/irods && mkdir /mnt/ingestZone
 
@@ -50,6 +54,6 @@ RUN chmod a+x /opt/irods/*
 
 EXPOSE 1248 1247
 
-VOLUME [ "/rules", "/helpers" ]
+VOLUME [ "/rules", "/helpers", "/microservices" ]
 
 ENTRYPOINT [ "/opt/irods/bootstrap.sh" ]

@@ -13,6 +13,9 @@ cp /helpers/* /var/lib/irods/iRODS/server/bin/cmd/.
 # Update RIT rules
 cd /rules && make install
 
+# Update RIT microservices
+cd /microservices && make install
+
 # Mount ingest zone
 mount -t cifs ${INGEST_MOUNT} /mnt/ingestZone -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999
 
