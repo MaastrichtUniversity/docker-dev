@@ -18,4 +18,5 @@ fi
 
 export RIT_ENV
 
+# Assuming docker-compose is available in the PATH
 docker-compose "$@"
