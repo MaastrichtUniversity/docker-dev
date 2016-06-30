@@ -7,11 +7,11 @@ if [[ -z $RIT_ENV ]]; then
         RIT_ENV="acc"
     fi
 
-    if [[ $HOSTNAME == "fhml-srv020" ]]; then
+    if [[ $HOSTNAME == "fhml-srv019" ]]; then
         RIT_ENV="dev1"
     fi
 
-    if [[ $HOSTNAME == "fhml-srv021" ]]; then
+    if [[ $HOSTNAME == "fhml-srv020" ]]; then
         RIT_ENV="dev2"
     fi
 fi
