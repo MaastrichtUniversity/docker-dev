@@ -1,10 +1,5 @@
 #!/bin/bash
 
-until mysql -h db -uroot -pfoobar &> /dev/null; do
-  >&2 echo "MySQL is unavailable - sleeping"
-  sleep 1
-done
-
 cd /var/www/html/sites/all/modules/pacman && composer update
 
 cd /var/www/html/sites/all/modules/handsontable && bower install --allow-root
@@ -31,7 +26,8 @@ cd /var/www/html && drush en \
 	fhml_um \
 	islandora_xml_form_builder_states \
 	islandora_ontology_autocomplete \
-	jquery_update
+	jquery_update \
+	rit_faker
 
 cd /var/www/html && drush add-rit-forms
 
@@ -45,6 +41,5 @@ cd /var/www/html && drush vset site_frontpage pacman/info
 
 # Enable and make theme default
 cd /var/www/html && drush vset theme_default fhml_um
-
 
 apache2-foreground

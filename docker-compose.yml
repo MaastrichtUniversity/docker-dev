@@ -9,6 +9,7 @@ pacman:
     - ../islandora_ontology_autocomplete:/var/www/html/sites/all/modules/islandora_ontology_autocomplete
     - ../rit-pacman:/var/www/html/sites/all/modules/pacman
     - ../rit_forms:/var/www/html/sites/all/modules/rit_forms
+    - ../rit_faker:/var/www/html/sites/all/modules/rit_faker
     - ../cloudbrowser_module:/var/www/html/sites/all/modules/cloudbrowser_module
     - ../fhml_um_theme_demo:/var/www/html/sites/all/themes/fhml_um_theme_demo
   environment:

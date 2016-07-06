@@ -20,6 +20,10 @@ WORKDIR /var/www/html/sites/all/modules
 
 RUN ln -s /usr/bin/nodejs /usr/bin/node
 
+ENV DOCKERIZE_VERSION v0.2.0
+RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz -o dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
 ENV ISLANDORA_VERSION 1.6
 
 RUN curl -fSL "https://github.com/islandora/islandora_xml_forms/archive/7.x-${ISLANDORA_VERSION}.zip" -o islandora_xml_forms.zip \
@@ -54,11 +58,11 @@ RUN curl -fSL http://files.drush.org/drush.phar -o /usr/bin/drush \
 RUN cd /var/www/html \
     && drush dl jquery_update
 
-VOLUME [ "/var/www/html/sites/all/modules/pacman", "/var/www/html/sites/all/modules/handsontable", "/var/www/html/sites/all/modules/rit_forms" ,"/var/www/html/sites/all/themes/fhml_um_theme_demo","/var/www/html/sites/all/modules/cloudbrowser_module", "/var/www/html/sites/all/modules/islandora_ontology_autocomplete" ]
+VOLUME [ "/var/www/html/sites/all/modules/pacman", "/var/www/html/sites/all/modules/handsontable", "/var/www/html/sites/all/modules/rit_forms" ,"/var/www/html/sites/all/themes/fhml_um_theme_demo","/var/www/html/sites/all/modules/cloudbrowser_module", "/var/www/html/sites/all/modules/islandora_ontology_autocomplete", "/var/www/html/sites/all/modules/rit_faker" ]
 
 WORKDIR /var/www/html
 
 ADD bootstrap.sh /var/www/html/
 RUN chmod +x /var/www/html/bootstrap.sh
 
-CMD /var/www/html/bootstrap.sh
+CMD dockerize -stdout /var/log/apache2/access.log -stderr /var/log/apache2/error.log -wait tcp://db:3306 -wait tcp://irods:1248 -timeout 30s /var/www/html/bootstrap.sh
