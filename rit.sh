@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 if [[ $1 == "create-ingest-zones" ]]; then
     ## Create initial dummy ingest-zones
     for i in {1..4}; do
