@@ -18,7 +18,8 @@ RUN apt-get update \
     make \
     cifs-utils  \
     g++ \
-    libssl-dev
+    libssl-dev \
+    libcurl4-openssl-dev
 
 
 RUN locale-gen en_US.UTF-8
