@@ -14,6 +14,18 @@ if [[ $1 == "create-ingest-zones" ]]; then
     exit 0
 fi
 
+if [[ $1 == "create-project-collections" ]]; then
+    ## Create dummy project collections
+    for i in {1..4}; do
+        docker exec dockerdev_pacman_1 drush create-project-collection p.vanschayck MUMC-M4I-0000${i}
+        docker exec dockerdev_pacman_1 drush create-project-collection m.coonen MUMC-RIT-0000${i}
+        docker exec dockerdev_pacman_1 drush create-project-collection d.theunissen MUMC-RIT-0000${i}
+        docker exec dockerdev_pacman_1 drush create-project-collection p.suppers MUMC-RIT-0000${i}
+    done
+
+    exit 0
+fi
+
 
 if [[ -z $RIT_ENV ]]; then
     RIT_ENV="local"
