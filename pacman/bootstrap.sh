@@ -2,6 +2,8 @@
 
 cd /var/www/html/sites/all/modules/pacman && composer update
 
+cd /var/www/html/sites/all/modules/rit_faker && composer update
+
 cd /var/www/html/sites/all/modules/handsontable && bower install --allow-root
 
 cd /var/www/html/sites/all/modules/islandora_ontology_autocomplete && bower install --allow-root
