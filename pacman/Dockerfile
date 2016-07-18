@@ -70,4 +70,4 @@ WORKDIR /var/www/html
 ADD bootstrap.sh /var/www/html/
 RUN chmod +x /var/www/html/bootstrap.sh
 
-CMD dockerize -stdout /var/log/apache2/access.log -stderr /var/log/apache2/error.log -wait tcp://db:3306 -wait tcp://irods:1248 -timeout 30s /var/www/html/bootstrap.sh
+CMD dockerize -wait tcp://db:3306 -wait tcp://irods:1248 -timeout 30s /var/www/html/bootstrap.sh
