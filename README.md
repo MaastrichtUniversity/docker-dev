@@ -3,9 +3,9 @@ Add irods.secrets.cfg
 
 ## Run
 ```
-docker-compose build
-docker-compose down
-docker-compose up
+./rit.sh build
+./rit.sh down
+./rit.sh up
 ```
 ## Usage of the i command
 First build the icommands image:
