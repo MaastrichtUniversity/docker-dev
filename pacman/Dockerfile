@@ -1,4 +1,4 @@
-FROM drupal:7.44-apache
+FROM drupal:7.50-apache
 
 RUN apt-get update && apt-get install -y \
 	unzip \
@@ -30,6 +30,11 @@ RUN curl -fSL "https://github.com/islandora/islandora_xml_forms/archive/7.x-${IS
 	&& unzip islandora_xml_forms.zip \
 	&& rm islandora_xml_forms.zip \
 	&& chown -R www-data:www-data .
+
+# This is a workarround for Drupal 7.50 and Islandora < 1.8.
+# Required untill this PR has been included in Islandora 1.8:
+# https://github.com/Islandora/islandora_xml_forms/pull/229
+RUN sed -i "s|schema  _api|xml_schema_api|" /var/www/html/sites/all/modules/islandora_xml_forms-7.x-${ISLANDORA_VERSION}/api/schema/Extension.inc
 
 RUN curl -fSL "https://github.com/islandora/php_lib/archive/7.x-${ISLANDORA_VERSION}.zip" -o php_lib.zip \
 	&& unzip php_lib.zip \
