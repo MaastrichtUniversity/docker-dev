@@ -14,6 +14,7 @@ pacman:
     - ../fhml_um_theme_demo:/var/www/html/sites/all/themes/fhml_um_theme_demo
   environment:
     VIRTUAL_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
+    OLS_URL: http://fhml-srv018.unimaas.nl:8081/ols-boot
 irods:
   build: irods/
   ports:
