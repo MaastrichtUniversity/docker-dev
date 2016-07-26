@@ -53,6 +53,8 @@ irods-frontend:
     VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
 proxy:
   image: jwilder/nginx-proxy
+  environment:
+    DEFAULT_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
   log_driver: none
   ports:
     - "80:80"
