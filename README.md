@@ -24,6 +24,7 @@ You can also execute commands from the irods-ruleset repository like this:
 ./i [user] irule -F rules/listManagingProjects.r
 ./i [user] irule -F rules/listViewingProjects.r
 ./i [user] irule -F rules/detailsProject.r "*project='MUMC-RIT-00013'"
+./i [user] imeta add -C /nlmumc/ingestZone/[collectionName] [attribute] [value] [unit]
 etc..
 ```
 
