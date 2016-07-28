@@ -52,7 +52,7 @@ irods-frontend:
   environment:
     VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
 metalnx:
-  build: metalnx/
+  image: metalnx/metalnx-web:1.0-latest
   ports:
       - "8080:8080"
   links:
