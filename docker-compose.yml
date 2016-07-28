@@ -51,6 +51,18 @@ irods-frontend:
     - irods
   environment:
     VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
+metalnx:
+  build: metalnx/
+  ports:
+      - "8080:8080"
+  links:
+      - irods
+  environment:
+    IRODS_HOST: irods
+    IRODS_PORT: 1247
+    IRODS_ZONE: nlmumc
+    IRODS_USER: rods
+    IRODS_PASS: irods
 proxy:
   image: jwilder/nginx-proxy
   log_driver: none

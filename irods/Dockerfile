@@ -39,6 +39,10 @@ RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/ubuntu14/irods-
 RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/ubuntu14/irods-dev-${IRODS_VERSION}-ubuntu14-x86_64.deb -O /tmp/irods-dev.deb \
     && dpkg -i /tmp/irods-dev.deb
 
+# install Metalnx RMD
+ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
+RUN dpkg -i /tmp/emc-metalnx-rmd-1.0-1.deb
+
 RUN mkdir /opt/irods && mkdir /mnt/ingestZone
 
 # Bug in cifs-utils package causes setcifsacl not to work without setting this symlink
@@ -53,7 +57,7 @@ ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
 ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
 RUN chmod a+x /opt/irods/*
 
-EXPOSE 1248 1247
+EXPOSE 1248 1247 8000
 
 VOLUME [ "/rules", "/helpers", "/microservices" ]
 
