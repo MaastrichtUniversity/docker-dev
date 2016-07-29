@@ -16,14 +16,8 @@ cd /rules && make install
 # Update RIT microservices
 cd /microservices && make install
 
-# Mount ingest zone
-mount -t cifs ${INGEST_MOUNT} /mnt/ingestZone -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999
-
 # Check if this is a first run of this container
-if [[ ! -e /etc/irods/setup_responses ]]; then
-
-    # generate configuration responses
-    /opt/irods/genresp.sh /etc/irods/setup_responses
+if [[ ! -e /var/run/irods_installed ]]; then
 
     if [ -n "$RODS_PASSWORD" ]; then
         echo "Setting irods password"
@@ -42,14 +36,9 @@ if [[ ! -e /etc/irods/setup_responses ]]; then
     # Dirty temp.password workaround (TODO: NEEDS TO BE FIXED PROPERLY)
     sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 1200\,/' /etc/irods/server_config.json
 
-    # iRODS settings
-    ## Add resource vaults
-    mkdir /mnt/UM-hnas-4k
-    chown irods:irods /mnt/UM-hnas-4k
-    mkdir /mnt/UM-hnas-32k
-    chown irods:irods /mnt/UM-hnas-32k
-
     su - irods -c "/opt/irods/bootstrap_irods.sh"
+
+    touch /var/run/irods_installed
 else
     service irods start
 fi

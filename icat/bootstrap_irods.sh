@@ -3,14 +3,16 @@
 ############
 ## Resources
 
-iadmin mkresc UM-hnas-4k unixfilesystem ${HOSTNAME}:/mnt/UM-hnas-4k
-iadmin mkresc UM-hnas-32k unixfilesystem ${HOSTNAME}:/mnt/UM-hnas-32k
+# TO DO: composable resources with a default passthru rootResc resource as described here:
+#        https://docs.irods.org/4.1.8/manual/best_practices/
+iadmin mkresc UM-hnas-4k unixfilesystem ires:/mnt/UM-hnas-4k
+iadmin mkresc UM-hnas-32k unixfilesystem ires:/mnt/UM-hnas-32k
 
 ##############
 ## Collections
-imkdir /nlmumc/ingestZone
-imkdir /nlmumc/rawdata
-imkdir /nlmumc/projects
+imkdir -p /nlmumc/ingest/zones
+imkdir -p /nlmumc/ingest/shares/rawdata
+imkdir -p /nlmumc/projects
 
 ###########
 ## Projects
@@ -76,8 +78,8 @@ ichmod read public /nlmumc
 ichmod read public /nlmumc/projects
 
 # Give groups access to the ingestZone
-ichmod -r own nanoscopy-l /nlmumc/ingestZone
-ichmod -r own rit-l /nlmumc/ingestZone
+ichmod -r own nanoscopy-l /nlmumc/ingest/zones
+ichmod -r own rit-l /nlmumc/ingest/zones
 
 # Projects contributors
 for i in {01..16}; do
@@ -108,4 +110,4 @@ done
 ## Special
 
 # Mounted collection for rawdata
-imcoll -m filesystem /mnt/ingestZone/rawData /nlmumc/rawdata
+imcoll -m filesystem /mnt/ingest/shares/rawData /nlmumc/ingest/shares/rawdata

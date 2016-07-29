@@ -5,10 +5,9 @@ RUN apt-get update \
     wget \
     unixodbc \
     super \
-    odbc-postgresql \
-    postgresql-client \
     libfuse2 \
     libjson-perl \
+ #   postgresql-client \
     python \
     python-psutil \
     python-requests \
@@ -19,7 +18,8 @@ RUN apt-get update \
     cifs-utils  \
     g++ \
     libssl-dev \
-    libcurl4-openssl-dev
+    libcurl4-openssl-dev \
+    curl
 
 
 RUN locale-gen en_US.UTF-8
@@ -30,11 +30,8 @@ ENV IRODS_VERSION 4.1.8
 
 # install iRODS
 
-RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/ubuntu14/irods-icat-${IRODS_VERSION}-ubuntu14-x86_64.deb -O /tmp/irods-icat.deb \
-    && dpkg -i /tmp/irods-icat.deb
-
-RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/ubuntu14/irods-database-plugin-postgres-1.8-ubuntu14-x86_64.deb -O /tmp/irods-dbplugin.deb \
-    && dpkg -i /tmp/irods-dbplugin.deb
+RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/ubuntu14/irods-resource-${IRODS_VERSION}-ubuntu14-x86_64.deb -O /tmp/irods-ires.deb \
+    && dpkg -i /tmp/irods-ires.deb
 
 RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/ubuntu14/irods-dev-${IRODS_VERSION}-ubuntu14-x86_64.deb -O /tmp/irods-dev.deb \
     && dpkg -i /tmp/irods-dev.deb
@@ -43,22 +40,21 @@ RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/ubuntu14/irods-
 ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
 RUN dpkg -i /tmp/emc-metalnx-rmd-1.0-1.deb
 
-RUN mkdir /opt/irods && mkdir /mnt/ingestZone
+RUN mkdir /opt/irods && mkdir -p /mnt/ingest/zones && mkdir -p /mnt/ingest/shares/rawData
 
 # Bug in cifs-utils package causes setcifsacl not to work without setting this symlink
 # https://bugs.launchpad.net/ubuntu/+source/cifs-utils/+bug/1372120
 RUN mkdir /etc/cifs-utils && ln -s /usr/lib/x86_64-linux-gnu/cifs-utils/idmapwb.so /etc/cifs-utils/idmap-plugin
 
-ADD ./genresp.sh /opt/irods/genresp.sh
-ADD ./setupdb.sh /opt/irods/setupdb.sh
+ADD ./setup_responses /etc/irods/setup_responses
 ADD ./config.sh /opt/irods/config.sh
 ADD ./bootstrap.sh /opt/irods/bootstrap.sh
-ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
-ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
 RUN chmod a+x /opt/irods/*
 
 EXPOSE 1248 1247 8000
 
-VOLUME [ "/rules", "/helpers", "/microservices" ]
-
 ENTRYPOINT [ "/opt/irods/bootstrap.sh" ]
+#ENV DOCKERIZE_VERSION v0.2.0
+#RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz -o dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+#    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+#CMD dockerize -wait tcp://irods:8000 -timeout 150s /opt/irods/bootstrap.sh
