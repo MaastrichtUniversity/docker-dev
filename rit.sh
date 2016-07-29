@@ -45,5 +45,11 @@ fi
 
 export RIT_ENV
 
+# Set other Docker Compose environment variables (mainly for pacman)
+export IRODS_FRONTEND_ENV_VIRTUAL_HOST="frontend.$RIT_ENV.rit.unimaas.nl"
+export IRODS_1_PORT_1247_TCP_ADDR="irods.$RIT_ENV.rit.unimaas.nl"
+export IRODS_FRONTEND_1_PORT_80_TCP_ADDR="frontend.$RIT_ENV.rit.unimaas.nl"
+export IRODS_ENV_RODS_PASSWORD="irods"
+
 # Assuming docker-compose is available in the PATH
 docker-compose "$@"

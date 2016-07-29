@@ -1,91 +1,103 @@
-pacman:
-  build: pacman/
-  hostname: pacman
-  links:
-    - db
-    - irods
-    - irods-frontend
-  volumes:
-    - ../handsontable:/var/www/html/sites/all/modules/handsontable
-    - ../islandora_ontology_autocomplete:/var/www/html/sites/all/modules/islandora_ontology_autocomplete
-    - ../rit-pacman:/var/www/html/sites/all/modules/pacman
-    - ../rit_forms:/var/www/html/sites/all/modules/rit_forms
-    - ../rit_faker:/var/www/html/sites/all/modules/rit_faker
-    - ../cloudbrowser_module:/var/www/html/sites/all/modules/cloudbrowser_module
-    - ../fhml_um_theme_demo:/var/www/html/sites/all/themes/fhml_um_theme_demo
-  environment:
-    VIRTUAL_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
-    OLS_URL: http://fhml-srv018.unimaas.nl:8081/ols-boot
-irods:
-  build: icat/
-  hostname: irods
-  ports:
-    - "1247:1247"
-    - "1248:1248"
-  links:
-    - ires
-    - irods-db
-  environment:
-    RODS_PASSWORD: irods
-    PGPASSWORD: foobar
-    VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
-  volumes:
-    - ./irods.secrets.cfg:/etc/secrets:ro
-    - ../irods-ruleset:/rules
-    - ../irods-helper-cmd:/helpers
-    - ../irods-microservices:/microservices
-ires:
-  build: ires/
-  hostname: ires
-  environment:
-    RODS_PASSWORD: irods
-    PGPASSWORD: foobar
-    INGEST_MOUNT: //fhml-srv002.unimaas.nl/ingest
-    INGEST_USER: p.vanschayck
-    LDAP_USER: M4i-nano-wiki
-    VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
-  volumes:
-    - ./irods.secrets.cfg:/etc/secrets:ro
-  # Required for CIFS mounting. cap-add not enough in Windows for some reason.
-  privileged: true
-db:
-  image: mysql:5.6
-  hostname: irods-db
-  environment:
-    MYSQL_DATABASE: pacman
-    MYSQL_ROOT_PASSWORD: foobar
-irods-db:
-  image: postgres:9.4
-  hostname: irods-db
-  environment:
-    POSTGRES_PASSWORD: foobar
-irods-frontend:
-  build: irods-frontend/
-  hostname: irods-frontend
-  links:
-    - irods
-  environment:
-    VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
-metalnx:
-  image: metalnx/metalnx-web:1.0-latest
-  hostname: metalnx
-  ports:
-      - "8080:8080"
-  links:
-      - irods
-      - ires
-  environment:
-    IRODS_HOST: irods
-    IRODS_PORT: 1247
-    IRODS_ZONE: nlmumc
-    IRODS_USER: rods
-    IRODS_PASS: irods
-proxy:
-  image: jwilder/nginx-proxy
-  environment:
-    DEFAULT_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
-  log_driver: none
-  ports:
-    - "80:80"
-  volumes:
-    - /var/run/docker.sock:/tmp/docker.sock:ro
+version: '2'
+# Services are a better way of organizing inter-container network traffic, as descibed here: https://docs.docker.com/compose/networking/
+### Limitation: Environment variables will only be populated if you’re using the legacy version 1 Compose file format.
+### Solution: move declaration of these ENV variables to the rit.sh wrapper
+services:
+  pacman:
+    build: pacman/
+    hostname: pacman
+    #links:
+    #  - db
+    #  - irods
+    #  - irods-frontend
+    volumes:
+      - ../handsontable:/var/www/html/sites/all/modules/handsontable
+      - ../islandora_ontology_autocomplete:/var/www/html/sites/all/modules/islandora_ontology_autocomplete
+      - ../rit-pacman:/var/www/html/sites/all/modules/pacman
+      - ../rit_forms:/var/www/html/sites/all/modules/rit_forms
+      - ../rit_faker:/var/www/html/sites/all/modules/rit_faker
+      - ../cloudbrowser_module:/var/www/html/sites/all/modules/cloudbrowser_module
+      - ../fhml_um_theme_demo:/var/www/html/sites/all/themes/fhml_um_theme_demo
+    environment:
+    # TO DO: Change the names of these variables in rit-pacman source code
+      IRODS_FRONTEND_ENV_VIRTUAL_HOST: ${IRODS_FRONTEND_ENV_VIRTUAL_HOST}
+      IRODS_1_PORT_1247_TCP_ADDR: ${IRODS_1_PORT_1247_TCP_ADDR}
+      IRODS_FRONTEND_1_PORT_80_TCP_ADDR: ${IRODS_FRONTEND_1_PORT_80_TCP_ADDR}
+      IRODS_ENV_RODS_PASSWORD: ${IRODS_ENV_RODS_PASSWORD}
+      VIRTUAL_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
+      OLS_URL: http://fhml-srv018.unimaas.nl:8081/ols-boot
+  irods:
+    build: icat/
+    hostname: irods
+    ports:
+      - "1247:1247"
+      - "1248:1248"
+    #links:
+    #  - ires
+    #  - irods-db
+    environment:
+      RODS_PASSWORD: irods
+      PGPASSWORD: foobar
+      VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
+    volumes:
+      - ./irods.secrets.cfg:/etc/secrets:ro
+      - ../irods-ruleset:/rules
+      - ../irods-helper-cmd:/helpers
+      - ../irods-microservices:/microservices
+  ires:
+    build: ires/
+    hostname: ires
+    #links:
+    #  - irods
+    environment:
+      RODS_PASSWORD: irods
+      PGPASSWORD: foobar
+      INGEST_MOUNT: //fhml-srv002.unimaas.nl/ingest
+      INGEST_USER: p.vanschayck
+      LDAP_USER: M4i-nano-wiki
+      VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
+    volumes:
+      - ./irods.secrets.cfg:/etc/secrets:ro
+    # Required for CIFS mounting. cap-add not enough in Windows for some reason.
+    privileged: true
+  db:
+    image: mysql:5.6
+    hostname: irods-db
+    environment:
+      MYSQL_DATABASE: pacman
+      MYSQL_ROOT_PASSWORD: foobar
+  irods-db:
+    image: postgres:9.4
+    hostname: irods-db
+    environment:
+      POSTGRES_PASSWORD: foobar
+  irods-frontend:
+    build: irods-frontend/
+    hostname: irods-frontend
+    #links:
+    #  - irods
+    environment:
+      VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
+  metalnx:
+    image: metalnx/metalnx-web:1.0-latest
+    hostname: metalnx
+    ports:
+        - "8080:8080"
+    #links:
+    #    - irods
+    #    - ires
+    environment:
+      IRODS_HOST: irods
+      IRODS_PORT: 1247
+      IRODS_ZONE: nlmumc
+      IRODS_USER: rods
+      IRODS_PASS: irods
+  proxy:
+    image: jwilder/nginx-proxy
+    environment:
+      DEFAULT_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
+    #log_driver: none
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
