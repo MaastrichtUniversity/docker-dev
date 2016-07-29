@@ -2,11 +2,6 @@
 
 source /etc/secrets
 
-# Sleep to wait for irods container to become available
-# Cannot use dockerize method, since there is no link from ires to irods defined in docker-compose (= circular dependency)
-sleep 120
-
-
 # Mount ingest zones and rawdata
 mount -t cifs ${INGEST_MOUNT} /mnt/ingest/zones -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999
 mount -t cifs ${INGEST_MOUNT}/rawData /mnt/ingest/shares/rawData -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999
@@ -38,7 +33,7 @@ else
 fi
 
 # Force start of Metalnx RMD
-service rmd start
+service rmd restart
 
 # this script must end with a persistent foreground process
 tail -f /var/lib/irods/iRODS/server/log/rodsLog.*

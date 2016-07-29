@@ -53,8 +53,8 @@ RUN chmod a+x /opt/irods/*
 
 EXPOSE 1248 1247 8000
 
-ENTRYPOINT [ "/opt/irods/bootstrap.sh" ]
-#ENV DOCKERIZE_VERSION v0.2.0
-#RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz -o dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-#    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-#CMD dockerize -wait tcp://irods:8000 -timeout 150s /opt/irods/bootstrap.sh
+#ENTRYPOINT [ "/opt/irods/bootstrap.sh" ]
+ENV DOCKERIZE_VERSION v0.2.0
+RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz -o dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+CMD dockerize -wait tcp://irods:1248 -timeout 150s /opt/irods/bootstrap.sh

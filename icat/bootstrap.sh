@@ -44,7 +44,7 @@ else
 fi
 
 # Force start of Metalnx RMD
-service rmd start
+service rmd restart
 
 # this script must end with a persistent foreground process
 tail -f /var/lib/irods/iRODS/server/log/rodsLog.*
