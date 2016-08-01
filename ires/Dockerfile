@@ -49,6 +49,7 @@ RUN mkdir /etc/cifs-utils && ln -s /usr/lib/x86_64-linux-gnu/cifs-utils/idmapwb.
 ADD ./setup_responses /etc/irods/setup_responses
 ADD ./config.sh /opt/irods/config.sh
 ADD ./bootstrap.sh /opt/irods/bootstrap.sh
+ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
 RUN chmod a+x /opt/irods/*
 
 EXPOSE 1248 1247 8000

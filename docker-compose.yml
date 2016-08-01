@@ -42,7 +42,6 @@ services:
     volumes:
       - ./irods.secrets.cfg:/etc/secrets:ro
       - ../irods-ruleset:/rules
-      - ../irods-helper-cmd:/helpers
       - ../irods-microservices:/microservices
   ires:
     build: ires/
@@ -52,12 +51,13 @@ services:
     environment:
       RODS_PASSWORD: irods
       PGPASSWORD: foobar
-      INGEST_MOUNT: //fhml-srv002.unimaas.nl/ingest
-      INGEST_USER: p.vanschayck
+      #INGEST_MOUNT: //fhml-srv002.unimaas.nl/ingest
+      #INGEST_USER: p.vanschayck
       LDAP_USER: M4i-nano-wiki
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
     volumes:
       - ./irods.secrets.cfg:/etc/secrets:ro
+      - ../irods-helper-cmd:/helpers
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
     privileged: true
   db:

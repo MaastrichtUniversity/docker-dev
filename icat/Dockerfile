@@ -43,7 +43,7 @@ RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/ubuntu14/irods-
 ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
 RUN dpkg -i /tmp/emc-metalnx-rmd-1.0-1.deb
 
-RUN mkdir /opt/irods && mkdir /mnt/ingestZone
+RUN mkdir /opt/irods
 
 # Bug in cifs-utils package causes setcifsacl not to work without setting this symlink
 # https://bugs.launchpad.net/ubuntu/+source/cifs-utils/+bug/1372120

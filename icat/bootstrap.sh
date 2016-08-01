@@ -8,7 +8,7 @@ until psql -h irods-db -U postgres -c '\l'; do
 done
 
 # Update RIT helpers
-cp /helpers/* /var/lib/irods/iRODS/server/bin/cmd/.
+#cp /helpers/* /var/lib/irods/iRODS/server/bin/cmd/.
 
 # Update RIT rules
 cd /rules && make install
