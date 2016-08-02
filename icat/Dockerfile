@@ -16,7 +16,6 @@ RUN apt-get update \
     python-ldap \
     lsof \
     make \
-  # cifs-utils  \
     g++ \
     libssl-dev \
     libcurl4-openssl-dev
@@ -44,10 +43,6 @@ ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
 RUN dpkg -i /tmp/emc-metalnx-rmd-1.0-1.deb
 
 RUN mkdir /opt/irods
-
-# Bug in cifs-utils package causes setcifsacl not to work without setting this symlink
-# https://bugs.launchpad.net/ubuntu/+source/cifs-utils/+bug/1372120
-RUN mkdir /etc/cifs-utils && ln -s /usr/lib/x86_64-linux-gnu/cifs-utils/idmapwb.so /etc/cifs-utils/idmap-plugin
 
 ADD ./setup_responses /etc/irods/setup_responses
 ADD ./setupdb.sh /opt/irods/setupdb.sh
