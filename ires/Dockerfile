@@ -7,7 +7,6 @@ RUN apt-get update \
     super \
     libfuse2 \
     libjson-perl \
- #   postgresql-client \
     python \
     python-psutil \
     python-requests \
@@ -54,7 +53,6 @@ RUN chmod a+x /opt/irods/*
 
 EXPOSE 1248 1247 8000
 
-#ENTRYPOINT [ "/opt/irods/bootstrap.sh" ]
 ENV DOCKERIZE_VERSION v0.2.0
 RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz -o dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz

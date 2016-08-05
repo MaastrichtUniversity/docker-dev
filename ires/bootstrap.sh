@@ -24,11 +24,17 @@ if [[ ! -e /var/run/irods_installed ]]; then
     sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 1200\,/' /etc/irods/server_config.json
 
     # iRODS settings
-    ## Add resource vaults
+    ## Add resource vaults (i.e. dummy-mounts in development)
     mkdir /mnt/UM-hnas-4k
     chown irods:irods /mnt/UM-hnas-4k
-    mkdir /mnt/UM-hnas-32k
-    chown irods:irods /mnt/UM-hnas-32k
+    mkdir /mnt/UM-hnas-4k-repl
+    chown irods:irods /mnt/UM-hnas-4k-repl
+
+    mkdir /mnt/AZM-storage
+    chown irods:irods /mnt/AZM-storage
+    mkdir /mnt/AZM-storage-repl
+    chown irods:irods /mnt/AZM-storage-repl
+
 
     su - irods -c "/opt/irods/bootstrap_irods.sh"
 
