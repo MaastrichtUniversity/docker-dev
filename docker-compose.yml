@@ -11,6 +11,7 @@ services:
     #  - irods
     #  - irods-frontend
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - ../handsontable:/var/www/html/sites/all/modules/handsontable
       - ../islandora_ontology_autocomplete:/var/www/html/sites/all/modules/islandora_ontology_autocomplete
       - ../rit-pacman:/var/www/html/sites/all/modules/pacman
@@ -40,6 +41,7 @@ services:
       PGPASSWORD: foobar
       VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
       - ../irods-ruleset:/rules
       - ../irods-microservices:/microservices
@@ -56,6 +58,7 @@ services:
       LDAP_USER: M4i-nano-wiki
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
       - ../irods-helper-cmd:/helpers
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
@@ -66,11 +69,15 @@ services:
     environment:
       MYSQL_DATABASE: pacman
       MYSQL_ROOT_PASSWORD: foobar
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
   irods-db:
     image: postgres:9.4
     hostname: irods-db
     environment:
       POSTGRES_PASSWORD: foobar
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
   irods-frontend:
     build: irods-frontend/
     hostname: irods-frontend
@@ -78,6 +85,8 @@ services:
     #  - irods
     environment:
       VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
   metalnx:
     image: metalnx/metalnx-web:1.0-latest
     hostname: metalnx
@@ -92,6 +101,8 @@ services:
       IRODS_ZONE: nlmumc
       IRODS_USER: rods
       IRODS_PASS: irods
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
   proxy:
     image: jwilder/nginx-proxy
     environment:
@@ -101,3 +112,5 @@ services:
       - "80:80"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
+      - /etc/localtime:/etc/localtime:ro
+
