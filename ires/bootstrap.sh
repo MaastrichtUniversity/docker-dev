@@ -25,6 +25,10 @@ if [[ ! -e /var/run/irods_installed ]]; then
 
     # iRODS settings
     ## Add resource vaults (i.e. dummy-mounts in development)
+    mkdir -p /mnt/ingest/zones
+    chown irods:irods /mnt/ingest/zones
+    mkdir -p /mnt/ingest/shares/rawData
+    chown irods:irods /mnt/ingest/shares/rawData
     mkdir /mnt/UM-hnas-4k
     chown irods:irods /mnt/UM-hnas-4k
     mkdir /mnt/UM-hnas-4k-repl
