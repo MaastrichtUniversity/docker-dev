@@ -47,5 +47,11 @@ fi
 
 export RIT_ENV
 
+# Retrieve the MirthConnect Bitbucket repo variables
+source mirth.secrets.cfg
+export BITBUCKET_SERVER=$BITBUCKET_SERVER
+export BITBUCKET_SERVER_PORT=$BITBUCKET_SERVER_PORT
+export BITBUCKET_MIRTH_CHANNEL_REPO=$BITBUCKET_MIRTH_CHANNEL_REPO
+
 # Assuming docker-compose is available in the PATH
 docker-compose "$@"
