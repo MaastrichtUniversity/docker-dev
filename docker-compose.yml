@@ -85,6 +85,16 @@ services:
       VIRTUAL_PORT: 8080
     volumes:
       - /etc/localtime:/etc/localtime:ro
+  mirthconnect:
+    build: mirthconnect/
+    hostname: mirthconnect
+    ports:
+      - "9090:9090"
+      - "9443:9443"
+    environment:
+      PGPASSWORD: foobar
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
   proxy:
     image: jwilder/nginx-proxy
     environment:
