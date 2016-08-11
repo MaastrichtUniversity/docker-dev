@@ -19,6 +19,18 @@ psql -h irods-db -U postgres -d postgres <<- EOSQL
 EOSQL
 
 
+# Add Bitbucket server to known hosts
+ssh-keyscan -p ${BITBUCKET_SERVER_PORT} ${BITBUCKET_SERVER} >> /root/.ssh/known_hosts
+
+# Clone the conf files into the docker container
+mkdir /opt/bitbucket && git clone $BITBUCKET_MIRTH_CHANNEL_REPO /opt/bitbucket/channels
+
+
+# TODO: Import channels into MirthConnect using CLI
+
+
+
+
 if [ "$1" = 'java' ]; then
     chown -R mirth /opt/mirth-connect/appdata
 

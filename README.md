@@ -1,5 +1,6 @@
 ## Config
-Add irods.secrets.cfg
+* Add irods.secrets.cfg
+* Add mirth.secrets.cfg
 
 ## Run
 ```

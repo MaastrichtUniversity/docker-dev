@@ -111,6 +111,9 @@ services:
       - "9443:9443"
     environment:
       PGPASSWORD: foobar
+      BITBUCKET_SERVER: ${BITBUCKET_SERVER}
+      BITBUCKET_SERVER_PORT: ${BITBUCKET_SERVER_PORT}
+      BITBUCKET_MIRTH_CHANNEL_REPO: ${BITBUCKET_MIRTH_CHANNEL_REPO}
     volumes:
       - /etc/localtime:/etc/localtime:ro
   proxy:

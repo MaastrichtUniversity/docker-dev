@@ -1,14 +1,20 @@
 # Adapted from https://github.com/brandonstevens/mirth-connect-docker
 FROM java
 
-#ENV MIRTH_CONNECT_VERSION 3.4.1.8057.b139
-ENV MIRTH_CONNECT_VERSION 3.3.1.7856.b91
+ENV MIRTH_CONNECT_VERSION 3.4.1.8057.b139
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     vim \
-    postgresql-client \
-    wget
+    postgresql-client
+
+### Preparations for git clone from bitbucket. Cloning the repo can only be done during runtime --> see docker-entrypoint.sh
+# Copy over private key, and set permissions
+ADD id_rsa /root/.ssh/id_rsa
+RUN chmod 400 /root/.ssh/id_rsa
+# Create known_hosts
+RUN touch /root/.ssh/known_hosts
+
 
 # Mirth Connect is run with user `connect`, uid = 1000
 # If you bind mount a volume from the host or a data container,
@@ -39,6 +45,7 @@ WORKDIR /opt/mirth-connect
 EXPOSE 9090 9443
 
 ADD ./mirth.properties /opt/mirth-connect/conf/mirth.properties
+ADD ./mirth-cli-config.properties /opt/mirth-connect/conf/mirth-cli-config.properties
 ADD ./docker-entrypoint.sh /docker-entrypoint.sh
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]

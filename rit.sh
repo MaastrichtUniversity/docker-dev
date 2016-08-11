@@ -51,6 +51,11 @@ export IRODS_1_PORT_1247_TCP_ADDR="irods.$RIT_ENV.rit.unimaas.nl"
 export IRODS_FRONTEND_1_PORT_80_TCP_ADDR="frontend.$RIT_ENV.rit.unimaas.nl"
 export IRODS_ENV_RODS_PASSWORD="irods"
 
+# Retrieve the MirthConnect Bitbucket repo variables
+source mirth.secrets.cfg
+export BITBUCKET_SERVER=$BITBUCKET_SERVER
+export BITBUCKET_SERVER_PORT=$BITBUCKET_SERVER_PORT
+export BITBUCKET_MIRTH_CHANNEL_REPO=$BITBUCKET_MIRTH_CHANNEL_REPO
 
 # Assuming docker-compose is available in the PATH
 docker-compose "$@"
