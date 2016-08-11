@@ -65,7 +65,7 @@ services:
     privileged: true
   db:
     image: mysql:5.6
-    hostname: irods-db
+    hostname: db
     environment:
       MYSQL_DATABASE: pacman
       MYSQL_ROOT_PASSWORD: foobar
@@ -101,6 +101,16 @@ services:
       IRODS_ZONE: nlmumc
       IRODS_USER: rods
       IRODS_PASS: irods
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+  mirthconnect:
+    build: mirthconnect/
+    hostname: mirthconnect
+    ports:
+      - "9090:9090"
+      - "9443:9443"
+    environment:
+      PGPASSWORD: foobar
     volumes:
       - /etc/localtime:/etc/localtime:ro
   proxy:
