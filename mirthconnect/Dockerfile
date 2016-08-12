@@ -21,23 +21,15 @@ RUN touch /root/.ssh/known_hosts
 # ensure you use the same uid
 RUN useradd -u 1000 mirth
 
-# grab gosu for easy step-down from root
-RUN gpg --keyserver pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
-	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/1.2/gosu-$(dpkg --print-architecture)" \
-	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/1.2/gosu-$(dpkg --print-architecture).asc" \
-	&& gpg --verify /usr/local/bin/gosu.asc \
-	&& rm /usr/local/bin/gosu.asc \
-	&& chmod +x /usr/local/bin/gosu
-
-VOLUME /opt/mirth-connect/appdata
+RUN mkdir /opt/mirth-connect
 
 RUN \
   cd /tmp && \
   wget http://downloads.mirthcorp.com/connect/$MIRTH_CONNECT_VERSION/mirthconnect-$MIRTH_CONNECT_VERSION-unix.tar.gz && \
   tar xvzf mirthconnect-$MIRTH_CONNECT_VERSION-unix.tar.gz && \
   rm -f mirthconnect-$MIRTH_CONNECT_VERSION-unix.tar.gz && \
-  mv Mirth\ Connect/* /opt/mirth-connect/ && \
+  mv Mirth\ Connect/*  /opt/mirth-connect/ && \
+  mv Mirth\ Connect/.install4j /opt/mirth-connect/ && \
   chown -R mirth /opt/mirth-connect
 
 WORKDIR /opt/mirth-connect
@@ -46,8 +38,8 @@ EXPOSE 9090 9443
 
 ADD ./mirth.properties /opt/mirth-connect/conf/mirth.properties
 ADD ./mirth-cli-config.properties /opt/mirth-connect/conf/mirth-cli-config.properties
+ADD ./configuration.properties /opt/mirth-connect/appdata/configuration.properties
+ADD ./mirth-config-script.txt /opt/mirth-config-script.txt
 ADD ./docker-entrypoint.sh /docker-entrypoint.sh
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
-
-CMD ["java", "-jar", "mirth-server-launcher.jar"]

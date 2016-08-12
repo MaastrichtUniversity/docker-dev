@@ -1,0 +1,6 @@
+user add admin "admin" "rit" "admin" "MUMC" "email@example.org"
+user add m.coonen "foobar" "M" "Coonen" "MUMC" "email@example.org"
+user add t.delnoy "foobar" "T" "Delnoy" "MUMC" "email@example.org"
+user add k.heinen "foobar" "K" "Heinen" "MUMC" "email@example.org"
+
+import "/opt/bitbucket/channels/Ch1 - HL7 to iRODS.xml"

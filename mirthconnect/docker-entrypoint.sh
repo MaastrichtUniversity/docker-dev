@@ -25,16 +25,13 @@ ssh-keyscan -p ${BITBUCKET_SERVER_PORT} ${BITBUCKET_SERVER} >> /root/.ssh/known_
 # Clone the conf files into the docker container
 mkdir /opt/bitbucket && git clone $BITBUCKET_MIRTH_CHANNEL_REPO /opt/bitbucket/channels
 
+# Start MirthConnect service
+./mcservice start
 
-# TODO: Import channels into MirthConnect using CLI
+sleep 10  # TODO: check mirthconnect-status or something instead of simply waiting
 
+# Create users and import channels into MirthConnect using CLI
+./mccommand -s /opt/mirth-config-script.txt
 
-
-
-if [ "$1" = 'java' ]; then
-    chown -R mirth /opt/mirth-connect/appdata
-
-    exec gosu mirth "$@"
-fi
-
-exec "$@"
+# End with a persistent foreground process
+tail -f /opt/mirth-connect/logs/mirth.log
