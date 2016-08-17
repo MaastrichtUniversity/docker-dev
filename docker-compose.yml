@@ -1,15 +1,10 @@
 version: '2'
-# Services are a better way of organizing inter-container network traffic, as descibed here: https://docs.docker.com/compose/networking/
 ### Limitation: Environment variables will only be populated if you’re using the legacy version 1 Compose file format.
 ### Solution: move declaration of these ENV variables to the rit.sh wrapper
 services:
   pacman:
     build: pacman/
     hostname: pacman
-    #links:
-    #  - db
-    #  - irods
-    #  - irods-frontend
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ../handsontable:/var/www/html/sites/all/modules/handsontable
@@ -33,9 +28,6 @@ services:
     ports:
       - "1247:1247"
       - "1248:1248"
-    #links:
-    #  - ires
-    #  - irods-db
     environment:
       RODS_PASSWORD: irods
       PGPASSWORD: foobar
@@ -48,8 +40,6 @@ services:
   ires:
     build: ires/
     hostname: ires
-    #links:
-    #  - irods
     environment:
       RODS_PASSWORD: irods
       PGPASSWORD: foobar
@@ -81,8 +71,6 @@ services:
   irods-frontend:
     build: irods-frontend/
     hostname: irods-frontend
-    #links:
-    #  - irods
     environment:
       VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
     volumes:
@@ -92,9 +80,6 @@ services:
     hostname: metalnx
     ports:
         - "8080:8080"
-    #links:
-    #    - irods
-    #    - ires
     environment:
       IRODS_HOST: irods
       IRODS_PORT: 1247
