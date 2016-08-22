@@ -63,10 +63,11 @@ done
 ########
 ## Users
 users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles"
+domain="maastrichtuniversity.nl"
 
 for user in $users; do
-    iadmin mkuser $user rodsuser
-    iadmin moduser $user password foobar
+    iadmin mkuser "${user}@${domain}" rodsuser
+    iadmin moduser "${user}@${domain}" password foobar
 done
 
 #########
@@ -75,14 +76,14 @@ nanoscopy="p.vanschayck g.tria rbg.ravelli"
 
 iadmin mkgroup nanoscopy-l
 for user in $nanoscopy-l; do
-    iadmin atg nanoscopy-l $user
+    iadmin atg nanoscopy-l "${user}@${domain}"
 done
 
 rit="p.vanschayck m.coonen d.theunissen p.suppers"
 
 iadmin mkgroup rit-l
 for user in $rit-l; do
-    iadmin atg rit-l $user
+    iadmin atg rit-l "${user}@${domain}"
 done
 
 ##############
@@ -116,11 +117,11 @@ done
 
 # Project managers
 for i in {01..16}; do
-    ichmod -r own p.suppers /nlmumc/projects/MUMC-RIT-000${i}
+    ichmod -r own "p.suppers@${domain}" /nlmumc/projects/MUMC-RIT-000${i}
 done
 
 for i in {01..23}; do
-    ichmod -r own p.vanschayck /nlmumc/projects/MUMC-M4I-000${i}
+    ichmod -r own "p.vanschayck@${domain}" /nlmumc/projects/MUMC-M4I-000${i}
 done
 
 

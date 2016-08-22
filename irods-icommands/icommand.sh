@@ -4,7 +4,7 @@
 cat << EOF > ~/.irods/irods_environment.json
 {
   "irods_port": 1247,
-  "irods_user_name": "$1",
+  "irods_user_name": "$1@maastrichtuniversity.nl",
   "irods_host": "irods.local",
   "irods_zone_name": "nlmumc",
   "irods_cwd": "/nlmumc/projects",
