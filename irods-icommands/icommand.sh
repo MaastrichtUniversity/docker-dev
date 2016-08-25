@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
 
+# The rods user does not have a domain
+if [[ $1 == "rods" ]]; then
+    user="rods"
+else
+    user="${1}@maastrichtuniversity.nl"
+fi
+
 # Set the specific user in irods_environment
 cat << EOF > ~/.irods/irods_environment.json
 {
   "irods_port": 1247,
-  "irods_user_name": "$1@maastrichtuniversity.nl",
+  "irods_user_name": "${user}",
   "irods_host": "irods.local",
   "irods_zone_name": "nlmumc",
   "irods_cwd": "/nlmumc/projects",
