@@ -33,7 +33,7 @@ if [[ -z $RIT_ENV ]]; then
     RIT_ENV="local"
 
     if [[ $HOSTNAME == "fhml-srv018" ]]; then
-        RIT_ENV="acc"
+        RIT_ENV="tst"
     fi
 
     if [[ $HOSTNAME == "fhml-srv019" ]]; then
