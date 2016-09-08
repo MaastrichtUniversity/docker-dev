@@ -41,6 +41,7 @@ ADD ./mirth.properties /opt/mirth-connect/conf/mirth.properties
 ADD ./mirth-cli-config.properties /opt/mirth-connect/conf/mirth-cli-config.properties
 ADD ./configuration.properties /opt/mirth-connect/appdata/configuration.properties
 ADD ./mirth-config-script.txt /opt/mirth-config-script.txt
+ADD ./metadata.xsd /opt/metadata.xsd
 ADD ./docker-entrypoint.sh /docker-entrypoint.sh
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]

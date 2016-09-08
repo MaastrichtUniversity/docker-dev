@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="metadata">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="project" type="xs:string" />
+        <xs:element name="title" type="xs:string" />
+        <xs:element name="description" type="xs:string" />
+        <xs:element name="date" type="xs:date" />
+        <xs:element name="factors">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="factor" type="xs:string" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="organism">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute name="id" type="xs:string" use="required" />
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="organ">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute name="id" type="xs:string" use="required" />
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="technology">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute name="id" type="xs:string" use="required" />
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element maxOccurs="unbounded" name="article">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="PubmedID" type="xs:string" />
+              <xs:element name="DOI" type="xs:string" />
+              <xs:element name="AuthorList" type="xs:string" />
+              <xs:element name="Title" type="xs:string" />
+              <xs:element name="Journal" type="xs:string" />
+              <xs:element name="Issue" type="xs:string" />
+              <xs:element name="Year" type="xs:string" />
+              <xs:element name="Status" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element maxOccurs="unbounded" name="contact">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="LastName" type="xs:string" />
+              <xs:element name="FirstName" type="xs:string" />
+              <xs:element name="MidInitials" />
+              <xs:element name="Email" type="xs:string" />
+              <xs:element name="Phone" />
+              <xs:element name="Adress" type="xs:string" />
+              <xs:element name="Affiliation" type="xs:string" />
+              <xs:element name="Role" type="xs:string" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="protocol">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="name" type="xs:string" />
+              <xs:element name="filename" type="xs:string" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

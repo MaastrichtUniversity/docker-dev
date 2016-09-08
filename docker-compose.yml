@@ -93,6 +93,7 @@ services:
       - "9443:9443"
     environment:
       PGPASSWORD: foobar
+      RIT_ENV: ${RIT_ENV}
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./mirth.secrets.cfg:/etc/secrets:ro

@@ -27,6 +27,9 @@ ssh-keyscan -p ${BITBUCKET_SERVER_PORT} ${BITBUCKET_SERVER} > /root/.ssh/known_h
 # Clone the channels into the docker container
 mkdir /opt/bitbucket/ && git clone -b v3.4.1.8057 $BITBUCKET_MIRTH_CHANNEL_REPO /opt/bitbucket/channels
 
+# Templating of the configuration.properties file
+sed -i "s/RIT_ENV/$RIT_ENV/" /opt/mirth-connect/appdata/configuration.properties
+
 # Start MirthConnect service
 ./mcservice start
 
