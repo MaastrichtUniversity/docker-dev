@@ -6,7 +6,8 @@ ENV MIRTH_CONNECT_VERSION 3.4.1.8057.b139
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     vim \
-    postgresql-client
+    postgresql-client \
+    netcat
 
 ### Preparations for git clone from bitbucket. Cloning the repo can only be done during runtime --> see docker-entrypoint.sh
 # Copy over private key, and set permissions

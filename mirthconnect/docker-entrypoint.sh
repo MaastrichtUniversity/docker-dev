@@ -30,7 +30,11 @@ mkdir /opt/bitbucket/ && git clone -b v3.4.1.8057 $BITBUCKET_MIRTH_CHANNEL_REPO 
 # Start MirthConnect service
 ./mcservice start
 
-sleep 10  # TODO: check mirthconnect-status or something instead of simply waiting
+# Check if MirthConnect is running
+until nc -z localhost 9090; do
+  echo "MirthConnect not started, sleeping"
+  sleep 2
+done
 
 # Create users and import channels into MirthConnect using CLI
 ./mccommand -s /opt/mirth-config-script.txt
