@@ -44,8 +44,29 @@ if [[ -z $RIT_ENV ]]; then
         RIT_ENV="dev2"
     fi
 fi
-
 export RIT_ENV
 
+if [[ $1 == "clone-externals" ]]; then
+    mkdir -p externals
+
+    git clone git@github.com:MaastrichtUniversity/dwh-solr.git externals/dwh-solr
+
+    exit 0
+fi
+
+COMPOSE_FILE="docker-compose.yml"
+if [[ $1 == "dwh" ]]; then
+    # Set a project name for the docker container naming scheme
+    COMPOSE_PROJECT_NAME="dwh"
+    export COMPOSE_PROJECT_NAME
+
+    # Set the compose file to be used to dwh
+    COMPOSE_FILE="compose-dwh.yml"
+
+    # Remove "dwh" from arguments
+    shift
+fi
+
+
 # Assuming docker-compose is available in the PATH
-docker-compose "$@"
+docker-compose -f ${COMPOSE_FILE} "$@"
