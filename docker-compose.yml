@@ -97,7 +97,7 @@ services:
       RIT_ENV: ${RIT_ENV}
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./mirth.secrets.cfg:/etc/secrets:ro
+      - ../channels:/opt/channels
   proxy:
     image: jwilder/nginx-proxy
     environment:

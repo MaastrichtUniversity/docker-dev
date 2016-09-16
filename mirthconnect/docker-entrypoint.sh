@@ -2,8 +2,6 @@
 
 set -e
 
-source /etc/secrets
-
 # Wait for postgres container to become available
 until psql -h irods-db -U postgres -c '\l'; do
   >&2 echo "Postgres is unavailable - sleeping"
@@ -20,12 +18,6 @@ psql -h irods-db -U postgres -d postgres <<- EOSQL
     GRANT ALL PRIVILEGES ON DATABASE mirthdb TO mirthconnect;
 EOSQL
 
-
-# Add Bitbucket server to known hosts
-ssh-keyscan -p ${BITBUCKET_SERVER_PORT} ${BITBUCKET_SERVER} > /root/.ssh/known_hosts
-
-# Clone the channels into the docker container
-mkdir /opt/bitbucket/ && git clone -b v3.4.1.8057 $BITBUCKET_MIRTH_CHANNEL_REPO /opt/bitbucket/channels
 
 # Templating of the configuration.properties file
 sed -i "s/RIT_ENV/$RIT_ENV/" /opt/mirth-connect/appdata/configuration.properties
