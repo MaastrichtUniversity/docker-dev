@@ -5,3 +5,6 @@ user add k.heinen "foobar" "K" "Heinen" "MUMC" "email@example.org"
 import "/opt/bitbucket/channels/XML Metadata Validation.xml"
 channel deploy "XML Metadata Validation.xml"
 
+import "/opt/bitbucket/channels/OLS ancestor channel.xml"
+channel deploy "OLS ancestor channel.xml"
+
