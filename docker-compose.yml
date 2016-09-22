@@ -31,6 +31,7 @@ services:
       RODS_PASSWORD: irods
       PGPASSWORD: foobar
       VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
+      MIRTH_METADATA_CHANNEL: mirthconnect:6669
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
@@ -85,6 +86,18 @@ services:
       VIRTUAL_PORT: 8080
     volumes:
       - /etc/localtime:/etc/localtime:ro
+  mirthconnect:
+    build: mirthconnect/
+    hostname: mirthconnect
+    ports:
+      - "9090:9090"
+      - "9443:9443"
+    environment:
+      PGPASSWORD: foobar
+      RIT_ENV: ${RIT_ENV}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ../channels:/opt/channels
   proxy:
     image: jwilder/nginx-proxy
     environment:

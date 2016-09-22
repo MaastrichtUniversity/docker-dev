@@ -1,0 +1,10 @@
+user add m.coonen "foobar" "M" "Coonen" "MUMC" "email@example.org"
+user add t.delnoy "foobar" "T" "Delnoy" "MUMC" "email@example.org"
+user add k.heinen "foobar" "K" "Heinen" "MUMC" "email@example.org"
+
+import "/opt/channels/XML Metadata Validation.xml"
+channel deploy "XML Metadata Validation.xml"
+
+import "/opt/channels/OLS ancestor channel.xml"
+channel deploy "OLS ancestor channel.xml"
+
