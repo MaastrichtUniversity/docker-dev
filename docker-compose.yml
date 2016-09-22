@@ -97,3 +97,5 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - /etc/localtime:/etc/localtime:ro
 
+networks:
+  core:
