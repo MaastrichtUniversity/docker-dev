@@ -95,6 +95,9 @@ services:
     environment:
       PGPASSWORD: foobar
       RIT_ENV: ${RIT_ENV}
+    networks:
+      - default
+      - oculus_default
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ../channels:/opt/channels
@@ -109,6 +112,12 @@ services:
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      - default
+      - oculus_default
 
 networks:
-  core:
+  default:
+    driver: bridge
+  oculus_default:
+    external: true
