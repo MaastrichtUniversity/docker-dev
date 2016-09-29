@@ -1,6 +1,16 @@
 ## Config
 * Add irods.secrets.cfg
-* Add mirth.secrets.cfg
+```
+INGEST_PASSWORD=
+INGEST_USER=
+INGEST_MOUNT=
+INGEST_PASSWORD_MIRTHACL=
+```
+## Get external repositories
+
+```
+./rit.sh externals clone
+```
 
 ## Run
 ```
@@ -8,6 +18,14 @@
 ./rit.sh down
 ./rit.sh up
 ```
+
+## Faker
+Create fake ingest zones and project collections
+```
+./rit.sh create-ingest-zones
+./rit.sh create-project-collections
+```
+
 ## Usage of the i command
 First build the icommands image:
 ```
@@ -29,5 +47,3 @@ You can also execute commands from the irods-ruleset repository like this:
 ./i [user] imeta add -C /nlmumc/ingestZone/[collectionName] [attribute] [value] [unit]
 etc..
 ```
-
-
