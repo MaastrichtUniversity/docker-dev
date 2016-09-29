@@ -28,6 +28,49 @@ if [[ $1 == "create-project-collections" ]]; then
     exit 0
 fi
 
+externals="externals/channels ssh://git@fhml-srv027.unimaas.nl:7999/mirthc/channels.git
+externals/cloudbrowser_module ssh://git@fhml-srv027.unimaas.nl:7999/ritdev/cloudbrowser_module.git
+externals/fhml_um_theme_demo ssh://git@fhml-srv027.unimaas.nl:7999/ritdev/fhml_um_theme_demo.git
+externals/handsontable git@github.com:MaastrichtUniversity/handsontable.git
+externals/irods-helper-cmd git@github.com:MaastrichtUniversity/irods-helper-cmd.git
+externals/irods-microservices git@github.com:MaastrichtUniversity/irods-microservices.git
+externals/irods-ruleset git@github.com:MaastrichtUniversity/irods-ruleset.git
+externals/islandora_ontology_autocomplete git@github.com:MaastrichtUniversity/islandora_ontology_autocomplete.git
+externals/rit_faker git@github.com:MaastrichtUniversity/rit_faker.git
+externals/rit_forms git@github.com:MaastrichtUniversity/rit_forms.git
+externals/rit-pacman git@github.com:MaastrichtUniversity/rit-pacman.git"
+
+if [[ $1 == "externals" ]]; then
+    mkdir -p externals
+
+    if [[ $2 == "clone" ]]; then
+        # Ignore error during cloning, as we don't care about existing dirs
+        set +e
+        while read -r external; do
+            external=($external)
+            echo -e "\e[32m =============== ${external[0]} ======================\033[0m"
+            git clone ${external[1]} ${external[0]}
+        done <<< "$externals"
+    fi
+
+    if [[ $2 == "status" ]]; then
+        while read -r external; do
+            external=($external)
+            echo -e "\e[32m =============== ${external[0]} ======================\033[0m"
+            git -C ${external[0]} status
+        done <<< "$externals"
+    fi
+
+    if [[ $2 == "pull" ]]; then
+        while read -r external; do
+            external=($external)
+            echo -e "\e[32m =============== ${external[0]} ======================\033[0m"
+            git -C ${external[0]} pull --rebase
+        done <<< "$externals"
+    fi
+    exit 0
+fi
+
 
 if [[ -z $RIT_ENV ]]; then
     RIT_ENV="local"
