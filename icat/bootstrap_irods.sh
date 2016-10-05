@@ -35,6 +35,7 @@ for i in {01..15}; do
     imkdir -p /nlmumc/projects/MUMC-MDL-000${i}
     # Resource for collections
     imeta add -C /nlmumc/projects/MUMC-MDL-000${i} resource replRescAZM01
+    imeta add -C /nlmumc/projects/MUMC-MDL-000${i} title `openssl rand -base64 32`
     # Inheritance
     ichmod -r inherit /nlmumc/projects/MUMC-MDL-000${i}
 done
@@ -43,6 +44,7 @@ for i in {01..16}; do
     imkdir -p /nlmumc/projects/MUMC-RIT-000${i}
     # Resource for collections
     imeta add -C /nlmumc/projects/MUMC-RIT-000${i} resource replRescUM01
+    imeta add -C /nlmumc/projects/MUMC-RIT-000${i} title `openssl rand -base64 32`
     ichmod -r inherit /nlmumc/projects/MUMC-RIT-000${i}
 done
 
@@ -50,6 +52,7 @@ for i in {01..23}; do
     imkdir -p /nlmumc/projects/MUMC-M4I-000${i}
     # Resource for collections
     imeta add -C /nlmumc/projects/MUMC-M4I-000${i} resource replRescUM01
+    imeta add -C /nlmumc/projects/MUMC-M4I-000${i} title `openssl rand -base64 32`
     ichmod -r inherit /nlmumc/projects/MUMC-M4I-000${i}
 done
 
@@ -57,6 +60,7 @@ for i in {01..42}; do
     imkdir -p /nlmumc/projects/MUMC-PATH-000${i}
     # Resource for collections
     imeta add -C /nlmumc/projects/MUMC-PATH-000${i} resource replRescUM01
+    imeta add -C /nlmumc/projects/MUMC-PATH-000${i} title `openssl rand -base64 32`
     ichmod -r inherit /nlmumc/projects/MUMC-PATH-000${i}
 done
 
