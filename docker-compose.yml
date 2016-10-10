@@ -73,6 +73,7 @@ services:
       VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
     volumes:
       - /etc/localtime:/etc/localtime:ro
+      - ./externals/irods-cloud-browser:/tmp/irods-cloud-browser
   metalnx:
     image: metalnx/metalnx-web:1.0-latest
     hostname: metalnx
@@ -105,8 +106,8 @@ services:
     image: jwilder/nginx-proxy
     environment:
       DEFAULT_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
-    logging:
-      driver: none
+#    logging:
+#      driver: none
     ports:
       - "80:80"
     volumes:

@@ -7,7 +7,8 @@ RUN apt-get update \
     apache2 \
     unzip \
     nodejs \    
-    npm 
+    npm \
+    git
 
 
 RUN echo "oracle-java8-installer shared/accepted-oracle-license-v1-1 select true" | /usr/bin/debconf-set-selections
@@ -38,21 +39,22 @@ RUN wget -P /tmp/ https://code.renci.org/gf/download/frsrelease/243/2742/irods-r
     && mkdir /etc/irods-ext
 ADD ./irods-rest.properties /etc/irods-ext/irods-rest.properties
 
-# Install Cloud-Browser backend
-RUN wget -P /var/lib/tomcat8/webapps/ https://code.renci.org/gf/download/frsrelease/239/2717/irods-cloud-backend.war
+# Install Cloud-Browser config 
 ADD ./irods-cloud-backend-config.groovy /etc/irods-cloud-backend-config.groovy
+ADD ./irods-cloud-backend-config.groovy /etc/irods-ext/irods-cloud-backend-config.groovy
 
-# Install DICE-UNC Cloud-Browser frontend and replace :8080 URL to reverse proxy location
-#RUN wget -P /var/lib/tomcat8/webapps/ https://github.com/DICE-UNC/irods-cloud-browser/releases/download/1.0.1-RELEASE/irods-cloud-backend.war
-#ADD ./irods-cloud-backend-config.groovy /etc/irods-ext/irods-cloud-backend-config.groovy
-#RUN wget -P /tmp/ https://github.com/DICE-UNC/irods-cloud-browser/releases/download/1.0.1-RELEASE/irods-cloud-frontend.zip \
-#    && unzip /tmp/irods-cloud-frontend.zip -d /var/www/html/ \
-#    && sed -i "s|\"+location.hostname+\":8080|\"+location.hostname+\"|" /var/www/html/irods-cloud-frontend/app/components/globals.js
+#Install grails and add to export
+RUN cd /tmp \
+    && wget https://github.com/grails/grails-core/releases/download/v2.5.0/grails-2.5.0.zip \
+    && unzip grails-2.5.0.zip \
+    && ln -s /usr/bin/nodejs /usr/bin/node
 
-### MUMC-modified version of Cloud browser. Uncomment the following lines if necessary. ###
-ADD ./irods-cloud-frontend-1.0.0-RELEASE_MUMC.zip /tmp/irods-cloud-frontend-1.0.0-RELEASE_MUMC.zip
-RUN unzip -o /tmp/irods-cloud-frontend-1.0.0-RELEASE_MUMC.zip -d /var/www/html/ \
-     && sed -i "s|\"+location.hostname+\":8080|\"+location.hostname+\"|" /var/www/html/irods-cloud-frontend/app/components/globals.js
+##exports
+ENV JAVA_HOME "/usr/lib/jvm/java-8-oracle"
+ENV GRAILS_HOME "/tmp/grails-2.5.0"
+ENV PATH "$PATH:$GRAILS_HOME/bin"
+
+
 
 EXPOSE 80
 
