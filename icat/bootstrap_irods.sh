@@ -74,8 +74,6 @@ for i in {01..4}; do
     # AVU's for collections
     imeta add -C /nlmumc/projects/${project} resource replRescAZM01
     imeta add -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
-    # Inheritance
-    ichmod -r inherit /nlmumc/projects/${project}
 
     # Contributor access for RIT
     ichmod -r write rit-l /nlmumc/projects/${project}
@@ -88,7 +86,6 @@ for i in {01..2}; do
     # AVU's for collections
     imeta add -C /nlmumc/projects/${project} resource replRescUM01
     imeta add -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
-    ichmod -r inherit /nlmumc/projects/${project}
 
     # Contributor access for nanoscopy
     ichmod -r write nanoscopy-l /nlmumc/projects/${project}
