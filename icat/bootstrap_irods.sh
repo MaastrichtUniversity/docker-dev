@@ -29,41 +29,6 @@ imkdir -p /nlmumc/ingest/zones
 imkdir -p /nlmumc/ingest/shares/rawdata
 imkdir -p /nlmumc/projects
 
-###########
-## Projects
-for i in {01..15}; do
-    imkdir -p /nlmumc/projects/MUMC-MDL-000${i}
-    # Resource for collections
-    imeta add -C /nlmumc/projects/MUMC-MDL-000${i} resource replRescAZM01
-    imeta add -C /nlmumc/projects/MUMC-MDL-000${i} title `openssl rand -base64 32`
-    # Inheritance
-    ichmod -r inherit /nlmumc/projects/MUMC-MDL-000${i}
-done
-
-for i in {01..16}; do
-    imkdir -p /nlmumc/projects/MUMC-RIT-000${i}
-    # Resource for collections
-    imeta add -C /nlmumc/projects/MUMC-RIT-000${i} resource replRescUM01
-    imeta add -C /nlmumc/projects/MUMC-RIT-000${i} title `openssl rand -base64 32`
-    ichmod -r inherit /nlmumc/projects/MUMC-RIT-000${i}
-done
-
-for i in {01..23}; do
-    imkdir -p /nlmumc/projects/MUMC-M4I-000${i}
-    # Resource for collections
-    imeta add -C /nlmumc/projects/MUMC-M4I-000${i} resource replRescUM01
-    imeta add -C /nlmumc/projects/MUMC-M4I-000${i} title `openssl rand -base64 32`
-    ichmod -r inherit /nlmumc/projects/MUMC-M4I-000${i}
-done
-
-for i in {01..42}; do
-    imkdir -p /nlmumc/projects/MUMC-PATH-000${i}
-    # Resource for collections
-    imeta add -C /nlmumc/projects/MUMC-PATH-000${i} resource replRescUM01
-    imeta add -C /nlmumc/projects/MUMC-PATH-000${i} title `openssl rand -base64 32`
-    ichmod -r inherit /nlmumc/projects/MUMC-PATH-000${i}
-done
-
 ########
 ## Users
 users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles"
@@ -79,14 +44,14 @@ done
 nanoscopy="p.vanschayck g.tria rbg.ravelli"
 
 iadmin mkgroup nanoscopy-l
-for user in $nanoscopy-l; do
+for user in $nanoscopy; do
     iadmin atg nanoscopy-l "${user}@${domain}"
 done
 
 rit="p.vanschayck m.coonen d.theunissen p.suppers"
 
 iadmin mkgroup rit-l
-for user in $rit-l; do
+for user in $rit; do
     iadmin atg rit-l "${user}@${domain}"
 done
 
@@ -101,31 +66,45 @@ ichmod read public /nlmumc/projects
 ichmod -r own nanoscopy-l /nlmumc/ingest/zones
 ichmod -r own rit-l /nlmumc/ingest/zones
 
-# Projects contributors
-for i in {01..15}; do
-    ichmod -r write rit-l /nlmumc/projects/MUMC-MDL-000${i}
+###########
+## Projects and project permissions
+
+for i in {01..4}; do
+    project=$(irule -F /rules/createProject.r)
+    # AVU's for collections
+    imeta add -C /nlmumc/projects/${project} resource replRescAZM01
+    imeta add -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
+    # Inheritance
+    ichmod -r inherit /nlmumc/projects/${project}
+
+    # Contributor access for RIT
+    ichmod -r write rit-l /nlmumc/projects/${project}
+    # Manage access for suppers
+    ichmod -r own "p.suppers@${domain}" /nlmumc/projects/${project}
 done
 
-for i in {01..16}; do
-    ichmod -r write rit-l /nlmumc/projects/MUMC-RIT-000${i}
+for i in {01..2}; do
+    project=$(irule -F /rules/createProject.r)
+    # AVU's for collections
+    imeta add -C /nlmumc/projects/${project} resource replRescUM01
+    imeta add -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
+    ichmod -r inherit /nlmumc/projects/${project}
+
+    # Contributor access for nanoscopy
+    ichmod -r write nanoscopy-l /nlmumc/projects/${project}
+    # Manage access for Paul
+    ichmod -r own "p.vanschayck@${domain}" /nlmumc/projects/${project}
 done
 
-for i in {01..23}; do
-    ichmod -r write nanoscopy-l /nlmumc/projects/MUMC-M4I-000${i}
-done
+for i in {01..8}; do
+    project=$(irule -F /rules/createProject.r)
+    # AVU's for collections
+    imeta add -C /nlmumc/projects/${project} resource replRescUM01
+    imeta add -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
+    ichmod -r inherit /nlmumc/projects/${project}
 
-# Project viewers
-for i in {01..42}; do
-    ichmod -r read rit-l /nlmumc/projects/MUMC-PATH-000${i}
-done
-
-# Project managers
-for i in {01..16}; do
-    ichmod -r own "p.suppers@${domain}" /nlmumc/projects/MUMC-RIT-000${i}
-done
-
-for i in {01..23}; do
-    ichmod -r own "p.vanschayck@${domain}" /nlmumc/projects/MUMC-M4I-000${i}
+    # Read access for rit
+    ichmod -r read rit-l /nlmumc/projects/${project}
 done
 
 
