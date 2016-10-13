@@ -72,8 +72,8 @@ ichmod -r own rit-l /nlmumc/ingest/zones
 for i in {01..4}; do
     project=$(irule -F /rules/createProject.r)
     # AVU's for collections
-    imeta add -C /nlmumc/projects/${project} resource replRescAZM01
-    imeta add -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
+    imeta set -C /nlmumc/projects/${project} resource replRescAZM01
+    imeta set -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
 
     # Contributor access for RIT
     ichmod -r write rit-l /nlmumc/projects/${project}
@@ -84,8 +84,8 @@ done
 for i in {01..2}; do
     project=$(irule -F /rules/createProject.r)
     # AVU's for collections
-    imeta add -C /nlmumc/projects/${project} resource replRescUM01
-    imeta add -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
+    imeta set -C /nlmumc/projects/${project} resource replRescUM01
+    imeta set -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
 
     # Contributor access for nanoscopy
     ichmod -r write nanoscopy-l /nlmumc/projects/${project}
@@ -96,9 +96,8 @@ done
 for i in {01..8}; do
     project=$(irule -F /rules/createProject.r)
     # AVU's for collections
-    imeta add -C /nlmumc/projects/${project} resource replRescUM01
-    imeta add -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
-    ichmod -r inherit /nlmumc/projects/${project}
+    imeta set -C /nlmumc/projects/${project} resource replRescUM01
+    imeta set -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
 
     # Read access for rit
     ichmod -r read rit-l /nlmumc/projects/${project}
