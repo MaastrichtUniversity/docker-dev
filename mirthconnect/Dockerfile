@@ -27,7 +27,7 @@ RUN \
 
 WORKDIR /opt/mirth-connect
 
-EXPOSE 9090 9443
+EXPOSE 9090 9443 6661
 
 ADD ./mirth.properties /opt/mirth-connect/conf/mirth.properties
 ADD ./mirth-cli-config.properties /opt/mirth-connect/conf/mirth-cli-config.properties

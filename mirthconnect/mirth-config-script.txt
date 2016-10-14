@@ -2,9 +2,19 @@ user add m.coonen "foobar" "M" "Coonen" "MUMC" "email@example.org"
 user add t.delnoy "foobar" "T" "Delnoy" "MUMC" "email@example.org"
 user add k.heinen "foobar" "K" "Heinen" "MUMC" "email@example.org"
 
+codetemplate library import "/opt/channels/lib_CustomFunctions.xml"
+
 import "/opt/channels/XML Metadata Validation.xml"
 channel deploy "XML Metadata Validation.xml"
 
 import "/opt/channels/OLS ancestor channel.xml"
 channel deploy "OLS ancestor channel.xml"
 
+import "/opt/channels/Mapping Tool - CH1 - Ophalen CDA bericht.xml"
+channel deploy "Mapping Tool - CH1 - Ophalen CDA bericht.xml"
+
+import "/opt/channels/Mapping tool - CH2 - Ophalen van Mapping.xml"
+channel deploy "Mapping tool - CH2 - Ophalen van Mapping.xml"
+
+import "/opt/channels/Upload via REST to iRODS.xml"
+channel deploy "Upload via REST to iRODS.xml"

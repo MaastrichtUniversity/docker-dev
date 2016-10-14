@@ -18,7 +18,8 @@ RUN apt-get update \
     make \
     g++ \
     libssl-dev \
-    libcurl4-openssl-dev
+    libcurl4-openssl-dev \
+    fortune-mod
 
 
 RUN locale-gen en_US.UTF-8

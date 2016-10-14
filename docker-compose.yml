@@ -75,7 +75,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/irods-cloud-browser:/tmp/irods-cloud-browser
   metalnx:
-    image: metalnx/metalnx-web:1.0-latest
+    build: metalnx/
     hostname: metalnx
     environment:
       IRODS_HOST: irods
