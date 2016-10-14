@@ -94,6 +94,7 @@ services:
     ports:
       - "9090:9090"
       - "9443:9443"
+      - "6661:6661"
     environment:
       PGPASSWORD: foobar
       RIT_ENV: ${RIT_ENV}
