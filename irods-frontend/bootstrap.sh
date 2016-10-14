@@ -15,7 +15,6 @@ npm install --global gulp-cli
 gulp backend-clean
 gulp backend-build
 gulp gen-war
-gulp gen-war
 
 
 ##move build war to tomcat webapps directory
