@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 ## run npm install
 cd /tmp/irods-cloud-browser/irods-cloud-frontend
@@ -6,11 +7,13 @@ npm install --unsafe-perm
 npm install --global gulp-cli
      
 ## run gulp builds 
+gulp backend-clean
 gulp backend-build
 gulp gen-war
 gulp gen-war
 
 
+##move build war to tomcat webapps directory
 cp /tmp/irods-cloud-browser/build/irods-cloud-backend.war /var/lib/tomcat8/webapps/
 
 # Start Tomcat8 service

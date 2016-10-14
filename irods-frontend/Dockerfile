@@ -46,8 +46,15 @@ ADD ./irods-cloud-backend-config.groovy /etc/irods-ext/irods-cloud-backend-confi
 #Install grails and add to export
 RUN cd /tmp \
     && wget https://github.com/grails/grails-core/releases/download/v2.5.0/grails-2.5.0.zip \
-    && unzip grails-2.5.0.zip \
-    && ln -s /usr/bin/nodejs /usr/bin/node
+    && unzip grails-2.5.0.zip 
+    
+##Nodejs fix
+RUN ln -s /usr/bin/nodejs /usr/bin/node
+
+
+##Set correct branch for repository 
+RUN cd /tmp/irods-cloud-browser/ \
+    && git checkout rit-cloud-browser
 
 ##exports
 ENV JAVA_HOME "/usr/lib/jvm/java-8-oracle"
