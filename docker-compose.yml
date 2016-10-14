@@ -19,6 +19,7 @@ services:
       IRODS_RESOURCE_HOST: ires
       IRODS_FRONTEND_1_PORT_80_TCP_ADDR: irods-frontend
       IRODS_ENV_RODS_PASSWORD: irods
+      DWH_FRONTEND_ENV_VIRTUAL_HOST: dwh.${RIT_ENV}.rit.unimaas.nl
       VIRTUAL_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
       OLS_URL: http://fhml-srv018.unimaas.nl:8081/ols-boot
   irods:
