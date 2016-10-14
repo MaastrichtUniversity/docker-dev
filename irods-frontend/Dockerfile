@@ -51,11 +51,6 @@ RUN cd /tmp \
 ##Nodejs fix
 RUN ln -s /usr/bin/nodejs /usr/bin/node
 
-
-##Set correct branch for repository 
-RUN cd /tmp/irods-cloud-browser/ \
-    && git checkout rit-cloud-browser
-
 ##exports
 ENV JAVA_HOME "/usr/lib/jvm/java-8-oracle"
 ENV GRAILS_HOME "/tmp/grails-2.5.0"

@@ -5,6 +5,11 @@ set -e
 cd /tmp/irods-cloud-browser/irods-cloud-frontend
 npm install --unsafe-perm 
 npm install --global gulp-cli
+
+##Switch to correct branch of cloudrbowser
+#cd /tmp/irods-cloud-browser
+#git checkout rit-cloud-browser
+
      
 ## run gulp builds 
 gulp backend-clean
