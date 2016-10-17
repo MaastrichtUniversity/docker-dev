@@ -32,7 +32,8 @@ services:
       RODS_PASSWORD: irods
       PGPASSWORD: foobar
       VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
-      MIRTH_METADATA_CHANNEL: mirthconnect:6669
+      MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
+      MIRTH_METADATA_CHANNEL: mirthconnect:6670
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
