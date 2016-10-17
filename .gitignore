@@ -1,6 +1,4 @@
 *.secrets.cfg
-irods-cloud-frontend-1.0.0-RELEASE_MUMC.zip
 .idea
-rit-prod.sh
 
 externals/*
