@@ -68,6 +68,8 @@ __setup_irods() {
 }
 
 __run_supervisor() {
+  cd /usr/share/tomcat/webapps
+  ln -s emc-metalnx-web/ ROOT
   supervisord -n
 }
 
