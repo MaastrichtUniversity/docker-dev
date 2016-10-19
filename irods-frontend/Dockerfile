@@ -56,6 +56,27 @@ ENV JAVA_HOME "/usr/lib/jvm/java-8-oracle"
 ENV GRAILS_HOME "/tmp/grails-2.5.0"
 ENV PATH "$PATH:$GRAILS_HOME/bin"
 
+### Clone cloudbrowser
+RUN cd /opt \
+    && git clone https://github.com/MaastrichtUniversity/irods-cloud-browser.git
+
+## run npm install
+RUN cd /opt/irods-cloud-browser/irods-cloud-frontend \
+    && npm install --unsafe-perm \
+    && npm install --global gulp-cli
+
+
+## run gulp builds
+RUN cd /opt/irods-cloud-browser/irods-cloud-frontend \
+    &&  gulp backend-clean
+RUN cd /opt/irods-cloud-browser/irods-cloud-frontend \
+    &&  gulp backend-build
+RUN cd /opt/irods-cloud-browser/irods-cloud-frontend \
+    &&  gulp gen-war \
+    &&  gulp gen-war 
+### BUG FIX FIRST RUN DOES NOT CREATE WAR
+
+RUN cp /opt/irods-cloud-browser/build/irods-cloud-backend.war /var/lib/tomcat8/webapps/
 
 
 EXPOSE 80

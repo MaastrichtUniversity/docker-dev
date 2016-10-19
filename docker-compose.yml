@@ -75,7 +75,6 @@ services:
       VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./externals/irods-cloud-browser:/tmp/irods-cloud-browser
   metalnx:
     build: metalnx/
     hostname: metalnx
