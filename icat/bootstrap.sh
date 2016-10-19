@@ -40,7 +40,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     # Dirty temp.password workaround (TODO: NEEDS TO BE FIXED PROPERLY)
     sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 1200\,/' /etc/irods/server_config.json
 
-    su - irods -c "/opt/irods/bootstrap_irods.sh"
+    su irods -c "/opt/irods/bootstrap_irods.sh"
 
     # Change default resource to rootResc for irods-user
     sed -i 's/\"irods_default_resource\"\:\ \"demoResc\"\,/\"irods_default_resource\"\:\ \"rootResc\"\,/' /var/lib/irods/.irods/irods_environment.json

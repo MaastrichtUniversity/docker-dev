@@ -16,7 +16,6 @@ services:
       # TODO: Change the names of these variables in rit-pacman source code
       IRODS_FRONTEND_ENV_VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
       IRODS_1_PORT_1247_TCP_ADDR: irods
-      IRODS_RESOURCE_HOST: ires
       IRODS_FRONTEND_1_PORT_80_TCP_ADDR: irods-frontend
       IRODS_ENV_RODS_PASSWORD: irods
       DWH_FRONTEND_ENV_VIRTUAL_HOST: dwh.${RIT_ENV}.rit.unimaas.nl
@@ -32,6 +31,7 @@ services:
       RODS_PASSWORD: irods
       PGPASSWORD: foobar
       VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
+      IRODS_RESOURCE_HOST: ires
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
     volumes:
