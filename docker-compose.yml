@@ -69,7 +69,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
   irods-frontend:
-    build: irods-frontend/
+    build: externals/irods-frontend/
     hostname: irods-frontend
     environment:
       VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
