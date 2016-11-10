@@ -2,7 +2,8 @@ user add m.coonen "foobar" "M" "Coonen" "MUMC" "email@example.org"
 user add t.delnoy "foobar" "T" "Delnoy" "MUMC" "email@example.org"
 user add k.heinen "foobar" "K" "Heinen" "MUMC" "email@example.org"
 
-codetemplate library import "/opt/channels/lib_CustomFunctions.xml"
+importcfg "/opt/channels/conf/mirth_server_settings.xml"
+codetemplate library import "/opt/channels/conf/lib_CustomFunctions.xml"
 
 import "/opt/channels/XML Metadata Validation.xml"
 channel deploy "XML Metadata Validation.xml"

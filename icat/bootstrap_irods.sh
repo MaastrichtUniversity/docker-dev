@@ -31,7 +31,7 @@ imkdir -p /nlmumc/projects
 
 ########
 ## Users
-users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles"
+users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy"
 domain="maastrichtuniversity.nl"
 
 for user in $users; do
@@ -48,7 +48,7 @@ for user in $nanoscopy; do
     iadmin atg nanoscopy-l "${user}@${domain}"
 done
 
-rit="p.vanschayck m.coonen d.theunissen p.suppers"
+rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy"
 
 iadmin mkgroup rit-l
 for user in $rit; do
@@ -109,3 +109,6 @@ done
 
 ##########
 ## Special
+
+# Create an initial collection folder for MDL data
+imkdir /nlmumc/projects/P000000001/C000000001
