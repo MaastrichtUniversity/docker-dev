@@ -51,4 +51,4 @@ fi
 service rmd restart
 
 # this script must end with a persistent foreground process
-tail -f /var/lib/irods/iRODS/server/log/rodsLog.*
+tail -F /var/lib/irods/iRODS/server/log/rodsLog.*
