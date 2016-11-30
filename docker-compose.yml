@@ -10,7 +10,7 @@ services:
       - ./externals/rit-pacman:/var/www/html/sites/all/modules/pacman
       - ./externals/rit_forms:/var/www/html/sites/all/modules/rit_forms
       - ./externals/rit_faker:/var/www/html/sites/all/modules/rit_faker
-      - ./externals/cloudbrowser_module:/var/www/html/sites/all/modules/cloudbrowser_module
+      - ./externals/cloudbrowser_module:/var/www/html/sites/all/modules/cloudbrowser
       - ./externals/fhml_um_theme_demo:/var/www/html/sites/all/themes/fhml_um_theme_demo
     environment:
       # TODO: Change the names of these variables in rit-pacman source code
