@@ -28,6 +28,13 @@ trap _term SIGTERM
 service cron start
 
 
+#Required for LOGS
+chmod -R 777 /LOGS
+
+##Crontab to make sure logs are readable
+crontab -l 2>/dev/null | grep -q 'chmod -R 777 /LOGS' || echo "* * * * * chmod -R 777 /LOGS" | crontab -
+
+
 ## remove pidfiles in case previous graceful termination failed
 # NOTE - This is the reason for the WARNING at the top - it's a bit hackish, 
 #   but if it's good enough for Fedora (https://goo.gl/88eyXJ), it's good
@@ -138,9 +145,6 @@ fi
 
 cd /tmp 
 elasticdump --input=kibana-exported.json --output=http://localhost:9200/.kibana --type=data
-
-chmod -R 777 /LOGS
-
 
 tail -f $OUTPUT_LOGFILES &
 wait

@@ -142,7 +142,7 @@ services:
     LOGSPOUT: ignore
    volumes:
       - /etc/localtime:/etc/localtime:ro 
-      - logs:/LOGS
+      - logs:/LOGS   
   logspout:
    build: logspout/
    volumes:
