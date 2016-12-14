@@ -131,15 +131,12 @@ services:
   elk:
    build: elk/
    hostname: elk
-   ports:
-     - "5601:5601"
-     - "9200:9200"
-     - "5044:5044"
-     - "5000/udp:5000/udp"
    environment:
     # otherwise logstash will keep sending its own logs to itself over and
     # over... not fun
     LOGSPOUT: ignore
+    VIRTUAL_HOST: elk.${RIT_ENV}.rit.unimaas.nl
+    VIRTUAL_PORT: 5601
    volumes:
       - /etc/localtime:/etc/localtime:ro 
       - logs:/LOGS   
