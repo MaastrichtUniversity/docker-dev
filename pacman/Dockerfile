@@ -47,17 +47,12 @@ ENV DOCKERIZE_VERSION v0.2.0
 RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz -o dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
-ENV ISLANDORA_VERSION 1.6
+ENV ISLANDORA_VERSION 1.8
 
 RUN curl -fSL "https://github.com/islandora/islandora_xml_forms/archive/7.x-${ISLANDORA_VERSION}.zip" -o islandora_xml_forms.zip \
 	&& unzip islandora_xml_forms.zip \
 	&& rm islandora_xml_forms.zip \
 	&& chown -R www-data:www-data .
-
-# This is a workarround for Drupal 7.50 and Islandora < 1.8.
-# Required untill this PR has been included in Islandora 1.8:
-# https://github.com/Islandora/islandora_xml_forms/pull/229
-RUN sed -i "s|schema  _api|xml_schema_api|" /var/www/html/sites/all/modules/islandora_xml_forms-7.x-${ISLANDORA_VERSION}/api/schema/Extension.inc
 
 RUN curl -fSL "https://github.com/islandora/php_lib/archive/7.x-${ISLANDORA_VERSION}.zip" -o php_lib.zip \
 	&& unzip php_lib.zip \
