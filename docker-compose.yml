@@ -13,10 +13,8 @@ services:
       - ./externals/cloudbrowser_module:/var/www/html/sites/all/modules/cloudbrowser
       - ./externals/fhml_um_theme_demo:/var/www/html/sites/all/themes/fhml_um_theme_demo
     environment:
-      # TODO: Change the names of these variables in rit-pacman source code
       IRODS_FRONTEND_ENV_VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
-      IRODS_1_PORT_1247_TCP_ADDR: irods
-      IRODS_FRONTEND_1_PORT_80_TCP_ADDR: irods-frontend
+      IRODS_HOST: irods
       IRODS_ENV_RODS_PASSWORD: irods
       DWH_FRONTEND_ENV_VIRTUAL_HOST: dwh.${RIT_ENV}.rit.unimaas.nl
       VIRTUAL_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
