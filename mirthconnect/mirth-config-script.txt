@@ -25,3 +25,6 @@ channel deploy "Upload via REST to iRODS.xml"
 
 import "/opt/channels/getProjectPermissions.xml"
 channel deploy "getProjectPermissions.xml"
+
+import "/opt/channels/getProjectTitle.xml"
+channel deploy "getProjectTitle.xml"
