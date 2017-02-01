@@ -33,7 +33,7 @@ imkdir -p /nlmumc/projects
 
 ########
 ## Users
-users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy"
+users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy service-dropzones"
 domain="maastrichtuniversity.nl"
 
 for user in $users; do
