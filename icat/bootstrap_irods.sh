@@ -33,7 +33,7 @@ imkdir -p /nlmumc/projects
 
 ########
 ## Users
-users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy service-dropzones"
+users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy service-dropzones service-mdl"
 domain="maastrichtuniversity.nl"
 
 for user in $users; do
@@ -114,3 +114,4 @@ done
 
 # Create an initial collection folder for MDL data
 imkdir /nlmumc/projects/P000000001/C000000001
+ichmod -r write "service-mdl@${domain}" /nlmumc/projects/P000000001
