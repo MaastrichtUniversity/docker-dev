@@ -121,4 +121,4 @@ done
 
 # Create an initial collection folder for MDL data
 imkdir /nlmumc/projects/P000000001/C000000001
-ichmod -r write "service-mdl@${domain}" /nlmumc/projects/P000000001
+ichmod -r write "service-mdl" /nlmumc/projects/P000000001
