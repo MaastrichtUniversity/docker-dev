@@ -33,12 +33,19 @@ imkdir -p /nlmumc/projects
 
 ########
 ## Users
-users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy service-dropzones service-mdl"
+users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy"
 domain="maastrichtuniversity.nl"
 
 for user in $users; do
     iadmin mkuser "${user}@${domain}" rodsuser
     iadmin moduser "${user}@${domain}" password foobar
+done
+
+serviceUsers="service-dropzones service-mdl"
+
+for user in $serviceUsers; do
+    iadmin mkuser "${user}" rodsuser
+    iadmin moduser "${user}" password foobar
 done
 
 #########
