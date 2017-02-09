@@ -10,8 +10,9 @@ cp /helpers/* /var/lib/irods/iRODS/server/bin/cmd/.
 # Mount ingest zones and rawdata
 mkdir -p /mnt/ingest/zones
 mkdir -p /mnt/ingest/shares/rawData
-mount -t cifs ${INGEST_MOUNT} /mnt/ingest/zones -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999
-mount -t cifs ${INGEST_MOUNT}/rawData /mnt/ingest/shares/rawData -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999
+mount -t cifs ${INGEST_MOUNT} /mnt/ingest/zones -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=998,gid=997
+mount -t cifs ${INGEST_MOUNT}/rawData /mnt/ingest/shares/rawData -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=998,gid=997
+
 # Check if this is a first run of this container
 if [[ ! -e /var/run/irods_installed ]]; then
 
@@ -28,14 +29,13 @@ if [[ ! -e /var/run/irods_installed ]]; then
 
     # iRODS settings
     ## Add resource vaults (i.e. dummy-mounts in development)
-    mkdir /mnt/UM-hnas-4k
-    chown irods:irods /mnt/UM-hnas-4k
-    mkdir /mnt/UM-hnas-4k-repl
-    chown irods:irods /mnt/UM-hnas-4k-repl
+    mkdir /mnt/AZM-storage
+    chown irods:irods /mnt/AZM-storage
+    mkdir /mnt/AZM-storage-repl
+    chown irods:irods /mnt/AZM-storage-repl
 
 
-
-    su - irods -c "/opt/irods/bootstrap_irods.sh"
+#    su - irods -c "/opt/irods/bootstrap_irods.sh"
 
     touch /var/run/irods_installed
 else
@@ -43,7 +43,7 @@ else
 fi
 
 # Force start of Metalnx RMD
-service rmd restart
+# service rmd restart
 
 # this script must end with a persistent foreground process
 tail -F /var/lib/irods/iRODS/server/log/rodsLog.*

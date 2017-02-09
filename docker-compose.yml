@@ -30,7 +30,8 @@ services:
       RODS_PASSWORD: irods
       PGPASSWORD: foobar
       VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
-      IRODS_RESOURCE_HOST: ires
+      IRODS_RESOURCE_HOST_DEB: ires
+      IRODS_RESOURCE_HOST_RPM: ires-centos
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
       LOGSPOUT: ignore
@@ -52,7 +53,22 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
-      - ./externals/irods-helper-cmd:/helpers
+      - ./externals/irods-helper-cmd:/helpers:ro
+    # Required for CIFS mounting. cap-add not enough in Windows for some reason.
+    privileged: true
+  ires-centos:
+    build: ires_centos/
+    hostname: ires-centos
+    environment:
+      RODS_PASSWORD: irods
+      PGPASSWORD: foobar
+      LDAP_USER: M4i-nano-wiki
+      VIRTUAL_HOST: ires-centos.${RIT_ENV}.rit.unimaas.nl
+      LOGSTASH_TAGS: IRES_CENTOS
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./irods.secrets.cfg:/etc/secrets:ro
+      - ./externals/irods-helper-cmd:/helpers:ro
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
     privileged: true
   db:

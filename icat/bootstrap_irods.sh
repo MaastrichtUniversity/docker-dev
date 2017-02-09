@@ -13,15 +13,15 @@ iadmin addchildtoresc rootResc demoResc
 
 # Create resources and make them members of the (composable) replication resource.
 iadmin mkresc replRescUM01 replication
-iadmin mkresc UM-hnas-4k unixfilesystem ires:/mnt/UM-hnas-4k
-iadmin mkresc UM-hnas-4k-repl unixfilesystem ires:/mnt/UM-hnas-4k-repl
+iadmin mkresc UM-hnas-4k unixfilesystem ${IRODS_RESOURCE_HOST_DEB}:/mnt/UM-hnas-4k
+iadmin mkresc UM-hnas-4k-repl unixfilesystem ${IRODS_RESOURCE_HOST_DEB}:/mnt/UM-hnas-4k-repl
 iadmin addchildtoresc replRescUM01 UM-hnas-4k
 iadmin addchildtoresc replRescUM01 UM-hnas-4k-repl
 
 # Ideally, the AZM resource is not needed for production. Included here to test concept of the policy choosing proper resource for a project
 iadmin mkresc replRescAZM01 replication
-iadmin mkresc AZM-storage unixfilesystem ires:/mnt/AZM-storage
-iadmin mkresc AZM-storage-repl unixfilesystem ires:/mnt/AZM-storage-repl
+iadmin mkresc AZM-storage unixfilesystem ${IRODS_RESOURCE_HOST_RPM}:/mnt/AZM-storage
+iadmin mkresc AZM-storage-repl unixfilesystem ${IRODS_RESOURCE_HOST_RPM}:/mnt/AZM-storage-repl
 iadmin addchildtoresc replRescAZM01 AZM-storage
 iadmin addchildtoresc replRescAZM01 AZM-storage-repl
 
@@ -40,6 +40,14 @@ for user in $users; do
     iadmin mkuser "${user}@${domain}" rodsuser
     iadmin moduser "${user}@${domain}" password foobar
 done
+
+serviceUsers="service-dropzones service-mdl"
+
+for user in $serviceUsers; do
+    iadmin mkuser "${user}" rodsuser
+    iadmin moduser "${user}" password foobar
+done
+
 
 #########
 ## Groups
@@ -74,7 +82,7 @@ ichmod -r own rit-l /nlmumc/ingest/zones
 for i in {01..4}; do
     project=$(irule -F /rules/projects/createProject.r)
     # AVU's for collections
-    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST}Resource
+    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST_RPM}Resource
     imeta set -C /nlmumc/projects/${project} resource replRescAZM01
     imeta set -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
 
@@ -87,7 +95,7 @@ done
 for i in {01..2}; do
     project=$(irule -F /rules/projects/createProject.r)
     # AVU's for collections
-    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST}Resource
+    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST_DEB}Resource
     imeta set -C /nlmumc/projects/${project} resource replRescUM01
     imeta set -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
 
@@ -100,7 +108,7 @@ done
 for i in {01..8}; do
     project=$(irule -F /rules/projects/createProject.r)
     # AVU's for collections
-    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST}Resource
+    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST_DEB}Resource
     imeta set -C /nlmumc/projects/${project} resource replRescUM01
     imeta set -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
 
@@ -114,3 +122,4 @@ done
 
 # Create an initial collection folder for MDL data
 imkdir /nlmumc/projects/P000000001/C000000001
+ichmod -r write "service-mdl" /nlmumc/projects/P000000001
