@@ -9,9 +9,7 @@ cp /helpers/* /var/lib/irods/iRODS/server/bin/cmd/.
 
 # Mount ingest zones and rawdata
 mkdir -p /mnt/ingest/zones
-mkdir -p /mnt/ingest/shares/rawData
 mount -t cifs ${INGEST_MOUNT} /mnt/ingest/zones -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=998,gid=997
-mount -t cifs ${INGEST_MOUNT}/rawData /mnt/ingest/shares/rawData -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=998,gid=997
 
 # Check if this is a first run of this container
 if [[ ! -e /var/run/irods_installed ]]; then
