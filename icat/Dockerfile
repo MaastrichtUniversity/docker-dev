@@ -56,6 +56,5 @@ RUN chmod a+x /opt/irods/*
 
 EXPOSE 1248 1247 8000
 
-VOLUME [ "/rules", "/helpers", "/microservices" ]
 
 ENTRYPOINT [ "/opt/irods/bootstrap.sh" ]
