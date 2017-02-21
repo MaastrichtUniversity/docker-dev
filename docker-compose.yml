@@ -87,7 +87,7 @@ services:
       - logs:/var/lib/tomcat8/logs/
       - logs:/var/log/apache2/
   metalnx:
-    build: metalnx/
+    build: externals/rit-metalnx-web/
     hostname: metalnx
     environment:
       IRODS_HOST: irods
