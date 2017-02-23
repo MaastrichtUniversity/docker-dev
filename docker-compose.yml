@@ -90,7 +90,6 @@ services:
       IRODS_PASS: irods
       VIRTUAL_HOST: metalnx.${RIT_ENV}.rit.unimaas.nl
       VIRTUAL_PORT: 8080
-      LOGSTASH_TAGS: METALNX
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro

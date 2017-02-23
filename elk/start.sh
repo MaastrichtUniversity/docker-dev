@@ -35,13 +35,6 @@ rm -f /var/run/elasticsearch/elasticsearch.pid /var/run/logstash.pid \
 ## initialise list of log files to stream in console (initially empty)
 OUTPUT_LOGFILES=""
 
-#Required for LOGS
-chmod -R 777 /LOGS
-
-##Crontab to make sure logs are readable
-crontab -l 2>/dev/null | grep -q 'chmod -R 777 /LOGS' || echo "* * * * * chmod -R 777 /LOGS" | crontab -
-
-
 ### crond
 
 service cron start
@@ -154,6 +147,7 @@ fi
 
 cd /tmp
 elasticdump --input=kibana-exported.json --output=http://elastic:changeme@localhost:9200/.kibana --type=data
+curl --user elastic:changeme -XPUT 'http://localhost:9200/_template/filebeat' -d@/tmp/filebeat.template.json
 
 
 touch $OUTPUT_LOGFILES
