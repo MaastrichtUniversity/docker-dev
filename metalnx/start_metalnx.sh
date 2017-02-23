@@ -70,6 +70,8 @@ __setup_irods() {
 __run_supervisor() {
   cd /usr/share/tomcat/webapps
   ln -s emc-metalnx-web/ ROOT
+  #logstash
+  /etc/init.d/filebeat start
   supervisord -n
 }
 
@@ -87,5 +89,7 @@ __create_user
 __setup_irods
 #__run_template
 __run_supervisor
+
+
 
 

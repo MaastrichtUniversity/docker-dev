@@ -4,6 +4,7 @@ ENV LOGSTASH_HOME /opt/logstash
 
 WORKDIR ${LOGSTASH_HOME}
 RUN gosu logstash bin/logstash-plugin install logstash-patterns-core
+RUN gosu logstash bin/logstash-plugin install logstash-input-beats
 
 RUN cd /etc/logstash && \
     curl -O "http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz" && \
@@ -48,7 +49,7 @@ ADD ./RIT.pattern ${LOGSTASH_HOME}/patterns/RIT
 ADD ./kibana-exported.json /tmp/kibana-exported.json
 
 
-EXPOSE 5000
+EXPOSE 5000 5555
 
 #Create own startup script
 ADD ./start.sh /usr/local/bin/start.sh

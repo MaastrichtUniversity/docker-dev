@@ -35,4 +35,30 @@ ADD ./configuration.properties /opt/mirth-connect/appdata/configuration.properti
 ADD ./mirth-config-script.txt /opt/mirth-config-script.txt
 ADD ./docker-entrypoint.sh /docker-entrypoint.sh
 
+###############################################################################
+#                                INSTALLATION LOGBEAT
+###############################################################################
+
+### install Filebeat
+
+RUN apt-get update -qq \
+ && apt-get install -qqy curl \
+ && apt-get clean
+
+RUN curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-5.2.0-amd64.deb \
+ && dpkg -i filebeat-5.2.0-amd64.deb \
+ && rm filebeat-5.2.0-amd64.deb
+
+###############################################################################
+#                                CONFIGURATION LOGBEAT
+###############################################################################
+
+### configure Filebeat
+
+# config file
+ADD filebeat.yml /etc/filebeat/filebeat.yml
+
+
+
+
 ENTRYPOINT [ "/docker-entrypoint.sh" ]

@@ -35,7 +35,6 @@ services:
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
       LOGSPOUT: ignore
     volumes:
-      - logs:/var/lib/irods/iRODS/server/log
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
       - ./externals/irods-ruleset:/rules
@@ -48,7 +47,7 @@ services:
       PGPASSWORD: foobar
       LDAP_USER: M4i-nano-wiki
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
-      LOGSTASH_TAGS: IRES
+      LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
@@ -80,8 +79,6 @@ services:
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - logs:/var/lib/tomcat8/logs/
-      - logs:/var/log/apache2/
   metalnx:
     build: metalnx/
     hostname: metalnx
@@ -94,6 +91,7 @@ services:
       VIRTUAL_HOST: metalnx.${RIT_ENV}.rit.unimaas.nl
       VIRTUAL_PORT: 8080
       LOGSTASH_TAGS: METALNX
+      LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
   mirthconnect:
@@ -106,7 +104,7 @@ services:
     environment:
       PGPASSWORD: foobar
       RIT_ENV: ${RIT_ENV}
-      LOGSTASH_TAGS: MIRTH
+      LOGSPOUT: ignore
     networks:
       - default
       - oculus_default
@@ -136,8 +134,7 @@ services:
     VIRTUAL_HOST: elk.${RIT_ENV}.rit.unimaas.nl
     VIRTUAL_PORT: 5601
    volumes:
-      - /etc/localtime:/etc/localtime:ro 
-      - logs:/LOGS   
+      - /etc/localtime:/etc/localtime:ro
   logspout:
    build: logspout/
    volumes:
@@ -156,6 +153,4 @@ networks:
     driver: bridge
   oculus_default:
     external: true
-volumes:
-  logs:
-  
+
