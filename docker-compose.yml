@@ -35,7 +35,6 @@ services:
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
       LOGSPOUT: ignore
     volumes:
-      - logs:/var/lib/irods/iRODS/server/log
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
       - ./externals/irods-ruleset:/rules
@@ -51,6 +50,7 @@ services:
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
       LOGSTASH_TAGS: IRES
+      LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
@@ -84,8 +84,6 @@ services:
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - logs:/var/lib/tomcat8/logs/
-      - logs:/var/log/apache2/
   metalnx:
     build: externals/rit-metalnx-web/
     hostname: metalnx
@@ -110,7 +108,7 @@ services:
     environment:
       PGPASSWORD: foobar
       RIT_ENV: ${RIT_ENV}
-      LOGSTASH_TAGS: MIRTH
+      LOGSPOUT: ignore
     networks:
       - default
       - oculus_default
@@ -121,7 +119,6 @@ services:
     image: jwilder/nginx-proxy
     environment:
       DEFAULT_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
-      LOGSTASH_TAGS: PROXY
     ports:
       - "80:80"
     volumes:
@@ -130,36 +127,36 @@ services:
     networks:
       - default
       - oculus_default
+    logging:
+      driver: none
   elk:
-   build: elk/
-   hostname: elk
-   environment:
-    # otherwise logstash will keep sending its own logs to itself over and
-    # over... not fun
-    LOGSPOUT: ignore
-    VIRTUAL_HOST: elk.${RIT_ENV}.rit.unimaas.nl
-    VIRTUAL_PORT: 5601
-   volumes:
-      - /etc/localtime:/etc/localtime:ro 
-      - logs:/LOGS   
+    build: elk/
+    hostname: elk
+    environment:
+     # otherwise logstash will keep sending its own logs to itself over and over
+      LOGSPOUT: ignore
+      VIRTUAL_HOST: elk.${RIT_ENV}.rit.unimaas.nl
+      VIRTUAL_PORT: 5601
+    logging:
+      driver: none
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
   logspout:
-   build: logspout/
-   volumes:
-    - /var/run/docker.sock:/tmp/docker.sock
-    - /etc/localtime:/etc/localtime:ro 
-   ports:
-    - "8001:80"
-   depends_on:
-    - "elk" 
-   environment:
-    DEBUG: "true" 
-    LOGSPOUT: ignore    
-   command: "logstash://elk:5000"    
+    build: logspout/
+    logging:
+      driver: none
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - "elk"
+    environment:
+      DEBUG: "true"
+      LOGSPOUT: ignore
+    command: "logstash://elk:5000"
 networks:
   default:
     driver: bridge
   oculus_default:
     external: true
-volumes:
-  logs:
-  
+

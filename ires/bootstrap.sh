@@ -67,5 +67,8 @@ fi
 # Force start of Metalnx RMD
 service rmd restart
 
+#logstash
+/etc/init.d/filebeat start
+
 # this script must end with a persistent foreground process
 tail -F /var/lib/irods/iRODS/server/log/rodsLog.*

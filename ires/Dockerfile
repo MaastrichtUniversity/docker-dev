@@ -55,6 +55,19 @@ RUN chmod a+x /opt/irods/*
 
 EXPOSE 1248 1247 8000
 
+###############################################################################
+#                                INSTALLATION LOGBEAT
+###############################################################################
+
+RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-5.2.0-amd64.deb -O /tmp/filebeat.deb \
+ && dpkg -i /tmp/filebeat.deb
+
+ADD filebeat.yml /etc/filebeat/filebeat.yml
+
+###############################################################################
+
+
+
 ENV DOCKERIZE_VERSION v0.2.0
 RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz -o dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
