@@ -58,15 +58,4 @@ RUN chmod +x /usr/local/bin/start.sh
 ###filebeat template
 ADD ./filebeat.template.json /tmp/filebeat.template.json
 
-
-#
 CMD [ "/usr/local/bin/start.sh" ]
-
-
-## Create dashboard dump
-
-#elasticdump --input=http://elastic:changeme@localhost:9200/.kibana --output=$ --type=data > kibana-exported.json
-
-#Load dahsboard dump
-# cd tmp
-# elasticdump --input=kibana-exported.json --output=http://localhost:9200/.kibana --type=data

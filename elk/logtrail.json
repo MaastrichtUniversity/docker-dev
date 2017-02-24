@@ -19,7 +19,7 @@
           "timestamp" : "@timestamp",
           "display_timestamp" : "@timestamp",
           "hostname" : "logtrail",
-          "program": "file",
+          "program": "source",
           "message": "message"
         }
       }

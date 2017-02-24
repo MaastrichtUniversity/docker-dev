@@ -132,23 +132,23 @@ services:
       LOGSPOUT: ignore
       VIRTUAL_HOST: elk.${RIT_ENV}.rit.unimaas.nl
       VIRTUAL_PORT: 5601
-  #  logging:
-  #    driver: none
+    logging:
+      driver: none
     volumes:
       - /etc/localtime:/etc/localtime:ro
   logspout:
-   build: logspout/
-   volumes:
-    - /var/run/docker.sock:/tmp/docker.sock
-    - /etc/localtime:/etc/localtime:ro 
-   ports:
-    - "8001:80"
-   depends_on:
-    - "elk" 
-   environment:
-    DEBUG: "true" 
-    LOGSPOUT: ignore    
-   command: "logstash://elk:5000"    
+    build: logspout/
+    logging:
+      driver: none
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - "elk"
+    environment:
+      DEBUG: "true"
+      LOGSPOUT: ignore
+    command: "logstash://elk:5000"
 networks:
   default:
     driver: bridge

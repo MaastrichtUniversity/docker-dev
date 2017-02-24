@@ -67,7 +67,7 @@ else
   # set number of retries (default: 30, override using ES_CONNECT_RETRY env var)
   re_is_numeric='^[0-9]+$'
   if ! [[ $ES_CONNECT_RETRY =~ $re_is_numeric ]] ; then
-     ES_CONNECT_RETRY=30
+     ES_CONNECT_RETRY=60
   fi
 
   counter=0
