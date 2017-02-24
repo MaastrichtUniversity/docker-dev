@@ -90,7 +90,7 @@ services:
       IRODS_PASS: irods
       VIRTUAL_HOST: metalnx.${RIT_ENV}.rit.unimaas.nl
       VIRTUAL_PORT: 8080
-      LOGSPOUT: ignore
+      LOGSTASH_TAGS: METALNX
     volumes:
       - /etc/localtime:/etc/localtime:ro
   mirthconnect:
@@ -114,7 +114,6 @@ services:
     image: jwilder/nginx-proxy
     environment:
       DEFAULT_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
-      LOGSTASH_TAGS: PROXY
     ports:
       - "80:80"
     volumes:
@@ -123,16 +122,19 @@ services:
     networks:
       - default
       - oculus_default
+    logging:
+      driver: none
   elk:
-   build: elk/
-   hostname: elk
-   environment:
-    # otherwise logstash will keep sending its own logs to itself over and
-    # over... not fun
-    LOGSPOUT: ignore
-    VIRTUAL_HOST: elk.${RIT_ENV}.rit.unimaas.nl
-    VIRTUAL_PORT: 5601
-   volumes:
+    build: elk/
+    hostname: elk
+    environment:
+     # otherwise logstash will keep sending its own logs to itself over and over
+      LOGSPOUT: ignore
+      VIRTUAL_HOST: elk.${RIT_ENV}.rit.unimaas.nl
+      VIRTUAL_PORT: 5601
+  #  logging:
+  #    driver: none
+    volumes:
       - /etc/localtime:/etc/localtime:ro
   logspout:
    build: logspout/

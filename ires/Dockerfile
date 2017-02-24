@@ -57,24 +57,12 @@ EXPOSE 1248 1247 8000
 #                                INSTALLATION LOGBEAT
 ###############################################################################
 
-### install Filebeat
+RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-5.2.0-amd64.deb -O /tmp/filebeat.deb \
+ && dpkg -i /tmp/filebeat.deb
 
-RUN apt-get update -qq \
- && apt-get install -qqy curl \
- && apt-get clean
-
-RUN curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-5.2.0-amd64.deb \
- && dpkg -i filebeat-5.2.0-amd64.deb \
- && rm filebeat-5.2.0-amd64.deb
-
-###############################################################################
-#                                CONFIGURATION LOGBEAT
-###############################################################################
-
-### configure Filebeat
-
-# config file
 ADD filebeat.yml /etc/filebeat/filebeat.yml
+
+###############################################################################
 
 
 
