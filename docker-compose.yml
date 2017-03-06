@@ -84,6 +84,13 @@ services:
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
+  davrods:
+    build: externals/rit-davrods/
+    environment:
+      VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
+      LOGSTASH_TAGS: DAVRODS
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
   metalnx:
     build: externals/rit-metalnx-web/
     hostname: metalnx
