@@ -32,6 +32,12 @@ RUN curl -O https://artifacts.elastic.co/downloads/packs/x-pack/${XPACK_PACKAGE}
 ###Logtrail
 RUN /opt/kibana/bin/kibana-plugin install https://github.com/sivasamyk/logtrail/releases/download/0.1.8/logtrail-5.2.0-0.1.8.zip
 ADD logtrail.json /opt/kibana/plugins/logtrail/logtrail.json
+###BUGFIX for logtrail https://github.com/sivasamyk/logtrail/issues/20
+ADD logtrail_server.js /opt/kibana/plugins/logtrail/server/routes/server.js
+ADD logtrail_app.js /opt/kibana/plugins/logtrail/public/app.js
+
+
+
 
 # Add config files
 ADD FRONTEND.conf /etc/logstash/conf.d/FRONTEND.conf
