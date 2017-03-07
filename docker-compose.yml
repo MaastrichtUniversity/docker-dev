@@ -90,6 +90,9 @@ services:
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      - default
+      - common_default
   davrods:
     build: externals/rit-davrods/
     environment:
