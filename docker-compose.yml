@@ -34,6 +34,9 @@ services:
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
       LOGSPOUT: ignore
+    networks:
+      - default
+      - common_default
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
@@ -51,6 +54,9 @@ services:
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
       LOGSTASH_TAGS: IRES
       LOGSPOUT: ignore
+    networks:
+      - default
+      - common_default
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
@@ -91,6 +97,9 @@ services:
       LOGSTASH_TAGS: DAVRODS
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      - default
+      - common_default
   metalnx:
     build: externals/rit-metalnx-web/
     hostname: metalnx
@@ -119,51 +128,12 @@ services:
     networks:
       - default
       - oculus_default
+      - common_default
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/channels:/opt/channels
-  proxy:
-    image: jwilder/nginx-proxy
-    environment:
-      DEFAULT_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
-    ports:
-      - "80:80"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - /etc/localtime:/etc/localtime:ro
-    networks:
-      - default
-      - oculus_default
-    logging:
-      driver: none
-  elk:
-    build: elk/
-    hostname: elk
-    environment:
-     # otherwise logstash will keep sending its own logs to itself over and over
-      LOGSPOUT: ignore
-      VIRTUAL_HOST: elk.${RIT_ENV}.rit.unimaas.nl
-      VIRTUAL_PORT: 5601
-    logging:
-      driver: none
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-  logspout:
-    build: logspout/
-    logging:
-      driver: none
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock
-      - /etc/localtime:/etc/localtime:ro
-    depends_on:
-      - "elk"
-    environment:
-      DEBUG: "true"
-      LOGSPOUT: ignore
-    command: "logstash://elk:5000"
 networks:
-  default:
-    driver: bridge
   oculus_default:
     external: true
-
+  common_default:
+    external: true
