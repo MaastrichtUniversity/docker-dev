@@ -43,6 +43,9 @@ cd /var/www/html && drush user-create p.suppers --mail="p.suppers@${domain}" --p
 # Set homepage to pacman/info
 cd /var/www/html && drush vset site_frontpage pacman/info
 
+# Set timezone to Europe/Amsterdam
+drush vset date_default_timezone 'Europe/Amsterdam' -y
+
 # Enable and make theme default
 cd /var/www/html && drush vset theme_default fhml_um
 

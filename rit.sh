@@ -43,7 +43,9 @@ externals/islandora_ontology_autocomplete git@github.com:MaastrichtUniversity/is
 externals/rit_faker git@github.com:MaastrichtUniversity/rit_faker.git
 externals/rit_forms git@github.com:MaastrichtUniversity/rit_forms.git
 externals/rit-pacman git@github.com:MaastrichtUniversity/rit-pacman.git
-externals/irods-frontend git@github.com:MaastrichtUniversity/irods-frontend.git"
+externals/irods-frontend git@github.com:MaastrichtUniversity/irods-frontend.git
+externals/rit-metalnx-web git@github.com:MaastrichtUniversity/rit-metalnx-web.git
+externals/rit-davrods git@github.com:MaastrichtUniversity/rit-davrods.git"
 
 if [[ $1 == "externals" ]]; then
     mkdir -p externals

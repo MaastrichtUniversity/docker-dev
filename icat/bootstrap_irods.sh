@@ -41,6 +41,13 @@ for user in $users; do
     iadmin moduser "${user}@${domain}" password foobar
 done
 
+serviceUsers="service-dropzones service-mdl"
+
+for user in $serviceUsers; do
+    iadmin mkuser "${user}" rodsuser
+    iadmin moduser "${user}" password foobar
+done
+
 #########
 ## Groups
 nanoscopy="p.vanschayck g.tria rbg.ravelli"
@@ -114,3 +121,4 @@ done
 
 # Create an initial collection folder for MDL data
 imkdir /nlmumc/projects/P000000001/C000000001
+ichmod -r write "service-mdl" /nlmumc/projects/P000000001
