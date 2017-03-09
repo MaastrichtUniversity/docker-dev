@@ -78,19 +78,6 @@ ichmod -r own rit-l /nlmumc/ingest/zones
 ###########
 ## Projects and project permissions
 
-for i in {01..4}; do
-    project=$(irule -F /rules/projects/createProject.r)
-    # AVU's for collections
-    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST}Resource
-    imeta set -C /nlmumc/projects/${project} resource replRescAZM01
-    imeta set -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
-
-    # Contributor access for RIT
-    ichmod -r write rit-l /nlmumc/projects/${project}
-    # Manage access for suppers
-    ichmod -r own "p.suppers@${domain}" /nlmumc/projects/${project}
-done
-
 for i in {01..2}; do
     project=$(irule -F /rules/projects/createProject.r)
     # AVU's for collections
@@ -104,7 +91,20 @@ for i in {01..2}; do
     ichmod -r own "p.vanschayck@${domain}" /nlmumc/projects/${project}
 done
 
-for i in {01..8}; do
+for i in {01..3}; do
+    project=$(irule -F /rules/projects/createProject.r)
+    # AVU's for collections
+    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST}Resource
+    imeta set -C /nlmumc/projects/${project} resource replRescUM01
+    imeta set -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
+
+    # Contributor access for RIT
+    ichmod -r write rit-l /nlmumc/projects/${project}
+    # Manage access for suppers
+    ichmod -r own "p.suppers@${domain}" /nlmumc/projects/${project}
+done
+
+for i in {01..3}; do
     project=$(irule -F /rules/projects/createProject.r)
     # AVU's for collections
     imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST}Resource
@@ -115,10 +115,23 @@ for i in {01..8}; do
     ichmod -r read rit-l /nlmumc/projects/${project}
 done
 
+for i in {01..4}; do
+    project=$(irule -F /rules/projects/createProject.r)
+    # AVU's for collections
+    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST}Resource
+    imeta set -C /nlmumc/projects/${project} resource replRescAZM01
+    imeta set -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
+
+    # Contributor access for RIT
+    ichmod -r write rit-l /nlmumc/projects/${project}
+    # Manage access for suppers
+    ichmod -r own "p.suppers@${domain}" /nlmumc/projects/${project}
+done
+
 
 ##########
 ## Special
 
 # Create an initial collection folder for MDL data
-imkdir /nlmumc/projects/P000000001/C000000001
-ichmod -r write "service-mdl" /nlmumc/projects/P000000001
+imkdir /nlmumc/projects/P000000010/C000000001
+ichmod -r write "service-mdl" /nlmumc/projects/P000000010
