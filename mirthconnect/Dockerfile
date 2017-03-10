@@ -36,7 +36,7 @@ ADD ./mirth-config-script.txt /opt/mirth-config-script.txt
 ADD ./docker-entrypoint.sh /docker-entrypoint.sh
 
 ###############################################################################
-#                                INSTALLATION LOGBEAT
+#                                INSTALLATION FILEBEAT
 ###############################################################################
 
 RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-5.2.0-amd64.deb -O /tmp/filebeat.deb \

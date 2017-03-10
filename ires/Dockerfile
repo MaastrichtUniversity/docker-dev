@@ -56,7 +56,7 @@ RUN chmod a+x /opt/irods/*
 EXPOSE 1248 1247 8000
 
 ###############################################################################
-#                                INSTALLATION LOGBEAT
+#                                INSTALLATION FILEBEAT
 ###############################################################################
 
 RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-5.2.0-amd64.deb -O /tmp/filebeat.deb \
