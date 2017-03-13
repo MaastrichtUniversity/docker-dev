@@ -13,7 +13,7 @@ filebeat.prospectors:
 
 
 output.logstash:
-    hosts: ["elk:5555"]
+    hosts: ["elk:5044"]
 
 
 tags: ["ICAT"]
