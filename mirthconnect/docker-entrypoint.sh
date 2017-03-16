@@ -26,7 +26,7 @@ EOSQL
 ./mcservice start
 
 # Check if MirthConnect is running
-until nc -z localhost 9090; do
+until nc -z localhost 80; do
   echo "MirthConnect not started, sleeping"
   sleep 2
 done

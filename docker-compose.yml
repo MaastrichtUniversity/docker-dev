@@ -122,12 +122,12 @@ services:
     build: mirthconnect/
     hostname: mirthconnect
     ports:
-      - "9090:9090"
-      - "9443:9443"
+      - "8443:8443"
       - "6661:6661"
     environment:
       PGPASSWORD: foobar
       RIT_ENV: ${RIT_ENV}
+      VIRTUAL_HOST: mirthconnect.${RIT_ENV}.rit.unimaas.nl
       LOGSPOUT: ignore
     networks:
       - default
