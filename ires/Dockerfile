@@ -2,6 +2,7 @@ FROM ubuntu:14.04
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    apt-transport-https \
     wget \
     unixodbc \
     super \
@@ -25,15 +26,14 @@ RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
-ENV IRODS_VERSION 4.1.8
 
 # install iRODS
-
-RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/ubuntu14/irods-resource-${IRODS_VERSION}-ubuntu14-x86_64.deb -O /tmp/irods-ires.deb \
-    && dpkg -i /tmp/irods-ires.deb
-
-RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/ubuntu14/irods-dev-${IRODS_VERSION}-ubuntu14-x86_64.deb -O /tmp/irods-dev.deb \
-    && dpkg -i /tmp/irods-dev.deb
+RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key add - \
+    && echo "deb [arch=amd64] https://packages.irods.org/apt/ trusty main" | sudo tee /etc/apt/sources.list.d/renci-irods.list \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    irods-server \
+    irods-dev
 
 # install Metalnx RMD
 ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
@@ -45,7 +45,7 @@ RUN mkdir /opt/irods
 # https://bugs.launchpad.net/ubuntu/+source/cifs-utils/+bug/1372120
 RUN mkdir /etc/cifs-utils && ln -s /usr/lib/x86_64-linux-gnu/cifs-utils/idmapwb.so /etc/cifs-utils/idmap-plugin
 
-ADD ./setup_responses /etc/irods/setup_responses
+ADD ./setup_responses /opt/irods/setup_responses
 ADD ./config.sh /opt/irods/config.sh
 ADD ./bootstrap.sh /opt/irods/bootstrap.sh
 ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
