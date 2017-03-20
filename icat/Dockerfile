@@ -2,6 +2,7 @@ FROM ubuntu:14.04
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    apt-transport-https \
     wget \
     unixodbc \
     super \
@@ -26,18 +27,15 @@ RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
-ENV IRODS_VERSION 4.1.8
 
 # install iRODS
-
-RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/ubuntu14/irods-icat-${IRODS_VERSION}-ubuntu14-x86_64.deb -O /tmp/irods-icat.deb \
-    && dpkg -i /tmp/irods-icat.deb
-
-RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/ubuntu14/irods-database-plugin-postgres-1.8-ubuntu14-x86_64.deb -O /tmp/irods-dbplugin.deb \
-    && dpkg -i /tmp/irods-dbplugin.deb
-
-RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/ubuntu14/irods-dev-${IRODS_VERSION}-ubuntu14-x86_64.deb -O /tmp/irods-dev.deb \
-    && dpkg -i /tmp/irods-dev.deb
+RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key add - \
+    && echo "deb [arch=amd64] https://packages.irods.org/apt/ trusty main" | sudo tee /etc/apt/sources.list.d/renci-irods.list \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    irods-server \
+    irods-database-plugin-postgres \
+    irods-dev
 
 # install Metalnx RMD
 ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
@@ -45,7 +43,7 @@ RUN dpkg -i /tmp/emc-metalnx-rmd-1.0-1.deb
 
 RUN mkdir /opt/irods
 
-ADD ./setup_responses /etc/irods/setup_responses
+ADD ./setup_responses /opt/irods/setup_responses
 ADD ./setupdb.sh /opt/irods/setupdb.sh
 ADD ./config.sh /opt/irods/config.sh
 ADD ./bootstrap.sh /opt/irods/bootstrap.sh
