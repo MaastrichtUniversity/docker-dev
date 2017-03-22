@@ -22,3 +22,9 @@ channel deploy "Mapping tool - CH2 - Ophalen van Mapping.xml"
 
 import "/opt/channels/Upload via REST to iRODS.xml"
 channel deploy "Upload via REST to iRODS.xml"
+
+import "/opt/channels/getProjectPermissions.xml"
+channel deploy "getProjectPermissions.xml"
+
+import "/opt/channels/getProjectTitle.xml"
+channel deploy "getProjectTitle.xml"

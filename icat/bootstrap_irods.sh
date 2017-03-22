@@ -41,7 +41,7 @@ for user in $users; do
     iadmin moduser "${user}@${domain}" password foobar
 done
 
-serviceUsers="service-dropzones service-mdl"
+serviceUsers="service-dropzones service-mdl service-dwh"
 
 for user in $serviceUsers; do
     iadmin mkuser "${user}" rodsuser
@@ -127,6 +127,9 @@ for i in {01..4}; do
     # Manage access for suppers
     ichmod -r own "p.suppers@${domain}" /nlmumc/projects/${project}
 done
+
+# service-dwh
+ichmod -r read service-dwh /nlmumc/projects
 
 
 ##########
