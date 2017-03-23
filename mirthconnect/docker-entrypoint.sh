@@ -26,13 +26,18 @@ EOSQL
 ./mcservice start
 
 # Check if MirthConnect is running
-until nc -z localhost 9090; do
+until nc -z localhost 80; do
   echo "MirthConnect not started, sleeping"
   sleep 2
 done
 
 # Create users and import channels into MirthConnect using CLI
 ./mccommand -s /opt/mirth-config-script.txt
+
+
+#logstash
+/etc/init.d/filebeat start
+
 
 # End with a persistent foreground process
 tail -f /opt/mirth-connect/logs/mirth.log

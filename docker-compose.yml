@@ -20,6 +20,7 @@ services:
       VIRTUAL_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
       OLS_URL: http://fhml-srv018.unimaas.nl:8081/ols-boot
       LOGSTASH_TAGS: PACMAN
+      JWT_SECRET: foobar
   irods:
     build: icat/
     hostname: irods
@@ -34,9 +35,12 @@ services:
       IRODS_RESOURCE_HOST_RPM: ires-centos
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
+      MIRTH_MDL_EXPORT_CHANNEL: fhml-srv024.unimaas.nl:6666
       LOGSPOUT: ignore
+    networks:
+      - default
+      - common_default
     volumes:
-      - logs:/var/lib/irods/iRODS/server/log
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
       - ./externals/irods-ruleset:/rules
@@ -49,11 +53,19 @@ services:
       PGPASSWORD: foobar
       LDAP_USER: M4i-nano-wiki
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
+      MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
+      MIRTH_METADATA_CHANNEL: mirthconnect:6670
       LOGSTASH_TAGS: IRES
+      LOGSPOUT: ignore
+    networks:
+      - default
+      - common_default
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
-      - ./externals/irods-helper-cmd:/helpers:ro
+      - ./externals/irods-ruleset:/rules
+      - ./externals/irods-microservices:/microservices
+      - ./externals/irods-helper-cmd:/helpers
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
     privileged: true
   ires-centos:
@@ -68,7 +80,9 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
-      - ./externals/irods-helper-cmd:/helpers:ro
+      - ./externals/irods-ruleset:/rules
+      - ./externals/irods-microservices:/microservices
+      - ./externals/irods-helper-cmd:/helpers
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
     privileged: true
   db:
@@ -96,10 +110,21 @@ services:
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - logs:/var/lib/tomcat8/logs/
-      - logs:/var/log/apache2/
+    networks:
+      - default
+      - common_default
+  davrods:
+    build: externals/rit-davrods/
+    environment:
+      VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
+      LOGSTASH_TAGS: DAVRODS
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - default
+      - common_default
   metalnx:
-    build: metalnx/
+    build: externals/rit-metalnx-web/
     hostname: metalnx
     environment:
       IRODS_HOST: irods
@@ -116,62 +141,22 @@ services:
     build: mirthconnect/
     hostname: mirthconnect
     ports:
-      - "9090:9090"
-      - "9443:9443"
+      - "8443:8443"
       - "6661:6661"
     environment:
       PGPASSWORD: foobar
       RIT_ENV: ${RIT_ENV}
-      LOGSTASH_TAGS: MIRTH
+      VIRTUAL_HOST: mirthconnect.${RIT_ENV}.rit.unimaas.nl
+      LOGSPOUT: ignore
     networks:
       - default
       - oculus_default
+      - common_default
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/channels:/opt/channels
-  proxy:
-    image: jwilder/nginx-proxy
-    environment:
-      DEFAULT_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
-      LOGSTASH_TAGS: PROXY
-    ports:
-      - "80:80"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - /etc/localtime:/etc/localtime:ro
-    networks:
-      - default
-      - oculus_default
-  elk:
-   build: elk/
-   hostname: elk
-   environment:
-    # otherwise logstash will keep sending its own logs to itself over and
-    # over... not fun
-    LOGSPOUT: ignore
-    VIRTUAL_HOST: elk.${RIT_ENV}.rit.unimaas.nl
-    VIRTUAL_PORT: 5601
-   volumes:
-      - /etc/localtime:/etc/localtime:ro 
-      - logs:/LOGS   
-  logspout:
-   build: logspout/
-   volumes:
-    - /var/run/docker.sock:/tmp/docker.sock
-    - /etc/localtime:/etc/localtime:ro 
-   ports:
-    - "8001:80"
-   depends_on:
-    - "elk" 
-   environment:
-    DEBUG: "true" 
-    LOGSPOUT: ignore    
-   command: "logstash://elk:5000"    
 networks:
-  default:
-    driver: bridge
   oculus_default:
     external: true
-volumes:
-  logs:
-  
+  common_default:
+    external: true

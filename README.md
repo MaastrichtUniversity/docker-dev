@@ -20,6 +20,7 @@ INGEST_MIRTHACL_URL=
 ./rit.sh down
 ./rit.sh up
 ```
+**Note:** Please be aware that these containers depend on a running ``proxy`` container from [docker-common](https://github.com/MaastrichtUniversity/docker-common) in order to be accessible on their ``VIRTUAL_HOST`` address.
 
 ## Faker
 Create fake ingest zones and project collections
