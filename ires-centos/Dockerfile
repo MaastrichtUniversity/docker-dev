@@ -55,12 +55,26 @@ ADD ./setup_responses /etc/irods/setup_responses
 ADD ./config.sh /opt/irods/config.sh
 ADD ./bootstrap.sh /opt/irods/bootstrap.sh
 ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
+ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
+ADD ./add_env_var.py /opt/irods/add_env_var.py
 RUN chmod a+x /opt/irods/*
 
 EXPOSE 1248 1247 8000
+
+###############################################################################
+#                                INSTALLATION FILEBEAT
+###############################################################################
+
+RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-5.2.0-x86_64.rpm -O /tmp/filebeat.rpm \
+ && rpm -Uvh /tmp/filebeat.rpm
+
+ADD filebeat.yml /etc/filebeat/filebeat.yml
+
+###############################################################################
+
 
 ENV DOCKERIZE_VERSION v0.2.0
 RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz -o dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
-CMD dockerize -wait tcp://irods:1248 -timeout 150s /opt/irods/bootstrap.sh
+CMD dockerize -wait tcp://ires:1248 -timeout 150s /opt/irods/bootstrap.sh

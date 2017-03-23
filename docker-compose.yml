@@ -55,6 +55,7 @@ services:
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
+      MIRTH_MDL_EXPORT_CHANNEL: fhml-srv024.unimaas.nl:6666
       LOGSTASH_TAGS: IRES
       LOGSPOUT: ignore
     networks:
@@ -69,14 +70,17 @@ services:
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
     privileged: true
   ires-centos:
-    build: ires_centos/
+    build: ires-centos/
     hostname: ires-centos
     environment:
       RODS_PASSWORD: irods
       PGPASSWORD: foobar
       LDAP_USER: M4i-nano-wiki
       VIRTUAL_HOST: ires-centos.${RIT_ENV}.rit.unimaas.nl
-      LOGSTASH_TAGS: IRES_CENTOS
+      MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
+      MIRTH_METADATA_CHANNEL: mirthconnect:6670
+      MIRTH_MDL_EXPORT_CHANNEL: fhml-srv024.unimaas.nl:6666
+      LOGSTASH_TAGS: IRES-CENTOS
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
