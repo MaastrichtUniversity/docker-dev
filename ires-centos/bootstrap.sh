@@ -59,8 +59,12 @@ else
     service irods start
 fi
 
+# TODO: Find solution for starting services in CentOS container (D-BUS errors): https://github.com/docker/docker/issues/7459
 # Force start of Metalnx RMD
 # service rmd restart
+
+#logstash
+#/etc/init.d/filebeat start
 
 # this script must end with a persistent foreground process
 tail -F /var/lib/irods/iRODS/server/log/rodsLog.*
