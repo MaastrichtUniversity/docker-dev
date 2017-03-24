@@ -89,6 +89,7 @@ services:
     hostname: irods-frontend
     environment:
       VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
+      PACMAN_HOST: http://pacman.${RIT_ENV}.rit.unimaas.nl
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
