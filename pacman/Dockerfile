@@ -29,7 +29,8 @@ RUN apt-get update && apt-get install -y \
 	mysql-client \
 	git \
 	nodejs \
-	npm
+	npm \
+  nano
 
 RUN docker-php-ext-install -j$(nproc) xsl
 

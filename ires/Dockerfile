@@ -18,7 +18,8 @@ RUN apt-get update \
     g++ \
     libssl-dev \
     libcurl4-openssl-dev \
-    curl
+    curl \
+    nano
 
 
 RUN locale-gen en_US.UTF-8

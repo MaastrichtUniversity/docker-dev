@@ -7,8 +7,9 @@ RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     vim \
     postgresql-client \
-    netcat
-
+    netcat \
+    nano
+    
 # Mirth Connect is run with user 'mirth', uid = 1000
 # If you bind mount a volume from the host or a data container,
 # ensure you use the same uid
