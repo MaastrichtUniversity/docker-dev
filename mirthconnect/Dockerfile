@@ -50,7 +50,6 @@ ADD filebeat.yml /etc/filebeat/filebeat.yml
 ADD ./epic_keystore /opt/mirth-connect/epic
 ADD ./mcserver.vmoptions /opt/mirth-connect/mcserver.vmoptions
 ADD ./mcservice.vmoptions /opt/mirth-connect/mcservice.vmoptions
-ADD ./305_mirth.pfx /opt/mirth-connect/305_mirth.pfx
 ###########################
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]

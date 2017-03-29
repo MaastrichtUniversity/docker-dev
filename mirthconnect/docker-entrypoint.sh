@@ -20,7 +20,7 @@ EOSQL
 
 
 # Templating of the configuration.properties file
-# sed -i "s/RIT_ENV/$RIT_ENV/" /opt/mirth-connect/appdata/configuration.properties
+ sed -i "s/RIT_ENV/$RIT_ENV/" /opt/mirth-connect/appdata/configuration.properties
 
 # Start MirthConnect service
 ./mcservice start
