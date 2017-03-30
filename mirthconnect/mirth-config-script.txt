@@ -8,8 +8,8 @@ codetemplate library import "/opt/channels/conf/lib_CustomFunctions.xml"
 import "/opt/channels/XML Metadata Validation.xml"
 channel deploy "XML Metadata Validation.xml"
 
-import "/opt/channels/XML Metadata send to SOLR.xml"
-channel deploy "XML Metadata send to SOLR.xml"
+import "/opt/channels/Generate PID and send metadata to SOLR.xml"
+channel deploy "Generate PID and send metadata to SOLR.xml"
 
 import "/opt/channels/OLS ancestor channel.xml"
 channel deploy "OLS ancestor channel.xml"
@@ -25,3 +25,9 @@ channel deploy "Upload via REST to iRODS.xml"
 
 import "/opt/channels/getProjectDetails.xml"
 channel deploy "getProjectDetails.xml"
+
+import "/opt/channels/createEpicPID.xml"
+channel deploy "createEpicPID.xml"
+
+import "/opt/channels/createPidAndSetAVU.xml"
+channel deploy "createPidAndSetAVU.xml"

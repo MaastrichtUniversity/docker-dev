@@ -47,7 +47,10 @@ ADD filebeat.yml /etc/filebeat/filebeat.yml
 
 ###############################################################################
 
-
-
+#######FOR EPIC PID SERVICE 
+ADD ./epic_keystore /opt/mirth-connect/epic
+ADD ./mcserver.vmoptions /opt/mirth-connect/mcserver.vmoptions
+ADD ./mcservice.vmoptions /opt/mirth-connect/mcservice.vmoptions
+###########################
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
