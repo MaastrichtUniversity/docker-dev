@@ -19,14 +19,17 @@ fi
 if [[ $1 == "create-project-collections" ]]; then
     ## Create dummy project collections
     for i in {1..4}; do
-        docker exec corpus_pacman_1 drush create-project-collection p.vanschayck@${domain} P000000005
+        echo "In P000000001"
+        docker exec corpus_pacman_1 drush create-project-collection p.vanschayck@${domain} P000000001
     done
 
     for i in {1..4}; do
-        docker exec corpus_pacman_1 drush create-project-collection m.coonen@${domain} P000000001
-        docker exec corpus_pacman_1 drush create-project-collection m.coonen@${domain} P000000002
-        docker exec corpus_pacman_1 drush create-project-collection d.theunissen@${domain} P000000001
-        docker exec corpus_pacman_1 drush create-project-collection d.theunissen@${domain} P000000002
+        echo "In P000000003"
+        docker exec corpus_pacman_1 drush create-project-collection m.coonen@${domain} P000000003
+        docker exec corpus_pacman_1 drush create-project-collection d.theunissen@${domain} P000000003
+        echo "In P000000004"
+        docker exec corpus_pacman_1 drush create-project-collection m.coonen@${domain} P000000004
+        docker exec corpus_pacman_1 drush create-project-collection d.theunissen@${domain} P000000004
     done
 
     exit 0
