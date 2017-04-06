@@ -19,17 +19,18 @@ if [[ ! -e /var/www/html/sites/default/settings.php ]]; then
 fi
 
 cd /var/www/html && drush en \
-	--yes \
-	xml_forms \
-	pacman \
-	handsontable \
-	rit_forms \
-	cloudbrowser \
-	fhml_um \
-	islandora_xml_form_builder_states \
-	islandora_ontology_autocomplete \
-	jquery_update \
-	rit_faker
+    --yes \
+    xml_forms \
+    pacman \
+    handsontable \
+    rit_forms \
+    cloudbrowser \
+    fhml_um \
+    islandora_xml_form_builder_states \
+    islandora_ontology_autocomplete \
+    islandora_crossref_lookup \
+    jquery_update \
+    rit_faker
 
 cd /var/www/html && drush add-rit-forms
 
