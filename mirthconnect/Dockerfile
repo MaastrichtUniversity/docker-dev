@@ -47,8 +47,11 @@ ADD filebeat.yml /etc/filebeat/filebeat.yml
 
 ###############################################################################
 
-#######FOR EPIC PID SERVICE 
-ADD ./epic_keystore /opt/mirth-connect/epic
+#######FOR EPIC PID SERVICE
+# The keyStore will be volume mounted and needs to be populated with the EPIC private key from secrets management
+# Add the TrustStore (contains public certificates for EPIC)
+ADD ./epic_trustStore /opt/mirth-connect/epic
+# Override the default Java KeyStore and TrustStore
 ADD ./mcserver.vmoptions /opt/mirth-connect/mcserver.vmoptions
 ADD ./mcservice.vmoptions /opt/mirth-connect/mcservice.vmoptions
 ###########################
