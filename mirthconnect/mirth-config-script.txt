@@ -31,3 +31,6 @@ channel deploy "createEpicPID.xml"
 
 import "/opt/channels/createPidAndSetAVU.xml"
 channel deploy "createPidAndSetAVU.xml"
+
+import "/opt/channels/getCrossRef.xml"
+channel deploy "getCrossRef.xml"
