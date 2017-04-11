@@ -138,8 +138,20 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/channels:/opt/channels
+  mpi-tempdb:
+    image: postgres:9.4
+    hostname: mpi-tempdb
+    environment:
+      POSTGRES_PASSWORD: foobar
+      LOGSPOUT: ignore
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - datavol_mpitempdb:/var/lib/postgresql/data
 networks:
   oculus_default:
     external: true
   common_default:
     external: true
+
+volumes:
+  datavol_mpitempdb:
