@@ -138,6 +138,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/channels:/opt/channels
+      - ./channels-backup:/opt/channels-backup
   mpi-tempdb:
     image: postgres:9.4
     hostname: mpi-tempdb

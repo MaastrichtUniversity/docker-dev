@@ -1,5 +1,5 @@
 *.secrets.cfg
 .idea
-
+channels-backup
 externals/*
 mirthconnect/305_mirth.pfx

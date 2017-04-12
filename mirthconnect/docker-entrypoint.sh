@@ -50,7 +50,13 @@ until nc -z localhost 80; do
 done
 
 # Create users and import channels into MirthConnect using CLI
-./mccommand -s /opt/mirth-config-script.txt
+./mccommand -s /opt/mirth-script_config.txt
+
+# force start of cron
+service cron start
+
+# Modify crontab to export channels every 15 minutes and remove old backups once a day
+crontab /opt/crontab.txt
 
 
 #logstash
