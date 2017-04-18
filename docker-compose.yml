@@ -126,6 +126,7 @@ services:
     ports:
       - "8443:8443"
       - "6661:6661"
+      - "6671:6671"
     environment:
       PGPASSWORD: foobar
       RIT_ENV: ${RIT_ENV}
@@ -139,15 +140,6 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/channels:/opt/channels
       - ./channels-backup:/opt/channels-backup
-  mpi-tempdb:
-    image: postgres:9.4
-    hostname: mpi-tempdb
-    environment:
-      POSTGRES_PASSWORD: foobar
-      LOGSPOUT: ignore
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - datavol_mpitempdb:/var/lib/postgresql/data
 networks:
   oculus_default:
     external: true

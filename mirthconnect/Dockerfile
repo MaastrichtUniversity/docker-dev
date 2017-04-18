@@ -29,7 +29,7 @@ RUN \
 
 WORKDIR /opt/mirth-connect
 
-EXPOSE 80 8443 6661
+EXPOSE 80 8443 6661 6671
 
 ADD ./mirth.properties /opt/mirth-connect/conf/mirth.properties
 ADD ./mirth-cli-config.properties /opt/mirth-connect/conf/mirth-cli-config.properties
