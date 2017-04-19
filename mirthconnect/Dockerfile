@@ -8,7 +8,8 @@ RUN apt-get update \
     vim \
     postgresql-client \
     netcat \
-    nano
+    nano \
+    cron
     
 # Mirth Connect is run with user 'mirth', uid = 1000
 # If you bind mount a volume from the host or a data container,
@@ -28,12 +29,15 @@ RUN \
 
 WORKDIR /opt/mirth-connect
 
-EXPOSE 80 8443 6661
+EXPOSE 80 8443 6661 6671
 
 ADD ./mirth.properties /opt/mirth-connect/conf/mirth.properties
 ADD ./mirth-cli-config.properties /opt/mirth-connect/conf/mirth-cli-config.properties
 ADD ./configuration.properties /opt/mirth-connect/appdata/configuration.properties
-ADD ./mirth-config-script.txt /opt/mirth-config-script.txt
+ADD ./mirth-script_config.txt /opt/mirth-script_config.txt
+ADD ./crontab.txt /opt/crontab.txt
+ADD ./export-all-channels.sh /opt/export-all-channels.sh
+ADD ./mirth-script_export-channels.txt /opt/mirth-script_export-channels.txt
 ADD ./docker-entrypoint.sh /docker-entrypoint.sh
 
 ###############################################################################
