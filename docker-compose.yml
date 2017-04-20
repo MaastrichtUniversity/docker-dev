@@ -156,6 +156,3 @@ networks:
     external: true
   common_default:
     external: true
-
-volumes:
-  datavol_mpitempdb:
