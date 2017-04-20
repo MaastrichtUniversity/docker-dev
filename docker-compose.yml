@@ -128,6 +128,7 @@ services:
     ports:
       - "8443:8443"
       - "6661:6661"
+      - "6671:6671"
     environment:
       PGPASSWORD: foobar
       RIT_ENV: ${RIT_ENV}
@@ -140,6 +141,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/channels:/opt/channels
+      - ./channels-backup:/opt/channels-backup
   crossref-lookup:
     build: externals/crossref-lookup
     volumes:
@@ -154,3 +156,6 @@ networks:
     external: true
   common_default:
     external: true
+
+volumes:
+  datavol_mpitempdb:
