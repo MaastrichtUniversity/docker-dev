@@ -19,14 +19,17 @@ fi
 if [[ $1 == "create-project-collections" ]]; then
     ## Create dummy project collections
     for i in {1..4}; do
-        docker exec corpus_pacman_1 drush create-project-collection p.vanschayck@${domain} P000000005
+        echo "In P000000001"
+        docker exec corpus_pacman_1 drush create-project-collection p.vanschayck@${domain} P000000001
     done
 
     for i in {1..4}; do
-        docker exec corpus_pacman_1 drush create-project-collection m.coonen@${domain} P000000001
-        docker exec corpus_pacman_1 drush create-project-collection m.coonen@${domain} P000000002
-        docker exec corpus_pacman_1 drush create-project-collection d.theunissen@${domain} P000000001
-        docker exec corpus_pacman_1 drush create-project-collection d.theunissen@${domain} P000000002
+        echo "In P000000003"
+        docker exec corpus_pacman_1 drush create-project-collection m.coonen@${domain} P000000003
+        docker exec corpus_pacman_1 drush create-project-collection d.theunissen@${domain} P000000003
+        echo "In P000000004"
+        docker exec corpus_pacman_1 drush create-project-collection m.coonen@${domain} P000000004
+        docker exec corpus_pacman_1 drush create-project-collection d.theunissen@${domain} P000000004
     done
 
     exit 0
@@ -40,12 +43,14 @@ externals/irods-helper-cmd git@github.com:MaastrichtUniversity/irods-helper-cmd.
 externals/irods-microservices git@github.com:MaastrichtUniversity/irods-microservices.git
 externals/irods-ruleset git@github.com:MaastrichtUniversity/irods-ruleset.git
 externals/islandora_ontology_autocomplete git@github.com:MaastrichtUniversity/islandora_ontology_autocomplete.git
+externals/islandora_crossref_lookup git@github.com:MaastrichtUniversity/islandora_crossref_lookup.git
 externals/rit_faker git@github.com:MaastrichtUniversity/rit_faker.git
 externals/rit_forms git@github.com:MaastrichtUniversity/rit_forms.git
 externals/rit-pacman git@github.com:MaastrichtUniversity/rit-pacman.git
 externals/irods-frontend git@github.com:MaastrichtUniversity/irods-frontend.git
 externals/rit-metalnx-web git@github.com:MaastrichtUniversity/rit-metalnx-web.git
-externals/rit-davrods git@github.com:MaastrichtUniversity/rit-davrods.git"
+externals/rit-davrods git@github.com:MaastrichtUniversity/rit-davrods.git
+externals/crossref-lookup git@github.com:MaastrichtUniversity/crossref-lookup.git "
 
 if [[ $1 == "externals" ]]; then
     mkdir -p externals

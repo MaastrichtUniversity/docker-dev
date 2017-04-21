@@ -7,8 +7,10 @@ RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     vim \
     postgresql-client \
-    netcat
-
+    netcat \
+    nano \
+    cron
+    
 # Mirth Connect is run with user 'mirth', uid = 1000
 # If you bind mount a volume from the host or a data container,
 # ensure you use the same uid
@@ -27,12 +29,15 @@ RUN \
 
 WORKDIR /opt/mirth-connect
 
-EXPOSE 80 8443 6661
+EXPOSE 80 8443 6661 6671
 
 ADD ./mirth.properties /opt/mirth-connect/conf/mirth.properties
 ADD ./mirth-cli-config.properties /opt/mirth-connect/conf/mirth-cli-config.properties
 ADD ./configuration.properties /opt/mirth-connect/appdata/configuration.properties
-ADD ./mirth-config-script.txt /opt/mirth-config-script.txt
+ADD ./mirth-script_config.txt /opt/mirth-script_config.txt
+ADD ./crontab.txt /opt/crontab.txt
+ADD ./export-all-channels.sh /opt/export-all-channels.sh
+ADD ./mirth-script_export-channels.txt /opt/mirth-script_export-channels.txt
 ADD ./docker-entrypoint.sh /docker-entrypoint.sh
 
 ###############################################################################
@@ -46,7 +51,13 @@ ADD filebeat.yml /etc/filebeat/filebeat.yml
 
 ###############################################################################
 
-
-
+#######FOR EPIC PID SERVICE
+# The keyStore will be volume mounted and needs to be populated with the EPIC private key from secrets management
+# Add the TrustStore (contains public certificates for EPIC)
+ADD ./epic_trustStore /opt/mirth-connect/epic
+# Override the default Java KeyStore and TrustStore
+ADD ./mcserver.vmoptions /opt/mirth-connect/mcserver.vmoptions
+ADD ./mcservice.vmoptions /opt/mirth-connect/mcservice.vmoptions
+###########################
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]

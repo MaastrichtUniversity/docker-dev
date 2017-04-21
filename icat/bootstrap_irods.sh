@@ -41,7 +41,7 @@ for user in $users; do
     iadmin moduser "${user}@${domain}" password foobar
 done
 
-serviceUsers="service-dropzones service-mdl service-dwh"
+serviceUsers="service-dropzones service-mdl service-dwh service-pid"
 
 for user in $serviceUsers; do
     iadmin mkuser "${user}" rodsuser
@@ -132,6 +132,8 @@ done
 # service-dwh
 ichmod -r read service-dwh /nlmumc/projects
 
+# service-pid
+ichmod -r write service-pid /nlmumc/projects
 
 ##########
 ## Special

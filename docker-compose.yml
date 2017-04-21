@@ -7,6 +7,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/handsontable:/var/www/html/sites/all/modules/handsontable
       - ./externals/islandora_ontology_autocomplete:/var/www/html/sites/all/modules/islandora_ontology_autocomplete
+      - ./externals/islandora_crossref_lookup:/var/www/html/sites/all/modules/islandora_crossref_lookup
       - ./externals/rit-pacman:/var/www/html/sites/all/modules/pacman
       - ./externals/rit_forms:/var/www/html/sites/all/modules/rit_forms
       - ./externals/rit_faker:/var/www/html/sites/all/modules/rit_faker
@@ -17,6 +18,7 @@ services:
       IRODS_HOST: irods
       IRODS_ENV_RODS_PASSWORD: irods
       DWH_FRONTEND_ENV_VIRTUAL_HOST: dwh.${RIT_ENV}.rit.unimaas.nl
+      CROSSREF_LOOKUP_HOST: crossref-lookup
       VIRTUAL_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
       OLS_URL: http://fhml-srv018.unimaas.nl:8081/ols-boot
       LOGSTASH_TAGS: PACMAN
@@ -114,6 +116,7 @@ services:
     hostname: irods-frontend
     environment:
       VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
+      PACMAN_HOST: http://pacman.${RIT_ENV}.rit.unimaas.nl
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -150,6 +153,7 @@ services:
     ports:
       - "8443:8443"
       - "6661:6661"
+      - "6671:6671"
     environment:
       PGPASSWORD: foobar
       RIT_ENV: ${RIT_ENV}
@@ -162,6 +166,16 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/channels:/opt/channels
+      - ./channels-backup:/opt/channels-backup
+  crossref-lookup:
+    build: externals/crossref-lookup
+    volumes:
+      - ./externals/crossref-lookup/app:/usr/src/app
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      VIRTUAL_HOST: crossref-lookup.${RIT_ENV}.rit.unimaas.nl
+    networks:
+      - default
 networks:
   oculus_default:
     external: true
