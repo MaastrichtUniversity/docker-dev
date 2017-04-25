@@ -55,6 +55,9 @@ if [[ ! -e /var/run/irods_installed ]]; then
 #    su - irods -c "/opt/irods/bootstrap_irods.sh"
 
     touch /var/run/irods_installed
+
+    # Force restart of irods service (see iRODS 4.1.10 bug described in RITDEV-231)
+    service irods restart
 else
     service irods start
 fi

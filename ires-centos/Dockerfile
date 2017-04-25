@@ -33,7 +33,7 @@ RUN yum install -y \
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
-ENV IRODS_VERSION 4.1.8
+ENV IRODS_VERSION 4.1.10
 
 # install iRODS
 RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/centos7/irods-resource-${IRODS_VERSION}-centos7-x86_64.rpm -O /tmp/irods-ires.rpm \
@@ -93,4 +93,5 @@ ENV DOCKERIZE_VERSION v0.2.0
 RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz -o dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
-CMD dockerize -wait tcp://ires:1248 -timeout 150s /opt/irods/bootstrap.sh
+# With iRODS 4.1.10, iRODS needs a force restart. Waiting for port 1248 is therefore not reliable. Wait for Metalnx RMD instead.
+CMD dockerize -wait tcp://ires:8000 -timeout 200s /opt/irods/bootstrap.sh
