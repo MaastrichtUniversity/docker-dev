@@ -89,6 +89,8 @@ services:
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
+      # [RPMBUILD] Uncomment the following line to use this CentOS as an RPM-build server (make sure the dir is chowned by root:root)
+      - ./vol_rpmbuild:/root/rpmbuild
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
     privileged: true
     networks:

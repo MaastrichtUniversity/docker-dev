@@ -3,3 +3,10 @@
 channels-backup
 externals/*
 mirthconnect/305_mirth.pfx
+
+# for RPM-build
+vol_rpmbuild/BUILD
+vol_rpmbuild/BUILDROOT
+vol_rpmbuild/RPMS
+vol_rpmbuild/SOURCES
+vol_rpmbuild/SRPMS

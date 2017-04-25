@@ -20,6 +20,7 @@ RUN yum install -y \
     python-ldap \
     lsof \
     make \
+    nano \
     cifs-utils  \
     gcc-c++ \
     openssl \
@@ -61,6 +62,7 @@ RUN chmod a+x /opt/irods/*
 
 EXPOSE 1248 1247 8000
 
+
 ###############################################################################
 #                                INSTALLATION FILEBEAT
 ###############################################################################
@@ -72,6 +74,20 @@ ADD filebeat.yml /etc/filebeat/filebeat.yml
 
 ###############################################################################
 
+
+##############################################################################################
+# [RPMBUILD] Uncomment the part below to use this CentOS as an RPM build- and package-server #
+##############################################################################################
+
+RUN yum install -y \
+    # For building RPMs
+    autoconf automake \
+    rpm-build rpmdevtools rpmlint \
+    # Dependencies for building cifs-utils
+    libtalloc-devel \
+    libwbclient-devel
+
+###################################################################################
 
 ENV DOCKERIZE_VERSION v0.2.0
 RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz -o dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
