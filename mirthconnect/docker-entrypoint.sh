@@ -21,8 +21,11 @@ EOSQL
 # Templating of the configuration.properties file
  sed -i "s/RIT_ENV/$RIT_ENV/" /opt/mirth-connect/appdata/configuration.properties
 
-# Append the epicserver CA file to the default Java CA TrustStore
-keytool -import -noprompt -storepass changeit -alias epicserver -file /opt/mirth-connect/epicserver_trustStore_ca -keystore $JAVA_HOME/jre/lib/security/cacerts
+# Conditionally append the epicserver CA file to the default Java CA TrustStore
+if ! keytool -list -storepass changeit -alias epicserver -keystore $JAVA_HOME/jre/lib/security/cacerts; then
+    echo "Debug: Certificate not present in trustStore, will be added now"
+    keytool -import -noprompt -storepass changeit -alias epicserver -file /opt/mirth-connect/epicserver_trustStore_ca -keystore $JAVA_HOME/jre/lib/security/cacerts
+fi
 
 # Start MirthConnect service
 ./mcservice start
