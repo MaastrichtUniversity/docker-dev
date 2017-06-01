@@ -4,5 +4,3 @@
 -Djavax.net.ssl.keyStoreType=pkcs12
 -Djavax.net.ssl.keyStore=/opt/channels/keys/305_mirth.pfx
 -Djavax.net.ssl.keyStorePassword=mirth
--Djavax.net.ssl.trustStore=/opt/mirth-connect/epic
--Djavax.net.ssl.trustStorePassword=mirthconnect
