@@ -74,8 +74,8 @@ ichmod read public /nlmumc/projects
 # Give all relevant groups write-access to the ingest-zones parent-collection
 # This is needed because users need sufficient permissions to delete dropzone-collections by the msiRmColl operation in 'ingestNestedDelay2.r'
 # See RITDEV-219
-ichmod modify nanoscopy-l /nlmumc/ingest/zones
-ichmod modify rit-l /nlmumc/ingest/zones
+ichmod write nanoscopy-l /nlmumc/ingest/zones
+ichmod write rit-l /nlmumc/ingest/zones
 
 ###########
 ## Projects and project permissions
