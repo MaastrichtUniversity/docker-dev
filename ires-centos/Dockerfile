@@ -29,7 +29,8 @@ RUN yum install -y \
     curl
 
 
-#RUN locale-gen en_US.UTF-8
+# Setting locale (for gcc compiler), see https://github.com/CentOS/sig-cloud-instance-images/issues/71#issuecomment-266959225
+RUN localedef -i en_US -f UTF-8 en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
