@@ -82,7 +82,7 @@ services:
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
       MIRTH_MDL_EXPORT_CHANNEL: fhml-srv024.unimaas.nl:6666
-      LOGSTASH_TAGS: IRES-CENTOS
+      LOGSTASH_TAGS: IRES_CENTOS
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
