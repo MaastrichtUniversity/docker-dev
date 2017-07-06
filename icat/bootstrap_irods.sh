@@ -84,7 +84,7 @@ ichmod write rit-l /nlmumc/ingest/zones
 for i in {01..2}; do
     project=$(irule -F /rules/projects/createProject.r)
     # AVU's for collections
-    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST}Resource
+    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST_DEB}Resource
     imeta set -C /nlmumc/projects/${project} resource replRescUM01
     imeta set -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
 
@@ -97,7 +97,7 @@ done
 for i in {01..3}; do
     project=$(irule -F /rules/projects/createProject.r)
     # AVU's for collections
-    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST}Resource
+    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST_DEB}Resource
     imeta set -C /nlmumc/projects/${project} resource replRescUM01
     imeta set -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
 
@@ -121,7 +121,7 @@ done
 for i in {01..4}; do
     project=$(irule -F /rules/projects/createProject.r)
     # AVU's for collections
-    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST}Resource
+    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST_RPM}Resource
     imeta set -C /nlmumc/projects/${project} resource replRescAZM01
     imeta set -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
 
