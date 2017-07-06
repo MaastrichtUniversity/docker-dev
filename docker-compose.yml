@@ -58,7 +58,6 @@ services:
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
       MIRTH_MDL_EXPORT_CHANNEL: fhml-srv024.unimaas.nl:6666
-      LOGSTASH_TAGS: IRES
       LOGSPOUT: ignore
     networks:
       - default
@@ -82,7 +81,7 @@ services:
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
       MIRTH_MDL_EXPORT_CHANNEL: fhml-srv024.unimaas.nl:6666
-      LOGSTASH_TAGS: IRES_CENTOS
+      LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
