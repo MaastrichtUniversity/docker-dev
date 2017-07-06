@@ -62,9 +62,9 @@ else
     service irods start
 fi
 
-# TODO: Find solution for starting services in CentOS container (D-BUS errors): https://github.com/docker/docker/issues/7459
+# Copy rmd ctl-script outside of /etc/init.d folder to prevent D-Bus kicking in
 # Force start of Metalnx RMD
-# service rmd restart
+cp /etc/init.d/rmd /opt/rmd/rmd && /opt/rmd/rmd start
 
 #logstash
 #/etc/init.d/filebeat start

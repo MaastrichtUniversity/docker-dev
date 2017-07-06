@@ -2,12 +2,12 @@ FROM centos:7
 
 RUN yum install -y \
     # extra repository to download extra packages
-    epel-release \
-    # backwards compatibility for service command
-    initscripts \
-    sudo
+    epel-release
 
 RUN yum install -y \
+    # backwards compatibility for 'service'-command that is used by the iRODS-install script
+    initscripts \
+    sudo \
     wget \
     unixODBC \
 #    super \
@@ -44,15 +44,16 @@ RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/centos7/irods-d
     && rpm -Uvh /tmp/irods-dev.rpm
 
 # install Metalnx RMD
-#RUN wget https://bintray.com/metalnx/rpm/download_file?file_path=emc-metalnx-rmd-1.0-22.noarch.rpm -O /tmp/emc-metalnx-rmd.rpm \
-#    && rpm -Uvh /tmp/emc-metalnx-rmd.rpm
+# Installation of rpm tries to start the rmd service, which causes D-Bus errors to appear. These can be safely ignored
+# since we will start the rmd-service manually in bootstrap.sh
+RUN wget https://bintray.com/metalnx/rpm/download_file?file_path=emc-metalnx-rmd-1.0-22.noarch.rpm -O /tmp/emc-metalnx-rmd.rpm \
+    && rpm -Uvh /tmp/emc-metalnx-rmd.rpm
 
 RUN mkdir /opt/irods
 #
 ## Bug in cifs-utils package causes setcifsacl not to work without setting this symlink
 ## https://bugs.launchpad.net/ubuntu/+source/cifs-utils/+bug/1372120
 #RUN mkdir /etc/cifs-utils && ln -s /usr/lib/x86_64-linux-gnu/cifs-utils/idmapwb.so /etc/cifs-utils/idmap-plugin
-#
 ADD ./setup_responses /etc/irods/setup_responses
 ADD ./config.sh /opt/irods/config.sh
 ADD ./bootstrap.sh /opt/irods/bootstrap.sh
