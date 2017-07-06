@@ -3,10 +3,3 @@
 channels-backup
 externals/*
 mirthconnect/305_mirth.pfx
-
-# for RPM-build
-ires-centos/vol_rpmbuild/BUILD
-ires-centos/vol_rpmbuild/BUILDROOT
-ires-centos/vol_rpmbuild/RPMS
-ires-centos/vol_rpmbuild/SOURCES
-ires-centos/vol_rpmbuild/SRPMS
