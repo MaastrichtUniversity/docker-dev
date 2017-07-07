@@ -53,7 +53,6 @@ services:
     environment:
       RODS_PASSWORD: irods
       PGPASSWORD: foobar
-      LDAP_USER: M4i-nano-wiki
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
@@ -76,7 +75,6 @@ services:
     environment:
       RODS_PASSWORD: irods
       PGPASSWORD: foobar
-      LDAP_USER: M4i-nano-wiki
       VIRTUAL_HOST: ires-centos.${RIT_ENV}.rit.unimaas.nl
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670

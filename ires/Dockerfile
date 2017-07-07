@@ -54,6 +54,10 @@ ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
 RUN chmod a+x /opt/irods/*
 
+# Overwrite the default setcifsacl with our own recompiled version
+ADD ./setcifsacl /usr/bin/setcifsacl
+RUN chmod a+x /usr/bin/setcifsacl
+
 EXPOSE 1248 1247 8000
 
 ###############################################################################
