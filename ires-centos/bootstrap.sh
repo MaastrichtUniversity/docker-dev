@@ -64,9 +64,9 @@ fi
 
 # Copy the service-control scripts outside of /etc/init.d folder to prevent D-Bus kicking in & force the service to start
 # Metalnx RMD
-cp /etc/init.d/rmd /opt/rmd/rmd && /opt/rmd/rmd start
+cp /etc/init.d/rmd /opt/rmd/rmd && /opt/rmd/rmd restart
 # Logstash
-cp /etc/init.d/filebeat /opt/filebeat && /opt/filebeat start
+cp /etc/init.d/filebeat /opt/filebeat && /opt/filebeat restart
 
 # this script must end with a persistent foreground process
 tail -F /var/lib/irods/iRODS/server/log/rodsLog.*
