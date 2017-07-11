@@ -36,7 +36,6 @@ if [[ $1 == "create-project-collections" ]]; then
 fi
 
 externals="externals/channels ssh://git@fhml-srv027.unimaas.nl:7999/mirthc/channels.git
-externals/cloudbrowser_module ssh://git@fhml-srv027.unimaas.nl:7999/ritdev/cloudbrowser_module.git
 externals/fhml_um_theme_demo ssh://git@fhml-srv027.unimaas.nl:7999/ritdev/fhml_um_theme_demo.git
 externals/handsontable git@github.com:MaastrichtUniversity/handsontable.git
 externals/irods-helper-cmd git@github.com:MaastrichtUniversity/irods-helper-cmd.git

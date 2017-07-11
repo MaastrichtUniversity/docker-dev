@@ -24,7 +24,6 @@ cd /var/www/html && drush en \
     pacman \
     handsontable \
     rit_forms \
-    cloudbrowser \
     fhml_um \
     islandora_xml_form_builder_states \
     islandora_ontology_autocomplete \
