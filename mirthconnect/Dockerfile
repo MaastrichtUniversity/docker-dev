@@ -1,7 +1,7 @@
 # Adapted from https://github.com/brandonstevens/mirth-connect-docker
 FROM java
 
-ENV MIRTH_CONNECT_VERSION 3.4.2.8129.b167
+ENV MIRTH_CONNECT_VERSION 3.5.0.8232.b2153
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
