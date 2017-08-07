@@ -11,7 +11,6 @@ services:
       - ./externals/rit-pacman:/var/www/html/sites/all/modules/pacman
       - ./externals/rit_forms:/var/www/html/sites/all/modules/rit_forms
       - ./externals/rit_faker:/var/www/html/sites/all/modules/rit_faker
-      - ./externals/cloudbrowser_module:/var/www/html/sites/all/modules/cloudbrowser
       - ./externals/fhml_um_theme_demo:/var/www/html/sites/all/themes/fhml_um_theme_demo
     environment:
       IRODS_FRONTEND_ENV_VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
