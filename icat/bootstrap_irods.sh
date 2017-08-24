@@ -143,3 +143,7 @@ ichmod -r write service-pid /nlmumc/projects
 # Create an initial collection folder for MDL data
 imkdir /nlmumc/projects/P000000010/C000000001
 ichmod -r write "service-mdl" /nlmumc/projects/P000000010
+
+# Create an initial collection folder for HVC data
+imkdir /nlmumc/projects/P000000011/C000000001
+ichmod -r write "service-mdl" /nlmumc/projects/P000000011
