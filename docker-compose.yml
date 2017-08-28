@@ -19,7 +19,7 @@ services:
       DWH_FRONTEND_ENV_VIRTUAL_HOST: dwh.${RIT_ENV}.rit.unimaas.nl
       CROSSREF_LOOKUP_HOST: crossref-lookup
       VIRTUAL_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
-      OLS_URL: http://fhml-srv018.unimaas.nl:8081/ols-boot
+      OLS_URL: http://ols.tst.rit.unimaas.nl
       LOGSTASH_TAGS: PACMAN
       JWT_SECRET: foobar
   irods:
