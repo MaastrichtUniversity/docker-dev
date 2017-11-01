@@ -116,6 +116,9 @@ for i in {01..3}; do
 
     # Read access for rit
     ichmod -r read rit-l /nlmumc/projects/${project}
+
+    # Manage access for Daniel
+    ichmod -r own "d.theunissen@${domain}" /nlmumc/projects/${project}
 done
 
 for i in {01..4}; do
