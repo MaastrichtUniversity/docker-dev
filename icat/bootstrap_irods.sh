@@ -18,7 +18,6 @@ iadmin mkresc UM-hnas-4k-repl unixfilesystem ${IRODS_RESOURCE_HOST_DEB}:/mnt/UM-
 iadmin addchildtoresc replRescUM01 UM-hnas-4k
 iadmin addchildtoresc replRescUM01 UM-hnas-4k-repl
 
-# Ideally, the AZM resource is not needed for production. Included here to test concept of the policy choosing proper resource for a project
 iadmin mkresc replRescAZM01 replication
 iadmin mkresc AZM-storage unixfilesystem ${IRODS_RESOURCE_HOST_RPM}:/mnt/AZM-storage
 iadmin mkresc AZM-storage-repl unixfilesystem ${IRODS_RESOURCE_HOST_RPM}:/mnt/AZM-storage-repl
