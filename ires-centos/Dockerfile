@@ -26,7 +26,8 @@ RUN yum install -y \
     openssl \
     openssl-devel \
     libcurl-devel \
-    curl
+    curl \
+    rpm-build
 
 
 # Setting locale (for gcc compiler), see https://github.com/CentOS/sig-cloud-instance-images/issues/71#issuecomment-266959225
