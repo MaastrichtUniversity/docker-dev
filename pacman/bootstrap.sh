@@ -46,6 +46,11 @@ cd /var/www/html && drush vset site_frontpage pacman/info
 # Set timezone to Europe/Amsterdam
 drush vset date_default_timezone 'Europe/Amsterdam' -y
 
+# Set drupal to know of the reverse proxy used in docker
+#TODO proxy ip dynamic
+drush vset reverse_proxy 'TRUE'
+php -r "print json_encode(array('172.20.0.2'));"  | drush vset --format=json reverse_proxy_addresses -
+
 # Enable and make theme default
 cd /var/www/html && drush vset theme_default fhml_um
 
