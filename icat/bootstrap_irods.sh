@@ -60,8 +60,10 @@ done
 rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy"
 
 iadmin mkgroup rit-l
+iadmin mkgroup DH-project-admins
 for user in $rit; do
     iadmin atg rit-l "${user}@${domain}"
+    iadmin atg DH-project-admins "${user}@${domain}"
 done
 
 ##############
@@ -76,6 +78,9 @@ ichmod read public /nlmumc/projects
 # See RITDEV-219
 ichmod write nanoscopy-l /nlmumc/ingest/zones
 ichmod write rit-l /nlmumc/ingest/zones
+
+# Give the DH-project-admins write access on the projects folder for project creation trough the webform
+ichmod write DH-project-admins /nlmumc/projects
 
 ###########
 ## Projects and project permissions
