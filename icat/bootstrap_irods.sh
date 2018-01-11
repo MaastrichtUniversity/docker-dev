@@ -81,11 +81,8 @@ ichmod write rit-l /nlmumc/ingest/zones
 ## Projects and project permissions
 
 for i in {01..2}; do
-    project=$(irule -F /rules/projects/createProject.r)
-    # AVU's for collections
-    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST_DEB}Resource
-    imeta set -C /nlmumc/projects/${project} resource replRescUM01
-    imeta set -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
+    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
+    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'")
 
     # Contributor access for nanoscopy
     ichmod -r write nanoscopy-l /nlmumc/projects/${project}
@@ -94,11 +91,8 @@ for i in {01..2}; do
 done
 
 for i in {01..3}; do
-    project=$(irule -F /rules/projects/createProject.r)
-    # AVU's for collections
-    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST_DEB}Resource
-    imeta set -C /nlmumc/projects/${project} resource replRescUM01
-    imeta set -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
+    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
+    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'")
 
     # Contributor access for RIT
     ichmod -r write rit-l /nlmumc/projects/${project}
@@ -107,11 +101,8 @@ for i in {01..3}; do
 done
 
 for i in {01..3}; do
-    project=$(irule -F /rules/projects/createProject.r)
-    # AVU's for collections
-    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST_DEB}Resource
-    imeta set -C /nlmumc/projects/${project} resource replRescUM01
-    imeta set -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
+    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
+    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'")
 
     # Read access for rit
     ichmod -r read rit-l /nlmumc/projects/${project}
@@ -121,23 +112,14 @@ for i in {01..3}; do
 done
 
 for i in {01..4}; do
-    project=$(irule -F /rules/projects/createProject.r)
-    # AVU's for collections
-    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST_RPM}Resource
-    imeta set -C /nlmumc/projects/${project} resource replRescAZM01
-    imeta set -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
+    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
+    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'")
 
     # Contributor access for RIT
     ichmod -r write rit-l /nlmumc/projects/${project}
     # Manage access for suppers
     ichmod -r own "p.suppers@${domain}" /nlmumc/projects/${project}
 done
-
-# service-dwh
-ichmod -r read service-dwh /nlmumc/projects
-
-# service-pid
-ichmod -r write service-pid /nlmumc/projects
 
 ##########
 ## Special
