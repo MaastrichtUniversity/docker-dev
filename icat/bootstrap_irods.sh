@@ -11,6 +11,9 @@ set -e
 iadmin mkresc rootResc passthru
 iadmin addchildtoresc rootResc demoResc
 
+
+
+
 # Create resources and make them members of the (composable) replication resource.
 iadmin mkresc replRescUM01 replication
 iadmin mkresc UM-hnas-4k unixfilesystem ${IRODS_RESOURCE_HOST_DEB}:/mnt/UM-hnas-4k
@@ -23,6 +26,13 @@ iadmin mkresc AZM-storage unixfilesystem ${IRODS_RESOURCE_HOST_RPM}:/mnt/AZM-sto
 iadmin mkresc AZM-storage-repl unixfilesystem ${IRODS_RESOURCE_HOST_RPM}:/mnt/AZM-storage-repl
 iadmin addchildtoresc replRescAZM01 AZM-storage
 iadmin addchildtoresc replRescAZM01 AZM-storage-repl
+
+#Add comment to resource for better identification in dropdown
+iadmin modresc rootResc comment DO-NOT-USE
+iadmin modresc demoResc comment DO-NOT-USE
+iadmin modresc replRescUM01 comment Replicated-resource-for-UM
+iadmin modresc replRescAZM01 comment Replicated-resource-for-AZM
+
 
 ##############
 ## Collections

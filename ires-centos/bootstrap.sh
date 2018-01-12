@@ -52,7 +52,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     chown irods:irods /mnt/AZM-storage-repl
 
 
-#    su - irods -c "/opt/irods/bootstrap_irods.sh"
+    su - irods -c "/opt/irods/bootstrap_irods.sh"
 
     touch /var/run/irods_installed
 
