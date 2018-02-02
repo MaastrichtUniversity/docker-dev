@@ -24,7 +24,7 @@ EOSQL
 # Conditionally append the epicserver CA file to the default Java CA TrustStore
 if ! keytool -list -storepass changeit -alias epicserver -keystore $JAVA_HOME/jre/lib/security/cacerts; then
     echo "Debug: Certificate not present in trustStore, will be added now"
-    keytool -import -noprompt -storepass changeit -alias epicserver -file /opt/mirth-connect/epic3storagesurfsaranl.crt -keystore $JAVA_HOME/jre/lib/security/cacerts
+    keytool -import -noprompt -storepass changeit -alias epicserver -file /opt/mirth-connect/epic5storagesurfsaranl.crt -keystore $JAVA_HOME/jre/lib/security/cacerts
 fi
 
 # Start MirthConnect service
