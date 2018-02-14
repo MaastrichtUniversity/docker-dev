@@ -78,7 +78,7 @@ RUN curl -fSL https://getcomposer.org/download/1.0.0-beta1/composer.phar -o /usr
 
 RUN npm install -g bower
 
-RUN curl -fSL http://files.drush.org/drush.phar -o /usr/bin/drush \
+RUN curl -fSL https://github.com/drush-ops/drush/releases/download/8.1.16/drush.phar -o /usr/bin/drush \
 	&& chmod +x /usr/bin/drush
 
 # Get jquery update for Drupal
