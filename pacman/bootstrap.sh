@@ -38,6 +38,7 @@ domain=maastrichtuniversity.nl
 cd /var/www/html && drush user-create p.vanschayck --mail="p.vanschayck@${domain}" --password="foobar"
 cd /var/www/html && drush user-create m.coonen --mail="m.coonen@${domain}" --password="foobar"
 cd /var/www/html && drush user-create d.theunissen --mail="d.theunissen@${domain}" --password="foobar"
+cd /var/www/html && drush user-create r.niesten --mail="r.niesten@${domain}" --password="foobar"
 cd /var/www/html && drush user-create p.suppers --mail="p.suppers@${domain}" --password="foobar"
 
 # Set homepage to pacman/info
