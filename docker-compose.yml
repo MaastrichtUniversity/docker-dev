@@ -9,6 +9,7 @@ services:
       - ./externals/islandora_ontology_autocomplete:/var/www/html/sites/all/modules/islandora_ontology_autocomplete
       - ./externals/islandora_crossref_lookup:/var/www/html/sites/all/modules/islandora_crossref_lookup
       - ./externals/rit-pacman:/var/www/html/sites/all/modules/pacman
+      - ./externals/rit_landing_page:/var/www/html/sites/all/modules/rit_landing_page
       - ./externals/rit_forms:/var/www/html/sites/all/modules/rit_forms
       - ./externals/rit_faker:/var/www/html/sites/all/modules/rit_faker
       - ./externals/fhml_um_theme_demo:/var/www/html/sites/all/themes/fhml_um_theme_demo

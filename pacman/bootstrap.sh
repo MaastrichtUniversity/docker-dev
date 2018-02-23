@@ -29,7 +29,8 @@ cd /var/www/html && drush en \
     islandora_ontology_autocomplete \
     islandora_crossref_lookup \
     jquery_update \
-    rit_faker
+    rit_faker \
+    rit_landing_page
 
 cd /var/www/html && drush add-rit-forms
 
