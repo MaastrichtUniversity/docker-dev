@@ -11,6 +11,7 @@ if [[ $1 == "create-ingest-zones" ]]; then
         docker exec corpus_pacman_1 drush create-ingest-zone m.coonen@${domain}
         docker exec corpus_pacman_1 drush create-ingest-zone d.theunissen@${domain}
         docker exec corpus_pacman_1 drush create-ingest-zone p.suppers@${domain}
+        docker exec corpus_pacman_1 drush create-ingest-zone r.niesten@${domain}
     done
 
     exit 0
@@ -27,9 +28,11 @@ if [[ $1 == "create-project-collections" ]]; then
         echo "In P000000003"
         docker exec corpus_pacman_1 drush create-project-collection m.coonen@${domain} P000000003
         docker exec corpus_pacman_1 drush create-project-collection d.theunissen@${domain} P000000003
+        docker exec corpus_pacman_1 drush create-project-collection r.niesten@${domain} P000000003
         echo "In P000000004"
         docker exec corpus_pacman_1 drush create-project-collection m.coonen@${domain} P000000004
         docker exec corpus_pacman_1 drush create-project-collection d.theunissen@${domain} P000000004
+        docker exec corpus_pacman_1 drush create-project-collection r.niesten@${domain} P000000004
     done
 
     exit 0
@@ -97,6 +100,11 @@ if [[ -z $RIT_ENV ]]; then
     if [[ $HOSTNAME == "fhml-srv020" ]]; then
         RIT_ENV="dev2"
     fi
+
+    if [[ $HOSTNAME == "fhml-srv065" ]]; then
+        RIT_ENV="dev3"
+    fi
+
 fi
 export RIT_ENV
 

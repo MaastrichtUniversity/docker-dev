@@ -1,4 +1,5 @@
 # Stay at PHP 5.6 for now
+# TODO: Remember to update to latest xdebug version somewhat below if we ever upgrade to a recent PHP version.
 FROM php:5.6-apache
 
 RUN a2enmod rewrite
@@ -34,7 +35,9 @@ RUN apt-get update && apt-get install -y \
 
 RUN docker-php-ext-install -j$(nproc) xsl
 
-RUN pecl install xdebug \
+# Freeze xdebug version to 2.5.5 because 2.6.0 requires PHP 7 or higher 
+# See changelog at https://pecl.php.net/package-changelog.php?package=xdebug&release=2.6.0
+RUN pecl install xdebug-2.5.5 \
     && docker-php-ext-enable xdebug \
     && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
@@ -75,7 +78,7 @@ RUN curl -fSL https://getcomposer.org/download/1.0.0-beta1/composer.phar -o /usr
 
 RUN npm install -g bower
 
-RUN curl -fSL http://files.drush.org/drush.phar -o /usr/bin/drush \
+RUN curl -fSL https://github.com/drush-ops/drush/releases/download/8.1.16/drush.phar -o /usr/bin/drush \
 	&& chmod +x /usr/bin/drush
 
 # Get jquery update for Drupal

@@ -38,6 +38,7 @@ domain=maastrichtuniversity.nl
 cd /var/www/html && drush user-create p.vanschayck --mail="p.vanschayck@${domain}" --password="foobar"
 cd /var/www/html && drush user-create m.coonen --mail="m.coonen@${domain}" --password="foobar"
 cd /var/www/html && drush user-create d.theunissen --mail="d.theunissen@${domain}" --password="foobar"
+cd /var/www/html && drush user-create r.niesten --mail="r.niesten@${domain}" --password="foobar"
 cd /var/www/html && drush user-create p.suppers --mail="p.suppers@${domain}" --password="foobar"
 
 # Set homepage to pacman/info
@@ -45,6 +46,11 @@ cd /var/www/html && drush vset site_frontpage pacman/info
 
 # Set timezone to Europe/Amsterdam
 drush vset date_default_timezone 'Europe/Amsterdam' -y
+
+# Set drupal to know of the reverse proxy used in docker
+drush vset reverse_proxy 'TRUE'
+proxyip=$(getent hosts proxy | awk '{ print $1 }')
+php -r "print json_encode(array('$proxyip'));"  | drush vset --format=json reverse_proxy_addresses -
 
 # Enable and make theme default
 cd /var/www/html && drush vset theme_default fhml_um
