@@ -85,6 +85,11 @@ if [[ $1 == "externals" ]]; then
     exit 0
 fi
 
+if [[ $1 == "exec" ]]; then
+    echo "Connect to container instance : $2"
+    docker exec -it $2 env COLUMNS=$(tput cols) LINES=$(tput lines) /bin/bash
+    exit 0
+fi
 
 if [[ -z $RIT_ENV ]]; then
     RIT_ENV="local"
