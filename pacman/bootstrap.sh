@@ -50,7 +50,14 @@ drush vset date_default_timezone 'Europe/Amsterdam' -y
 # Set drupal to know of the reverse proxy used in docker
 drush vset reverse_proxy 'TRUE'
 proxyip=$(getent hosts proxy | awk '{ print $1 }')
-php -r "print json_encode(array('$proxyip'));"  | drush vset --format=json reverse_proxy_addresses -
+if [ -z "$proxyip" ]; then
+    # proxyip variable is empty
+    echo "ERROR: make sure that nginx proxy container is running"
+    exit 1
+else
+    # proxyip variable contains the internal Docker IP
+    php -r "print json_encode(array('$proxyip'));"  | drush vset --format=json reverse_proxy_addresses -
+fi
 
 # Enable and make theme default
 cd /var/www/html && drush vset theme_default fhml_um
