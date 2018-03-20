@@ -18,7 +18,7 @@ cp /helpers/* /var/lib/irods/iRODS/server/bin/cmd/.
 
 # Mount ingest zones and rawdata
 mkdir -p /mnt/ingest/zones
-mount -t cifs ${INGEST_MOUNT} /mnt/ingest/zones -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=998,gid=997,vers=2.0
+mount -t cifs ${INGEST_MOUNT} /mnt/ingest/zones -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=998,gid=997,vers=1.0
 
 # Check if this is a first run of this container
 if [[ ! -e /var/run/irods_installed ]]; then
@@ -53,7 +53,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     chown irods:irods /mnt/AZM-storage-repl
 
 
-#    su - irods -c "/opt/irods/bootstrap_irods.sh"
+    su - irods -c "/opt/irods/bootstrap_irods.sh"
 
     touch /var/run/irods_installed
 

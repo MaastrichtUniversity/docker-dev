@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Set the prefix for the project
+COMPOSE_PROJECT_NAME="corpus"
+export COMPOSE_PROJECT_NAME
 
 set -e
 
@@ -38,8 +41,8 @@ if [[ $1 == "create-project-collections" ]]; then
     exit 0
 fi
 
-externals="externals/channels ssh://git@fhml-srv027.unimaas.nl:7999/mirthc/channels.git
-externals/fhml_um_theme_demo ssh://git@fhml-srv027.unimaas.nl:7999/ritdev/fhml_um_theme_demo.git
+externals="externals/channels ssh://git@bitbucket.rit.unimaas.nl:7999/mirthc/channels.git
+externals/fhml_um_theme_demo ssh://git@bitbucket.rit.unimaas.nl:7999/ritdev/fhml_um_theme_demo.git
 externals/handsontable git@github.com:MaastrichtUniversity/handsontable.git
 externals/irods-helper-cmd git@github.com:MaastrichtUniversity/irods-helper-cmd.git
 externals/irods-microservices git@github.com:MaastrichtUniversity/irods-microservices.git
@@ -86,6 +89,11 @@ if [[ $1 == "externals" ]]; then
     exit 0
 fi
 
+if [[ $1 == "exec" ]]; then
+    echo "Connect to container instance : ${COMPOSE_PROJECT_NAME}_${2}_1"
+    docker exec -it ${COMPOSE_PROJECT_NAME}_${2}_1 env COLUMNS=$(tput cols) LINES=$(tput lines) /bin/bash
+    exit 0
+fi
 
 if [[ -z $RIT_ENV ]]; then
     RIT_ENV="local"
@@ -108,10 +116,6 @@ if [[ -z $RIT_ENV ]]; then
 
 fi
 export RIT_ENV
-
-# Set the prefix for the project
-COMPOSE_PROJECT_NAME="corpus"
-export COMPOSE_PROJECT_NAME
 
 # Assuming docker-compose is available in the PATH
 docker-compose "$@"

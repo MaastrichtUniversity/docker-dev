@@ -11,6 +11,9 @@ set -e
 iadmin mkresc rootResc passthru
 iadmin addchildtoresc rootResc demoResc
 
+
+
+
 # Create resources and make them members of the (composable) replication resource.
 iadmin mkresc replRescUM01 replication
 iadmin mkresc UM-hnas-4k unixfilesystem ${IRODS_RESOURCE_HOST_DEB}:/mnt/UM-hnas-4k
@@ -23,6 +26,13 @@ iadmin mkresc AZM-storage unixfilesystem ${IRODS_RESOURCE_HOST_RPM}:/mnt/AZM-sto
 iadmin mkresc AZM-storage-repl unixfilesystem ${IRODS_RESOURCE_HOST_RPM}:/mnt/AZM-storage-repl
 iadmin addchildtoresc replRescAZM01 AZM-storage
 iadmin addchildtoresc replRescAZM01 AZM-storage-repl
+
+#Add comment to resource for better identification in dropdown
+iadmin modresc rootResc comment DO-NOT-USE
+iadmin modresc demoResc comment DO-NOT-USE
+iadmin modresc replRescUM01 comment Replicated-resource-for-UM
+iadmin modresc replRescAZM01 comment Replicated-resource-for-AZM
+
 
 ##############
 ## Collections
@@ -40,7 +50,7 @@ for user in $users; do
     iadmin moduser "${user}@${domain}" password foobar
 done
 
-serviceUsers="service-dropzones service-mdl service-dwh service-pid"
+serviceUsers="service-dropzones service-mdl service-dwh service-pid service-disqover"
 
 for user in $serviceUsers; do
     iadmin mkuser "${user}" rodsuser
@@ -60,8 +70,10 @@ done
 rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy r.niesten"
 
 iadmin mkgroup rit-l
+iadmin mkgroup DH-project-admins
 for user in $rit; do
     iadmin atg rit-l "${user}@${domain}"
+    iadmin atg DH-project-admins "${user}@${domain}"
 done
 
 ##############
@@ -77,15 +89,15 @@ ichmod read public /nlmumc/projects
 ichmod write nanoscopy-l /nlmumc/ingest/zones
 ichmod write rit-l /nlmumc/ingest/zones
 
+# Give the DH-project-admins write access on the projects folder for project creation trough the webform
+ichmod write DH-project-admins /nlmumc/projects
+
 ###########
 ## Projects and project permissions
 
 for i in {01..2}; do
-    project=$(irule -F /rules/projects/createProject.r)
-    # AVU's for collections
-    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST_DEB}Resource
-    imeta set -C /nlmumc/projects/${project} resource replRescUM01
-    imeta set -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
+    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
+    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'")
 
     # Contributor access for nanoscopy
     ichmod -r write nanoscopy-l /nlmumc/projects/${project}
@@ -94,11 +106,8 @@ for i in {01..2}; do
 done
 
 for i in {01..3}; do
-    project=$(irule -F /rules/projects/createProject.r)
-    # AVU's for collections
-    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST_DEB}Resource
-    imeta set -C /nlmumc/projects/${project} resource replRescUM01
-    imeta set -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
+    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
+    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'")
 
     # Contributor access for RIT
     ichmod -r write rit-l /nlmumc/projects/${project}
@@ -107,11 +116,8 @@ for i in {01..3}; do
 done
 
 for i in {01..3}; do
-    project=$(irule -F /rules/projects/createProject.r)
-    # AVU's for collections
-    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST_DEB}Resource
-    imeta set -C /nlmumc/projects/${project} resource replRescUM01
-    imeta set -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
+    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
+    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'")
 
     # Read access for rit
     ichmod -r read rit-l /nlmumc/projects/${project}
@@ -121,23 +127,14 @@ for i in {01..3}; do
 done
 
 for i in {01..4}; do
-    project=$(irule -F /rules/projects/createProject.r)
-    # AVU's for collections
-    imeta set -C /nlmumc/projects/${project} ingestResource ${IRODS_RESOURCE_HOST_RPM}Resource
-    imeta set -C /nlmumc/projects/${project} resource replRescAZM01
-    imeta set -C /nlmumc/projects/${project} title "`fortune | head -n 1`"
+    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
+    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'")
 
     # Contributor access for RIT
     ichmod -r write rit-l /nlmumc/projects/${project}
     # Manage access for suppers
     ichmod -r own "p.suppers@${domain}" /nlmumc/projects/${project}
 done
-
-# service-dwh
-ichmod -r read service-dwh /nlmumc/projects
-
-# service-pid
-ichmod -r write service-pid /nlmumc/projects
 
 ##########
 ## Special
