@@ -15,6 +15,7 @@ if [[ $1 == "create-ingest-zones" ]]; then
         docker exec corpus_pacman_1 drush create-ingest-zone d.theunissen@${domain}
         docker exec corpus_pacman_1 drush create-ingest-zone p.suppers@${domain}
         docker exec corpus_pacman_1 drush create-ingest-zone r.niesten@${domain}
+        docker exec corpus_pacman_1 drush create-ingest-zone r.brecheisen@${domain}
     done
 
     exit 0
