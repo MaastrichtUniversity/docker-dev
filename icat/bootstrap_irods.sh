@@ -76,6 +76,12 @@ for user in $rit; do
     iadmin atg DH-project-admins "${user}@${domain}"
 done
 
+# Add all users created so far to the DH-ingest group
+iadmin mkgroup DH-ingest
+for user in $users; do
+    iadmin atg DH-ingest "${user}@${domain}"
+done
+
 ##############
 ## Permissions
 
@@ -83,11 +89,10 @@ done
 ichmod read public /nlmumc
 ichmod read public /nlmumc/projects
 
-# Give all relevant groups write-access to the ingest-zones parent-collection
+# Give the DH-ingest group write-access to the ingest-zones parent-collection
 # This is needed because users need sufficient permissions to delete dropzone-collections by the msiRmColl operation in 'ingestNestedDelay2.r'
-# See RITDEV-219
-ichmod write nanoscopy-l /nlmumc/ingest/zones
-ichmod write rit-l /nlmumc/ingest/zones
+# See RITDEV-219 and RITDEV-422
+ichmod write DH-ingest /nlmumc/ingest/zones
 
 # Give the DH-project-admins write access on the projects folder for project creation trough the webform
 ichmod write DH-project-admins /nlmumc/projects
