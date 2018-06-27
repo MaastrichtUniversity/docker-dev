@@ -1,11 +1,11 @@
 # Stay at PHP 5.6 for now
 # TODO: Remember to update to latest xdebug version somewhat below if we ever upgrade to a recent PHP version.
-FROM php:5.6-apache
+FROM php:5.6-apache-jessie
 
 RUN a2enmod rewrite
 
 # install the PHP extensions we need
-RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libpq-dev \
+RUN apt-get update && apt-get install -y libpng12-dev libjpeg-dev libpq-dev \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
 	&& docker-php-ext-install gd mbstring pdo pdo_mysql pdo_pgsql zip
