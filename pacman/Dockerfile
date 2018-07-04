@@ -23,6 +23,8 @@ RUN curl -fSL "http://ftp.drupal.org/files/projects/drupal-${DRUPAL_VERSION}.tar
 	&& chown -R www-data:www-data sites
 
 ## The part above could be restructured to its own Drupal-php56 Dockerfile, but we best have an image repository before we do that
+# New version of node required for yarn
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 
 RUN apt-get update && apt-get install -y \
 	unzip \
@@ -30,8 +32,7 @@ RUN apt-get update && apt-get install -y \
 	mysql-client \
 	git \
 	nodejs \
-	npm \
-  nano
+    nano
 
 RUN docker-php-ext-install -j$(nproc) xsl
 
@@ -44,8 +45,6 @@ RUN pecl install xdebug-2.5.5 \
     && echo "xdebug.remote_host=172.17.0.1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 WORKDIR /var/www/html/sites/all/modules
-
-RUN ln -s /usr/bin/nodejs /usr/bin/node
 
 ENV DOCKERIZE_VERSION v0.2.0
 RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz -o dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
@@ -76,7 +75,7 @@ RUN curl -fSL "https://github.com/Michigan-State-University/islandora_xml_form_b
 RUN curl -fSL https://getcomposer.org/download/1.0.0-beta1/composer.phar -o /usr/bin/composer \
 	&& chmod +x /usr/bin/composer
 
-RUN npm install -g bower
+RUN npm install -g yarn
 
 RUN curl -fSL https://github.com/drush-ops/drush/releases/download/8.1.16/drush.phar -o /usr/bin/drush \
 	&& chmod +x /usr/bin/drush
