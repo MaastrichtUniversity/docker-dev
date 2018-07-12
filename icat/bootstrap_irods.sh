@@ -57,6 +57,12 @@ for user in $serviceUsers; do
     iadmin moduser "${user}" password foobar
 done
 
+serviceAdmins="service-surfarchive"
+
+for user in $serviceUsers; do
+    iadmin mkuser "${user}" rodsadmin
+    iadmin moduser "${user}" password foobar
+done
 
 #########
 ## Groups
