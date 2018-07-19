@@ -165,6 +165,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/channels:/opt/channels
+      - ./externals/alerts:/opt/alerts
       - ./channels-backup:/opt/channels-backup
   crossref-lookup:
     build: externals/crossref-lookup
