@@ -6,9 +6,9 @@ RUN a2enmod rewrite
 
 # install the PHP extensions we need
 RUN apt-get update && apt-get install -y libpng12-dev libjpeg-dev libpq-dev \
-	&& rm -rf /var/lib/apt/lists/* \
-	&& docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
-	&& docker-php-ext-install gd mbstring pdo pdo_mysql pdo_pgsql zip
+    && rm -rf /var/lib/apt/lists/* \
+    && docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
+    && docker-php-ext-install gd mbstring pdo pdo_mysql pdo_pgsql zip
 
 WORKDIR /var/www/html
 
@@ -17,21 +17,22 @@ ENV DRUPAL_VERSION 7.50
 ENV DRUPAL_MD5 f23905b0248d76f0fc8316692cd64753
 
 RUN curl -fSL "http://ftp.drupal.org/files/projects/drupal-${DRUPAL_VERSION}.tar.gz" -o drupal.tar.gz \
-	&& echo "${DRUPAL_MD5} *drupal.tar.gz" | md5sum -c - \
-	&& tar -xz --strip-components=1 -f drupal.tar.gz \
-	&& rm drupal.tar.gz \
-	&& chown -R www-data:www-data sites
+    && echo "${DRUPAL_MD5} *drupal.tar.gz" | md5sum -c - \
+    && tar -xz --strip-components=1 -f drupal.tar.gz \
+    && rm drupal.tar.gz \
+    && chown -R www-data:www-data sites
 
 ## The part above could be restructured to its own Drupal-php56 Dockerfile, but we best have an image repository before we do that
+# New version of node required for yarn
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 
 RUN apt-get update && apt-get install -y \
-	unzip \
-	libxslt-dev \
-	mysql-client \
-	git \
-	nodejs \
-	npm \
-  nano
+    unzip \
+    libxslt-dev \
+    mysql-client \
+    git \
+    nodejs \
+    nano
 
 RUN docker-php-ext-install -j$(nproc) xsl
 
@@ -45,8 +46,6 @@ RUN pecl install xdebug-2.5.5 \
 
 WORKDIR /var/www/html/sites/all/modules
 
-RUN ln -s /usr/bin/nodejs /usr/bin/node
-
 ENV DOCKERIZE_VERSION v0.2.0
 RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz -o dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
@@ -54,32 +53,32 @@ RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_
 ENV ISLANDORA_VERSION 1.8
 
 RUN curl -fSL "https://github.com/islandora/islandora_xml_forms/archive/7.x-${ISLANDORA_VERSION}.zip" -o islandora_xml_forms.zip \
-	&& unzip islandora_xml_forms.zip \
-	&& rm islandora_xml_forms.zip \
-	&& chown -R www-data:www-data .
+    && unzip islandora_xml_forms.zip \
+    && rm islandora_xml_forms.zip \
+    && chown -R www-data:www-data .
 
 RUN curl -fSL "https://github.com/islandora/php_lib/archive/7.x-${ISLANDORA_VERSION}.zip" -o php_lib.zip \
-	&& unzip php_lib.zip \
-	&& rm php_lib.zip \
-	&& chown -R www-data:www-data .
+    && unzip php_lib.zip \
+    && rm php_lib.zip \
+    && chown -R www-data:www-data .
 
 RUN curl -fSL "https://github.com/islandora/objective_forms/archive/7.x-${ISLANDORA_VERSION}.zip" -o objective_forms.zip \
-	&& unzip objective_forms.zip \
-	&& rm objective_forms.zip \
-	&& chown -R www-data:www-data .
+    && unzip objective_forms.zip \
+    && rm objective_forms.zip \
+    && chown -R www-data:www-data .
 
 RUN curl -fSL "https://github.com/Michigan-State-University/islandora_xml_form_builder_states/archive/master.zip" -o islandora_xml_form_builder_states.zip \
-	&& unzip islandora_xml_form_builder_states.zip \
-	&& rm islandora_xml_form_builder_states.zip \
-	&& chown -R www-data:www-data .
+    && unzip islandora_xml_form_builder_states.zip \
+    && rm islandora_xml_form_builder_states.zip \
+    && chown -R www-data:www-data .
 
 RUN curl -fSL https://getcomposer.org/download/1.0.0-beta1/composer.phar -o /usr/bin/composer \
-	&& chmod +x /usr/bin/composer
+    && chmod +x /usr/bin/composer
 
-RUN npm install -g bower
+RUN npm install -g yarn
 
 RUN curl -fSL https://github.com/drush-ops/drush/releases/download/8.1.16/drush.phar -o /usr/bin/drush \
-	&& chmod +x /usr/bin/drush
+    && chmod +x /usr/bin/drush
 
 # Get jquery update for Drupal
 RUN cd /var/www/html \

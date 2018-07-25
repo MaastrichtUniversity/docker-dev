@@ -4,9 +4,9 @@ cd /var/www/html/sites/all/modules/pacman && composer update
 
 cd /var/www/html/sites/all/modules/rit_faker && composer update
 
-cd /var/www/html/sites/all/modules/handsontable && bower install --allow-root
+cd /var/www/html/sites/all/modules/handsontable && yarn install
 
-cd /var/www/html/sites/all/modules/islandora_ontology_autocomplete && bower install --allow-root
+cd /var/www/html/sites/all/modules/islandora_ontology_autocomplete && yarn install
 
 # Only re-install when in a fresh container
 if [[ ! -e /var/www/html/sites/default/settings.php ]]; then
