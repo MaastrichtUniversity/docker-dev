@@ -59,7 +59,7 @@ done
 
 serviceAdmins="service-surfarchive"
 
-for user in $serviceUsers; do
+for user in $serviceAdmins; do
     iadmin mkuser "${user}" rodsadmin
     iadmin moduser "${user}" password foobar
 done
