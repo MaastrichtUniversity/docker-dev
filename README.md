@@ -20,6 +20,10 @@ LDAP_PASSWORD=
 ./rit.sh build
 ./rit.sh down
 ./rit.sh up
+
+# Special
+./rit.sh build --no-cache
+./rit.sh build --pull --no-cache     # Attempts to pull a newer version of the upstream base image
 ```
 **Note:** Please be aware that these containers depend on a running ``proxy`` container from [docker-common](https://github.com/MaastrichtUniversity/docker-common) in order to be accessible on their ``VIRTUAL_HOST`` address.
 

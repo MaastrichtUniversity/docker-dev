@@ -4,9 +4,9 @@ cd /var/www/html/sites/all/modules/pacman && composer update
 
 cd /var/www/html/sites/all/modules/rit_faker && composer update
 
-cd /var/www/html/sites/all/modules/handsontable && bower install --allow-root
+cd /var/www/html/sites/all/modules/handsontable && yarn install
 
-cd /var/www/html/sites/all/modules/islandora_ontology_autocomplete && bower install --allow-root
+cd /var/www/html/sites/all/modules/islandora_ontology_autocomplete && yarn install
 
 # Only re-install when in a fresh container
 if [[ ! -e /var/www/html/sites/default/settings.php ]]; then
@@ -41,6 +41,7 @@ cd /var/www/html && drush user-create m.coonen --mail="m.coonen@${domain}" --pas
 cd /var/www/html && drush user-create d.theunissen --mail="d.theunissen@${domain}" --password="foobar"
 cd /var/www/html && drush user-create r.niesten --mail="r.niesten@${domain}" --password="foobar"
 cd /var/www/html && drush user-create p.suppers --mail="p.suppers@${domain}" --password="foobar"
+cd /var/www/html && drush user-create r.brecheisen --mail="r.brecheisen@${domain}" --password="foobar"
 
 # Set homepage to pacman/info
 cd /var/www/html && drush vset site_frontpage pacman/info
@@ -51,14 +52,7 @@ drush vset date_default_timezone 'Europe/Amsterdam' -y
 # Set drupal to know of the reverse proxy used in docker
 drush vset reverse_proxy 'TRUE'
 proxyip=$(getent hosts proxy | awk '{ print $1 }')
-if [ -z "$proxyip" ]; then
-    # proxyip variable is empty
-    echo "ERROR: make sure that nginx proxy container is running"
-    exit 1
-else
-    # proxyip variable contains the internal Docker IP
-    php -r "print json_encode(array('$proxyip'));"  | drush vset --format=json reverse_proxy_addresses -
-fi
+php -r "echo json_encode(array('$proxyip'));"  | drush vset --format=json reverse_proxy_addresses -
 
 # Enable and make theme default
 cd /var/www/html && drush vset theme_default fhml_um

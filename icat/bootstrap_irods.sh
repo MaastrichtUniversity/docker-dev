@@ -42,7 +42,7 @@ imkdir -p /nlmumc/projects
 
 ########
 ## Users
-users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy r.niesten"
+users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy r.niesten r.brecheisen"
 domain="maastrichtuniversity.nl"
 
 for user in $users; do
@@ -57,6 +57,12 @@ for user in $serviceUsers; do
     iadmin moduser "${user}" password foobar
 done
 
+serviceAdmins="service-surfarchive"
+
+for user in $serviceAdmins; do
+    iadmin mkuser "${user}" rodsadmin
+    iadmin moduser "${user}" password foobar
+done
 
 #########
 ## Groups
@@ -67,13 +73,19 @@ for user in $nanoscopy; do
     iadmin atg nanoscopy-l "${user}@${domain}"
 done
 
-rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy r.niesten"
+rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy r.niesten r.brecheisen"
 
 iadmin mkgroup rit-l
 iadmin mkgroup DH-project-admins
 for user in $rit; do
     iadmin atg rit-l "${user}@${domain}"
     iadmin atg DH-project-admins "${user}@${domain}"
+done
+
+# Add all users created so far to the DH-ingest group
+iadmin mkgroup DH-ingest
+for user in $users; do
+    iadmin atg DH-ingest "${user}@${domain}"
 done
 
 ##############
@@ -83,11 +95,10 @@ done
 ichmod read public /nlmumc
 ichmod read public /nlmumc/projects
 
-# Give all relevant groups write-access to the ingest-zones parent-collection
+# Give the DH-ingest group write-access to the ingest-zones parent-collection
 # This is needed because users need sufficient permissions to delete dropzone-collections by the msiRmColl operation in 'ingestNestedDelay2.r'
-# See RITDEV-219
-ichmod write nanoscopy-l /nlmumc/ingest/zones
-ichmod write rit-l /nlmumc/ingest/zones
+# See RITDEV-219 and RITDEV-422
+ichmod write DH-ingest /nlmumc/ingest/zones
 
 # Give the DH-project-admins write access on the projects folder for project creation trough the webform
 ichmod write DH-project-admins /nlmumc/projects
