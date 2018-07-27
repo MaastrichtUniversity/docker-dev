@@ -42,7 +42,7 @@ imkdir -p /nlmumc/projects
 
 ########
 ## Users
-users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy r.niesten r.brecheisen"
+users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy r.niesten r.brecheisen stijn.hanssen"
 domain="maastrichtuniversity.nl"
 
 for user in $users; do
@@ -73,7 +73,7 @@ for user in $nanoscopy; do
     iadmin atg nanoscopy-l "${user}@${domain}"
 done
 
-rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy r.niesten r.brecheisen"
+rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy r.niesten r.brecheisen stijn.hanssen"
 
 iadmin mkgroup rit-l
 iadmin mkgroup DH-project-admins
