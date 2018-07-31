@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # The rods user does not have a domain
-if [[ $1 == "rods" ]]; then
-    user="rods"
+if [[ $1 == "rods" ]] || [[ $1 == *"service-"* ]]; then
+    user=$1
 else
     user="${1}@maastrichtuniversity.nl"
 fi

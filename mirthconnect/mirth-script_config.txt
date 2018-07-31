@@ -1,0 +1,32 @@
+user add m.coonen "foobar" "M" "Coonen" "MUMC" "email@example.org"
+user add t.delnoy "foobar" "T" "Delnoy" "MUMC" "email@example.org"
+user add k.heinen "foobar" "K" "Heinen" "MUMC" "email@example.org"
+user add r.niesten "foobar" "R" "Niesten" "MUMC" "email@example.org"
+user add r.brecheisen "foobar" "R" "Brecheisen" "MUMC" "email@example.org"
+
+importcfg "/opt/channels/conf/mirth_server_settings.xml"
+codetemplate library import "/opt/channels/conf/lib_CustomFunctions.xml"
+
+import "/opt/channels/INGEST_02_XML Metadata Validation.xml"
+channel deploy "INGEST_02_XML Metadata Validation.xml"
+
+import "/opt/channels/INGEST_03_PID and sendToSolr.xml"
+channel deploy "INGEST_03_PID and sendToSolr.xml"
+
+import "/opt/channels/SERVICE_DWH_OLS ancestors.xml"
+channel deploy "SERVICE_DWH_OLS ancestors.xml"
+
+import "/opt/channels/SERVICE_IRODS_Upload via REST.xml"
+channel deploy "SERVICE_IRODS_Upload via REST.xml"
+
+import "/opt/channels/SERVICE_IRODS_getProjectDetails.xml"
+channel deploy "SERVICE_IRODS_getProjectDetails.xml"
+
+import "/opt/channels/SERVICE_PID_createEpicPID.xml"
+channel deploy "SERVICE_PID_createEpicPID.xml"
+
+import "/opt/channels/SERVICE_PID_IRODS_createPidAndSetAVU.xml"
+channel deploy "SERVICE_PID_IRODS_createPidAndSetAVU.xml"
+
+import "/opt/channels/SERVICE_DWH_getCrossRef.xml"
+channel deploy "SERVICE_DWH_getCrossRef.xml"

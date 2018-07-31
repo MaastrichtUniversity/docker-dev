@@ -11,27 +11,25 @@ source /etc/secrets
 cd /rules && make install
 
 # Update RIT microservices
-# TODO: rewrite Make-procedure OR switch to CMake (just like iRODS-developers)
-#cd /microservices && make install
+cd /microservices && make install
 
 # Update RIT helpers
-cp /helpers/* /var/lib/irods/msiExecCmd_bin/.
+cp /helpers/* /var/lib/irods/iRODS/server/bin/cmd/.
 
 # Mount ingest zones and rawdata
 mkdir -p /mnt/ingest/zones
-mkdir -p /mnt/ingest/shares/rawData
-mount -t cifs ${INGEST_MOUNT} /mnt/ingest/zones -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999,vers=1.0
-mount -t cifs ${INGEST_MOUNT}/rawData /mnt/ingest/shares/rawData -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999,vers=1.0
+mount -t cifs ${INGEST_MOUNT} /mnt/ingest/zones -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=998,gid=997,vers=1.0
+
 # Check if this is a first run of this container
 if [[ ! -e /var/run/irods_installed ]]; then
 
     if [ -n "$RODS_PASSWORD" ]; then
         echo "Setting irods password"
-        sed -i "16s/.*/$RODS_PASSWORD/" /opt/irods/setup_responses
+        sed -i "17s/.*/$RODS_PASSWORD/" /etc/irods/setup_responses
     fi
 
     # set up iRODS
-    python /var/lib/irods/scripts/setup_irods.py < /opt/irods/setup_responses
+    /opt/irods/config.sh /etc/irods/setup_responses
 
     # Add the ruleset-rit to server config
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-misc
@@ -44,16 +42,15 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/add_env_var.py /etc/irods/server_config.json MIRTH_MDL_EXPORT_CHANNEL ${MIRTH_MDL_EXPORT_CHANNEL}
     /opt/irods/add_env_var.py /etc/irods/server_config.json IRODS_INGEST_REMOVE_DELAY ${IRODS_INGEST_REMOVE_DELAY}
 
-    # Dirty temp.password workaround
+    # Dirty temp.password workaround (TODO: NEEDS TO BE FIXED PROPERLY)
     sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 86400\,/' /etc/irods/server_config.json
 
     # iRODS settings
     ## Add resource vaults (i.e. dummy-mounts in development)
-    mkdir /mnt/UM-hnas-4k
-    chown irods:irods /mnt/UM-hnas-4k
-    mkdir /mnt/UM-hnas-4k-repl
-    chown irods:irods /mnt/UM-hnas-4k-repl
-
+    mkdir /mnt/AZM-storage
+    chown irods:irods /mnt/AZM-storage
+    mkdir /mnt/AZM-storage-repl
+    chown irods:irods /mnt/AZM-storage-repl
 
 
     su - irods -c "/opt/irods/bootstrap_irods.sh"
@@ -66,11 +63,11 @@ else
     service irods start
 fi
 
-# Force start of Metalnx RMD
-service rmd restart
-
-#logstash
-/etc/init.d/filebeat start
+# Copy the service-control scripts outside of /etc/init.d folder to prevent D-Bus kicking in & force the service to start
+# Metalnx RMD
+cp /etc/init.d/rmd /opt/rmd/rmd && /opt/rmd/rmd restart
+# Logstash
+cp /etc/init.d/filebeat /opt/filebeat && /opt/filebeat restart
 
 # this script must end with a persistent foreground process
-tail -F /var/lib/irods/log/rodsLog.*
+tail -F /var/lib/irods/iRODS/server/log/rodsLog.*

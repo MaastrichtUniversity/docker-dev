@@ -19,7 +19,8 @@ RUN apt-get update \
     g++ \
     libssl-dev \
     libcurl4-openssl-dev \
-    curl
+    curl \
+    nano
 
 
 RUN locale-gen en_US.UTF-8
@@ -53,6 +54,10 @@ ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
 RUN chmod a+x /opt/irods/*
 
+# Overwrite the default setcifsacl with our own recompiled version
+ADD ./setcifsacl /usr/bin/setcifsacl
+RUN chmod a+x /usr/bin/setcifsacl
+
 EXPOSE 1248 1247 8000
 
 ###############################################################################
@@ -71,4 +76,5 @@ ADD filebeat.yml /etc/filebeat/filebeat.yml
 ENV DOCKERIZE_VERSION v0.2.0
 RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz -o dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-CMD dockerize -wait tcp://irods:1248 -timeout 150s /opt/irods/bootstrap.sh
+# With iRODS 4.1.10, iRODS needs a force restart. Waiting for port 1248 is therefore not reliable. Wait for Metalnx RMD instead.
+CMD dockerize -wait tcp://irods:8000 -timeout 200s /opt/irods/bootstrap.sh

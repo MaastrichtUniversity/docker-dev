@@ -1,0 +1,6 @@
+-server
+-Xmx256m
+-Djava.awt.headless=true
+-Djavax.net.ssl.keyStoreType=pkcs12
+-Djavax.net.ssl.keyStore=/opt/channels/keys/305_mirth.pfx
+-Djavax.net.ssl.keyStorePassword=mirth
