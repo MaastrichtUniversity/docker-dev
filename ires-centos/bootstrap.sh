@@ -11,10 +11,11 @@ source /etc/secrets
 cd /rules && make install
 
 # Update RIT microservices
-cd /microservices && make install
+# TODO: rewrite Make-procedure OR switch to CMake (just like iRODS-developers)
+#cd /microservices && make install
 
 # Update RIT helpers
-cp /helpers/* /var/lib/irods/iRODS/server/bin/cmd/.
+cp /helpers/* /var/lib/irods/msiExecCmd_bin/.
 
 # Mount ingest zones and rawdata
 mkdir -p /mnt/ingest/zones
@@ -25,11 +26,11 @@ if [[ ! -e /var/run/irods_installed ]]; then
 
     if [ -n "$RODS_PASSWORD" ]; then
         echo "Setting irods password"
-        sed -i "17s/.*/$RODS_PASSWORD/" /etc/irods/setup_responses
+        sed -i "16s/.*/$RODS_PASSWORD/" /etc/irods/setup_responses
     fi
 
     # set up iRODS
-    /opt/irods/config.sh /etc/irods/setup_responses
+    python /var/lib/irods/scripts/setup_irods.py < /etc/irods/setup_responses
 
     # Add the ruleset-rit to server config
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-misc
@@ -42,7 +43,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/add_env_var.py /etc/irods/server_config.json MIRTH_MDL_EXPORT_CHANNEL ${MIRTH_MDL_EXPORT_CHANNEL}
     /opt/irods/add_env_var.py /etc/irods/server_config.json IRODS_INGEST_REMOVE_DELAY ${IRODS_INGEST_REMOVE_DELAY}
 
-    # Dirty temp.password workaround (TODO: NEEDS TO BE FIXED PROPERLY)
+    # Dirty temp.password workaround
     sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 86400\,/' /etc/irods/server_config.json
 
     # iRODS settings
@@ -58,7 +59,8 @@ if [[ ! -e /var/run/irods_installed ]]; then
     touch /var/run/irods_installed
 
     # Force restart of irods service (see iRODS 4.1.10 bug described in RITDEV-231)
-    service irods restart
+    # TODO: Determine if this restart is still required in iRODS 4.2.3
+    #service irods restart
 else
     service irods start
 fi

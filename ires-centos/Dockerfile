@@ -35,14 +35,15 @@ RUN localedef -i en_US -f UTF-8 en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
-ENV IRODS_VERSION 4.1.10
+ENV IRODS_VERSION 4.2.3
 
 # install iRODS
-RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/centos7/irods-resource-${IRODS_VERSION}-centos7-x86_64.rpm -O /tmp/irods-ires.rpm \
-    && rpm -Uvh /tmp/irods-ires.rpm
+RUN rpm --import https://packages.irods.org/irods-signing-key.asc \
+    && wget -qO - https://packages.irods.org/renci-irods.yum.repo | sudo tee /etc/yum.repos.d/renci-irods.yum.repo \
+    && yum install -y \
+    irods-server-${IRODS_VERSION} \
+    irods-dev-${IRODS_VERSION}
 
-RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/centos7/irods-dev-${IRODS_VERSION}-centos7-x86_64.rpm -O /tmp/irods-dev.rpm \
-    && rpm -Uvh /tmp/irods-dev.rpm
 
 # install Metalnx RMD
 # Installation of rpm tries to start the rmd service, which causes D-Bus errors to appear. These can be safely ignored
@@ -51,7 +52,7 @@ RUN wget https://bintray.com/metalnx/rpm/download_file?file_path=emc-metalnx-rmd
     && rpm -Uvh /tmp/emc-metalnx-rmd.rpm
 
 RUN mkdir /opt/irods
-#
+
 ## Bug in cifs-utils package causes setcifsacl not to work without setting this symlink
 ## https://bugs.launchpad.net/ubuntu/+source/cifs-utils/+bug/1372120
 #RUN mkdir /etc/cifs-utils && ln -s /usr/lib/x86_64-linux-gnu/cifs-utils/idmapwb.so /etc/cifs-utils/idmap-plugin
