@@ -19,15 +19,23 @@ RUN yum install -y \
     python-jsonschema \
     python-ldap \
     lsof \
-    make \
     nano \
     cifs-utils  \
-    gcc-c++ \
     openssl \
     openssl-devel \
     libcurl-devel \
     curl \
+    # packages required for building ruleset and microservices
+    gcc-c++ \
+    make \
     rpm-build
+# Ubuntu 14.04 package manager contains a very old version of cmake.
+# Install modern version with: (found on https://askubuntu.com/questions/952429/is-there-are-good-ppa-for-cmake-backports)
+ENV CMAKE_VERSION 3.12
+ENV CMAKE_LONG_VERSION 3.12.0
+RUN cd /tmp && \
+    wget https://cmake.org/files/v${CMAKE_VERSION}/cmake-${CMAKE_LONG_VERSION}-Linux-x86_64.sh && \
+    sudo sh cmake-${CMAKE_LONG_VERSION}-Linux-x86_64.sh --prefix=/usr/local --exclude-subdir
 
 
 # Setting locale (for gcc compiler), see https://github.com/CentOS/sig-cloud-instance-images/issues/71#issuecomment-266959225
@@ -42,7 +50,10 @@ RUN rpm --import https://packages.irods.org/irods-signing-key.asc \
     && wget -qO - https://packages.irods.org/renci-irods.yum.repo | sudo tee /etc/yum.repos.d/renci-irods.yum.repo \
     && yum install -y \
     irods-server-${IRODS_VERSION} \
-    irods-dev-${IRODS_VERSION}
+    irods-devel-${IRODS_VERSION} \
+    # packages required for building microservices
+    irods-externals-clang-runtime3.8-0 \
+    irods-externals-clang3.8-0
 
 
 # install Metalnx RMD

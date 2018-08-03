@@ -15,14 +15,21 @@ RUN apt-get update \
     python-ldap \
     sudo \
     lsof \
-    make \
     cifs-utils  \
-    g++ \
     libssl-dev \
     libcurl4-openssl-dev \
     curl \
-    nano
-
+    nano \
+    # packages required for building ruleset and microservices
+    g++ \
+    make
+# Ubuntu 14.04 package manager contains a very old version of cmake.
+# Install modern version with: (found on https://askubuntu.com/questions/952429/is-there-are-good-ppa-for-cmake-backports)
+ENV CMAKE_VERSION 3.12
+ENV CMAKE_LONG_VERSION 3.12.0
+RUN cd /tmp && \
+    wget https://cmake.org/files/v${CMAKE_VERSION}/cmake-${CMAKE_LONG_VERSION}-Linux-x86_64.sh && \
+    sudo sh cmake-${CMAKE_LONG_VERSION}-Linux-x86_64.sh --prefix=/usr/local --exclude-subdir
 
 #RUN locale-gen en_US.UTF-8
 #ENV LANG en_US.UTF-8
@@ -36,7 +43,10 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key a
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     irods-server=${IRODS_VERSION} \
-    irods-dev=${IRODS_VERSION}
+    irods-dev=${IRODS_VERSION} \
+    # packages required for building microservices
+    irods-externals-clang-runtime3.8-0 \
+    irods-externals-clang3.8-0
 
 # install Metalnx RMD
 ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
