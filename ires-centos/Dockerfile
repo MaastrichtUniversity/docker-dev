@@ -37,12 +37,6 @@ RUN cd /tmp && \
     wget https://cmake.org/files/v${CMAKE_VERSION}/cmake-${CMAKE_LONG_VERSION}-Linux-x86_64.sh && \
     sudo sh cmake-${CMAKE_LONG_VERSION}-Linux-x86_64.sh --prefix=/usr/local --exclude-subdir
 
-
-# Setting locale (for gcc compiler), see https://github.com/CentOS/sig-cloud-instance-images/issues/71#issuecomment-266959225
-RUN localedef -i en_US -f UTF-8 en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
 ENV IRODS_VERSION 4.2.3
 
 # install iRODS
