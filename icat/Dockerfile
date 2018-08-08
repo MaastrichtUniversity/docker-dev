@@ -17,13 +17,14 @@ RUN apt-get update \
     python-ldap \
     sudo \
     lsof \
-    libssl-dev \
-    libcurl4-openssl-dev \
     fortune-mod \
     nano \
-    # packages required for building ruleset and microservices
+    # packages required for building ruleset and microservices {{
+    libssl-dev \
+    libcurl4-openssl-dev \
     g++ \
     make
+    # }} end
 # Ubuntu 14.04 package manager contains a very old version of cmake.
 # Install modern version with: (found on https://askubuntu.com/questions/952429/is-there-are-good-ppa-for-cmake-backports)
 ENV CMAKE_VERSION 3.12

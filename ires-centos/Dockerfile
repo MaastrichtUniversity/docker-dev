@@ -22,13 +22,14 @@ RUN yum install -y \
     nano \
     cifs-utils  \
     openssl \
+    curl \
+    # packages required for building ruleset and microservices {{
     openssl-devel \
     libcurl-devel \
-    curl \
-    # packages required for building ruleset and microservices
     gcc-c++ \
     make \
     rpm-build
+    # }} end
 # Ubuntu 14.04 package manager contains a very old version of cmake.
 # Install modern version with: (found on https://askubuntu.com/questions/952429/is-there-are-good-ppa-for-cmake-backports)
 ENV CMAKE_VERSION 3.12
