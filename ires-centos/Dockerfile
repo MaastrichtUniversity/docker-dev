@@ -30,7 +30,7 @@ RUN yum install -y \
     make \
     rpm-build
     # }} end
-# Ubuntu 14.04 package manager contains a very old version of cmake.
+# CentOS package manager contains a very old version of cmake.
 # Install modern version with: (found on https://askubuntu.com/questions/952429/is-there-are-good-ppa-for-cmake-backports)
 ENV CMAKE_VERSION 3.12
 ENV CMAKE_LONG_VERSION 3.12.0

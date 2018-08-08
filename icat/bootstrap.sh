@@ -12,9 +12,13 @@ done
 # Update RIT rules
 cd /rules && make install
 
+# Remove previous build dir (if exists)
+if [ -d "/microservices/build" ]; then
+  rm -fr /microservices/build
+fi
+
 # Update RIT microservices
-# TODO: rewrite Make-procedure OR switch to CMake (just like iRODS-developers)
-# cd /microservices && make install
+mkdir -p /microservices/build && cd /microservices/build && cmake .. && make && make install
 
 # Check if this is a first run of this container
 if [[ ! -e /var/run/irods_installed ]]; then
