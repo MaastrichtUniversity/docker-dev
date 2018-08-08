@@ -76,4 +76,4 @@ cp /etc/init.d/rmd /opt/rmd/rmd && /opt/rmd/rmd restart
 cp /etc/init.d/filebeat /opt/filebeat && /opt/filebeat restart
 
 # this script must end with a persistent foreground process
-tail -F /var/lib/irods/iRODS/server/log/rodsLog.*
+tail -F /var/lib/irods/log/rodsLog.*
