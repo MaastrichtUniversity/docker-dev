@@ -103,10 +103,8 @@ You can omit the domain, this is added automatically.
 
 You can also execute commands from the irods-ruleset repository like this:
 ```
-./i [user] irule -F rules/listContributingProjects.r
-./i [user] irule -F rules/listManagingProjects.r
-./i [user] irule -F rules/listViewingProjects.r
-./i [user] irule -F rules/detailsProject.r "*project='MUMC-RIT-00013'"
-./i [user] imeta add -C /nlmumc/ingestZone/[collectionName] [attribute] [value] [unit]
+./i [user] irule -F rules/projects/listContributingProjects.r 
+./i [user] irule -F rules/projects/detailsProject.r "*project='P000000001'" "*inherited='false'"
+./i [user] imeta add -C /nlmumc/ingest/zones/[collectionName] [attribute] [value] [unit]
 etc..
 ```
