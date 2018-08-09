@@ -128,7 +128,7 @@ done
 
 for i in {01..3}; do
     PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'")
+    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_RPM}Resource'" "*resource='replRescAZM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'")
 
     # Read access for rit
     ichmod -r read rit-l /nlmumc/projects/${project}
