@@ -135,6 +135,9 @@ for i in {01..3}; do
 
     # Manage access for Daniel
     ichmod -r own "d.theunissen@${domain}" /nlmumc/projects/${project}
+
+    # Contributor access for Maarten
+    ichmod -r write "m.coonen@${domain}" /nlmumc/projects/${project}
 done
 
 for i in {01..4}; do
