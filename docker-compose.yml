@@ -35,7 +35,7 @@ services:
       VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
       IRODS_RESOURCE_HOST_DEB: ires
       IRODS_RESOURCE_HOST_RPM: ires-centos
-      IRODS_INGEST_REMOVE_DELAY: 300s
+      IRODS_INGEST_REMOVE_DELAY: 300s                         # Only unit 's' supported in 4.2.3 See post on iRODS-chat
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
       MIRTH_MDL_EXPORT_CHANNEL: fhml-srv024.unimaas.nl:6666
@@ -55,7 +55,7 @@ services:
       RODS_PASSWORD: irods
       PGPASSWORD: foobar
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
-      IRODS_INGEST_REMOVE_DELAY: 300s
+      IRODS_INGEST_REMOVE_DELAY: 300s                         # Only unit 's' supported in 4.2.3 See post on iRODS-chat
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
       MIRTH_MDL_EXPORT_CHANNEL: fhml-srv024.unimaas.nl:6666
@@ -78,7 +78,7 @@ services:
       RODS_PASSWORD: irods
       PGPASSWORD: foobar
       VIRTUAL_HOST: ires-centos.${RIT_ENV}.rit.unimaas.nl
-      IRODS_INGEST_REMOVE_DELAY: 300s
+      IRODS_INGEST_REMOVE_DELAY: 300s                         # Only unit 's' supported in 4.2.3 See post on iRODS-chat
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
       MIRTH_MDL_EXPORT_CHANNEL: fhml-srv024.unimaas.nl:6666
