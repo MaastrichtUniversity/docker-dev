@@ -55,7 +55,7 @@ externals/rit_forms git@github.com:MaastrichtUniversity/rit_forms.git
 externals/rit-pacman git@github.com:MaastrichtUniversity/rit-pacman.git
 externals/rit_landing_page git@github.com:MaastrichtUniversity/rit_landing_page.git
 externals/irods-frontend git@github.com:MaastrichtUniversity/irods-frontend.git
-externals/rit-metalnx-web git@github.com:MaastrichtUniversity/rit-metalnx-web.git
+externals/metalnx-web git@github.com:MaastrichtUniversity/metalnx-web.git
 externals/rit-davrods git@github.com:MaastrichtUniversity/rit-davrods.git
 externals/crossref-lookup git@github.com:MaastrichtUniversity/crossref-lookup.git "
 
