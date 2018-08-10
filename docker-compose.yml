@@ -146,6 +146,7 @@ services:
       METALNX_POSTGRES_DB_NAME: metalnx
       METALNX_POSTGRES_DB_USER: metalnx
       METALNX_POSTGRES_DB_PASS: foobar
+      METALNX_RUN_SYNC_JOBS: false
       VIRTUAL_HOST: metalnx.${RIT_ENV}.rit.unimaas.nl
       VIRTUAL_PORT: 8080
       LOGSTASH_TAGS: METALNX
