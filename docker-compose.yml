@@ -152,8 +152,7 @@ services:
     hostname: mirthconnect
     ports:
       - "8443:8443"
-      - "6661:6661"
-      - "6671:6671"
+      - "6661-6671:6661-6671"
     environment:
       PGPASSWORD: foobar
       RIT_ENV: ${RIT_ENV}
