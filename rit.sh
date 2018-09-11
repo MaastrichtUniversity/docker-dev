@@ -54,6 +54,7 @@ externals/islandora_crossref_lookup git@github.com:MaastrichtUniversity/islandor
 externals/rit_faker git@github.com:MaastrichtUniversity/rit_faker.git
 externals/rit_forms git@github.com:MaastrichtUniversity/rit_forms.git
 externals/rit-pacman git@github.com:MaastrichtUniversity/rit-pacman.git
+externals/rit_landing_page git@github.com:MaastrichtUniversity/rit_landing_page.git
 externals/irods-frontend git@github.com:MaastrichtUniversity/irods-frontend.git
 externals/rit-metalnx-web git@github.com:MaastrichtUniversity/rit-metalnx-web.git
 externals/rit-davrods git@github.com:MaastrichtUniversity/rit-davrods.git
