@@ -30,3 +30,13 @@ channel deploy "SERVICE_PID_IRODS_createPidAndSetAVU.xml"
 
 import "/opt/channels/SERVICE_DWH_getCrossRef.xml"
 channel deploy "SERVICE_DWH_getCrossRef.xml"
+
+import "/opt/channels/SERVICE_SLACK_Send_notification.xml"
+channel deploy "SERVICE_HIPCHAT_Send_notification.xml"
+
+import "/opt/channels/SERVICE_LOGSTASH_send_alert.xml"
+channel deploy "SERVICE_LOGSTASH_send_alert.xml"
+
+importalert "/opt/alerts/Elastic.xml"
+
+importalert "/opt/alerts/Slack.xml"
