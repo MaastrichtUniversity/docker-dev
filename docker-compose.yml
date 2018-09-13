@@ -173,6 +173,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     environment:
       VIRTUAL_HOST: crossref-lookup.${RIT_ENV}.rit.unimaas.nl
+      LOGSTASH_TAGS: CROSSREF_LOOKUP
     networks:
       - default
 networks:
