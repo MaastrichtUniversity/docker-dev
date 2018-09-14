@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-# source library dh-lib.sh
+# source library lib-dh.sh
 if [[ -z $DH_ENV_HOME ]]; then
     DH_ENV_HOME=".."
     echo "(DH_ENV_HOME not set, using parent folder as default)"
 fi
-. $DH_ENV_HOME/dh-lib.sh
+. $DH_ENV_HOME/lib-dh.sh
 
 # Set the prefix for the project
 COMPOSE_PROJECT_NAME="corpus"
