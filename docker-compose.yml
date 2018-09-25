@@ -42,7 +42,6 @@ services:
       IRODS_INGEST_REMOVE_DELAY: 5m
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
-      MIRTH_MDL_EXPORT_CHANNEL: fhml-srv024.unimaas.nl:6666
       LOGSPOUT: ignore
     networks:
       - default
@@ -62,7 +61,6 @@ services:
       IRODS_INGEST_REMOVE_DELAY: 5m
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
-      MIRTH_MDL_EXPORT_CHANNEL: fhml-srv024.unimaas.nl:6666
       LOGSPOUT: ignore
     networks:
       - default
@@ -85,7 +83,6 @@ services:
       IRODS_INGEST_REMOVE_DELAY: 5m
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
-      MIRTH_MDL_EXPORT_CHANNEL: fhml-srv024.unimaas.nl:6666
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
