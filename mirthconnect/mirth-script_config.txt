@@ -3,6 +3,7 @@ user add t.delnoy "foobar" "T" "Delnoy" "MUMC" "email@example.org"
 user add k.heinen "foobar" "K" "Heinen" "MUMC" "email@example.org"
 user add r.niesten "foobar" "R" "Niesten" "MUMC" "email@example.org"
 user add r.brecheisen "foobar" "R" "Brecheisen" "MUMC" "email@example.org"
+user add jonathan.melius "foobar" "J" "Melius" "MUMC" "email@example.org"
 
 importcfg "/opt/channels/conf/mirth_server_settings.xml"
 codetemplate library import "/opt/channels/conf/lib_CustomFunctions.xml"
@@ -30,3 +31,13 @@ channel deploy "SERVICE_PID_IRODS_createPidAndSetAVU.xml"
 
 import "/opt/channels/SERVICE_DWH_getCrossRef.xml"
 channel deploy "SERVICE_DWH_getCrossRef.xml"
+
+import "/opt/channels/SERVICE_SLACK_Send_notification.xml"
+channel deploy "SERVICE_SLACK_Send_notification.xml"
+
+import "/opt/channels/SERVICE_LOGSTASH_send_alert.xml"
+channel deploy "SERVICE_LOGSTASH_send_alert.xml"
+
+importalert "/opt/alerts/Elastic.xml"
+
+importalert "/opt/alerts/Slack.xml"

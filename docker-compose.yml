@@ -9,6 +9,7 @@ services:
       - ./externals/islandora_ontology_autocomplete:/var/www/html/sites/all/modules/islandora_ontology_autocomplete
       - ./externals/islandora_crossref_lookup:/var/www/html/sites/all/modules/islandora_crossref_lookup
       - ./externals/rit-pacman:/var/www/html/sites/all/modules/pacman
+      - ./externals/rit_landing_page:/var/www/html/sites/all/modules/rit_landing_page
       - ./externals/rit_forms:/var/www/html/sites/all/modules/rit_forms
       - ./externals/rit_faker:/var/www/html/sites/all/modules/rit_faker
       - ./externals/fhml_um_theme_demo:/var/www/html/sites/all/themes/fhml_um_theme_demo
@@ -22,6 +23,10 @@ services:
       OLS_URL: http://ols.tst.rit.unimaas.nl
       LOGSTASH_TAGS: PACMAN
       JWT_SECRET: foobar
+      DH_MAILER_ENDPOINT : http://mailer.${RIT_ENV}.rit.unimaas.nl/email/send
+      DH_MAILER_TO_ADRESS : datahub@maastrichtuniversity.nl
+      DH_MAILER_USERNAME : user
+      DH_MAILER_PASSWORD : password
   irods:
     build: icat/
     hostname: irods
@@ -37,7 +42,6 @@ services:
       IRODS_INGEST_REMOVE_DELAY: 5m
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
-      MIRTH_MDL_EXPORT_CHANNEL: fhml-srv024.unimaas.nl:6666
       LOGSPOUT: ignore
     networks:
       - default
@@ -57,7 +61,6 @@ services:
       IRODS_INGEST_REMOVE_DELAY: 5m
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
-      MIRTH_MDL_EXPORT_CHANNEL: fhml-srv024.unimaas.nl:6666
       LOGSPOUT: ignore
     networks:
       - default
@@ -80,7 +83,6 @@ services:
       IRODS_INGEST_REMOVE_DELAY: 5m
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
-      MIRTH_MDL_EXPORT_CHANNEL: fhml-srv024.unimaas.nl:6666
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -151,8 +153,7 @@ services:
     hostname: mirthconnect
     ports:
       - "8443:8443"
-      - "6661:6661"
-      - "6671:6671"
+      - "6661-6671:6661-6671"
     environment:
       PGPASSWORD: foobar
       RIT_ENV: ${RIT_ENV}
@@ -165,6 +166,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/channels:/opt/channels
+      - ./externals/alerts:/opt/alerts
       - ./channels-backup:/opt/channels-backup
   crossref-lookup:
     build: externals/crossref-lookup

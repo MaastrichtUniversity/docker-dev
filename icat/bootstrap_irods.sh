@@ -42,7 +42,7 @@ imkdir -p /nlmumc/projects
 
 ########
 ## Users
-users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy r.niesten r.brecheisen"
+users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy r.niesten r.brecheisen stijn.hanssen jonathan.melius"
 domain="maastrichtuniversity.nl"
 
 for user in $users; do
@@ -57,6 +57,12 @@ for user in $serviceUsers; do
     iadmin moduser "${user}" password foobar
 done
 
+serviceAdmins="service-surfarchive"
+
+for user in $serviceAdmins; do
+    iadmin mkuser "${user}" rodsadmin
+    iadmin moduser "${user}" password foobar
+done
 
 #########
 ## Groups
@@ -67,7 +73,7 @@ for user in $nanoscopy; do
     iadmin atg nanoscopy-l "${user}@${domain}"
 done
 
-rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy r.niesten r.brecheisen"
+rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy r.niesten r.brecheisen stijn.hanssen jonathan.melius"
 
 iadmin mkgroup rit-l
 iadmin mkgroup DH-project-admins
@@ -102,7 +108,7 @@ ichmod write DH-project-admins /nlmumc/projects
 
 for i in {01..2}; do
     PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'")
+    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'" "*principalInvestigator='p.vanschayck@${domain}'" "*respCostCenter='UM-30001234X'" "*pricePerGBPerYear='0.32'")
 
     # Contributor access for nanoscopy
     ichmod -r write nanoscopy-l /nlmumc/projects/${project}
@@ -112,7 +118,7 @@ done
 
 for i in {01..3}; do
     PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'")
+    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'" "*principalInvestigator='p.suppers@${domain}'" "*respCostCenter='UM-30009998X'" "*pricePerGBPerYear='0.24'")
 
     # Contributor access for RIT
     ichmod -r write rit-l /nlmumc/projects/${project}
@@ -122,7 +128,7 @@ done
 
 for i in {01..3}; do
     PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'")
+    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'" "*principalInvestigator='d.theunissen@${domain}'" "*respCostCenter='UM-30009999X'" "*pricePerGBPerYear='0.16'")
 
     # Read access for rit
     ichmod -r read rit-l /nlmumc/projects/${project}
@@ -133,7 +139,7 @@ done
 
 for i in {01..4}; do
     PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'")
+    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'" "*principalInvestigator='p.suppers@${domain}'" "*respCostCenter='UM-30009999X'" "*pricePerGBPerYear='0.32'")
 
     # Contributor access for RIT
     ichmod -r write rit-l /nlmumc/projects/${project}
