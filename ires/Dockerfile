@@ -19,6 +19,7 @@ RUN apt-get update \
     libssl-dev \
     libcurl4-openssl-dev \
     curl \
+    librabbitmq-dev \
     nano
 
 
