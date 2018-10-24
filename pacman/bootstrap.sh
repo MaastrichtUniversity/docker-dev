@@ -44,6 +44,7 @@ cd /var/www/html && drush user-create p.suppers --mail="p.suppers@${domain}" --p
 cd /var/www/html && drush user-create r.brecheisen --mail="r.brecheisen@${domain}" --password="foobar"
 cd /var/www/html && drush user-create stijn.hanssen --mail="stijn.hanssen@${domain}" --password="foobar"
 cd /var/www/html && drush user-create jonathan.melius --mail="jonathan.melius@${domain}" --password="foobar"
+cd /var/www/html && drush user-create k.heinen --mail="k.heinen@${domain}" --password="foobar"
 
 # Set homepage to pacman/info
 cd /var/www/html && drush vset site_frontpage pacman/info
