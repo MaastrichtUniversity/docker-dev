@@ -151,9 +151,17 @@ done
 ## Special
 
 # Create an initial collection folder for MDL data
-imkdir /nlmumc/projects/P000000010/C000000001
+irule -F /rules/projects/createProjectCollection.r "*project='P000000010'" "*title='MDL placeholder collection'"
 ichmod -r write "service-mdl" /nlmumc/projects/P000000010
+# Add additional AVUs
+imeta add -C /nlmumc/projects/P000000010/C000000001 creator irods_bootstrap@docker.dev
+imeta add -C /nlmumc/projects/P000000010/C000000001 dcat:byteSize 0
+imeta add -C /nlmumc/projects/P000000010/C000000001 numFiles 0
 
 # Create an initial collection folder for HVC data
-imkdir /nlmumc/projects/P000000011/C000000001
+irule -F /rules/projects/createProjectCollection.r "*project='P000000011'" "*title='HVC placeholder collection'"
 ichmod -r write "service-mdl" /nlmumc/projects/P000000011
+# Add additional AVUs
+imeta add -C /nlmumc/projects/P000000011/C000000001 creator irods_bootstrap@docker.dev
+imeta add -C /nlmumc/projects/P000000011/C000000001 dcat:byteSize 0
+imeta add -C /nlmumc/projects/P000000011/C000000001 numFiles 0
