@@ -27,6 +27,7 @@ RUN yum install -y \
     openssl-devel \
     libcurl-devel \
     curl \
+    librabbitmq-devel \
     rpm-build
 
 

@@ -20,6 +20,7 @@ RUN apt-get update \
     libssl-dev \
     libcurl4-openssl-dev \
     fortune-mod \
+    librabbitmq-dev \
     nano
 
 
