@@ -42,7 +42,8 @@ services:
       IRODS_INGEST_REMOVE_DELAY: 5m
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
-      LOGSPOUT: ignore
+      # dev only, in acc/prod ICAT is not in a docker container
+      LOGSTASH_TAGS: ICAT
     networks:
       - default
       - common_default
@@ -61,7 +62,9 @@ services:
       IRODS_INGEST_REMOVE_DELAY: 5m
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
-      LOGSPOUT: ignore
+      # dev only, in acc/prod IRES is not in a docker container
+      LOGSTASH_TAGS: IRES,IRES_UM01
+
     networks:
       - default
       - common_default
@@ -83,7 +86,8 @@ services:
       IRODS_INGEST_REMOVE_DELAY: 5m
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
-      LOGSPOUT: ignore
+      # dev only, in acc/prod IRES is not in a docker container
+      LOGSTASH_TAGS: IRES,IRES_AZM
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
@@ -118,6 +122,7 @@ services:
     environment:
       VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
       PACMAN_HOST: http://pacman.${RIT_ENV}.rit.unimaas.nl
+      # logs are sent via filebeat, so logspout should be ignored
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -158,6 +163,8 @@ services:
       PGPASSWORD: foobar
       RIT_ENV: ${RIT_ENV}
       VIRTUAL_HOST: mirthconnect.${RIT_ENV}.rit.unimaas.nl
+      # dev only, in acc/prod MIRTH is not in a docker container
+      LOGSTASH_TAGS: MIRTH-UM
       LOGSPOUT: ignore
     networks:
       - default
