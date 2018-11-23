@@ -42,8 +42,7 @@ services:
       IRODS_INGEST_REMOVE_DELAY: 5m
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
-      # dev only, in acc/prod ICAT is not in a docker container
-      LOGSTASH_TAGS: ICAT
+      LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       - default
       - common_default
@@ -62,9 +61,7 @@ services:
       IRODS_INGEST_REMOVE_DELAY: 5m
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
-      # dev only, in acc/prod IRES is not in a docker container
-      LOGSTASH_TAGS: IRES,IRES_UM01
-
+      LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       - default
       - common_default
@@ -86,8 +83,7 @@ services:
       IRODS_INGEST_REMOVE_DELAY: 5m
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
-      # dev only, in acc/prod IRES is not in a docker container
-      LOGSTASH_TAGS: IRES,IRES_AZM
+      LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
