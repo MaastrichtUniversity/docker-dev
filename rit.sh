@@ -1,10 +1,53 @@
 #!/usr/bin/env bash
+
+# source library lib-dh.sh
+if [[ -z $DH_ENV_HOME ]]; then
+    DH_ENV_HOME=".."
+    echo "(DH_ENV_HOME not set, using parent folder as default)"
+fi
+. $DH_ENV_HOME/lib-dh.sh
+
 # Set the prefix for the project
 COMPOSE_PROJECT_NAME="corpus"
 export COMPOSE_PROJECT_NAME
 
 set -e
 
+
+# specify externals for this project
+externals="externals/channels ssh://git@bitbucket.rit.unimaas.nl:7999/mirthc/channels.git
+externals/fhml_um_theme_demo ssh://git@bitbucket.rit.unimaas.nl:7999/ritdev/fhml_um_theme_demo.git
+externals/handsontable git@github.com:MaastrichtUniversity/handsontable.git
+externals/irods-helper-cmd git@github.com:MaastrichtUniversity/irods-helper-cmd.git
+externals/irods-microservices git@github.com:MaastrichtUniversity/irods-microservices.git
+externals/irods-ruleset git@github.com:MaastrichtUniversity/irods-ruleset.git
+externals/islandora_ontology_autocomplete git@github.com:MaastrichtUniversity/islandora_ontology_autocomplete.git
+externals/islandora_crossref_lookup git@github.com:MaastrichtUniversity/islandora_crossref_lookup.git
+externals/rit_faker git@github.com:MaastrichtUniversity/rit_faker.git
+externals/rit_forms git@github.com:MaastrichtUniversity/rit_forms.git
+externals/rit-pacman git@github.com:MaastrichtUniversity/rit-pacman.git
+externals/irods-frontend git@github.com:MaastrichtUniversity/irods-frontend.git
+externals/rit-metalnx-web git@github.com:MaastrichtUniversity/rit-metalnx-web.git
+externals/rit-davrods git@github.com:MaastrichtUniversity/rit-davrods.git
+externals/crossref-lookup git@github.com:MaastrichtUniversity/crossref-lookup.git "
+
+
+# do the required action in case of externals or exec
+if [[ $1 == "externals" ]]; then
+    action=$2
+    run_repo_action ${action} "${externals}"
+    exit 0
+fi
+
+if [[ $1 == "exec" ]]; then
+    run_docker_exec ${COMPOSE_PROJECT_NAME} $2
+    exit 0
+fi
+
+
+#
+# code block for create functionality
+#
 domain="maastrichtuniversity.nl"
 
 if [[ $1 == "create-ingest-zones" ]]; then
@@ -63,64 +106,12 @@ externals/rit-metalnx-web git@github.com:MaastrichtUniversity/rit-metalnx-web.gi
 externals/rit-davrods git@github.com:MaastrichtUniversity/rit-davrods.git
 externals/crossref-lookup git@github.com:MaastrichtUniversity/crossref-lookup.git "
 
-if [[ $1 == "externals" ]]; then
-    mkdir -p externals
+# set RIT_ENV if not set already
+env_selector
 
-    if [[ $2 == "clone" ]]; then
-        # Ignore error during cloning, as we don't care about existing dirs
-        set +e
-        while read -r external; do
-            external=($external)
-            echo -e "\e[32m =============== ${external[0]} ======================\033[0m"
-            git clone ${external[1]} ${external[0]}
-        done <<< "$externals"
-    fi
-
-    if [[ $2 == "status" ]]; then
-        while read -r external; do
-            external=($external)
-            echo -e "\e[32m =============== ${external[0]} ======================\033[0m"
-            git -C ${external[0]} status
-        done <<< "$externals"
-    fi
-
-    if [[ $2 == "pull" ]]; then
-        while read -r external; do
-            external=($external)
-            echo -e "\e[32m =============== ${external[0]} ======================\033[0m"
-            git -C ${external[0]} pull --rebase
-        done <<< "$externals"
-    fi
-    exit 0
-fi
-
-if [[ $1 == "exec" ]]; then
-    echo "Connect to container instance : ${COMPOSE_PROJECT_NAME}_${2}_1"
-    docker exec -it ${COMPOSE_PROJECT_NAME}_${2}_1 env COLUMNS=$(tput cols) LINES=$(tput lines) /bin/bash
-    exit 0
-fi
-
-if [[ -z $RIT_ENV ]]; then
-    RIT_ENV="local"
-
-    if [[ $HOSTNAME == "fhml-srv018" ]]; then
-        RIT_ENV="tst"
-    fi
-
-    if [[ $HOSTNAME == "fhml-srv019" ]]; then
-        RIT_ENV="dev1"
-    fi
-
-    if [[ $HOSTNAME == "fhml-srv020" ]]; then
-        RIT_ENV="dev2"
-    fi
-
-    if [[ $HOSTNAME == "fhml-srv065" ]]; then
-        RIT_ENV="dev3"
-    fi
-
-fi
-export RIT_ENV
 
 # Assuming docker-compose is available in the PATH
+log $DBG "$0 [docker-compose \"$@\"]"
 docker-compose "$@"
+
+
