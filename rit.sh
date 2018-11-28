@@ -62,7 +62,7 @@ externals/irods-frontend git@github.com:MaastrichtUniversity/irods-frontend.git
 externals/rit-metalnx-web git@github.com:MaastrichtUniversity/rit-metalnx-web.git
 externals/rit-davrods git@github.com:MaastrichtUniversity/rit-davrods.git
 externals/crossref-lookup git@github.com:MaastrichtUniversity/crossref-lookup.git
-externals/epicpid-microservice git@github.com:MaastrichtUniversity/epicpid-microservice.git"
+externals/epicpid-microservice git@github.com:MaastrichtUniversity/epicpid-microservice.git "
 
 if [[ $1 == "externals" ]]; then
     mkdir -p externals
