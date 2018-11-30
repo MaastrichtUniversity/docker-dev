@@ -186,7 +186,7 @@ services:
     networks:
       - default
   epicpid:
-    build: externals/epicpid-microservice
+    build: externals/epicpid-microservice/docker
     volumes:
       - ./externals/epicpid-microservice/:/opt/app
       - /etc/localtime:/etc/localtime:ro
@@ -199,8 +199,7 @@ services:
       RABBITMQ_HOST : rabbitmq
       RABBITMQ_USER : user
       RABBITMQ_PASS : password
-    expose:
-     - "5000"
+      EPIC_CREDENTIALS: my_credentials_test.json
     networks:
       - default
       - common_default
