@@ -199,6 +199,7 @@ services:
       RABBITMQ_HOST : rabbitmq
       RABBITMQ_USER : user
       RABBITMQ_PASS : password
+      RABBITMQ_PORT: 5672
       EPIC_CREDENTIALS: my_credentials_test.json
     networks:
       - default
