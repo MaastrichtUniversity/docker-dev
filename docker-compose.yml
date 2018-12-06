@@ -182,6 +182,25 @@ services:
       LOGSTASH_TAGS: CROSSREF_LOOKUP
     networks:
       - default
+  epicpid:
+    build: externals/epicpid-microservice/docker
+    volumes:
+      - ./externals/epicpid-microservice/:/opt/app
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      VIRTUAL_HOST: epicpid.${RIT_ENV}.rit.unimaas.nl
+      LOGSTASH_TAGS: EPIC_PID
+      LOG_LEVEL: DEBUG
+      USERNAME: user
+      PASSWORD: foobar
+      RABBITMQ_HOST : rabbitmq
+      RABBITMQ_USER : user
+      RABBITMQ_PASS : password
+      RABBITMQ_PORT: 5672
+      EPIC_CREDENTIALS: my_credentials_test.json
+    networks:
+      - default
+      - common_default
 networks:
   oculus_default:
     external: true
