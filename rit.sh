@@ -16,6 +16,7 @@ set -e
 
 # specify externals for this project
 externals="externals/channels ssh://git@bitbucket.rit.unimaas.nl:7999/mirthc/channels.git
+externals/alerts ssh://git@bitbucket.rit.unimaas.nl:7999/mirthc/alerts.git
 externals/fhml_um_theme_demo ssh://git@bitbucket.rit.unimaas.nl:7999/ritdev/fhml_um_theme_demo.git
 externals/handsontable git@github.com:MaastrichtUniversity/handsontable.git
 externals/irods-helper-cmd git@github.com:MaastrichtUniversity/irods-helper-cmd.git
@@ -26,10 +27,12 @@ externals/islandora_crossref_lookup git@github.com:MaastrichtUniversity/islandor
 externals/rit_faker git@github.com:MaastrichtUniversity/rit_faker.git
 externals/rit_forms git@github.com:MaastrichtUniversity/rit_forms.git
 externals/rit-pacman git@github.com:MaastrichtUniversity/rit-pacman.git
+externals/rit_landing_page git@github.com:MaastrichtUniversity/rit_landing_page.git
 externals/irods-frontend git@github.com:MaastrichtUniversity/irods-frontend.git
 externals/rit-metalnx-web git@github.com:MaastrichtUniversity/rit-metalnx-web.git
 externals/rit-davrods git@github.com:MaastrichtUniversity/rit-davrods.git
-externals/crossref-lookup git@github.com:MaastrichtUniversity/crossref-lookup.git "
+externals/crossref-lookup git@github.com:MaastrichtUniversity/crossref-lookup.git
+externals/epicpid-microservice git@github.com:MaastrichtUniversity/epicpid-microservice.git "
 
 
 # do the required action in case of externals or exec
@@ -88,24 +91,6 @@ if [[ $1 == "create-project-collections" ]]; then
     exit 0
 fi
 
-externals="externals/channels ssh://git@bitbucket.rit.unimaas.nl:7999/mirthc/channels.git
-externals/alerts ssh://git@bitbucket.rit.unimaas.nl:7999/mirthc/alerts.git
-externals/fhml_um_theme_demo ssh://git@bitbucket.rit.unimaas.nl:7999/ritdev/fhml_um_theme_demo.git
-externals/handsontable git@github.com:MaastrichtUniversity/handsontable.git
-externals/irods-helper-cmd git@github.com:MaastrichtUniversity/irods-helper-cmd.git
-externals/irods-microservices git@github.com:MaastrichtUniversity/irods-microservices.git
-externals/irods-ruleset git@github.com:MaastrichtUniversity/irods-ruleset.git
-externals/islandora_ontology_autocomplete git@github.com:MaastrichtUniversity/islandora_ontology_autocomplete.git
-externals/islandora_crossref_lookup git@github.com:MaastrichtUniversity/islandora_crossref_lookup.git
-externals/rit_faker git@github.com:MaastrichtUniversity/rit_faker.git
-externals/rit_forms git@github.com:MaastrichtUniversity/rit_forms.git
-externals/rit-pacman git@github.com:MaastrichtUniversity/rit-pacman.git
-externals/rit_landing_page git@github.com:MaastrichtUniversity/rit_landing_page.git
-externals/irods-frontend git@github.com:MaastrichtUniversity/irods-frontend.git
-externals/rit-metalnx-web git@github.com:MaastrichtUniversity/rit-metalnx-web.git
-externals/rit-davrods git@github.com:MaastrichtUniversity/rit-davrods.git
-externals/crossref-lookup git@github.com:MaastrichtUniversity/crossref-lookup.git
-externals/epicpid-microservice git@github.com:MaastrichtUniversity/epicpid-microservice.git "
 
 # set RIT_ENV if not set already
 env_selector
