@@ -15,6 +15,7 @@ services:
       - ./externals/fhml_um_theme_demo:/var/www/html/sites/all/themes/fhml_um_theme_demo
     environment:
       IRODS_FRONTEND_ENV_VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
+      IRODS_WEBDAV_ENV_VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
       IRODS_HOST: irods
       IRODS_ENV_RODS_PASSWORD: irods
       DWH_FRONTEND_ENV_VIRTUAL_HOST: dwh.${RIT_ENV}.rit.unimaas.nl
