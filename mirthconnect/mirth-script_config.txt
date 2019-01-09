@@ -4,6 +4,7 @@ user add k.heinen "foobar" "K" "Heinen" "MUMC" "email@example.org"
 user add r.niesten "foobar" "R" "Niesten" "MUMC" "email@example.org"
 user add r.brecheisen "foobar" "R" "Brecheisen" "MUMC" "email@example.org"
 user add jonathan.melius "foobar" "J" "Melius" "MUMC" "email@example.org"
+user add s.nijhuis "foobar" "S" "Nijhuis" "MUMC" "email@example.org"
 
 importcfg "/opt/channels/conf/mirth_server_settings.xml"
 codetemplate library import "/opt/channels/conf/lib_CustomFunctions.xml"
