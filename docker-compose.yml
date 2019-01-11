@@ -198,6 +198,7 @@ services:
       RABBITMQ_PASS : password
       RABBITMQ_PORT: 5672
       EPIC_CREDENTIALS: my_credentials_test.json
+      REQUESTS_CA_BUNDLE: /opt/epic5storagesurfsaranlCHAIN.crt
     networks:
       - default
       - common_default
