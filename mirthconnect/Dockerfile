@@ -1,5 +1,5 @@
 # Adapted from https://github.com/brandonstevens/mirth-connect-docker
-FROM java
+FROM openjdk:8u181-jdk-stretch
 
 ENV MIRTH_CONNECT_VERSION 3.7.0.b2399
 
