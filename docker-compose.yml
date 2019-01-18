@@ -15,6 +15,7 @@ services:
       - ./externals/fhml_um_theme_demo:/var/www/html/sites/all/themes/fhml_um_theme_demo
     environment:
       IRODS_FRONTEND_ENV_VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
+      IRODS_WEBDAV_ENV_VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
       IRODS_HOST: irods
       IRODS_ENV_RODS_PASSWORD: irods
       DWH_FRONTEND_ENV_VIRTUAL_HOST: dwh.${RIT_ENV}.rit.unimaas.nl
@@ -42,8 +43,7 @@ services:
       IRODS_INGEST_REMOVE_DELAY: 5m
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
-      MIRTH_MDL_EXPORT_CHANNEL: fhml-srv024.unimaas.nl:6666
-      LOGSPOUT: ignore
+      LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       - default
       - common_default
@@ -62,8 +62,7 @@ services:
       IRODS_INGEST_REMOVE_DELAY: 5m
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
-      MIRTH_MDL_EXPORT_CHANNEL: fhml-srv024.unimaas.nl:6666
-      LOGSPOUT: ignore
+      LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       - default
       - common_default
@@ -85,8 +84,7 @@ services:
       IRODS_INGEST_REMOVE_DELAY: 5m
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
-      MIRTH_MDL_EXPORT_CHANNEL: fhml-srv024.unimaas.nl:6666
-      LOGSPOUT: ignore
+      LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
@@ -121,6 +119,7 @@ services:
     environment:
       VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
       PACMAN_HOST: http://pacman.${RIT_ENV}.rit.unimaas.nl
+      # logs are sent via filebeat, so logspout should be ignored
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -161,6 +160,8 @@ services:
       PGPASSWORD: foobar
       RIT_ENV: ${RIT_ENV}
       VIRTUAL_HOST: mirthconnect.${RIT_ENV}.rit.unimaas.nl
+      # dev only, in acc/prod MIRTH is not in a docker container
+      LOGSTASH_TAGS: MIRTH-UM
       LOGSPOUT: ignore
     networks:
       - default
@@ -169,6 +170,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/channels:/opt/channels
+      - ./externals/alerts:/opt/alerts
       - ./channels-backup:/opt/channels-backup
   crossref-lookup:
     build: externals/crossref-lookup
@@ -177,8 +179,29 @@ services:
       - /etc/localtime:/etc/localtime:ro
     environment:
       VIRTUAL_HOST: crossref-lookup.${RIT_ENV}.rit.unimaas.nl
+      LOGSTASH_TAGS: CROSSREF_LOOKUP
     networks:
       - default
+  epicpid:
+    build: externals/epicpid-microservice/docker
+    volumes:
+      - ./externals/epicpid-microservice/:/opt/app
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      VIRTUAL_HOST: epicpid.${RIT_ENV}.rit.unimaas.nl
+      LOGSTASH_TAGS: EPIC_PID
+      LOG_LEVEL: DEBUG
+      USERNAME: user
+      PASSWORD: foobar
+      RABBITMQ_HOST : rabbitmq
+      RABBITMQ_USER : user
+      RABBITMQ_PASS : password
+      RABBITMQ_PORT: 5672
+      EPIC_CREDENTIALS: my_credentials_test.json
+      REQUESTS_CA_BUNDLE: /opt/epic5storagesurfsaranlCHAIN.crt
+    networks:
+      - default
+      - common_default
 networks:
   oculus_default:
     external: true

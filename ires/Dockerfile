@@ -19,6 +19,7 @@ RUN apt-get update \
     libssl-dev \
     libcurl4-openssl-dev \
     curl \
+    librabbitmq-dev \
     nano
 
 
@@ -26,7 +27,7 @@ RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
-ENV IRODS_VERSION 4.1.10
+ENV IRODS_VERSION 4.1.12
 
 # install iRODS
 
