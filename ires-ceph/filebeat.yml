@@ -1,0 +1,23 @@
+filebeat.prospectors:
+
+# Each - is a prospector. Most options can be set at the prospector level, so
+# you can use different prospectors for various configurations.
+# Below are the prospector specific configurations.
+
+- input_type: log
+
+  # Paths that should be crawled and fetched. Glob based paths.
+  paths:
+    - /var/lib/irods/iRODS/server/log/*Log*
+
+  #Multiline
+  multiline.pattern: '^[A-Z][a-z]{2}\s+\d'
+  multiline.negate: true
+  multiline.match: after
+  multiline.max_linex: 10000
+
+  #Tags
+  tags: ["IRES_CEPH"]
+
+output.logstash:
+    hosts: ["elk:5044"]
