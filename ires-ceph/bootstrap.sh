@@ -63,6 +63,7 @@ echo "[global]
 [${CEPHGLUSER}]
     key = ${CEPHGLKEY}" > /etc/irods/irados.config
 
+su - irods -c "iadmin mkresc radosResc irados ires-ceph:/tmp \"ceph|irods-dev|client.irods-dev\" "
 
 # Force start of Metalnx RMD
 service rmd restart
