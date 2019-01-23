@@ -28,6 +28,7 @@ RUN apt-get update \
     uuid-dev \
     apt-transport-https
 
+# Add Ceph repo for appropriate version of librados packages
 RUN wget -q -O- 'https://download.ceph.com/keys/release.asc' | sudo apt-key add -
 RUN echo deb https://download.ceph.com/debian-luminous/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
 

@@ -51,17 +51,18 @@ else
     service irods start
 fi
 
-# Install irods librados plugin:
-echo "compiling irods rados plugin"
-cd /var/tmp && git clone https://github.com/irods/irods_resource_plugin_rados.git
-cd /var/tmp/irods_resource_plugin_rados && git checkout 4-1-stable && make && make install
+# Install iRODS librados plugin
+echo "compiling iRODS rados plugin"
+cd /irods_resource_plugin_rados && make && make install
 
+# Templating irados config file
 touch /etc/irods/irados.config && chown irods: /etc/irods/irados.config && chmod 600 /etc/irods/irados.config
 echo "[global]
-	mon host = ${CEPHGLMONHOST}
+    mon host = ${CEPHGLMONHOST}
     
 [${CEPHGLUSER}]
-	key = ${CEPHGLKEY}" > /etc/irods/irados.config
+    key = ${CEPHGLKEY}" > /etc/irods/irados.config
+
 
 # Force start of Metalnx RMD
 service rmd restart
