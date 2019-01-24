@@ -43,7 +43,6 @@ if [[ ! -e /var/run/irods_installed ]]; then
     # Add config variable to iRODS
     /opt/irods/add_env_var.py /etc/irods/server_config.json MIRTH_METADATA_CHANNEL ${MIRTH_METADATA_CHANNEL}
     /opt/irods/add_env_var.py /etc/irods/server_config.json MIRTH_VALIDATION_CHANNEL ${MIRTH_VALIDATION_CHANNEL}
-    /opt/irods/add_env_var.py /etc/irods/server_config.json MIRTH_MDL_EXPORT_CHANNEL ${MIRTH_MDL_EXPORT_CHANNEL}
     /opt/irods/add_env_var.py /etc/irods/server_config.json IRODS_INGEST_REMOVE_DELAY ${IRODS_INGEST_REMOVE_DELAY}
 
     # Dirty temp.password workaround

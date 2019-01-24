@@ -21,6 +21,7 @@ RUN apt-get update \
     # packages required for building ruleset and microservices {{
     libssl-dev \
     libcurl4-openssl-dev \
+<<<<<<< HEAD
     g++ \
     make
     # }} end
@@ -33,6 +34,18 @@ RUN cd /tmp && \
     sudo sh cmake-${CMAKE_LONG_VERSION}-Linux-x86_64.sh --prefix=/usr/local --exclude-subdir
 
 ENV IRODS_VERSION 4.2.3
+=======
+    curl \
+    librabbitmq-dev \
+    nano
+
+
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
+ENV IRODS_VERSION 4.1.12
+>>>>>>> master
 
 # install iRODS
 RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key add - \

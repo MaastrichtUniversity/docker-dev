@@ -1,7 +1,7 @@
 # Adapted from https://github.com/brandonstevens/mirth-connect-docker
-FROM java
+FROM openjdk:8u181-jdk-stretch
 
-ENV MIRTH_CONNECT_VERSION 3.5.0.8232.b2153
+ENV MIRTH_CONNECT_VERSION 3.7.0.b2399
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -51,13 +51,5 @@ ADD filebeat.yml /etc/filebeat/filebeat.yml
 
 ###############################################################################
 
-#######FOR EPIC PID SERVICE
-# The keyStore will be volume mounted and needs to be populated with the EPIC private key from secrets management
-# Add the epicserver CA file that will be appended to the Java CA TrustStore (contains public certificates for EPIC)
-ADD ./epic5storagesurfsaranl.crt /opt/mirth-connect/epic5storagesurfsaranl.crt
-# Override the default Java KeyStore
-ADD ./mcserver.vmoptions /opt/mirth-connect/mcserver.vmoptions
-ADD ./mcservice.vmoptions /opt/mirth-connect/mcservice.vmoptions
-###########################
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]

@@ -12,6 +12,7 @@ RUN yum install -y \
     unixODBC \
 #    super \
     fuse-libs \
+    librabbitmq-devel \
     perl-JSON \
     python \
     python-psutil \

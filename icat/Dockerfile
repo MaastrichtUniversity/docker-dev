@@ -10,6 +10,7 @@ RUN apt-get update \
     postgresql-client \
     libfuse2 \
     libjson-perl \
+    librabbitmq-dev \
     python \
     python-psutil \
     python-requests \
