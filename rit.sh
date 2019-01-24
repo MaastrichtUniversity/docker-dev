@@ -37,7 +37,7 @@ externals/epicpid-microservice git@github.com:MaastrichtUniversity/epicpid-micro
 
 # do the required action in case of externals or exec
 if [[ $1 == "externals" ]]; then
-    action=$2
+    action=${@/$1/}
     run_repo_action ${action} "${externals}"
     exit 0
 fi
