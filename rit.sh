@@ -95,6 +95,8 @@ fi
 # set RIT_ENV if not set already
 env_selector
 
+# Load versions ENV vars
+source set_versions_env.sh
 
 # Assuming docker-compose is available in the PATH
 log $DBG "$0 [docker-compose \"$@\"]"

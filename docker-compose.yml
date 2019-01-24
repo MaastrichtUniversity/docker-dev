@@ -1,7 +1,15 @@
 version: '2'
 services:
   pacman:
-    build: pacman/
+    build:
+      context: pacman/
+      args:
+        ENV_XDEBUG_VERSION: ${ENV_XDEBUG_VERSION}
+        ENV_DRUPAL_VERSION: ${ENV_DRUPAL_VERSION}
+        ENV_DRUPAL_VERSION_MD5: ${ENV_DRUPAL_VERSION_MD5}
+        ENV_ISLANDORA_VERSION: ${ENV_ISLANDORA_VERSION}
+        ENV_DOCKERIZE_VERSION: ${ENV_DOCKERIZE_VERSION}
+        ENV_FILEBEAT_VERSION: ${ENV_FILEBEAT_VERSION}
     hostname: pacman
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -29,7 +37,15 @@ services:
       DH_MAILER_USERNAME : user
       DH_MAILER_PASSWORD : password
   irods:
-    build: icat/
+    build:
+      context: icat/
+      args:
+        ENV_IRODS_VERSION: ${ENV_IRODS_VERSION}
+        ENV_IRODS_EXT_CLANG_VERSION: ${ENV_IRODS_EXT_CLANG_VERSION}
+        ENV_IRODS_EXT_CLANG_RUNTIME_VERSION: ${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION}
+        ENV_CMAKE_VERSION: ${ENV_CMAKE_VERSION}
+        ENV_CMAKE_LONG_VERSION: ${ENV_CMAKE_LONG_VERSION}
+        ENV_FILEBEAT_VERSION: ${ENV_FILEBEAT_VERSION}
     hostname: irods
     ports:
       - "1247:1247"
@@ -53,7 +69,16 @@ services:
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
   ires:
-    build: ires/
+    build:
+      context: ires/
+      args:
+        ENV_IRODS_VERSION: ${ENV_IRODS_VERSION}
+        ENV_IRODS_EXT_CLANG_VERSION: ${ENV_IRODS_EXT_CLANG_VERSION}
+        ENV_IRODS_EXT_CLANG_RUNTIME_VERSION: ${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION}
+        ENV_CMAKE_VERSION: ${ENV_CMAKE_VERSION}
+        ENV_CMAKE_LONG_VERSION: ${ENV_CMAKE_LONG_VERSION}
+        ENV_DOCKERIZE_VERSION: ${ENV_DOCKERIZE_VERSION}
+        ENV_FILEBEAT_VERSION: ${ENV_FILEBEAT_VERSION}
     hostname: ires
     environment:
       RODS_PASSWORD: irods
@@ -75,7 +100,16 @@ services:
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
     privileged: true
   ires-centos:
-    build: ires-centos/
+    build:
+      context: ires-centos/
+      args:
+        ENV_IRODS_VERSION: ${ENV_IRODS_VERSION}
+        ENV_IRODS_EXT_CLANG_VERSION: ${ENV_IRODS_EXT_CLANG_VERSION}
+        ENV_IRODS_EXT_CLANG_RUNTIME_VERSION: ${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION}
+        ENV_CMAKE_VERSION: ${ENV_CMAKE_VERSION}
+        ENV_CMAKE_LONG_VERSION: ${ENV_CMAKE_LONG_VERSION}
+        ENV_DOCKERIZE_VERSION: ${ENV_DOCKERIZE_VERSION}
+        ENV_FILEBEAT_VERSION: ${ENV_FILEBEAT_VERSION}
     hostname: ires-centos
     environment:
       RODS_PASSWORD: irods
@@ -97,7 +131,7 @@ services:
       - default
       - common_default
   db:
-    image: mysql:5.6
+    image: mysql:${ENV_MYSQL_VERSION}
     hostname: db
     environment:
       MYSQL_DATABASE: pacman
@@ -106,7 +140,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
   irods-db:
-    image: postgres:9.4
+    image: postgres:${ENV_POSTGRES_VERSION}
     hostname: irods-db
     environment:
       POSTGRES_PASSWORD: foobar
@@ -114,7 +148,12 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
   irods-frontend:
-    build: externals/irods-frontend/
+    build:
+      context: externals/irods-frontend/
+      args:
+        ENV_IRODS_REST_VERSION: ${ENV_IRODS_REST_VERSION}
+        ENV_CLOUDBROWSER_VERSION: ${ENV_CLOUDBROWSER_VERSION}
+        ENV_FILEBEAT_VERSION: ${ENV_FILEBEAT_VERSION}
     hostname: irods-frontend
     environment:
       VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
@@ -127,7 +166,11 @@ services:
       - default
       - common_default
   davrods:
-    build: externals/rit-davrods/
+    build:
+      context: externals/rit-davrods/
+      args:
+        ENV_IRODS_VERSION: ${ENV_IRODS_VERSION}
+        ENV_DAVRODS_VERSION: ${ENV_DAVRODS_VERSION}
     environment:
       VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
       LOGSTASH_TAGS: DAVRODS
@@ -156,7 +199,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
   metalnx-db:
-    image: postgres:9.4
+    image: postgres:${ENV_POSTGRES_VERSION}
     hostname: metalnx-db
     environment:
       POSTGRES_USER: metalnx
@@ -165,7 +208,11 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
   mirthconnect:
-    build: mirthconnect/
+    build:
+      context: mirthconnect/
+      args:
+        ENV_MIRTH_CONNECT_VERSION: ${ENV_MIRTH_CONNECT_VERSION}
+        ENV_FILEBEAT_VERSION: ${ENV_FILEBEAT_VERSION}
     hostname: mirthconnect
     ports:
       - "8443:8443"

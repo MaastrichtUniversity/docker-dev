@@ -1,5 +1,14 @@
 FROM centos:7
 
+# Load build arguments from environment
+ARG ENV_IRODS_VERSION
+ARG ENV_IRODS_EXT_CLANG_VERSION
+ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+ARG ENV_CMAKE_VERSION
+ARG ENV_CMAKE_LONG_VERSION
+ARG ENV_DOCKERIZE_VERSION
+ARG ENV_FILEBEAT_VERSION
+
 RUN yum install -y \
     # extra repository to download extra packages
     epel-release
@@ -33,13 +42,13 @@ RUN yum install -y \
     # }} end
 # CentOS package manager contains a very old version of cmake.
 # Install modern version with: (found on https://askubuntu.com/questions/952429/is-there-are-good-ppa-for-cmake-backports)
-ENV CMAKE_VERSION 3.12
-ENV CMAKE_LONG_VERSION 3.12.0
+ENV CMAKE_VERSION ${ENV_CMAKE_VERSION}
+ENV CMAKE_LONG_VERSION ${ENV_CMAKE_LONG_VERSION}
 RUN cd /tmp && \
     wget https://cmake.org/files/v${CMAKE_VERSION}/cmake-${CMAKE_LONG_VERSION}-Linux-x86_64.sh && \
     sudo sh cmake-${CMAKE_LONG_VERSION}-Linux-x86_64.sh --prefix=/usr/local --exclude-subdir
 
-ENV IRODS_VERSION 4.2.3
+ENV IRODS_VERSION ${ENV_IRODS_VERSION}
 
 # install iRODS
 RUN rpm --import https://packages.irods.org/irods-signing-key.asc \
@@ -48,8 +57,8 @@ RUN rpm --import https://packages.irods.org/irods-signing-key.asc \
     irods-server-${IRODS_VERSION} \
     irods-devel-${IRODS_VERSION} \
     # packages required for building microservices
-    irods-externals-clang-runtime3.8-0 \
-    irods-externals-clang3.8-0
+    irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
+    irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION}
 
 
 # install Metalnx RMD
@@ -82,7 +91,7 @@ EXPOSE 1248 1247 8000
 #                                INSTALLATION FILEBEAT
 ###############################################################################
 
-RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-5.2.0-x86_64.rpm -O /tmp/filebeat.rpm \
+RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-x86_64.rpm -O /tmp/filebeat.rpm \
  && rpm -Uvh /tmp/filebeat.rpm
 
 ADD filebeat.yml /etc/filebeat/filebeat.yml
@@ -90,9 +99,8 @@ ADD filebeat.yml /etc/filebeat/filebeat.yml
 ###############################################################################
 
 
-ENV DOCKERIZE_VERSION v0.2.0
-RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz -o dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKERIZE_VERSION}/dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz -o dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz
 
 # With iRODS 4.1.10, iRODS needs a force restart. Waiting for port 1248 is therefore not reliable. Wait for Metalnx RMD instead.
 CMD dockerize -wait tcp://ires:8000 -timeout 200s /opt/irods/bootstrap.sh

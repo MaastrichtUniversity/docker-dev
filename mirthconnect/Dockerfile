@@ -1,7 +1,10 @@
 # Adapted from https://github.com/brandonstevens/mirth-connect-docker
 FROM openjdk:8u181-jdk-stretch
 
-ENV MIRTH_CONNECT_VERSION 3.7.0.b2399
+ARG ENV_MIRTH_CONNECT_VERSION
+ARG ENV_FILEBEAT_VERSION
+
+ENV MIRTH_CONNECT_VERSION ${ENV_MIRTH_CONNECT_VERSION}
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -44,7 +47,7 @@ ADD ./docker-entrypoint.sh /docker-entrypoint.sh
 #                                INSTALLATION FILEBEAT
 ###############################################################################
 
-RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-5.2.0-amd64.deb -O /tmp/filebeat.deb \
+RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-amd64.deb -O /tmp/filebeat.deb \
  && dpkg -i /tmp/filebeat.deb
 
 ADD filebeat.yml /etc/filebeat/filebeat.yml

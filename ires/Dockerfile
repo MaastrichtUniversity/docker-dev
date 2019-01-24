@@ -1,5 +1,14 @@
 FROM ubuntu:14.04
 
+# Load build arguments from environment
+ARG ENV_IRODS_VERSION
+ARG ENV_IRODS_EXT_CLANG_VERSION
+ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+ARG ENV_CMAKE_VERSION
+ARG ENV_CMAKE_LONG_VERSION
+ARG ENV_DOCKERIZE_VERSION
+ARG ENV_FILEBEAT_VERSION
+
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     apt-transport-https \
@@ -8,6 +17,7 @@ RUN apt-get update \
     super \
     libfuse2 \
     libjson-perl \
+    librabbitmq-dev \
     python \
     python-psutil \
     python-requests \
@@ -21,31 +31,18 @@ RUN apt-get update \
     # packages required for building ruleset and microservices {{
     libssl-dev \
     libcurl4-openssl-dev \
-<<<<<<< HEAD
     g++ \
     make
     # }} end
 # Ubuntu 14.04 package manager contains a very old version of cmake.
 # Install modern version with: (found on https://askubuntu.com/questions/952429/is-there-are-good-ppa-for-cmake-backports)
-ENV CMAKE_VERSION 3.12
-ENV CMAKE_LONG_VERSION 3.12.0
+ENV CMAKE_VERSION ${ENV_CMAKE_VERSION}
+ENV CMAKE_LONG_VERSION ${ENV_CMAKE_LONG_VERSION}
 RUN cd /tmp && \
     wget https://cmake.org/files/v${CMAKE_VERSION}/cmake-${CMAKE_LONG_VERSION}-Linux-x86_64.sh && \
     sudo sh cmake-${CMAKE_LONG_VERSION}-Linux-x86_64.sh --prefix=/usr/local --exclude-subdir
 
-ENV IRODS_VERSION 4.2.3
-=======
-    curl \
-    librabbitmq-dev \
-    nano
-
-
-RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
-ENV IRODS_VERSION 4.1.12
->>>>>>> master
+ENV IRODS_VERSION ${ENV_IRODS_VERSION}
 
 # install iRODS
 RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key add - \
@@ -55,8 +52,8 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key a
     irods-server=${IRODS_VERSION} \
     irods-dev=${IRODS_VERSION} \
     # packages required for building microservices
-    irods-externals-clang-runtime3.8-0 \
-    irods-externals-clang3.8-0
+    irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
+    irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION}
 
 # install Metalnx RMD
 ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
@@ -86,7 +83,7 @@ EXPOSE 1248 1247 8000
 #                                INSTALLATION FILEBEAT
 ###############################################################################
 
-RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-5.2.0-amd64.deb -O /tmp/filebeat.deb \
+RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-amd64.deb -O /tmp/filebeat.deb \
  && dpkg -i /tmp/filebeat.deb
 
 ADD filebeat.yml /etc/filebeat/filebeat.yml
@@ -95,8 +92,7 @@ ADD filebeat.yml /etc/filebeat/filebeat.yml
 
 
 
-ENV DOCKERIZE_VERSION v0.2.0
-RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz -o dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKERIZE_VERSION}/dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz -o dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz
 # With iRODS 4.1.10, iRODS needs a force restart. Waiting for port 1248 is therefore not reliable. Wait for Metalnx RMD instead.
 CMD dockerize -wait tcp://irods:8000 -timeout 200s /opt/irods/bootstrap.sh

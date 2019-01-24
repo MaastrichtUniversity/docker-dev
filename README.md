@@ -1,5 +1,5 @@
 ## Config
-* Add irods.secrets.cfg
+* Add _irods.secrets.cfg_ file
 ```
 INGEST_PASSWORD=
 INGEST_USER=
@@ -9,6 +9,88 @@ INGEST_MIRTHACL_PASSWORD=
 INGEST_MIRTHACL_URL=
 LDAP_PASSWORD=
 ```
+
+* Specify the desired versions in the _set_version_env.sh_ file
+```
+# iRODS and iRES
+ENV_IRODS_VERSION=4.2.4     # Note: also used in davrods container
+ENV_IRODS_EXT_CLANG_VERSION=3.8.0
+ENV_IRODS_EXT_CLANG_RUNTIME_VERSION=3.8.0
+ENV_CMAKE_VERSION=3.12
+ENV_CMAKE_LONG_VERSION=3.12.0
+
+<...>
+
+# Other (used in various containers)
+ENV_DOCKERIZE_VERSION=v0.2.0
+ENV_FILEBEAT_VERSION=5.2.0
+
+```
+
+
+## Get external repositories
+```
+./rit.sh externals clone
+```
+
+## Run
+```
+./rit.sh build
+./rit.sh down
+./rit.sh up
+
+# Special
+./rit.sh build --no-cache
+./rit.sh build --pull --no-cache     # Attempts to pull a newer version of the upstream base image
+```
+> **NOTE:** Please be aware that these containers depend on a running ``proxy`` container from [docker-common](https://github.com/MaastrichtUniversity/docker-common) in order to be accessible on their ``VIRTUAL_HOST`` address.
+
+
+## Usage of the i command
+First build the icommands image:
+```
+./i build
+```
+To execute a command:
+```
+./i [user] ils
+```
+Where `[user]` is a valid iRODS user as defined in irods/bootstrap_irods.sh. 
+You can omit the domain, this is added automatically. 
+
+You can also execute commands from the irods-ruleset repository like this:
+```
+./i [user] irule -F rules/projects/listContributingProjects.r 
+./i [user] irule -F rules/projects/detailsProject.r "*project='P000000001'" "*inherited='false'"
+./i [user] imeta add -C /nlmumc/ingest/zones/[collectionName] [attribute] [value] [unit]
+etc..
+```
+
+
+## Advanced usage
+
+### How to add a new version variable 'FOO' to the project?
+1. Add this entry to _set_versions_env.sh_ : ENV_FOO=bar
+1. Add to the bottom of _set_versions_env.sh_ : `export ENV_FOO`
+1. Add to _docker-compose.yml_ :
+    ```
+    # if required at build time
+    servicename:
+      build:
+        args:
+          ENV_FOO: ${ENV_FOO}
+
+    # if required at run time
+    servicename:
+      environment:
+        ENV_FOO: ${ENV_FOO}
+    ```
+1. (applies only to build time) Add to _servicename/Dockerfile_ :
+    ```
+    ARG ENV_FOO
+    ```
+1. Build the project as usual with `./rit.sh build`
+
 
 ### iRODS setup responses
 Unattended installation of iRODS requires a 'setup_responses' file. 
@@ -64,24 +146,6 @@ The order of the elements is important!
 17. IRODS_VAULT_DIRECTORY
 ```
 
-## Get external repositories
-
-```
-./rit.sh externals clone
-```
-
-## Run
-```
-./rit.sh build
-./rit.sh down
-./rit.sh up
-
-# Special
-./rit.sh build --no-cache
-./rit.sh build --pull --no-cache     # Attempts to pull a newer version of the upstream base image
-```
-**Note:** Please be aware that these containers depend on a running ``proxy`` container from [docker-common](https://github.com/MaastrichtUniversity/docker-common) in order to be accessible on their ``VIRTUAL_HOST`` address.
-
 ## Faker
 Create fake ingest zones and project collections
 ```
@@ -89,22 +153,3 @@ Create fake ingest zones and project collections
 ./rit.sh create-project-collections
 ```
 
-## Usage of the i command
-First build the icommands image:
-```
-./i build
-```
-To execute a command:
-```
-./i [user] ils
-```
-Where `[user]` is a valid iRODS user as defined in irods/bootstrap_irods.sh. 
-You can omit the domain, this is added automatically. 
-
-You can also execute commands from the irods-ruleset repository like this:
-```
-./i [user] irule -F rules/projects/listContributingProjects.r 
-./i [user] irule -F rules/projects/detailsProject.r "*project='P000000001'" "*inherited='false'"
-./i [user] imeta add -C /nlmumc/ingest/zones/[collectionName] [attribute] [value] [unit]
-etc..
-```
