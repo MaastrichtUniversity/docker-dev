@@ -109,6 +109,6 @@ env_selector
 
 # Assuming docker-compose is available in the PATH
 log $DBG "$0 [docker-compose \"$ARGS\"]"
-docker-compose "$ARGS"
+docker-compose $ARGS
 
 
