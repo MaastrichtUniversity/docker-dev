@@ -8,7 +8,7 @@ filebeat.prospectors:
 
   # Paths that should be crawled and fetched. Glob based paths.
   paths:
-    - /var/lib/irods/iRODS/server/log/*Log*
+    - /var/lib/irods/log/*Log*
 
   #Multiline
   multiline.pattern: '^[A-Z][a-z]{2}\s+\d'

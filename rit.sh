@@ -29,7 +29,7 @@ externals/rit_forms git@github.com:MaastrichtUniversity/rit_forms.git
 externals/rit-pacman git@github.com:MaastrichtUniversity/rit-pacman.git
 externals/rit_landing_page git@github.com:MaastrichtUniversity/rit_landing_page.git
 externals/irods-frontend git@github.com:MaastrichtUniversity/irods-frontend.git
-externals/rit-metalnx-web git@github.com:MaastrichtUniversity/rit-metalnx-web.git
+externals/metalnx-web git@github.com:MaastrichtUniversity/metalnx-web.git
 externals/rit-davrods git@github.com:MaastrichtUniversity/rit-davrods.git
 externals/crossref-lookup git@github.com:MaastrichtUniversity/crossref-lookup.git
 externals/epicpid-microservice git@github.com:MaastrichtUniversity/epicpid-microservice.git
@@ -96,6 +96,8 @@ fi
 # set RIT_ENV if not set already
 env_selector
 
+# Load versions ENV vars
+source set_versions_env.sh
 
 # Assuming docker-compose is available in the PATH
 log $DBG "$0 [docker-compose \"$@\"]"

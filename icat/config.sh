@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # config.sh
-# Configures iRODS using the response values in /opt/irods/setup_responses
+# Configures iRODS using the response values in /etc/irods/setup_responses
 #
 
 RESPFILE=$1
