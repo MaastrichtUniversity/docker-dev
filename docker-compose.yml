@@ -131,13 +131,22 @@ services:
       - default
       - common_default
   ires-ceph:
-    build: ires-ceph/
+    build:
+      context: ires-ceph/
+      args:
+        ENV_IRODS_VERSION: ${ENV_IRODS_VERSION}
+        ENV_IRODS_EXT_CLANG_VERSION: ${ENV_IRODS_EXT_CLANG_VERSION}
+        ENV_IRODS_EXT_CLANG_RUNTIME_VERSION: ${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION}
+        ENV_CMAKE_VERSION: ${ENV_CMAKE_VERSION}
+        ENV_CMAKE_LONG_VERSION: ${ENV_CMAKE_LONG_VERSION}
+        ENV_DOCKERIZE_VERSION: ${ENV_DOCKERIZE_VERSION}
+        ENV_FILEBEAT_VERSION: ${ENV_FILEBEAT_VERSION}
     hostname: ires-ceph
     environment:
       RODS_PASSWORD: irods
       PGPASSWORD: foobar
       VIRTUAL_HOST: ires-ceph.${RIT_ENV}.rit.unimaas.nl
-      IRODS_INGEST_REMOVE_DELAY: 5m
+      IRODS_INGEST_REMOVE_DELAY: 300s                         # Only unit 's' supported in 4.2.3 See post on iRODS-chat
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)

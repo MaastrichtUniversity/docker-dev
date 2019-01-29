@@ -10,22 +10,27 @@ source /etc/secrets
 # Now solved by letting ires_centos wait for ires:1248 in Dockerize
 cd /rules && make install
 
+# Remove previous build dir (if exists)
+if [ -d "/microservices/build" ]; then
+  rm -fr /microservices/build
+fi
+
 # Update RIT microservices
-cd /microservices && make install
+mkdir -p /microservices/build && cd /microservices/build && cmake .. && make && make install
 
 # Update RIT helpers
-cp /helpers/* /var/lib/irods/iRODS/server/bin/cmd/.
+cp /helpers/* /var/lib/irods/msiExecCmd_bin/.
 
 # Check if this is a first run of this container
 if [[ ! -e /var/run/irods_installed ]]; then
 
     if [ -n "$RODS_PASSWORD" ]; then
         echo "Setting irods password"
-        sed -i "17s/.*/$RODS_PASSWORD/" /etc/irods/setup_responses
+        sed -i "16s/.*/$RODS_PASSWORD/" /etc/irods/setup_responses
     fi
 
     # set up iRODS
-    /opt/irods/config.sh /etc/irods/setup_responses
+    python /var/lib/irods/scripts/setup_irods.py < /etc/irods/setup_responses
 
     # Add the ruleset-rit to server config
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-misc
@@ -45,15 +50,19 @@ if [[ ! -e /var/run/irods_installed ]]; then
 
     touch /var/run/irods_installed
 
-    # Force restart of irods service (see iRODS 4.1.10 bug described in RITDEV-231)
-    service irods restart
 else
     service irods start
 fi
 
+# Force start of Metalnx RMD
+service rmd restart
+
+#logstash
+/etc/init.d/filebeat start
+
 # Install iRODS librados plugin
 echo "compiling iRODS rados plugin"
-cd /irods_resource_plugin_rados && make && make install
+cd /irods_resource_plugin_rados && cmake -DCMAKE_INSTALL_PREFIX=/ . && make && make install
 
 # Templating irados config file
 touch /etc/irods/irados.config && chown irods: /etc/irods/irados.config && chmod 600 /etc/irods/irados.config
@@ -65,11 +74,6 @@ echo "[global]
 
 su - irods -c "iadmin mkresc radosResc irados ires-ceph:/tmp \"ceph|irods-dev|client.irods-dev\" "
 
-# Force start of Metalnx RMD
-service rmd restart
-
-#logstash
-/etc/init.d/filebeat start
 
 # this script must end with a persistent foreground process
-tail -F /var/lib/irods/iRODS/server/log/rodsLog.*
+tail -F /var/lib/irods/log/rodsLog.*
