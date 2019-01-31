@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM ubuntu:16.04
 
 # Load build arguments from environment
 ARG ENV_IRODS_VERSION
@@ -8,6 +8,9 @@ ARG ENV_CMAKE_VERSION
 ARG ENV_CMAKE_LONG_VERSION
 ARG ENV_DOCKERIZE_VERSION
 ARG ENV_FILEBEAT_VERSION
+
+# Use apt-get NL mirrors
+RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/apt/sources.list && apt-get update
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -46,7 +49,7 @@ ENV IRODS_VERSION ${ENV_IRODS_VERSION}
 
 # install iRODS
 RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key add - \
-    && echo "deb [arch=amd64] https://packages.irods.org/apt/ trusty main" | sudo tee /etc/apt/sources.list.d/renci-irods.list \
+    && echo "deb [arch=amd64] https://packages.irods.org/apt/ xenial main" | sudo tee /etc/apt/sources.list.d/renci-irods.list \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     irods-server=${IRODS_VERSION} \
