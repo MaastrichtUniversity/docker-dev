@@ -10,7 +10,8 @@ RUN apt-get update \
     apt-transport-https \
     wget \
     libfuse2 \
-    libcurl4-gnutls-dev
+    libcurl4-gnutls-dev \
+    libxml2
 
 # install iRODS icommands
 RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key add - \

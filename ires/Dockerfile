@@ -21,6 +21,7 @@ RUN apt-get update \
     libfuse2 \
     libjson-perl \
     librabbitmq-dev \
+    libxml2 \
     python \
     python-psutil \
     python-requests \
