@@ -38,7 +38,8 @@ RUN apt-get update \
     g++ \
     make
     # }} end
-# Ubuntu 14.04 package manager contains a very old version of cmake.
+
+# Ubuntu's package manager contains a very old version of cmake.
 # Install modern version with: (found on https://askubuntu.com/questions/952429/is-there-are-good-ppa-for-cmake-backports)
 ENV CMAKE_VERSION ${ENV_CMAKE_VERSION}
 ENV CMAKE_LONG_VERSION ${ENV_CMAKE_LONG_VERSION}
