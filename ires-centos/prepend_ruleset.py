@@ -13,7 +13,7 @@ def main(path_to_server_config, name_of_new_rule_file):
 
     with open(path_to_server_config, 'r+') as f:
         server_config = json.load(f)
-        server_config['re_rulebase_set'].insert(0, {'filename': name_of_new_rule_file})
+        server_config['plugin_configuration']['rule_engines'][0]['plugin_specific_configuration']['re_rulebase_set'].insert(0, name_of_new_rule_file)
         f.seek(0)
         json.dump(server_config, f, indent=4, sort_keys=True)
         f.truncate()

@@ -5,9 +5,9 @@
 # privileges to the user.
 
 RESPFILE=$1
-DBUSER=`tail -n 3 $RESPFILE | head -n 1`
-DBPASS=`tail -n 2 $RESPFILE | head -n 1`
-DBNAME=`tail -n 4 $RESPFILE | head -n 1`
+DBNAME=`head -n 7 $RESPFILE | tail -n 1`
+DBUSER=`head -n 8 $RESPFILE | tail -n 1`
+DBPASS=`head -n 10 $RESPFILE | tail -n 1`
 
 psql -h irods-db -U postgres -d postgres <<- EOSQL
 DROP DATABASE $DBNAME;

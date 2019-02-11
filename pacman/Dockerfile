@@ -1,5 +1,13 @@
 FROM php:7.1-apache-stretch
 
+# Load build arguments from environment
+ARG ENV_XDEBUG_VERSION
+ARG ENV_DRUPAL_VERSION
+ARG ENV_DRUPAL_VERSION_MD5
+ARG ENV_ISLANDORA_VERSION
+ARG ENV_DOCKERIZE_VERSION
+ARG ENV_FILEBEAT_VERSION
+
 RUN apt-get update && apt-get install -y \
         unzip \
         libxslt-dev \
@@ -25,7 +33,7 @@ RUN docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
         zip
 
 # PHP xdebug extension
-RUN pecl install xdebug-2.6.1 \
+RUN pecl install xdebug-${ENV_XDEBUG_VERSION} \
     && docker-php-ext-enable xdebug \
     && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
@@ -39,8 +47,8 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
     && apt-get install -y nodejs
 
 # https://www.drupal.org/node/3060/release
-ENV DRUPAL_VERSION 7.59
-ENV DRUPAL_MD5 7e09c6b177345a81439fe0aa9a2d15fc
+ENV DRUPAL_VERSION ${ENV_DRUPAL_VERSION}
+ENV DRUPAL_MD5 ${ENV_DRUPAL_VERSION_MD5}
 
 RUN cd /var/www/html \
     && curl -fSL "http://ftp.drupal.org/files/projects/drupal-${DRUPAL_VERSION}.tar.gz" -o drupal.tar.gz \
@@ -49,12 +57,11 @@ RUN cd /var/www/html \
     && rm drupal.tar.gz \
     && chown -R www-data:www-data sites
 
-ENV DOCKERIZE_VERSION v0.2.0
-RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz -o dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKERIZE_VERSION}/dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz -o dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz
 
 WORKDIR /var/www/html/sites/all/modules
-ENV ISLANDORA_VERSION 1.11
+ENV ISLANDORA_VERSION ${ENV_ISLANDORA_VERSION}
 
 RUN curl -fSL "https://github.com/islandora/islandora_xml_forms/archive/7.x-${ISLANDORA_VERSION}.zip" -o islandora_xml_forms.zip \
     && unzip islandora_xml_forms.zip \

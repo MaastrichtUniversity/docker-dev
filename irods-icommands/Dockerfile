@@ -1,21 +1,24 @@
-FROM ubuntu:14.04
+FROM ubuntu:16.04
+
+ARG ENV_IRODS_VERSION
+
+# Use apt-get NL mirrors
+RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/apt/sources.list && apt-get update
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    apt-transport-https \
     wget \
     libfuse2 \
-    libcurl4-gnutls-dev
-
-RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
-ENV IRODS_VERSION 4.1.12
+    libcurl4-gnutls-dev \
+    libxml2
 
 # install iRODS icommands
-
-RUN wget ftp://ftp.renci.org/pub/irods/releases/${IRODS_VERSION}/ubuntu14/irods-icommands-${IRODS_VERSION}-ubuntu14-x86_64.deb -O /tmp/irods-icat.deb \
-    && dpkg -i /tmp/irods-icat.deb
+RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key add - \
+    && echo "deb [arch=amd64] https://packages.irods.org/apt/ xenial main" | sudo tee /etc/apt/sources.list.d/renci-irods.list \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    irods-icommands=${ENV_IRODS_VERSION}
 
 RUN useradd -ms /bin/bash irods
 WORKDIR /home/irods
