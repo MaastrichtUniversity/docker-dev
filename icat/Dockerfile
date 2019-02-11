@@ -90,6 +90,6 @@ ADD filebeat.yml /etc/filebeat/filebeat.yml
 
 ###############################################################################
 
-VOLUME [ "/rules", "/helpers", "/microservices" ]
+# VOLUME [ "/rules", "/helpers", "/microservices" ]
 
 ENTRYPOINT [ "/opt/irods/bootstrap.sh" ]

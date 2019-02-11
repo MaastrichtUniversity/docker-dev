@@ -1,14 +1,4 @@
 ## Config
-* Add _irods.secrets.cfg_ file
-```
-INGEST_PASSWORD=
-INGEST_USER=
-INGEST_MOUNT=
-INGEST_MIRTHACL_USER=
-INGEST_MIRTHACL_PASSWORD=
-INGEST_MIRTHACL_URL=
-LDAP_PASSWORD=
-```
 
 * Specify the desired versions in the _set_version_env.sh_ file
 ```
@@ -30,41 +20,15 @@ ENV_FILEBEAT_VERSION=5.2.0
 
 ## Get external repositories
 ```
-./rit.sh externals clone
+cd docker-dev
+git clone git@github.com:MaastrichtUniversity/irods_resource_plugin_rados.git externals/irods_resource_plugin_rados 
 ```
 
 ## Run
 ```
-./rit.sh build
-./rit.sh down
-./rit.sh up
-
-# Special
-./rit.sh build --no-cache
-./rit.sh build --pull --no-cache     # Attempts to pull a newer version of the upstream base image
-```
-> **NOTE:** Please be aware that these containers depend on a running ``proxy`` container from [docker-common](https://github.com/MaastrichtUniversity/docker-common) in order to be accessible on their ``VIRTUAL_HOST`` address.
-
-
-## Usage of the i command
-First build the icommands image:
-```
-./i build
-```
-To execute a command:
-```
-./i [user] ils
-```
-Where `[user]` is a valid iRODS user as defined in irods/bootstrap_irods.sh. 
-You can omit the domain, this is added automatically. 
-
-You can also execute commands from the irods-ruleset repository like this:
-```
-./i [user] irule -F rules/projects/listContributingProjects.r 
-./i [user] irule -F rules/projects/detailsProject.r "*project='P000000001'" "*inherited='false'"
-./i [user] imeta add -C /nlmumc/ingest/zones/[collectionName] [attribute] [value] [unit]
-etc..
-```
+./run_rit_light.sh build
+./run_rit_light.sh down
+./run_rit_light.sh up
 
 
 ## Advanced usage
@@ -89,7 +53,7 @@ etc..
     ```
     ARG ENV_FOO
     ```
-1. Build the project as usual with `./rit.sh build`
+1. Build the project as usual with `./run_rit_light.sh build`
 
 
 ### iRODS setup responses
@@ -144,12 +108,5 @@ The order of the elements is important!
 15. IRODS_CONTROL_PLANE_KEY
 16. IRODS_SERVER_ADMINISTRATOR_PASSWORD
 17. IRODS_VAULT_DIRECTORY
-```
-
-## Faker
-Create fake ingest zones and project collections
-```
-./rit.sh create-ingest-zones
-./rit.sh create-project-collections
 ```
 

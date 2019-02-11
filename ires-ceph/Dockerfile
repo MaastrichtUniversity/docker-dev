@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM ubuntu:16.04
 
 # Load build arguments from environment
 ARG ENV_IRODS_VERSION
@@ -9,6 +9,9 @@ ARG ENV_CMAKE_LONG_VERSION
 ARG ENV_DOCKERIZE_VERSION
 ARG ENV_FILEBEAT_VERSION
 
+# Use apt-get NL mirrors
+RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/apt/sources.list && apt-get update
+
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     apt-transport-https \
@@ -18,6 +21,7 @@ RUN apt-get update \
     libfuse2 \
     libjson-perl \
     librabbitmq-dev \
+    libxml2 \
     python \
     python-psutil \
     python-requests \
@@ -28,8 +32,8 @@ RUN apt-get update \
     curl \
     joe \
     nano \
+    # packages required for using rados plugin
     uuid-dev \
-    libssl-dev \
     build-essential \
     # packages required for building ruleset and microservices {{
     libssl-dev \
@@ -40,14 +44,14 @@ RUN apt-get update \
 
 # Add Ceph repo for appropriate version of librados packages
 RUN wget -q -O- 'https://download.ceph.com/keys/release.asc' | sudo apt-key add -
-RUN echo deb https://download.ceph.com/debian-luminous/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
+RUN echo deb https://download.ceph.com/debian-luminous/ xenial main | sudo tee /etc/apt/sources.list.d/ceph.list
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     librados2 \
     librados-dev
 
-# Ubuntu 14.04 package manager contains a very old version of cmake.
+# Ubuntu's package manager contains a very old version of cmake.
 # Install modern version with: (found on https://askubuntu.com/questions/952429/is-there-are-good-ppa-for-cmake-backports)
 ENV CMAKE_VERSION ${ENV_CMAKE_VERSION}
 ENV CMAKE_LONG_VERSION ${ENV_CMAKE_LONG_VERSION}
@@ -59,7 +63,7 @@ ENV IRODS_VERSION ${ENV_IRODS_VERSION}
 
 # install iRODS
 RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key add - \
-    && echo "deb [arch=amd64] https://packages.irods.org/apt/ trusty main" | sudo tee /etc/apt/sources.list.d/renci-irods.list \
+    && echo "deb [arch=amd64] https://packages.irods.org/apt/ xenial main" | sudo tee /etc/apt/sources.list.d/renci-irods.list \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     irods-server=${IRODS_VERSION} \

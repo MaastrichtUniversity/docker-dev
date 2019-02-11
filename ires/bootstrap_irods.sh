@@ -10,4 +10,4 @@ iadmin modresc iresResource comment UBUNTU-INGEST-RESOURCE
 ## Special
 
 # Mounted collection for rawdata
-imcoll -m filesystem /mnt/ingest/shares/rawData /nlmumc/ingest/shares/rawdata
+# imcoll -m filesystem /mnt/ingest/shares/rawData /nlmumc/ingest/shares/rawdata
