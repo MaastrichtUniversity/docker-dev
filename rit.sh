@@ -7,6 +7,17 @@ if [[ -z $DH_ENV_HOME ]]; then
 fi
 . $DH_ENV_HOME/lib-dh.sh
 
+# Set logging level based on -v (--verbose) or -vv param
+ARGS="$@ "
+if [[ ${ARGS} = *"-vv "* ]]; then
+   export LOGTRESHOLD=$DBG
+   ARGS="${ARGS/-vv /}"
+elif [[ ${ARGS} = *"--verbose "* ]] || [[ ${ARGS} = *"-v "* ]]; then
+   export LOGTRESHOLD=$INF
+   ARGS="${ARGS/--verbose /}"
+   ARGS="${ARGS/-v /}"
+fi
+
 # Set the prefix for the project
 COMPOSE_PROJECT_NAME="corpus"
 export COMPOSE_PROJECT_NAME
@@ -38,7 +49,7 @@ externals/irods_resource_plugin_rados git@github.com:MaastrichtUniversity/irods_
 
 # do the required action in case of externals or exec
 if [[ $1 == "externals" ]]; then
-    action=$2
+    action=${ARGS/$1/}
     run_repo_action ${action} "${externals}"
     exit 0
 fi
@@ -100,7 +111,7 @@ env_selector
 source set_versions_env.sh
 
 # Assuming docker-compose is available in the PATH
-log $DBG "$0 [docker-compose \"$@\"]"
-docker-compose "$@"
+log $DBG "$0 [docker-compose \"$ARGS\"]"
+docker-compose $ARGS
 
 
