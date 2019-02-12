@@ -1,6 +1,6 @@
 ## Config
 
-* Specify the desired versions in the _set_version_env.sh_ file
+* Specify the desired versions in the _set_versions_env.sh_ file
 ```
 # iRODS and iRES
 ENV_IRODS_VERSION=4.2.4     # Note: also used in davrods container
@@ -15,6 +15,15 @@ ENV_CMAKE_LONG_VERSION=3.12.0
 ENV_DOCKERIZE_VERSION=v0.2.0
 ENV_FILEBEAT_VERSION=5.2.0
 
+```
+
+* Add _irods.secrets.cfg_ file
+```
+# Ceph credentials
+CEPHGLMONHOST= monhost1,monhost2,monhost3
+CEPHPOOL=poolname
+CEPHGLUSER=username
+CEPHGLKEY=userkey
 ```
 
 
