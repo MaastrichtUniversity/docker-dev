@@ -30,15 +30,14 @@ CEPHGLKEY=userkey
 ## Get external repositories
 ```
 cd docker-dev
-git clone git@github.com:MaastrichtUniversity/irods_resource_plugin_rados.git externals/irods_resource_plugin_rados 
+git clone git@github.com:irods/irods_resource_plugin_rados externals/irods_resource_plugin_rados
 ```
 
 ## Run
 ```
 ./run_rit_light.sh build
-./run_rit_light.sh down
 ./run_rit_light.sh up
-
+```
 
 ## Advanced usage
 
