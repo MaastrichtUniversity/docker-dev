@@ -180,7 +180,7 @@ services:
       - default
       - common_default
   metalnx:
-    build: externals/metalnx-web/packaging/docker/
+    build: externals/rit-metalnx-web/
     hostname: metalnx
     environment:
       IRODS_HOST: irods
@@ -188,23 +188,9 @@ services:
       IRODS_ZONE: nlmumc
       IRODS_USER: rods
       IRODS_PASS: irods
-      METALNX_POSTGRES_HOST: metalnx-db
-      METALNX_POSTGRES_DB_NAME: metalnx
-      METALNX_POSTGRES_DB_USER: metalnx
-      METALNX_POSTGRES_DB_PASS: foobar
-      METALNX_RUN_SYNC_JOBS: "false"
       VIRTUAL_HOST: metalnx.${RIT_ENV}.rit.unimaas.nl
       VIRTUAL_PORT: 8080
       LOGSTASH_TAGS: METALNX
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-  metalnx-db:
-    image: postgres:${ENV_POSTGRES_VERSION}
-    hostname: metalnx-db
-    environment:
-      POSTGRES_USER: metalnx
-      POSTGRES_PASSWORD: foobar
-      LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
   mirthconnect:
