@@ -2,7 +2,7 @@
 
 set -e
 
-source /etc/secrets
+
 
 # Update RIT rules
 # FYI: This step (and make of the microservices) rely on sequential starts of the ires-containers. If those containers
@@ -22,10 +22,22 @@ mkdir -p /microservices/build && cd /microservices/build && cmake .. && make && 
 cp /helpers/* /var/lib/irods/msiExecCmd_bin/.
 
 # Mount ingest zones and rawdata
-mkdir -p /mnt/ingest/zones
-mkdir -p /mnt/ingest/shares/rawData
-mount -t cifs ${INGEST_MOUNT} /mnt/ingest/zones -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999,vers=1.0
-mount -t cifs ${INGEST_MOUNT}/rawData /mnt/ingest/shares/rawData -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999,vers=1.0
+if [ "${USE_SAMBA}" = "true" ] ; then
+    if [ -s /etc/secrets ]
+    then
+         source /etc/secrets
+         mkdir -p /mnt/ingest/zones
+         mkdir -p /mnt/ingest/shares/rawData
+         mount -t cifs ${INGEST_MOUNT} /mnt/ingest/zones -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999,vers=1.0
+         mount -t cifs ${INGEST_MOUNT}/rawData /mnt/ingest/shares/rawData -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999,vers=1.0
+    else
+         echo "Secrets file can not be empty when using SAMBA" 
+         exit 1
+    fi
+else 
+   echo "Using docker volume bind, not using CIFS mount"
+fi
+
 # Check if this is a first run of this container
 if [[ ! -e /var/run/irods_installed ]]; then
 
