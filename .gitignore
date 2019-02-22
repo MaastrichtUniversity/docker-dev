@@ -1,3 +1,4 @@
+*.secrets.cfg
 .idea
 channels-backup
 externals/*
