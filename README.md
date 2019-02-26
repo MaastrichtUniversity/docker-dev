@@ -20,7 +20,7 @@ ENV_FILEBEAT_VERSION=5.2.0
 * Add _irods.secrets.cfg_ file
 ```
 # Ceph credentials
-CEPHGLMONHOST= monhost1,monhost2,monhost3
+CEPHGLMONHOST=monhost1,monhost2,monhost3
 CEPHPOOL=poolname
 CEPHGLUSER=username
 CEPHGLKEY=userkey
