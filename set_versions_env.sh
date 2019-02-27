@@ -5,7 +5,7 @@
 ####################################################################################
 
 # iRODS and iRES
-ENV_IRODS_VERSION=4.2.4     # Note: also used in davrods container
+ENV_IRODS_VERSION=4.2.5     # Note: also used in davrods container
 ENV_IRODS_EXT_CLANG_VERSION=3.8-0
 ENV_IRODS_EXT_CLANG_RUNTIME_VERSION=3.8-0
 ENV_CMAKE_VERSION=3.12
