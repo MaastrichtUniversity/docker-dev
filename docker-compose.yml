@@ -169,7 +169,7 @@ services:
     build:
       context: externals/rit-davrods/
       args:
-        ENV_IRODS_VERSION: ${ENV_IRODS_VERSION}
+        ENV_DAVRODS_IRODS_VERSION: ${ENV_DAVRODS_IRODS_VERSION}
         ENV_DAVRODS_VERSION: ${ENV_DAVRODS_VERSION}
     environment:
       VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
