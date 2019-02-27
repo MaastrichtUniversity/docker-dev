@@ -9,8 +9,7 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     apt-transport-https \
     wget \
     libfuse2 \
-    libcurl4-gnutls-dev \
-    libxml2
+    libcurl4-gnutls-dev
 
 # install iRODS icommands
 RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key add - \
