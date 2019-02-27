@@ -57,6 +57,8 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key a
     irods-server=${IRODS_VERSION} \
     irods-database-plugin-postgres=${IRODS_VERSION} \
     irods-dev=${IRODS_VERSION} \
+    irods-runtime=${IRODS_VERSION} \
+    irods-icommands=${IRODS_VERSION} \
     # packages required for building microservices
     irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
     irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION}
