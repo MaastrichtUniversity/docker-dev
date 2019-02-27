@@ -20,7 +20,6 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     libfuse2 \
     libjson-perl \
     librabbitmq-dev \
-    libxml2 \
     python \
     python-psutil \
     python-requests \
