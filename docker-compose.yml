@@ -43,8 +43,6 @@ services:
         - ENV_IRODS_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
-        - ENV_CMAKE_VERSION
-        - ENV_CMAKE_LONG_VERSION
         - ENV_FILEBEAT_VERSION
     hostname: irods
     ports:
@@ -75,8 +73,6 @@ services:
         - ENV_IRODS_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
-        - ENV_CMAKE_VERSION
-        - ENV_CMAKE_LONG_VERSION
         - ENV_DOCKERIZE_VERSION
         - ENV_FILEBEAT_VERSION
     hostname: ires

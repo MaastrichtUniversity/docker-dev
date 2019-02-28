@@ -10,13 +10,12 @@ source /etc/secrets
 # Now solved by letting ires_centos wait for ires:1248 in Dockerize
 cd /rules && make install
 
-# Remove previous build dir (if exists)
-if [ -d "/microservices/build" ]; then
-  rm -fr /microservices/build
-fi
-
-# Update RIT microservices
-mkdir -p /microservices/build && cd /microservices/build && cmake .. && make && make install
+# Build RIT microservices
+mkdir -p /tmp/microservices-build && \
+    cd /tmp/microservices-build && \
+    cmake /microservices && \
+    make && \
+    make install
 
 # Update RIT helpers
 cp /helpers/* /var/lib/irods/msiExecCmd_bin/.

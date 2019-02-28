@@ -19,7 +19,6 @@ RUN yum install -y \
     sudo \
     wget \
     unixODBC \
-#    super \
     fuse-libs \
     librabbitmq-devel \
     perl-JSON \
@@ -41,8 +40,8 @@ RUN yum install -y \
     rpm-build
     # }} end
 
-# CentOS package manager contains a very old version of cmake.
-# Install modern version with: (found on https://askubuntu.com/questions/952429/is-there-are-good-ppa-for-cmake-backports)
+# CentOS 7 contains cmake 3.3
+# Install newer version
 ENV CMAKE_VERSION ${ENV_CMAKE_VERSION}
 ENV CMAKE_LONG_VERSION ${ENV_CMAKE_LONG_VERSION}
 RUN cd /tmp && \

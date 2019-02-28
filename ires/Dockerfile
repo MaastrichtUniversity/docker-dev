@@ -4,8 +4,6 @@ FROM ubuntu:16.04
 ARG ENV_IRODS_VERSION
 ARG ENV_IRODS_EXT_CLANG_VERSION
 ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
-ARG ENV_CMAKE_VERSION
-ARG ENV_CMAKE_LONG_VERSION
 ARG ENV_DOCKERIZE_VERSION
 ARG ENV_FILEBEAT_VERSION
 
@@ -34,16 +32,9 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     libssl-dev \
     libcurl4-openssl-dev \
     g++ \
-    make
+    make \
+    cmake
     # }} end
-
-# Ubuntu's package manager contains a very old version of cmake.
-# Install modern version with: (found on https://askubuntu.com/questions/952429/is-there-are-good-ppa-for-cmake-backports)
-ENV CMAKE_VERSION ${ENV_CMAKE_VERSION}
-ENV CMAKE_LONG_VERSION ${ENV_CMAKE_LONG_VERSION}
-RUN cd /tmp && \
-    wget https://cmake.org/files/v${CMAKE_VERSION}/cmake-${CMAKE_LONG_VERSION}-Linux-x86_64.sh && \
-    sudo sh cmake-${CMAKE_LONG_VERSION}-Linux-x86_64.sh --prefix=/usr/local --exclude-subdir
 
 ENV IRODS_VERSION ${ENV_IRODS_VERSION}
 
