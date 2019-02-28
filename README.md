@@ -10,7 +10,7 @@ INGEST_MIRTHACL_URL=
 LDAP_PASSWORD=
 ```
 
-* Specify the desired versions in the _set_version_env.sh_ file
+* Specify the default values and versions for environment vars in the _.env_ file
 ```
 # iRODS and iRES
 ENV_IRODS_VERSION=4.2.4
@@ -70,8 +70,7 @@ etc..
 ## Advanced usage
 
 ### How to add a new version variable 'FOO' to the project?
-1. Add this entry to _set_versions_env.sh_ : ENV_FOO=bar
-1. Add to the bottom of _set_versions_env.sh_ : `export ENV_FOO`
+1. Add this entry to _.env_ : ENV_FOO=bar
 1. Add to _docker-compose.yml_ :
     ```
     # if required at build time

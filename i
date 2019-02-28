@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Load versions ENV vars
-source set_versions_env.sh
+source .env
 
 if [[ $1 == "build" ]]; then
     docker build -t irods-icommand --build-arg ENV_IRODS_VERSION=${ENV_IRODS_VERSION} irods-icommands/
