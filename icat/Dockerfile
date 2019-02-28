@@ -92,4 +92,7 @@ ADD filebeat.yml /etc/filebeat/filebeat.yml
 
 VOLUME [ "/rules", "/helpers", "/microservices" ]
 
+# Propagate (some) build arguments to runtime ENV vars
+ENV ENV_IRODS_VERSION=${ENV_IRODS_VERSION}
+
 ENTRYPOINT [ "/opt/irods/bootstrap.sh" ]

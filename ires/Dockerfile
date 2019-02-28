@@ -95,6 +95,8 @@ ADD filebeat.yml /etc/filebeat/filebeat.yml
 
 ###############################################################################
 
+# Propagate (some) build arguments to runtime ENV vars
+ENV ENV_IRODS_VERSION=${ENV_IRODS_VERSION}
 
 
 RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKERIZE_VERSION}/dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz -o dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz \
