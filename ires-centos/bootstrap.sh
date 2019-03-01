@@ -15,7 +15,7 @@ mkdir -p /tmp/microservices-build && \
 # Update RIT helpers
 cp /helpers/* /var/lib/irods/msiExecCmd_bin/.
 
-# Mount ingest zones and rawdata
+# Mount ingest zones
 if [ "${USE_SAMBA}" = "true" ] ; then
     if [ -s /etc/secrets ]
     then

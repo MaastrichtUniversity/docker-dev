@@ -37,7 +37,6 @@ iadmin modresc replRescAZM01 comment Replicated-resource-for-AZM
 ##############
 ## Collections
 imkdir -p /nlmumc/ingest/zones
-imkdir -p /nlmumc/ingest/shares/rawdata
 imkdir -p /nlmumc/projects
 
 ########

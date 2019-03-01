@@ -17,15 +17,13 @@ mkdir -p /tmp/microservices-build && \
 # Update RIT helpers
 cp /helpers/* /var/lib/irods/msiExecCmd_bin/.
 
-# Mount ingest zones and rawdata
+# Mount ingest zones
 if [ "${USE_SAMBA}" = "true" ] ; then
     if [ -s /etc/secrets ]
     then
          source /etc/secrets
          mkdir -p /mnt/ingest/zones
-         mkdir -p /mnt/ingest/shares/rawData
          mount -t cifs ${INGEST_MOUNT} /mnt/ingest/zones -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999,vers=1.0
-         mount -t cifs ${INGEST_MOUNT}/rawData /mnt/ingest/shares/rawData -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999,vers=1.0
     else
          echo "Secrets file can not be empty when using SAMBA" 
          exit 1

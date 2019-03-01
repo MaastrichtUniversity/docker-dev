@@ -94,7 +94,6 @@ services:
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
       - ./staging-data/dropzones:/mnt/ingest/zones
-      - ./staging-data/rawdata:/mnt/ingest/shares/rawData
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
     privileged: true
   ires-centos:
