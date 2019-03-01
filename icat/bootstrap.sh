@@ -10,7 +10,7 @@ until psql -h irods-db -U postgres -c '\l'; do
 done
 
 # Update RIT rules
-cd /rules && make install
+cd /rules && make
 
 # Build RIT microservices
 mkdir -p /tmp/microservices-build && \
