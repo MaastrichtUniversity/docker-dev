@@ -35,6 +35,7 @@ cd /var/www/html && drush en \
 cd /var/www/html && drush add-rit-forms
 
 domain=maastrichtuniversity.nl
+snDomain=scannexus.nl
 
 cd /var/www/html && drush user-create p.vanschayck --mail="p.vanschayck@${domain}" --password="foobar"
 cd /var/www/html && drush user-create m.coonen --mail="m.coonen@${domain}" --password="foobar"
@@ -45,6 +46,7 @@ cd /var/www/html && drush user-create r.brecheisen --mail="r.brecheisen@${domain
 cd /var/www/html && drush user-create jonathan.melius --mail="jonathan.melius@${domain}" --password="foobar"
 cd /var/www/html && drush user-create k.heinen --mail="k.heinen@${domain}" --password="foobar"
 cd /var/www/html && drush user-create s.nijhuis --mail="s.nijhuis@${domain}" --password="foobar"
+cd /var/www/html && drush user-create rick.voncken --mail="rick.voncken@${snDomain}" --password="foobar"
 
 # Set homepage to pacman/info
 cd /var/www/html && drush vset site_frontpage pacman/info

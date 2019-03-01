@@ -4,15 +4,12 @@ FROM ubuntu:16.04
 ARG ENV_IRODS_VERSION
 ARG ENV_IRODS_EXT_CLANG_VERSION
 ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
-ARG ENV_CMAKE_VERSION
-ARG ENV_CMAKE_LONG_VERSION
 ARG ENV_FILEBEAT_VERSION
 
-# Use apt-get NL mirrors
-RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/apt/sources.list && apt-get update
-
-RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+# Use apt-get NL mirrors and install packages
+RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/apt/sources.list && \
+    apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
     apt-transport-https \
     wget \
     unixodbc \
@@ -22,7 +19,6 @@ RUN apt-get update \
     libfuse2 \
     libjson-perl \
     librabbitmq-dev \
-    libxml2 \
     python \
     python-psutil \
     python-requests \
@@ -36,17 +32,9 @@ RUN apt-get update \
     libssl-dev \
     libcurl4-openssl-dev \
     g++ \
-    make
+    make \
+    cmake
     # }} end
-
-# Ubuntu's package manager contains a very old version of cmake.
-# Install modern version with: (found on https://askubuntu.com/questions/952429/is-there-are-good-ppa-for-cmake-backports)
-ENV CMAKE_VERSION ${ENV_CMAKE_VERSION}
-ENV CMAKE_LONG_VERSION ${ENV_CMAKE_LONG_VERSION}
-RUN cd /tmp && \
-    wget https://cmake.org/files/v${CMAKE_VERSION}/cmake-${CMAKE_LONG_VERSION}-Linux-x86_64.sh && \
-    sudo sh cmake-${CMAKE_LONG_VERSION}-Linux-x86_64.sh --prefix=/usr/local --exclude-subdir
-
 
 ENV IRODS_VERSION ${ENV_IRODS_VERSION}
 
@@ -58,6 +46,8 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key a
     irods-server=${IRODS_VERSION} \
     irods-database-plugin-postgres=${IRODS_VERSION} \
     irods-dev=${IRODS_VERSION} \
+    irods-runtime=${IRODS_VERSION} \
+    irods-icommands=${IRODS_VERSION} \
     # packages required for building microservices
     irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
     irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION}

@@ -4,12 +4,12 @@ services:
     build:
       context: pacman/
       args:
-        ENV_XDEBUG_VERSION: ${ENV_XDEBUG_VERSION}
-        ENV_DRUPAL_VERSION: ${ENV_DRUPAL_VERSION}
-        ENV_DRUPAL_VERSION_MD5: ${ENV_DRUPAL_VERSION_MD5}
-        ENV_ISLANDORA_VERSION: ${ENV_ISLANDORA_VERSION}
-        ENV_DOCKERIZE_VERSION: ${ENV_DOCKERIZE_VERSION}
-        ENV_FILEBEAT_VERSION: ${ENV_FILEBEAT_VERSION}
+        - ENV_XDEBUG_VERSION
+        - ENV_DRUPAL_VERSION
+        - ENV_DRUPAL_VERSION_MD5
+        - ENV_ISLANDORA_VERSION
+        - ENV_DOCKERIZE_VERSION
+        - ENV_FILEBEAT_VERSION
     hostname: pacman
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -40,12 +40,10 @@ services:
     build:
       context: icat/
       args:
-        ENV_IRODS_VERSION: ${ENV_IRODS_VERSION}
-        ENV_IRODS_EXT_CLANG_VERSION: ${ENV_IRODS_EXT_CLANG_VERSION}
-        ENV_IRODS_EXT_CLANG_RUNTIME_VERSION: ${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION}
-        ENV_CMAKE_VERSION: ${ENV_CMAKE_VERSION}
-        ENV_CMAKE_LONG_VERSION: ${ENV_CMAKE_LONG_VERSION}
-        ENV_FILEBEAT_VERSION: ${ENV_FILEBEAT_VERSION}
+        - ENV_IRODS_VERSION
+        - ENV_IRODS_EXT_CLANG_VERSION
+        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+        - ENV_FILEBEAT_VERSION
     hostname: irods
     ports:
       - "1247:1247"
@@ -71,13 +69,11 @@ services:
     build:
       context: ires/
       args:
-        ENV_IRODS_VERSION: ${ENV_IRODS_VERSION}
-        ENV_IRODS_EXT_CLANG_VERSION: ${ENV_IRODS_EXT_CLANG_VERSION}
-        ENV_IRODS_EXT_CLANG_RUNTIME_VERSION: ${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION}
-        ENV_CMAKE_VERSION: ${ENV_CMAKE_VERSION}
-        ENV_CMAKE_LONG_VERSION: ${ENV_CMAKE_LONG_VERSION}
-        ENV_DOCKERIZE_VERSION: ${ENV_DOCKERIZE_VERSION}
-        ENV_FILEBEAT_VERSION: ${ENV_FILEBEAT_VERSION}
+        - ENV_IRODS_VERSION
+        - ENV_IRODS_EXT_CLANG_VERSION
+        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+        - ENV_DOCKERIZE_VERSION
+        - ENV_FILEBEAT_VERSION
     hostname: ires
     environment:
       RODS_PASSWORD: irods
@@ -105,13 +101,11 @@ services:
     build:
       context: ires-centos/
       args:
-        ENV_IRODS_VERSION: ${ENV_IRODS_VERSION}
-        ENV_IRODS_EXT_CLANG_VERSION: ${ENV_IRODS_EXT_CLANG_VERSION}
-        ENV_IRODS_EXT_CLANG_RUNTIME_VERSION: ${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION}
-        ENV_CMAKE_VERSION: ${ENV_CMAKE_VERSION}
-        ENV_CMAKE_LONG_VERSION: ${ENV_CMAKE_LONG_VERSION}
-        ENV_DOCKERIZE_VERSION: ${ENV_DOCKERIZE_VERSION}
-        ENV_FILEBEAT_VERSION: ${ENV_FILEBEAT_VERSION}
+        - ENV_IRODS_VERSION
+        - ENV_IRODS_EXT_CLANG_VERSION
+        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+        - ENV_DOCKERIZE_VERSION
+        - ENV_FILEBEAT_VERSION
     hostname: ires-centos
     environment:
       RODS_PASSWORD: irods
@@ -155,9 +149,9 @@ services:
     build:
       context: externals/irods-frontend/
       args:
-        ENV_IRODS_REST_VERSION: ${ENV_IRODS_REST_VERSION}
-        ENV_CLOUDBROWSER_VERSION: ${ENV_CLOUDBROWSER_VERSION}
-        ENV_FILEBEAT_VERSION: ${ENV_FILEBEAT_VERSION}
+        - ENV_IRODS_REST_VERSION
+        - ENV_CLOUDBROWSER_VERSION
+        - ENV_FILEBEAT_VERSION
     hostname: irods-frontend
     environment:
       VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
@@ -173,8 +167,8 @@ services:
     build:
       context: externals/rit-davrods/
       args:
-        ENV_IRODS_VERSION: ${ENV_IRODS_VERSION}
-        ENV_DAVRODS_VERSION: ${ENV_DAVRODS_VERSION}
+        - ENV_DAVRODS_IRODS_VERSION
+        - ENV_DAVRODS_VERSION
     environment:
       VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
       LOGSTASH_TAGS: DAVRODS
@@ -184,7 +178,7 @@ services:
       - default
       - common_default
   metalnx:
-    build: externals/metalnx-web/packaging/docker/
+    build: externals/rit-metalnx-web/
     hostname: metalnx
     environment:
       IRODS_HOST: irods
@@ -192,31 +186,17 @@ services:
       IRODS_ZONE: nlmumc
       IRODS_USER: rods
       IRODS_PASS: irods
-      METALNX_POSTGRES_HOST: metalnx-db
-      METALNX_POSTGRES_DB_NAME: metalnx
-      METALNX_POSTGRES_DB_USER: metalnx
-      METALNX_POSTGRES_DB_PASS: foobar
-      METALNX_RUN_SYNC_JOBS: "false"
       VIRTUAL_HOST: metalnx.${RIT_ENV}.rit.unimaas.nl
       VIRTUAL_PORT: 8080
       LOGSTASH_TAGS: METALNX
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-  metalnx-db:
-    image: postgres:${ENV_POSTGRES_VERSION}
-    hostname: metalnx-db
-    environment:
-      POSTGRES_USER: metalnx
-      POSTGRES_PASSWORD: foobar
-      LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
   mirthconnect:
     build:
       context: mirthconnect/
       args:
-        ENV_MIRTH_CONNECT_VERSION: ${ENV_MIRTH_CONNECT_VERSION}
-        ENV_FILEBEAT_VERSION: ${ENV_FILEBEAT_VERSION}
+        - ENV_MIRTH_CONNECT_VERSION
+        - ENV_FILEBEAT_VERSION
     hostname: mirthconnect
     ports:
       - "8443:8443"

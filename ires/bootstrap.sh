@@ -5,18 +5,14 @@ set -e
 
 
 # Update RIT rules
-# FYI: This step (and make of the microservices) rely on sequential starts of the ires-containers. If those containers
-# start simultaneously, the make steps fail because they are accessing the same files at the same time.
-# Now solved by letting ires_centos wait for ires:1248 in Dockerize
-cd /rules && make install
+cd /rules && make
 
-# Remove previous build dir (if exists)
-if [ -d "/microservices/build" ]; then
-  rm -fr /microservices/build
-fi
-
-# Update RIT microservices
-mkdir -p /microservices/build && cd /microservices/build && cmake .. && make && make install
+# Build RIT microservices
+mkdir -p /tmp/microservices-build && \
+    cd /tmp/microservices-build && \
+    cmake /microservices && \
+    make && \
+    make install
 
 # Update RIT helpers
 cp /helpers/* /var/lib/irods/msiExecCmd_bin/.
@@ -83,7 +79,7 @@ fi
 # Force start of Metalnx RMD
 service rmd restart
 
-#logstash
+# logstash
 /etc/init.d/filebeat start
 
 # this script must end with a persistent foreground process

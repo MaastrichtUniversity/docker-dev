@@ -4,8 +4,6 @@ FROM centos:7
 ARG ENV_IRODS_VERSION
 ARG ENV_IRODS_EXT_CLANG_VERSION
 ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
-ARG ENV_CMAKE_VERSION
-ARG ENV_CMAKE_LONG_VERSION
 ARG ENV_DOCKERIZE_VERSION
 ARG ENV_FILEBEAT_VERSION
 
@@ -19,7 +17,6 @@ RUN yum install -y \
     sudo \
     wget \
     unixODBC \
-#    super \
     fuse-libs \
     librabbitmq-devel \
     perl-JSON \
@@ -38,16 +35,10 @@ RUN yum install -y \
     libcurl-devel \
     gcc-c++ \
     make \
-    rpm-build
+    rpm-build \
+    cmake3
     # }} end
 
-# CentOS package manager contains a very old version of cmake.
-# Install modern version with: (found on https://askubuntu.com/questions/952429/is-there-are-good-ppa-for-cmake-backports)
-ENV CMAKE_VERSION ${ENV_CMAKE_VERSION}
-ENV CMAKE_LONG_VERSION ${ENV_CMAKE_LONG_VERSION}
-RUN cd /tmp && \
-    wget https://cmake.org/files/v${CMAKE_VERSION}/cmake-${CMAKE_LONG_VERSION}-Linux-x86_64.sh && \
-    sudo sh cmake-${CMAKE_LONG_VERSION}-Linux-x86_64.sh --prefix=/usr/local --exclude-subdir
 
 ENV IRODS_VERSION ${ENV_IRODS_VERSION}
 
@@ -99,9 +90,7 @@ ADD filebeat.yml /etc/filebeat/filebeat.yml
 
 ###############################################################################
 
-
 RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKERIZE_VERSION}/dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz -o dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz
 
-# With iRODS 4.1.10, iRODS needs a force restart. Waiting for port 1248 is therefore not reliable. Wait for Metalnx RMD instead.
-CMD dockerize -wait tcp://ires:8000 -timeout 200s /opt/irods/bootstrap.sh
+CMD dockerize -wait tcp://irods:1247 -timeout 200s /opt/irods/bootstrap.sh

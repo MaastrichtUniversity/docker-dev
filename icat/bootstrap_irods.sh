@@ -50,6 +50,14 @@ for user in $users; do
     iadmin moduser "${user}@${domain}" password foobar
 done
 
+snUsers="rick.voncken"
+snDomain="scannexus.nl"
+
+for snUser in $snUsers; do
+    iadmin mkuser "${snUser}@${snDomain}" rodsuser
+    iadmin moduser "${snUser}@${snDomain}" password foobar
+done
+
 serviceUsers="service-dropzones service-mdl service-dwh service-pid service-disqover"
 
 for user in $serviceUsers; do
@@ -86,6 +94,15 @@ done
 iadmin mkgroup DH-ingest
 for user in $users; do
     iadmin atg DH-ingest "${user}@${domain}"
+done
+
+
+scannexus="rick.voncken"
+
+iadmin mkgroup UM-SCANNEXUS
+for user in $scannexus; do
+    iadmin atg UM-SCANNEXUS "${user}@${snDomain}"
+    iadmin atg DH-ingest "${user}@${snDomain}"
 done
 
 ##############
@@ -148,6 +165,16 @@ for i in {01..4}; do
     ichmod -r write rit-l /nlmumc/projects/${project}
     # Manage access for suppers
     ichmod -r own "p.suppers@${domain}" /nlmumc/projects/${project}
+done
+
+for i in {01..2}; do
+    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
+    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'" "*principalInvestigator='m.coonen@${domain}'" "*respCostCenter='UM-30009999X'" "*pricePerGBPerYear='0.32'")
+
+    # Contributor access for UM-SCANNEXUS
+    ichmod -r write UM-SCANNEXUS /nlmumc/projects/${project}
+    # Manage access for coonen
+    ichmod -r own "m.coonen@${domain}" /nlmumc/projects/${project}
 done
 
 ##########

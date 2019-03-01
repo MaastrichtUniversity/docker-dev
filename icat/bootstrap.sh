@@ -8,15 +8,14 @@ until psql -h irods-db -U postgres -c '\l'; do
 done
 
 # Update RIT rules
-cd /rules && make install
+cd /rules && make
 
-# Remove previous build dir (if exists)
-if [ -d "/microservices/build" ]; then
-  rm -fr /microservices/build
-fi
-
-# Update RIT microservices
-mkdir -p /microservices/build && cd /microservices/build && cmake .. && make && make install
+# Build RIT microservices
+mkdir -p /tmp/microservices-build && \
+    cd /tmp/microservices-build && \
+    cmake /microservices && \
+    make && \
+    make install
 
 # Check if this is a first run of this container
 if [[ ! -e /var/run/irods_installed ]]; then
