@@ -4,8 +4,6 @@ FROM centos:7
 ARG ENV_IRODS_VERSION
 ARG ENV_IRODS_EXT_CLANG_VERSION
 ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
-ARG ENV_CMAKE_VERSION
-ARG ENV_CMAKE_LONG_VERSION
 ARG ENV_DOCKERIZE_VERSION
 ARG ENV_FILEBEAT_VERSION
 
@@ -37,16 +35,10 @@ RUN yum install -y \
     libcurl-devel \
     gcc-c++ \
     make \
-    rpm-build
+    rpm-build \
+    cmake3
     # }} end
 
-# CentOS 7 contains cmake 3.3
-# Install newer version
-ENV CMAKE_VERSION ${ENV_CMAKE_VERSION}
-ENV CMAKE_LONG_VERSION ${ENV_CMAKE_LONG_VERSION}
-RUN cd /tmp && \
-    wget https://cmake.org/files/v${CMAKE_VERSION}/cmake-${CMAKE_LONG_VERSION}-Linux-x86_64.sh && \
-    sudo sh cmake-${CMAKE_LONG_VERSION}-Linux-x86_64.sh --prefix=/usr/local --exclude-subdir
 
 ENV IRODS_VERSION ${ENV_IRODS_VERSION}
 

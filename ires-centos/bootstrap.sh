@@ -13,7 +13,7 @@ cd /rules && make install
 # Build RIT microservices
 mkdir -p /tmp/microservices-build && \
     cd /tmp/microservices-build && \
-    cmake /microservices && \
+    cmake3 /microservices && \
     make && \
     make install
 
