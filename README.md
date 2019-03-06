@@ -8,6 +8,7 @@ INGEST_MIRTHACL_USER=
 INGEST_MIRTHACL_PASSWORD=
 INGEST_MIRTHACL_URL=
 LDAP_PASSWORD=
+USE_SAMBA=false
 ```
 
 * Specify the default values and versions for environment vars in the _.env_ file

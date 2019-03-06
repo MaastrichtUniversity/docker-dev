@@ -2,7 +2,7 @@
 
 set -e
 
-
+source /etc/secrets
 
 # Update RIT rules
 cd /rules && make
@@ -22,17 +22,15 @@ cp /helpers/* /var/lib/irods/msiExecCmd_bin/.
 mkdir -p /mnt/ingest/zones && chmod 777 /mnt/ingest/zones
 
 if [ "${USE_SAMBA}" = "true" ] ; then
-    if [ -s /etc/secrets ]
-    then
-         source /etc/secrets
+    if [ -z "${INGEST_MOUNT}" ] || [ -z "${INGEST_USER}" ] || [ -z "${INGEST_PASSWORD}" ] || [ -z "${LDAP_PASSWORD}" ]; then     # -z is true when var is unset or equals empty string
+         echo "ERROR: Make sure to specify INGEST_MOUNT, INGEST_USER, INGEST_PASSWORD and LDAP_PASSWORD values in secrets file when USE_SAMBA is true"
+         exit 1
+    else
          # mount CIFS on top of the created /mnt/ingest/zones folder
          mount -t cifs ${INGEST_MOUNT} /mnt/ingest/zones -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999,vers=1.0
-    else
-         echo "Secrets file can not be empty when using SAMBA" 
-         exit 1
     fi
 else 
-   echo "Using docker volume bind, not using CIFS mount"
+    echo "Using docker volume bind for dropzones instead of CIFS mount"
 fi
 
 # Check if this is a first run of this container
