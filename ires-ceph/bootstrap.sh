@@ -31,12 +31,23 @@ cd /irods_resource_plugin_rados && cmake -DCMAKE_INSTALL_PREFIX=/ . && make && m
 # Templating irados config file
 touch /etc/irods/irados.config && chown irods: /etc/irods/irados.config && chmod 600 /etc/irods/irados.config
 echo "[global]
-    mon host = ${CEPHGLMONHOST}
-    
-[${CEPHGLUSER}]
-    key = ${CEPHGLKEY}" > /etc/irods/irados.config
+    mon host = mon1" > /etc/irods/irados.config
+
+echo "Waiting for irods-dev keyring to be created..."
+
+while [ ! -f /etc/ceph/client.irods-dev.keyring ]
+do
+  sleep 1
+done
+
+cat /etc/ceph/client.irods-dev.keyring >> /etc/irods/irados.config
 
 su - irods -c "iadmin mkresc radosResc irados ires-ceph:/tmp \"ceph|irods-dev|client.irods-dev\" "
+
+# Create test files
+cd /tmp
+fallocate -l 5M 5MiB.bin
+fallocate -l 50M 50MiB.bin
 
 
 # this script must end with a persistent foreground process

@@ -8,3 +8,5 @@ node_modules/
 npm-debug.log
 package.json
 yarn.lock
+volumes_data/ceph/*
+volumes_data/disks/*

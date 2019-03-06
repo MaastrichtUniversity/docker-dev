@@ -1,9 +1,13 @@
-version: '3'
+version: '2'
 
 networks:
-  cluster-net:
-    external:
-      name: ceph-cluster-net
+  ceph-cluster-net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.0.0/16
+          ip-range: 172.18.0.0/24
+          gateway: 172.18.0.1
 
 services:
   irods:
@@ -46,11 +50,12 @@ services:
       VIRTUAL_HOST: ires-ceph.${RIT_ENV}.rit.unimaas.nl
     networks:
       - default
-      - cluster-net
+      - ceph-cluster-net
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
       - ./externals/irods_resource_plugin_rados:/irods_resource_plugin_rados
+      - ${VOLUMES_PATH}/ceph:/etc/ceph
   irods-db:
     image: postgres:${ENV_POSTGRES_VERSION}
     hostname: irods-db
@@ -59,19 +64,26 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
 
-# See: https://github.com/VasiliyLiao/ceph-docker-compose
-
   mon1:
-    image: ceph/daemon:${CEPH_CONTAINER_VERSION}
+    build:
+      context: mon1
+      args:
+        - CEPH_CONTAINER_VERSION
+        - VOLUMES_PATH
+        - DISKS_PATH
+        - DASHBOARD_PORT
+        - RGW_PORT
+        - CEPH_PUBLIC_NETWORK
     command: "mon"
     environment:
-      MON_IP: ${MON1_IP}
-      CEPH_PUBLIC_NETWORK: ${MON1_CEPH_PUBLIC_NETWORK}
+      - MON_IP
+      - CEPH_PUBLIC_NETWORK
     volumes:
       - ${VOLUMES_PATH}/ceph:/etc/ceph
       - ${VOLUMES_PATH}/lib/:/var/lib/ceph/
-    networks: 
-      - cluster-net
+    networks:
+      ceph-cluster-net:
+        ipv4_address: ${MON_IP}
 
   mgr: 
     image: ceph/daemon:${CEPH_CONTAINER_VERSION}
@@ -82,7 +94,7 @@ services:
     depends_on:
       - mon1
     networks: 
-      - cluster-net
+      - ceph-cluster-net
     ports:
       - ${DASHBOARD_PORT}:7000
   
@@ -102,7 +114,7 @@ services:
     depends_on:
       - mon1
     networks: 
-      - cluster-net
+      - ceph-cluster-net
   
   osd2:
     pid: host
@@ -120,7 +132,7 @@ services:
     depends_on:
       - mon1
     networks: 
-      - cluster-net
+      - ceph-cluster-net
 
   osd3:
     pid: host
@@ -138,7 +150,7 @@ services:
     depends_on:
       - mon1
     networks: 
-      - cluster-net
+      - ceph-cluster-net
 
   rgw1:
     image: ceph/daemon:${CEPH_CONTAINER_VERSION}
@@ -151,21 +163,6 @@ services:
       - osd2
       - osd3
     networks: 
-      - cluster-net
+      - ceph-cluster-net
     ports:
       - ${RGW_PORT}:8080
-
-  mds1:
-    image: ceph/daemon:${CEPH_CONTAINER_VERSION}
-    command: "mds"
-    environment:
-      CEPHFS_CREATE: 1
-    volumes:
-      - ${VOLUMES_PATH}/ceph:/etc/ceph
-      - ${VOLUMES_PATH}/lib/:/var/lib/ceph/
-    depends_on:
-      - osd1
-      - osd2
-      - osd3
-    networks: 
-      - cluster-net
