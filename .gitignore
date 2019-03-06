@@ -8,3 +8,4 @@ node_modules/
 npm-debug.log
 package.json
 yarn.lock
+staging-data/*

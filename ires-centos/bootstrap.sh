@@ -16,11 +16,14 @@ mkdir -p /tmp/microservices-build && \
 cp /helpers/* /var/lib/irods/msiExecCmd_bin/.
 
 # Mount ingest zones
+# Note: 'mkdir -p' is idempotent and will not error if folder already exists
+mkdir -p /mnt/ingest/zones && chmod 777 /mnt/ingest/zones
+
 if [ "${USE_SAMBA}" = "true" ] ; then
     if [ -s /etc/secrets ]
     then
          source /etc/secrets
-         mkdir -p /mnt/ingest/zones
+         # mount CIFS on top of the created /mnt/ingest/zones folder
          mount -t cifs ${INGEST_MOUNT} /mnt/ingest/zones -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999,vers=1.0
     else
          echo "Secrets file can not be empty when using SAMBA" 

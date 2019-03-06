@@ -93,7 +93,7 @@ services:
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
-      - ./staging-data/dropzones:/mnt/ingest/zones
+      - ./staging-data:/mnt/ingest            # binding a non-existing dir results in creation of that dir on host system
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
     privileged: true
   ires-centos:
@@ -121,7 +121,7 @@ services:
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
-      - ./staging-data/dropzones:/mnt/ingest/zones
+      - ./staging-data:/mnt/ingest            # binding a non-existing dir results in creation of that dir on host system
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
     privileged: true
     networks:
