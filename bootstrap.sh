@@ -6,12 +6,12 @@ source .env
 
 if [[ ! -e ${VOLUMES_PATH} ]]; then
   echo "Creating ${VOLUMES_PATH}"
-  mkdir -p VOLUMES_PATH
+  mkdir -p ${VOLUMES_PATH}
 fi
 
 if [[ ! -e ${DISKS_PATH} ]]; then
   echo "Creating ${DISKS_PATH}"
-  mkdir -p DISKS_PATH
+  mkdir -p ${DISKS_PATH}
 fi
 
 # remove previous Ceph config
