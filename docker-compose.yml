@@ -32,10 +32,10 @@ services:
       OLS_URL: http://ols.tst.rit.unimaas.nl
       LOGSTASH_TAGS: PACMAN
       JWT_SECRET: foobar
-      DH_MAILER_ENDPOINT : http://mailer.${RIT_ENV}.rit.unimaas.nl/email/send
-      DH_MAILER_TO_ADRESS : datahub@maastrichtuniversity.nl
-      DH_MAILER_USERNAME : user
-      DH_MAILER_PASSWORD : password
+      DH_MAILER_ENDPOINT: http://mailer.${RIT_ENV}.rit.unimaas.nl/email/send
+      DH_MAILER_TO_ADDRESS: m.coonen@maastrichtuniversity.nl
+      DH_MAILER_USERNAME: user
+      DH_MAILER_PASSWORD: password
   irods:
     build:
       context: icat/
