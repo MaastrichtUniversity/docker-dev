@@ -36,7 +36,8 @@ RUN yum install -y \
     gcc-c++ \
     make \
     rpm-build \
-    cmake3
+    cmake3 \
+    python-pip
     # }} end
 
 
@@ -50,7 +51,9 @@ RUN rpm --import https://packages.irods.org/irods-signing-key.asc \
     irods-devel-${IRODS_VERSION} \
     # packages required for building microservices
     irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
-    irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION}
+    irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION} \
+    # packages required for python rule engine
+    irods-rule-engine-plugin-python 
 
 
 # install Metalnx RMD
@@ -69,6 +72,7 @@ ADD ./config.sh /opt/irods/config.sh
 ADD ./bootstrap.sh /opt/irods/bootstrap.sh
 ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
 ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
+ADD ./add_rule_engine.py /opt/irods/add_rule_engine.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
 RUN chmod a+x /opt/irods/*
 
@@ -89,6 +93,10 @@ RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FI
 ADD filebeat.yml /etc/filebeat/filebeat.yml
 
 ###############################################################################
+
+# Python requirements
+ADD python_requirements.txt /opt
+RUN pip install -r /opt/python_requirements.txt
 
 RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKERIZE_VERSION}/dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz -o dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz

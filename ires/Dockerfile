@@ -33,7 +33,8 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     libcurl4-openssl-dev \
     g++ \
     make \
-    cmake
+    cmake \
+    python-pip
     # }} end
 
 ENV IRODS_VERSION ${ENV_IRODS_VERSION}
@@ -49,7 +50,9 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key a
     irods-icommands=${IRODS_VERSION} \
     # packages required for building microservices
     irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
-    irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION}
+    irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION} \
+    # packages required for python rule engine
+    irods-rule-engine-plugin-python 
 
 # install Metalnx RMD
 ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
@@ -66,6 +69,7 @@ ADD ./config.sh /opt/irods/config.sh
 ADD ./bootstrap.sh /opt/irods/bootstrap.sh
 ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
 ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
+ADD ./add_rule_engine.py /opt/irods/add_rule_engine.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
 RUN chmod a+x /opt/irods/*
 
@@ -86,6 +90,9 @@ ADD filebeat.yml /etc/filebeat/filebeat.yml
 
 ###############################################################################
 
+# Python requirements
+ADD python_requirements.txt /opt
+RUN pip install -r /opt/python_requirements.txt
 
 RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKERIZE_VERSION}/dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz -o dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz
