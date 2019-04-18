@@ -50,16 +50,13 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projects
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projectCollection
 
+    # Add python rule engine to iRODS
+    /opt/irods/add_rule_engine.py /etc/irods/server_config.json python 1
+
     # Add config variable to iRODS
     /opt/irods/add_env_var.py /etc/irods/server_config.json MIRTH_METADATA_CHANNEL ${MIRTH_METADATA_CHANNEL}
     /opt/irods/add_env_var.py /etc/irods/server_config.json MIRTH_VALIDATION_CHANNEL ${MIRTH_VALIDATION_CHANNEL}
     /opt/irods/add_env_var.py /etc/irods/server_config.json IRODS_INGEST_REMOVE_DELAY ${IRODS_INGEST_REMOVE_DELAY}
-
-    # Add python rule engine to iRODS
-    /opt/irods/add_rule_engine.py /etc/irods/server_config.json python 1
-    
-    # Copy irods-python-rule-engine core.py to correct folder
-    cp /rules/python/core.py /etc/irods/
     
     # Dirty temp.password workaround
     sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 86400\,/' /etc/irods/server_config.json
