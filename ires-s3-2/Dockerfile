@@ -75,6 +75,9 @@ ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
 RUN chmod a+x /opt/irods/*
 
+ADD ./irods-resource-plugin-s3_2.5.0~xenial_amd64.deb /tmp/irods-resource-plugin-s3_2.5.0~xenial_amd64.deb
+
+
 EXPOSE 1248 1247 8000
 
 ###############################################################################

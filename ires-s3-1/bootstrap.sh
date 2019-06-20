@@ -61,14 +61,20 @@ service rmd restart
 /etc/init.d/filebeat start
 
 # Install iRODS S3 plugin
-echo "download S3 plugin"
-cd /tmp
-git clone https://github.com/JustinKyleJames/irods_resource_plugin_s3
-cd /tmp/irods_resource_plugin_s3 && git checkout issue_1867
-echo "compiling iRODS S3 plugin"
-mkdir build && cd build && cmake /tmp/irods_resource_plugin_s3 && make package
+# Compile plugin from source:
+#echo "download S3 plugin"
+#cd /tmp
+#git clone https://github.com/JustinKyleJames/irods_resource_plugin_s3
+#cd /tmp/irods_resource_plugin_s3 && git checkout issue_1867
+#echo "compiling iRODS S3 plugin"
+#mkdir build && cd build && cmake /tmp/irods_resource_plugin_s3 && make package
+#echo "Installing s3 dpkg"
+#dpkg -i /tmp/irods_resource_plugin_s3/build/irods-resource-plugin-s3*.deb
+
+# or use precompiled plugin
+# based on https://github.com/JustinKyleJames/irods_resource_plugin_s3/commit/fccdc69d0b54642c77717ef67d52201479dc7a08
 echo "Installing s3 dpkg"
-dpkg -i /tmp/irods_resource_plugin_s3/build/irods-resource-plugin-s3*.deb
+dpkg -i /tmp/irods-resource-plugin-s3_2.5.0~xenial_amd64.deb
 
 #Create secrets file
 touch /var/lib/irods/minio1.keypair && chown irods /var/lib/irods/minio1.keypair && chmod 400 /var/lib/irods/minio1.keypair
