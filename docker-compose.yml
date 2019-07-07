@@ -2,7 +2,7 @@ version: '2'
 services:
   pacman:
     build:
-      context: pacman/
+      context: externals/dh-rdm-service-docker/dev
       args:
         - ENV_XDEBUG_VERSION
         - ENV_DRUPAL_VERSION
