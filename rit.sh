@@ -44,8 +44,7 @@ externals/rit-metalnx-web git@github.com:MaastrichtUniversity/rit-metalnx-web.gi
 externals/rit-davrods git@github.com:MaastrichtUniversity/rit-davrods.git
 externals/crossref-lookup git@github.com:MaastrichtUniversity/crossref-lookup.git
 externals/epicpid-microservice git@github.com:MaastrichtUniversity/epicpid-microservice.git
-externals/epicpid-microservice git@github.com:MaastrichtUniversity/dh.git
-"
+externals/dh-rdm-service-docker git@github.com:MaastrichtUniversity/dh-rdm-service-docker.git"
 
 
 # do the required action in case of externals or exec
