@@ -128,7 +128,7 @@ services:
       - common_default
   ires-s3-1:
     build:
-      context: ires-s3-1/
+      context: ires-s3/
       args:
         - ENV_IRODS_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
@@ -144,6 +144,10 @@ services:
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
+      ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY1}
+      ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY1}
+      ENV_S3_RESC_NAME: "UM-Ceph-S3-AC"
+      ENV_S3_HOST: "minio1:9000"
     networks:
       - default
       - common_default
@@ -159,7 +163,7 @@ services:
       - common_default
   ires-s3-2:
     build:
-      context: ires-s3-2/
+      context: ires-s3/
       args:
         - ENV_IRODS_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
@@ -175,6 +179,11 @@ services:
       MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
       MIRTH_METADATA_CHANNEL: mirthconnect:6670
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
+      ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY2}
+      ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
+      ENV_S3_RESC_NAME: "UM-Ceph-S3-GL"
+      ENV_S3_HOST: "minio2:9000"
+    entrypoint: "dockerize -wait tcp://ires-s3-1:1247 -timeout 200s /opt/irods/bootstrap.sh"
     networks:
       - default
       - common_default
@@ -311,16 +320,16 @@ services:
     image: minio/minio:RELEASE.2019-05-23T00-29-34Z
     environment:
       VIRTUAL_HOST: minio1.${RIT_ENV}.rit.unimaas.nl
-      MINIO_ACCESS_KEY: ABCDEFGHIJKLMNOPQRST
-      MINIO_SECRET_KEY: ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNO
+      MINIO_ACCESS_KEY: ${ENV_S3_ACCESS_KEY1}
+      MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY1}
     entrypoint: sh
     command: -c 'mkdir -p /data/dh-irods-bucket-dev && /usr/bin/minio server /data'
   minio2:
     image: minio/minio:RELEASE.2019-05-23T00-29-34Z
     environment:
       VIRTUAL_HOST: minio2.${RIT_ENV}.rit.unimaas.nl
-      MINIO_ACCESS_KEY: BCDEFGHIJKLMNOPQRSTU
-      MINIO_SECRET_KEY: BCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP
+      MINIO_ACCESS_KEY: ${ENV_S3_ACCESS_KEY2}
+      MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
     entrypoint: sh
     command: -c 'mkdir -p /data/dh-irods-bucket-dev && /usr/bin/minio server /data'
 networks:

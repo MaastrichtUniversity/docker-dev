@@ -77,17 +77,26 @@ echo "Installing s3 dpkg"
 dpkg -i /tmp/irods-resource-plugin-s3_2.5.0~xenial_amd64.deb
 
 #Create secrets file
-touch /var/lib/irods/minio1.keypair && chown irods /var/lib/irods/minio1.keypair && chmod 400 /var/lib/irods/minio1.keypair
-echo "ABCDEFGHIJKLMNOPQRST" >  /var/lib/irods/minio1.keypair
-echo "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNO" >> /var/lib/irods/minio1.keypair
+touch /var/lib/irods/minio.keypair && chown irods /var/lib/irods/minio.keypair && chmod 400 /var/lib/irods/minio.keypair
+echo ${ENV_S3_ACCESS_KEY} >  /var/lib/irods/minio.keypair
+echo ${ENV_S3_SECRET_KEY} >> /var/lib/irods/minio.keypair
 
 # Create cache dir for S3 plugin
 mkdir /cache && chown irods /cache
 
 # Add S3 resource
-su - irods -c "iadmin mkresc replRescUMCeph01 replication"
-su - irods -c "iadmin mkresc UM-Ceph-S3-AC s3 `hostname`:/dh-irods-bucket-dev \"S3_DEFAULT_HOSTNAME=minio1:9000;S3_AUTH_FILE=/var/lib/irods/minio1.keypair;S3_REGIONNAME=irods-dev;S3_RETRY_COUNT=1;S3_WAIT_TIME_SEC=3;S3_PROTO=HTTP;ARCHIVE_NAMING_POLICY=consistent;HOST_MODE=cacheless_attached;S3_CACHE_DIR=/cache\""
-su - irods -c "iadmin addchildtoresc replRescUMCeph01 UM-Ceph-S3-AC"
+su - irods -c "iadmin mkresc ${ENV_S3_RESC_NAME} s3 `hostname`:/dh-irods-bucket-dev \"S3_DEFAULT_HOSTNAME=${ENV_S3_HOST};S3_AUTH_FILE=/var/lib/irods/minio.keypair;S3_REGIONNAME=irods-dev;S3_RETRY_COUNT=1;S3_WAIT_TIME_SEC=3;S3_PROTO=HTTP;ARCHIVE_NAMING_POLICY=consistent;HOST_MODE=cacheless_attached;S3_CACHE_DIR=/cache\""
+
+# Check if repl resource exists, if not, create it
+if [ "`su - irods -c \"iadmin lr replRescUMCeph01\"`" == "No rows found" ];
+then
+  su - irods -c "iadmin mkresc replRescUMCeph01 replication";
+else
+  echo "Resource already exists";
+fi
+
+# Add child resource to repl resource
+su - irods -c "iadmin addchildtoresc replRescUMCeph01 ${ENV_S3_RESC_NAME}"
 
 # this script must end with a persistent foreground process
 tail -F /var/lib/irods/log/rodsLog.*
