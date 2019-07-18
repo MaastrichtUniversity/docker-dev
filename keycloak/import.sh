@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sleep 1m
+sleep 60
 
 echo $RIT_ENV
 
