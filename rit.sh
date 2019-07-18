@@ -28,7 +28,7 @@ set -e
 # specify externals for this project
 externals="externals/channels ssh://git@bitbucket.rit.unimaas.nl:7999/mirthc/channels.git
 externals/alerts ssh://git@bitbucket.rit.unimaas.nl:7999/mirthc/alerts.git
-externals/fhml_um_theme_demo ssh://git@bitbucket.rit.unimaas.nl:7999/ritdev/fhml_um_theme_demo.git
+externals/datahub_drupal_theme git@github.com:MaastrichtUniversity/datahub_drupal_theme.git
 externals/handsontable git@github.com:MaastrichtUniversity/handsontable.git
 externals/irods-helper-cmd git@github.com:MaastrichtUniversity/irods-helper-cmd.git
 externals/irods-microservices git@github.com:MaastrichtUniversity/irods-microservices.git

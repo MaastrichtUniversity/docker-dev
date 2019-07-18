@@ -20,7 +20,7 @@ services:
       - ./externals/rit_landing_page:/var/www/html/sites/all/modules/rit_landing_page
       - ./externals/rit_forms:/var/www/html/sites/all/modules/rit_forms
       - ./externals/rit_faker:/var/www/html/sites/all/modules/rit_faker
-      - ./externals/fhml_um_theme_demo:/var/www/html/sites/all/themes/fhml_um_theme_demo
+      - ./externals/datahub_drupal_theme:/var/www/html/sites/all/themes/datahub_drupal_theme
     environment:
       IRODS_FRONTEND_ENV_VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
       IRODS_WEBDAV_ENV_VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
