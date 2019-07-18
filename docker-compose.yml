@@ -22,6 +22,7 @@ services:
       - ./externals/rit_faker:/var/www/html/sites/all/modules/rit_faker
       - ./externals/datahub_drupal_theme:/var/www/html/sites/all/themes/datahub_drupal_theme
     environment:
+      RIT_ENV: ${RIT_ENV}
       IRODS_FRONTEND_ENV_VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
       IRODS_WEBDAV_ENV_VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
       IRODS_HOST: irods
@@ -36,6 +37,20 @@ services:
       DH_MAILER_TO_ADDRESS: m.coonen@maastrichtuniversity.nl
       DH_MAILER_USERNAME: user
       DH_MAILER_PASSWORD: password
+  keycloak:
+    image: jboss/keycloak
+    hostname: keycloak
+    environment:
+      VIRTUAL_HOST: keycloak.${RIT_ENV}.rit.unimaas.nl
+      VIRTUAL_PORT: 8080
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      RIT_ENV: ${RIT_ENV}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./keycloak/realm-export.json:/tmp/realm-export.json
+      - ./keycloak/import.sh:/tmp/import.sh
+      - ./keycloak/startup.sh:/opt/jboss/startup-scripts/startup.sh
   irods:
     build:
       context: icat/
