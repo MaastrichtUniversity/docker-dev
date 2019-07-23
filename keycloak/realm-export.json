@@ -1370,6 +1370,7 @@
     "strictTransportSecurity": "max-age=31536000; includeSubDomains"
   },
   "smtpServer": {},
+  "loginTheme": "datahub",
   "eventsEnabled": true,
   "eventsListeners": [
     "jboss-logging"

@@ -20,7 +20,7 @@ services:
       - ./externals/rit_landing_page:/var/www/html/sites/all/modules/rit_landing_page
       - ./externals/rit_forms:/var/www/html/sites/all/modules/rit_forms
       - ./externals/rit_faker:/var/www/html/sites/all/modules/rit_faker
-      - ./externals/datahub_drupal_theme:/var/www/html/sites/all/themes/datahub_drupal_theme
+      - ./externals/datahub_drupal_theme:/var/www/html/sites/all/themes/datahub
     environment:
       RIT_ENV: ${RIT_ENV}
       IRODS_FRONTEND_ENV_VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
@@ -51,6 +51,7 @@ services:
       - ./keycloak/realm-export.json:/tmp/realm-export.json
       - ./keycloak/import.sh:/tmp/import.sh
       - ./keycloak/startup.sh:/opt/jboss/startup-scripts/startup.sh
+      - ./keycloak/datahub-keycloak-theme:/opt/jboss/keycloak/themes/datahub
   irods:
     build:
       context: icat/
