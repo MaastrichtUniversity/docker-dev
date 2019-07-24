@@ -37,6 +37,8 @@ services:
       DH_MAILER_TO_ADDRESS: m.coonen@maastrichtuniversity.nl
       DH_MAILER_USERNAME: user
       DH_MAILER_PASSWORD: password
+      SIMPLESAMLPHP_PASSWORD: password
+      SIMPLESAMLPHP_SALT: 04ewyapckg6lj4wn7emchwu8kojtjaoh
   keycloak:
     image: jboss/keycloak
     hostname: keycloak
