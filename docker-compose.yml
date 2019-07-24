@@ -40,7 +40,7 @@ services:
       SIMPLESAMLPHP_PASSWORD: password
       SIMPLESAMLPHP_SALT: 04ewyapckg6lj4wn7emchwu8kojtjaoh
   keycloak:
-    image: jboss/keycloak
+    image: jboss/keycloak:6.0.1
     hostname: keycloak
     environment:
       VIRTUAL_HOST: keycloak.${RIT_ENV}.rit.unimaas.nl
