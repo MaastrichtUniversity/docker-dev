@@ -20,7 +20,6 @@ body {
     background-color: #2C7DA9;
     background-size: cover;
     background-repeat: no-repeat;
-
     color: #fff;
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
 }
@@ -28,8 +27,6 @@ body {
 a {
     color: #fff;
 }
-
-
 
 #kc-header{
     background-image: url("../img/zuyderlicht_blauw.svg");
@@ -71,7 +68,7 @@ div#kc-form {
 
 div#kc-form label {
     display: block;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 div#info-area {
