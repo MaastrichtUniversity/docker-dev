@@ -27,12 +27,17 @@ iadmin mkresc AZM-storage-repl unixfilesystem ${IRODS_RESOURCE_HOST_RPM}:/mnt/AZ
 iadmin addchildtoresc replRescAZM01 AZM-storage
 iadmin addchildtoresc replRescAZM01 AZM-storage-repl
 
-#Add comment to resource for better identification in dropdown
+# Add comment to resource for better identification in dropdown
 iadmin modresc rootResc comment DO-NOT-USE
 iadmin modresc demoResc comment DO-NOT-USE
 iadmin modresc replRescUM01 comment Replicated-resource-for-UM
 iadmin modresc replRescAZM01 comment Replicated-resource-for-AZM
 
+# Add storage pricing to resources
+imeta add -R rootResc NCIT:C88193 999
+imeta add -R demoResc NCIT:C88193 999
+imeta add -R replRescUM01 NCIT:C88193 0.189
+imeta add -R replRescAZM01 NCIT:C88193 0
 
 ##############
 ## Collections

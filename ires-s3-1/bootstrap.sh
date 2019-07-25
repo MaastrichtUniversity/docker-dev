@@ -88,6 +88,7 @@ mkdir /cache && chown irods /cache
 su - irods -c "iadmin mkresc replRescUMCeph01 replication"
 su - irods -c "iadmin mkresc UM-Ceph-S3-AC s3 `hostname`:/dh-irods-bucket-dev \"S3_DEFAULT_HOSTNAME=minio1:9000;S3_AUTH_FILE=/var/lib/irods/minio1.keypair;S3_REGIONNAME=irods-dev;S3_RETRY_COUNT=1;S3_WAIT_TIME_SEC=3;S3_PROTO=HTTP;ARCHIVE_NAMING_POLICY=consistent;HOST_MODE=cacheless_attached;S3_CACHE_DIR=/cache\""
 su - irods -c "iadmin addchildtoresc replRescUMCeph01 UM-Ceph-S3-AC"
+su - irods -c "imeta add -R replRescUMCeph01 NCIT:C88193 0.062"
 
 # this script must end with a persistent foreground process
 tail -F /var/lib/irods/log/rodsLog.*
