@@ -78,7 +78,6 @@ services:
     hostname: ires
     environment:
       RODS_PASSWORD: irods
-      PGPASSWORD: foobar
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
       IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
       MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
@@ -108,7 +107,6 @@ services:
     hostname: ires-centos
     environment:
       RODS_PASSWORD: irods
-      PGPASSWORD: foobar
       VIRTUAL_HOST: ires-centos.${RIT_ENV}.rit.unimaas.nl
       IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
       MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
@@ -138,7 +136,6 @@ services:
     hostname: ires-s3-1
     environment:
       RODS_PASSWORD: irods
-      PGPASSWORD: foobar
       VIRTUAL_HOST: ires-s3-1.${RIT_ENV}.rit.unimaas.nl
       IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
       MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
@@ -169,7 +166,6 @@ services:
     hostname: ires-s3-2
     environment:
       RODS_PASSWORD: irods
-      PGPASSWORD: foobar
       VIRTUAL_HOST: ires-s3-2.${RIT_ENV}.rit.unimaas.nl
       IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
       MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
