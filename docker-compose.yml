@@ -55,9 +55,9 @@ services:
       VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
       IRODS_RESOURCE_HOST_DEB: ires
       IRODS_RESOURCE_HOST_RPM: ires-centos
-      IRODS_INGEST_REMOVE_DELAY: 300s                         # Only unit 's' supported in 4.2.3 See post on iRODS-chat
-      MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
-      MIRTH_METADATA_CHANNEL: mirthconnect:6670
+      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
+      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
+      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       - default
@@ -80,9 +80,9 @@ services:
       RODS_PASSWORD: irods
       PGPASSWORD: foobar
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
-      IRODS_INGEST_REMOVE_DELAY: 300s                         # Only unit 's' supported in 4.2.3 See post on iRODS-chat
-      MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
-      MIRTH_METADATA_CHANNEL: mirthconnect:6670
+      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
+      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
+      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       - default
@@ -110,9 +110,9 @@ services:
       RODS_PASSWORD: irods
       PGPASSWORD: foobar
       VIRTUAL_HOST: ires-centos.${RIT_ENV}.rit.unimaas.nl
-      IRODS_INGEST_REMOVE_DELAY: 300s                         # Only unit 's' supported in 4.2.3 See post on iRODS-chat
-      MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
-      MIRTH_METADATA_CHANNEL: mirthconnect:6670
+      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
+      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
+      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -140,9 +140,9 @@ services:
       RODS_PASSWORD: irods
       PGPASSWORD: foobar
       VIRTUAL_HOST: ires-s3-1.${RIT_ENV}.rit.unimaas.nl
-      IRODS_INGEST_REMOVE_DELAY: 300s                         # Only unit 's' supported in 4.2.3 See post on iRODS-chat
-      MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
-      MIRTH_METADATA_CHANNEL: mirthconnect:6670
+      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
+      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
+      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       - default
@@ -171,9 +171,9 @@ services:
       RODS_PASSWORD: irods
       PGPASSWORD: foobar
       VIRTUAL_HOST: ires-s3-2.${RIT_ENV}.rit.unimaas.nl
-      IRODS_INGEST_REMOVE_DELAY: 300s                         # Only unit 's' supported in 4.2.3 See post on iRODS-chat
-      MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
-      MIRTH_METADATA_CHANNEL: mirthconnect:6670
+      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
+      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
+      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       - default
