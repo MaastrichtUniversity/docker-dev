@@ -10,6 +10,10 @@ services:
         - ENV_ISLANDORA_VERSION
         - ENV_DOCKERIZE_VERSION
         - ENV_FILEBEAT_VERSION
+    depends_on:
+      - irods
+      - db
+      - crossref-lookup
     hostname: pacman
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -45,6 +49,9 @@ services:
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_FILEBEAT_VERSION
+    depends_on:
+      - irods-db
+      - mirthconnect
     hostname: irods
     ports:
       - "1247:1247"
@@ -75,6 +82,8 @@ services:
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_DOCKERIZE_VERSION
         - ENV_FILEBEAT_VERSION
+    depends_on:
+      - irods
     hostname: ires
     environment:
       RODS_PASSWORD: irods
@@ -104,6 +113,8 @@ services:
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_DOCKERIZE_VERSION
         - ENV_FILEBEAT_VERSION
+    depends_on:
+      - irods
     hostname: ires-centos
     environment:
       RODS_PASSWORD: irods
@@ -133,6 +144,9 @@ services:
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_DOCKERIZE_VERSION
         - ENV_FILEBEAT_VERSION
+    depends_on:
+      - irods
+      - minio1
     hostname: ires-s3-1
     environment:
       RODS_PASSWORD: irods
@@ -160,6 +174,9 @@ services:
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_DOCKERIZE_VERSION
         - ENV_FILEBEAT_VERSION
+    depends_on:
+      - irods
+      - minio2
     hostname: ires-s3-2
     environment:
       RODS_PASSWORD: irods
@@ -202,6 +219,8 @@ services:
         - ENV_IRODS_REST_VERSION
         - ENV_CLOUDBROWSER_VERSION
         - ENV_FILEBEAT_VERSION
+    depends_on:
+      - irods
     hostname: irods-frontend
     environment:
       VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
@@ -219,6 +238,8 @@ services:
       args:
         - ENV_DAVRODS_IRODS_VERSION
         - ENV_DAVRODS_VERSION
+    depends_on:
+      - irods
     environment:
       VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
       LOGSTASH_TAGS: DAVRODS
@@ -229,6 +250,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
   metalnx:
     build: externals/rit-metalnx-web/
+    depends_on:
+      - irods
     hostname: metalnx
     environment:
       IRODS_HOST: irods
@@ -247,6 +270,8 @@ services:
       args:
         - ENV_MIRTH_CONNECT_VERSION
         - ENV_FILEBEAT_VERSION
+    depends_on:
+      - epicpid
     hostname: mirthconnect
     ports:
       - "8443:8443"
