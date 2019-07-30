@@ -10,6 +10,8 @@ services:
         - ENV_ISLANDORA_VERSION
         - ENV_DOCKERIZE_VERSION
         - ENV_FILEBEAT_VERSION
+        - ENV_SIMPLESAML_VERSION
+        - ENV_SIMPLESAML_HASH
     hostname: pacman
     volumes:
       - /etc/localtime:/etc/localtime:ro
