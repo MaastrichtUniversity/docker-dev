@@ -60,8 +60,6 @@ services:
       RODS_PASSWORD: irods
       PGPASSWORD: foobar
       VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
-      IRODS_RESOURCE_HOST_DEB: ires
-      IRODS_RESOURCE_HOST_RPM: ires-centos
       IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
       MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
       MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
@@ -146,6 +144,7 @@ services:
         - ENV_FILEBEAT_VERSION
     depends_on:
       - irods
+      - ires  # Because of ingest resource
       - minio1
     hostname: ires-s3-1
     environment:
@@ -176,6 +175,7 @@ services:
         - ENV_FILEBEAT_VERSION
     depends_on:
       - irods
+      - ires  # Because of ingest resource
       - minio2
     hostname: ires-s3-2
     environment:

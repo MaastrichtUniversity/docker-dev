@@ -26,6 +26,7 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     python-ldap \
     sudo \
     lsof \
+    fortune-mod \
     curl \
     joe \
     nano \
@@ -93,5 +94,6 @@ ADD filebeat.yml /etc/filebeat/filebeat.yml
 
 RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKERIZE_VERSION}/dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz -o dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz
-# With iRODS 4.1.10, iRODS needs a force restart. Waiting for port 1248 is therefore not reliable. Wait for Metalnx RMD instead.
+
+# Wait for startup of first S3 resource server
 CMD dockerize -wait tcp://ires-s3-1:1247 -timeout 200s /opt/irods/bootstrap.sh

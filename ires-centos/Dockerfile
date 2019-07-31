@@ -26,6 +26,7 @@ RUN yum install -y \
     python-jsonschema \
     python-ldap \
     lsof \
+    fortune-mod \
     nano \
     cifs-utils  \
     openssl \

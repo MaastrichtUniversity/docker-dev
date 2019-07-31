@@ -26,6 +26,7 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     python-ldap \
     sudo \
     lsof \
+    fortune-mod \
     curl \
     joe \
     nano \

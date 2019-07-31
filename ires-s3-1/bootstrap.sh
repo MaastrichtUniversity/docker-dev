@@ -46,7 +46,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     # Dirty temp.password workaround
     sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 86400\,/' /etc/irods/server_config.json
 
-    su - irods -c "/opt/irods/bootstrap_irods.sh"
+    # Execution of irods_bootstrap.sh moved further down
 
     touch /var/run/irods_installed
 
@@ -84,10 +84,8 @@ echo "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNO" >> /var/lib/irods/minio1.keypai
 # Create cache dir for S3 plugin
 mkdir /cache && chown irods /cache
 
-# Add S3 resource
-su - irods -c "iadmin mkresc replRescUMCeph01 replication"
-su - irods -c "iadmin mkresc UM-Ceph-S3-AC s3 `hostname`:/dh-irods-bucket-dev \"S3_DEFAULT_HOSTNAME=minio1:9000;S3_AUTH_FILE=/var/lib/irods/minio1.keypair;S3_REGIONNAME=irods-dev;S3_RETRY_COUNT=1;S3_WAIT_TIME_SEC=3;S3_PROTO=HTTP;ARCHIVE_NAMING_POLICY=consistent;HOST_MODE=cacheless_attached;S3_CACHE_DIR=/cache\""
-su - irods -c "iadmin addchildtoresc replRescUMCeph01 UM-Ceph-S3-AC"
+# iRODS bootstrap script must be executed after installing the S3 plugin
+su - irods -c "/opt/irods/bootstrap_irods.sh"
 
 # this script must end with a persistent foreground process
 tail -F /var/lib/irods/log/rodsLog.*
