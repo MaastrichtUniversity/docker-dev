@@ -53,7 +53,7 @@ fi
 # Force start of Metalnx RMD
 service rmd restart
 
-#logstash
+# Logstash
 /etc/init.d/filebeat start
 
 # Remove the multiline comment tags to build the plugin from source
@@ -72,13 +72,13 @@ echo "Installing built s3 dpkg"
 dpkg -i /tmp/irods_resource_plugin_s3/build/irods-resource-plugin-s3*.deb
 COMMENT
 
-# or use precompiled plugin based on https://github.com/irods/irods_resource_plugin_s3/commit/6a24dd8e3b0f68e50324a877d1cbd0fdca051a46   
+# Or use precompiled plugin based on https://github.com/irods/irods_resource_plugin_s3/commit/6a24dd8e3b0f68e50324a877d1cbd0fdca051a46
 if [ "$BuildFromSource" != true ] ; then
     echo "Installing precompiled s3 dpkg"
     dpkg -i /tmp/irods-resource-plugin-s3_2.6.1~xenial_amd64.deb
 fi
 
-#Create secrets file
+# Create secrets file
 touch /var/lib/irods/minio.keypair && chown irods /var/lib/irods/minio.keypair && chmod 400 /var/lib/irods/minio.keypair
 echo ${ENV_S3_ACCESS_KEY} >  /var/lib/irods/minio.keypair
 echo ${ENV_S3_SECRET_KEY} >> /var/lib/irods/minio.keypair
@@ -87,10 +87,10 @@ echo ${ENV_S3_SECRET_KEY} >> /var/lib/irods/minio.keypair
 mkdir /cache && chown irods /cache
 
 # Add S3 resource
-su - irods -c "iadmin mkresc ${ENV_S3_RESC_NAME} s3 `hostname`:/dh-irods-bucket-dev \"S3_DEFAULT_HOSTNAME=${ENV_S3_HOST};S3_AUTH_FILE=/var/lib/irods/minio.keypair;S3_REGIONNAME=irods-dev;S3_RETRY_COUNT=1;S3_WAIT_TIME_SEC=3;S3_PROTO=HTTP;ARCHIVE_NAMING_POLICY=consistent;HOST_MODE=cacheless_attached;S3_CACHE_DIR=/cache\""
+su - irods -c "iadmin mkresc ${ENV_S3_RESC_NAME} s3 $(hostname):/dh-irods-bucket-dev \"S3_DEFAULT_HOSTNAME=${ENV_S3_HOST};S3_AUTH_FILE=/var/lib/irods/minio.keypair;S3_REGIONNAME=irods-dev;S3_RETRY_COUNT=1;S3_WAIT_TIME_SEC=3;S3_PROTO=HTTP;ARCHIVE_NAMING_POLICY=consistent;HOST_MODE=cacheless_attached;S3_CACHE_DIR=/cache\""
 
 # Check if repl resource exists, if not, create it
-if [ "`su - irods -c \"iadmin lr replRescUMCeph01\"`" == "No rows found" ];
+if [ "$(su - irods -c "iadmin lr replRescUMCeph01")" == "No rows found" ];
 then
   su - irods -c "iadmin mkresc replRescUMCeph01 replication";
 else
