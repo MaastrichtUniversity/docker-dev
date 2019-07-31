@@ -4,9 +4,18 @@
 ## Resources
 
 # Create coordination- and child-resources for project data
-iadmin mkresc UM-Ceph-S3-AC s3 `hostname`:/dh-irods-bucket-dev \"S3_DEFAULT_HOSTNAME=minio1:9000;S3_AUTH_FILE=/var/lib/irods/minio1.keypair;S3_REGIONNAME=irods-dev;S3_RETRY_COUNT=1;S3_WAIT_TIME_SEC=3;S3_PROTO=HTTP;ARCHIVE_NAMING_POLICY=consistent;HOST_MODE=cacheless_attached;S3_CACHE_DIR=/cache\"
-iadmin mkresc replRescUMCeph01 replication
-iadmin addchildtoresc replRescUMCeph01 UM-Ceph-S3-AC
+iadmin mkresc ${ENV_S3_RESC_NAME} s3 $(hostname):/dh-irods-bucket-dev \"S3_DEFAULT_HOSTNAME=${ENV_S3_HOST};S3_AUTH_FILE=/var/lib/irods/minio.keypair;S3_REGIONNAME=irods-dev;S3_RETRY_COUNT=1;S3_WAIT_TIME_SEC=3;S3_PROTO=HTTP;ARCHIVE_NAMING_POLICY=consistent;HOST_MODE=cacheless_attached;S3_CACHE_DIR=/cache\"
+
+# Check if repl resource exists, if not, create it
+if [ "$(su - irods -c "iadmin lr replRescUMCeph01")" == "No rows found" ];
+then
+  su - irods -c "iadmin mkresc replRescUMCeph01 replication";
+else
+  echo "Replication resource already exists";
+fi
+
+# Add child resource to repl resource
+iadmin addchildtoresc replRescUMCeph01 ${ENV_S3_RESC_NAME}
 
 # Add comment to resource for better identification in pacman's createProject dropdown
 iadmin modresc ${HOSTNAME}Resource comment DO-NOT-USE

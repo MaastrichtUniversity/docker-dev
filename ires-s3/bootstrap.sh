@@ -1,22 +1,18 @@
 #!/bin/bash
-sleep 10
+
 set -e
 
 source /etc/secrets
 
 # Update RIT rules
-# FYI: This step (and make of the microservices) rely on sequential starts of the ires-containers. If those containers
-# start simultaneously, the make steps fail because they are accessing the same files at the same time.
-# Now solved by letting ires_centos wait for ires:1248 in Dockerize
 cd /rules && make
 
-# Remove previous build dir (if exists)
-if [ -d "/microservices/build" ]; then
-  rm -fr /microservices/build
-fi
-
-# Update RIT microservices
-mkdir -p /microservices/build && cd /microservices/build && cmake .. && make && make install
+# Build RIT microservices
+mkdir -p /tmp/microservices-build && \
+    cd /tmp/microservices-build && \
+    cmake /microservices && \
+    make && \
+    make install
 
 # Update RIT helpers
 cp /helpers/* /var/lib/irods/msiExecCmd_bin/.
@@ -57,30 +53,35 @@ fi
 # Force start of Metalnx RMD
 service rmd restart
 
-#logstash
+# Logstash
 /etc/init.d/filebeat start
 
-
+# Remove the multiline comment tags to build the plugin from source
+<<COMMENT
 # Install iRODS S3 plugin
 # Compile plugin from source:
-#echo "download S3 plugin"
-#cd /tmp
-#git clone https://github.com/JustinKyleJames/irods_resource_plugin_s3
-#cd /tmp/irods_resource_plugin_s3 && git checkout issue_1867
-#echo "compiling iRODS S3 plugin"
-#mkdir build && cd build && cmake /tmp/irods_resource_plugin_s3 && make package
-#echo "Installing s3 dpkg"
-#dpkg -i /tmp/irods_resource_plugin_s3/build/irods-resource-plugin-s3*.deb
+BuildFromSource=true
+echo "download S3 plugin"
+cd /tmp
+git clone https://github.com/irods/irods_resource_plugin_s3
+cd /tmp/irods_resource_plugin_s3 && git checkout 4-2-stable
+sed -i 's/4\.2\.6/4\.2\.5/' CMakeLists.txt
+echo "compiling iRODS S3 plugin"
+mkdir build && cd build && cmake /tmp/irods_resource_plugin_s3 && make package
+echo "Installing built s3 dpkg"
+dpkg -i /tmp/irods_resource_plugin_s3/build/irods-resource-plugin-s3*.deb
+COMMENT
 
-# or use precompiled plugin
-# based on https://github.com/JustinKyleJames/irods_resource_plugin_s3/commit/fccdc69d0b54642c77717ef67d52201479dc7a08
-echo "Installing s3 dpkg"
-dpkg -i /tmp/irods-resource-plugin-s3_2.5.0~xenial_amd64.deb
+# Or use precompiled plugin based on https://github.com/irods/irods_resource_plugin_s3/commit/6a24dd8e3b0f68e50324a877d1cbd0fdca051a46
+if [ "$BuildFromSource" != true ] ; then
+    echo "Installing precompiled s3 dpkg"
+    dpkg -i /tmp/irods-resource-plugin-s3_2.6.1~xenial_amd64.deb
+fi
 
-#Create secrets file
-touch /var/lib/irods/minio2.keypair && chown irods /var/lib/irods/minio2.keypair && chmod 400 /var/lib/irods/minio2.keypair
-echo "BCDEFGHIJKLMNOPQRSTU" >  /var/lib/irods/minio2.keypair
-echo "BCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP" >> /var/lib/irods/minio2.keypair
+# Create secrets file
+touch /var/lib/irods/minio.keypair && chown irods /var/lib/irods/minio.keypair && chmod 400 /var/lib/irods/minio.keypair
+echo ${ENV_S3_ACCESS_KEY} >  /var/lib/irods/minio.keypair
+echo ${ENV_S3_SECRET_KEY} >> /var/lib/irods/minio.keypair
 
 # Create cache dir for S3 plugin
 mkdir /cache && chown irods /cache
