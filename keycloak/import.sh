@@ -35,22 +35,27 @@ echo "Set the correct DEV envonment"
 # Set the correct DEV envonment
 sed 's/RIT_ENV/'"$RIT_ENV"'/g' /tmp/realm-export.json > /tmp/realm-export_env.json
 
+echo "Set the correct ldap admin password envonment"
+# Set the correct ldap admin password envonment
+sed 's/\*\*\*\*\*\*\*\*\*\*/'"$LDAP_ADMIN_PASSWORD"'/g'  /tmp/realm-export_env.json >  /tmp/realm-export_env_pw.json
+
+
 # If drupal realm does not yet exist load it from config
 if ! $(/opt/jboss/keycloak/bin/kcadm.sh get realms | grep -q "drupal");
 then
   echo "Import Drupal realm"
-  /opt/jboss/keycloak/bin/kcadm.sh create realms -f /tmp/realm-export_env.json
+  /opt/jboss/keycloak/bin/kcadm.sh create realms -f /tmp/realm-export_env_pw.json
 fi
 
 echo "Create Users"
 #Create Users
 
 
-if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username=d.theunissen  | grep -q "id");
-then
-  /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username=d.theunissen -s enabled=true -s email=d.theunissen@maastrichtuniversity.nl
-  /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username d.theunissen --new-password 'foobar'
-fi
+#if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username=d.theunissen  | grep -q "id");
+#then
+#  /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username=d.theunissen -s enabled=true -s email=d.theunissen@maastrichtuniversity.nl
+#  /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username d.theunissen --new-password 'foobar'
+#fi
 
 if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username=p.vanschayck  | grep -q "id");
 then
@@ -107,3 +112,11 @@ then
 fi
 
 echo "Users Created"
+
+# Sync of the ldap 
+
+echo "Syncing LDAP"
+/opt/jboss/keycloak/bin/kcadm.sh create user-storage/10d55377-d139-4865-bd3e-1375ea079925/sync?action=triggerFullSync -r drupal
+
+echo "Done syncing LDAP"
+
