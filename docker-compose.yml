@@ -53,8 +53,6 @@ services:
       - irods-db
       - mirthconnect
     hostname: irods
-    depends_on:
-      - irods-db
     ports:
       - "1247:1247"
       - "1248:1248"
