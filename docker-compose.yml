@@ -149,9 +149,6 @@ services:
       - ires  # Because of ingest resource
       - minio1
     hostname: ires-s3-1
-    depends_on:
-      - minio1
-      - irods
     environment:
       RODS_PASSWORD: irods
       VIRTUAL_HOST: ires-s3-1.${RIT_ENV}.rit.unimaas.nl
@@ -184,9 +181,6 @@ services:
       - ires  # Because of ingest resource
       - minio2
     hostname: ires-s3-2
-    depends_on:
-      - minio2
-      - irods
     environment:
       RODS_PASSWORD: irods
       VIRTUAL_HOST: ires-s3-2.${RIT_ENV}.rit.unimaas.nl
