@@ -15,6 +15,7 @@ services:
       - irods
       - db
       - crossref-lookup
+      - keycloak
     hostname: pacman
     volumes:
       - /etc/localtime:/etc/localtime:ro
