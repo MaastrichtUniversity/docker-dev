@@ -69,7 +69,6 @@ RUN dpkg -i /tmp/emc-metalnx-rmd-1.0-1.deb
 RUN mkdir /opt/irods
 
 ADD ./setup_responses /etc/irods/setup_responses
-ADD ./config.sh /opt/irods/config.sh
 ADD ./bootstrap.sh /opt/irods/bootstrap.sh
 ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
 ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
