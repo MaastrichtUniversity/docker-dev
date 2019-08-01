@@ -62,8 +62,16 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | apt-key add - 
 ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
 RUN dpkg -i /tmp/emc-metalnx-rmd-1.0-1.deb
 
-RUN mkdir /opt/irods
+# Filebeat
 
+RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-amd64.deb -O /tmp/filebeat.deb \
+ && dpkg -i /tmp/filebeat.deb
+
+ADD filebeat.yml /etc/filebeat/filebeat.yml
+
+# Finalize
+
+RUN mkdir /opt/irods
 ADD ./setup_responses /etc/irods/setup_responses
 ADD ./setupdb.sh /opt/irods/setupdb.sh
 ADD ./bootstrap.sh /opt/irods/bootstrap.sh
@@ -73,18 +81,5 @@ ADD ./add_env_var.py /opt/irods/add_env_var.py
 RUN chmod a+x /opt/irods/*
 
 EXPOSE 1248 1247 8000
-
-###############################################################################
-#                                INSTALLATION FILEBEAT
-###############################################################################
-
-RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-amd64.deb -O /tmp/filebeat.deb \
- && dpkg -i /tmp/filebeat.deb
-
-ADD filebeat.yml /etc/filebeat/filebeat.yml
-
-###############################################################################
-
 VOLUME [ "/rules", "/helpers", "/microservices" ]
-
 ENTRYPOINT [ "/opt/irods/bootstrap.sh" ]

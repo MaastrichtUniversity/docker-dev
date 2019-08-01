@@ -26,6 +26,7 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     python-ldap \
     sudo \
     lsof \
+    fortune-mod \
     curl \
     joe \
     nano \
@@ -65,32 +66,27 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key a
 ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
 RUN dpkg -i /tmp/emc-metalnx-rmd-1.0-1.deb
 
+# iRODS S3 resource plugin
+ADD ./irods-resource-plugin-s3_2.6.1~xenial_amd64.deb /tmp/irods-resource-plugin-s3_2.6.1~xenial_amd64.deb
+
+# Filebeat
+RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-amd64.deb -O /tmp/filebeat.deb \
+ && dpkg -i /tmp/filebeat.deb
+ADD filebeat.yml /etc/filebeat/filebeat.yml
+
+# Dockerize
+RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKERIZE_VERSION}/dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz -o dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz
+
+# Finalize
 RUN mkdir /opt/irods
 
 ADD ./setup_responses /etc/irods/setup_responses
-ADD ./config.sh /opt/irods/config.sh
 ADD ./bootstrap.sh /opt/irods/bootstrap.sh
 ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
 ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
 RUN chmod a+x /opt/irods/*
 
-ADD ./irods-resource-plugin-s3_2.5.0~xenial_amd64.deb /tmp/irods-resource-plugin-s3_2.5.0~xenial_amd64.deb
-
 EXPOSE 1248 1247 8000
-
-###############################################################################
-#                                INSTALLATION FILEBEAT
-###############################################################################
-
-RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-amd64.deb -O /tmp/filebeat.deb \
- && dpkg -i /tmp/filebeat.deb
-
-ADD filebeat.yml /etc/filebeat/filebeat.yml
-
-###############################################################################
-
-RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKERIZE_VERSION}/dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz -o dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz
-# With iRODS 4.1.10, iRODS needs a force restart. Waiting for port 1248 is therefore not reliable. Wait for Metalnx RMD instead.
 CMD dockerize -wait tcp://irods:1247 -timeout 200s /opt/irods/bootstrap.sh
