@@ -192,7 +192,6 @@ services:
       ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
       ENV_S3_RESC_NAME: "UM-Ceph-S3-GL"
       ENV_S3_HOST: "minio2:9000"
-    entrypoint: "dockerize -wait tcp://ires-s3-1:1247 -timeout 200s /opt/irods/bootstrap.sh"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro

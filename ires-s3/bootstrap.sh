@@ -87,7 +87,7 @@ echo ${ENV_S3_SECRET_KEY} >> /var/lib/irods/minio.keypair
 mkdir /cache && chown irods /cache
 
 # iRODS bootstrap script must be executed after installing the S3 plugin
-su - irods -c "/opt/irods/bootstrap_irods.sh"
+su irods -c "/opt/irods/bootstrap_irods.sh"     # su without "-" to preserve env vars in child script
 
 # this script must end with a persistent foreground process
 tail -F /var/lib/irods/log/rodsLog.*
