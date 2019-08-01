@@ -44,7 +44,7 @@ services:
     image: jboss/keycloak:6.0.1
     hostname: keycloak
     environment:
-      VIRTUAL_HOST: keycloak.${RIT_ENV}.rit.unimaas.nl
+      VIRTUAL_HOST: keycloak.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 8080
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
