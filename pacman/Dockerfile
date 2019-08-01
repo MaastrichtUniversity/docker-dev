@@ -98,4 +98,4 @@ RUN cd /var/www/html \
 ADD bootstrap.sh /var/www/html/
 RUN chmod +x /var/www/html/bootstrap.sh
 
-CMD dockerize -wait tcp://db:3306 -wait tcp://irods:1248 -timeout 80s /var/www/html/bootstrap.sh
+CMD dockerize -wait tcp://db:3306 -timeout 80s /var/www/html/bootstrap.sh
