@@ -25,6 +25,7 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     python-ldap \
     sudo \
     lsof \
+    fortune-mod \
     cifs-utils  \
     curl \
     nano \
@@ -61,6 +62,20 @@ RUN mkdir /opt/irods
 # https://bugs.launchpad.net/ubuntu/+source/cifs-utils/+bug/1372120
 RUN mkdir /etc/cifs-utils && ln -s /usr/lib/x86_64-linux-gnu/cifs-utils/idmapwb.so /etc/cifs-utils/idmap-plugin
 
+# Overwrite the default setcifsacl with our own recompiled version
+ADD ./setcifsacl /usr/bin/setcifsacl
+RUN chmod a+x /usr/bin/setcifsacl
+
+# Filebeat
+RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-amd64.deb -O /tmp/filebeat.deb \
+ && dpkg -i /tmp/filebeat.deb
+ADD filebeat.yml /etc/filebeat/filebeat.yml
+
+# Dockerize
+RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKERIZE_VERSION}/dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz -o dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz
+
+# Finalize
 ADD ./setup_responses /etc/irods/setup_responses
 ADD ./bootstrap.sh /opt/irods/bootstrap.sh
 ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
@@ -68,25 +83,5 @@ ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
 RUN chmod a+x /opt/irods/*
 
-# Overwrite the default setcifsacl with our own recompiled version
-ADD ./setcifsacl /usr/bin/setcifsacl
-RUN chmod a+x /usr/bin/setcifsacl
-
 EXPOSE 1248 1247 8000
-
-###############################################################################
-#                                INSTALLATION FILEBEAT
-###############################################################################
-
-RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-amd64.deb -O /tmp/filebeat.deb \
- && dpkg -i /tmp/filebeat.deb
-
-ADD filebeat.yml /etc/filebeat/filebeat.yml
-
-###############################################################################
-
-
-RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKERIZE_VERSION}/dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz -o dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz
-
 CMD dockerize -wait tcp://irods:1247 -timeout 200s /opt/irods/bootstrap.sh

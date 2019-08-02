@@ -17,7 +17,7 @@ filebeat.prospectors:
   multiline.max_linex: 10000
 
   #Tags
-  tags: ["IRES_S3_2"]
+  tags: ["IRES_S3"]
 
 output.logstash:
     hosts: ["elk:5044"]

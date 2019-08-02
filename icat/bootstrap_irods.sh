@@ -11,33 +11,13 @@ set -e
 iadmin mkresc rootResc passthru
 iadmin addchildtoresc rootResc demoResc
 
-
-
-
-# Create resources and make them members of the (composable) replication resource.
-iadmin mkresc replRescUM01 replication
-iadmin mkresc UM-hnas-4k unixfilesystem ${IRODS_RESOURCE_HOST_DEB}:/mnt/UM-hnas-4k
-iadmin mkresc UM-hnas-4k-repl unixfilesystem ${IRODS_RESOURCE_HOST_DEB}:/mnt/UM-hnas-4k-repl
-iadmin addchildtoresc replRescUM01 UM-hnas-4k
-iadmin addchildtoresc replRescUM01 UM-hnas-4k-repl
-
-iadmin mkresc replRescAZM01 replication
-iadmin mkresc AZM-storage unixfilesystem ${IRODS_RESOURCE_HOST_RPM}:/mnt/AZM-storage
-iadmin mkresc AZM-storage-repl unixfilesystem ${IRODS_RESOURCE_HOST_RPM}:/mnt/AZM-storage-repl
-iadmin addchildtoresc replRescAZM01 AZM-storage
-iadmin addchildtoresc replRescAZM01 AZM-storage-repl
-
-# Add comment to resource for better identification in dropdown
+# Add comment to resource for better identification in pacman's createProject dropdown
 iadmin modresc rootResc comment DO-NOT-USE
 iadmin modresc demoResc comment DO-NOT-USE
-iadmin modresc replRescUM01 comment Replicated-resource-for-UM
-iadmin modresc replRescAZM01 comment Replicated-resource-for-AZM
 
 # Add storage pricing to resources
 imeta add -R rootResc NCIT:C88193 999
 imeta add -R demoResc NCIT:C88193 999
-imeta add -R replRescUM01 NCIT:C88193 0.189
-imeta add -R replRescAZM01 NCIT:C88193 0
 
 ##############
 ## Collections
@@ -126,75 +106,45 @@ ichmod write DH-project-admins /nlmumc/projects
 
 ###########
 ## Projects and project permissions
+# Note: creation of projects will be handled by the respective resource servers
 
-for i in {01..2}; do
-    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'" "*principalInvestigator='p.vanschayck@${domain}'" "*respCostCenter='UM-30001234X'")
-
-    # Contributor access for nanoscopy
-    ichmod -r write nanoscopy-l /nlmumc/projects/${project}
-    # Manage access for Paul
-    ichmod -r own "p.vanschayck@${domain}" /nlmumc/projects/${project}
-done
-
-for i in {01..3}; do
-    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'" "*principalInvestigator='p.suppers@${domain}'" "*respCostCenter='UM-30009998X'")
-
-    # Contributor access for RIT
-    ichmod -r write rit-l /nlmumc/projects/${project}
-    # Manage access for suppers
-    ichmod -r own "p.suppers@${domain}" /nlmumc/projects/${project}
-done
-
-for i in {01..3}; do
-    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'" "*principalInvestigator='d.theunissen@${domain}'" "*respCostCenter='UM-30009999X'")
-
-    # Read access for rit
-    ichmod -r read rit-l /nlmumc/projects/${project}
-
-    # Manage access for Daniel
-    ichmod -r own "d.theunissen@${domain}" /nlmumc/projects/${project}
-
-    # Contributor access for Maarten
-    ichmod -r write "m.coonen@${domain}" /nlmumc/projects/${project}
-done
-
-for i in {01..4}; do
-    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'" "*principalInvestigator='p.suppers@${domain}'" "*respCostCenter='UM-30009999X'")
-
-    # Contributor access for RIT
-    ichmod -r write rit-l /nlmumc/projects/${project}
-    # Manage access for suppers
-    ichmod -r own "p.suppers@${domain}" /nlmumc/projects/${project}
-done
-
-for i in {01..2}; do
-    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${IRODS_RESOURCE_HOST_DEB}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'" "*principalInvestigator='m.coonen@${domain}'" "*respCostCenter='UM-30009999X'")
-
-    # Contributor access for UM-SCANNEXUS
-    ichmod -r write UM-SCANNEXUS /nlmumc/projects/${project}
-    # Manage access for coonen
-    ichmod -r own "m.coonen@${domain}" /nlmumc/projects/${project}
-done
 
 ##########
 ## Special
 
-# Create an initial collection folder for MDL data
-irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000010'" "*title='MDL placeholder collection'"
+# Create a hardcoded project no. 10 for MDL data
+imkdir -p /nlmumc/projects/P000000010
+imeta add -C /nlmumc/projects/P000000010 authorizationPeriodEndDate 1-1-2018
+imeta add -C /nlmumc/projects/P000000010 dataRetentionPeriodEndDate 1-1-2018
+imeta add -C /nlmumc/projects/P000000010 ingestResource ${HOSTNAME}Resource
+imeta add -C /nlmumc/projects/P000000010 OBI:0000103 p.suppers@maastrichtuniversity.nl
+imeta add -C /nlmumc/projects/P000000010 resource replRescAZM01
+imeta add -C /nlmumc/projects/P000000010 responsibleCostCenter AZM-123456
+imeta add -C /nlmumc/projects/P000000010 storageQuotaGb 10
+imeta add -C /nlmumc/projects/P000000010 title "(MDL) Placeholder project"
+irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000010'" "*title='(MDL) Placeholder collection'"
+ichmod -r own "p.suppers@maastrichtuniversity.nl" /nlmumc/projects/P000000010
 ichmod -r write "service-mdl" /nlmumc/projects/P000000010
+ichmod -r read "rit-l" /nlmumc/projects/P000000010
 # Add additional AVUs
 imeta add -C /nlmumc/projects/P000000010/C000000001 creator irods_bootstrap@docker.dev
 imeta add -C /nlmumc/projects/P000000010/C000000001 dcat:byteSize 0
 imeta add -C /nlmumc/projects/P000000010/C000000001 numFiles 0
 
-# Create an initial collection folder for HVC data
-irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000011'" "*title='HVC placeholder collection'"
+# Create a hardcoded project no. 11 for HVC data
+imkdir -p /nlmumc/projects/P000000011
+imeta add -C /nlmumc/projects/P000000011 authorizationPeriodEndDate 1-1-2018
+imeta add -C /nlmumc/projects/P000000011 dataRetentionPeriodEndDate 1-1-2018
+imeta add -C /nlmumc/projects/P000000011 ingestResource ${HOSTNAME}Resource
+imeta add -C /nlmumc/projects/P000000011 OBI:0000103 p.suppers@maastrichtuniversity.nl
+imeta add -C /nlmumc/projects/P000000011 resource replRescAZM01
+imeta add -C /nlmumc/projects/P000000011 responsibleCostCenter AZM-123456
+imeta add -C /nlmumc/projects/P000000011 storageQuotaGb 10
+imeta add -C /nlmumc/projects/P000000011 title "(HVC) Placeholder project"
+irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000011'" "*title='(HVC) Placeholder collection'"
+ichmod -r own "p.suppers@maastrichtuniversity.nl" /nlmumc/projects/P000000011
 ichmod -r write "service-mdl" /nlmumc/projects/P000000011
+ichmod -r read "rit-l" /nlmumc/projects/P000000011
 # Add additional AVUs
 imeta add -C /nlmumc/projects/P000000011/C000000001 creator irods_bootstrap@docker.dev
 imeta add -C /nlmumc/projects/P000000011/C000000001 dcat:byteSize 0

@@ -10,6 +10,10 @@ services:
         - ENV_ISLANDORA_VERSION
         - ENV_DOCKERIZE_VERSION
         - ENV_FILEBEAT_VERSION
+    depends_on:
+      - irods
+      - db
+      - crossref-lookup
     hostname: pacman
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -45,6 +49,9 @@ services:
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_FILEBEAT_VERSION
+    depends_on:
+      - irods-db
+      - mirthconnect
     hostname: irods
     ports:
       - "1247:1247"
@@ -53,11 +60,9 @@ services:
       RODS_PASSWORD: irods
       PGPASSWORD: foobar
       VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
-      IRODS_RESOURCE_HOST_DEB: ires
-      IRODS_RESOURCE_HOST_RPM: ires-centos
-      IRODS_INGEST_REMOVE_DELAY: 300s                         # Only unit 's' supported in 4.2.3 See post on iRODS-chat
-      MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
-      MIRTH_METADATA_CHANNEL: mirthconnect:6670
+      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
+      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
+      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       - default
@@ -75,14 +80,15 @@ services:
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_DOCKERIZE_VERSION
         - ENV_FILEBEAT_VERSION
+    depends_on:
+      - irods
     hostname: ires
     environment:
       RODS_PASSWORD: irods
-      PGPASSWORD: foobar
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
-      IRODS_INGEST_REMOVE_DELAY: 300s                         # Only unit 's' supported in 4.2.3 See post on iRODS-chat
-      MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
-      MIRTH_METADATA_CHANNEL: mirthconnect:6670
+      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
+      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
+      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       - default
@@ -105,15 +111,19 @@ services:
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_DOCKERIZE_VERSION
         - ENV_FILEBEAT_VERSION
+    depends_on:
+      - irods
     hostname: ires-centos
     environment:
       RODS_PASSWORD: irods
-      PGPASSWORD: foobar
       VIRTUAL_HOST: ires-centos.${RIT_ENV}.rit.unimaas.nl
-      IRODS_INGEST_REMOVE_DELAY: 300s                         # Only unit 's' supported in 4.2.3 See post on iRODS-chat
-      MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
-      MIRTH_METADATA_CHANNEL: mirthconnect:6670
+      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
+      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
+      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
+    networks:
+      - default
+      - common_default
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
@@ -123,30 +133,31 @@ services:
       - ./staging-data:/mnt/ingest            # binding a non-existing dir results in creation of that dir on host system
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
     privileged: true
-    networks:
-      - default
-      - common_default
   ires-s3-1:
     build:
-      context: ires-s3-1/
+      context: ires-s3/
       args:
         - ENV_IRODS_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_DOCKERIZE_VERSION
         - ENV_FILEBEAT_VERSION
+    depends_on:
+      - irods
+      - ires  # Because of ingest resource
+      - minio1
     hostname: ires-s3-1
     environment:
       RODS_PASSWORD: irods
-      PGPASSWORD: foobar
       VIRTUAL_HOST: ires-s3-1.${RIT_ENV}.rit.unimaas.nl
-      IRODS_INGEST_REMOVE_DELAY: 300s                         # Only unit 's' supported in 4.2.3 See post on iRODS-chat
-      MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
-      MIRTH_METADATA_CHANNEL: mirthconnect:6670
+      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
+      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
+      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
-    networks:
-      - default
-      - common_default
+      ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY1}
+      ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY1}
+      ENV_S3_RESC_NAME: "UM-Ceph-S3-AC"
+      ENV_S3_HOST: "minio1:9000"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
@@ -154,30 +165,31 @@ services:
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
       - ./externals/irods_resource_plugin_s3:/irods_resource_plugin_s3
-    networks:
-      - default
-      - common_default
   ires-s3-2:
     build:
-      context: ires-s3-2/
+      context: ires-s3/
       args:
         - ENV_IRODS_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_DOCKERIZE_VERSION
         - ENV_FILEBEAT_VERSION
+    depends_on:
+      - irods
+      - ires  # Because of ingest resource
+      - minio2
     hostname: ires-s3-2
     environment:
       RODS_PASSWORD: irods
-      PGPASSWORD: foobar
       VIRTUAL_HOST: ires-s3-2.${RIT_ENV}.rit.unimaas.nl
-      IRODS_INGEST_REMOVE_DELAY: 300s                         # Only unit 's' supported in 4.2.3 See post on iRODS-chat
-      MIRTH_VALIDATION_CHANNEL: mirthconnect:6669
-      MIRTH_METADATA_CHANNEL: mirthconnect:6670
+      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
+      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
+      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
-    networks:
-      - default
-      - common_default
+      ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY2}
+      ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
+      ENV_S3_RESC_NAME: "UM-Ceph-S3-GL"
+      ENV_S3_HOST: "minio2:9000"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
@@ -185,9 +197,6 @@ services:
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
       - ./externals/irods_resource_plugin_s3:/irods_resource_plugin_s3
-    networks:
-      - default
-      - common_default
   db:
     image: mysql:${ENV_MYSQL_VERSION}
     hostname: db
@@ -212,33 +221,39 @@ services:
         - ENV_IRODS_REST_VERSION
         - ENV_CLOUDBROWSER_VERSION
         - ENV_FILEBEAT_VERSION
+    depends_on:
+      - irods
     hostname: irods-frontend
     environment:
       VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
       PACMAN_HOST: http://pacman.${RIT_ENV}.rit.unimaas.nl
       # logs are sent via filebeat, so logspout should be ignored
       LOGSPOUT: ignore
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
     networks:
       - default
       - common_default
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
   davrods:
     build:
       context: externals/rit-davrods/
       args:
         - ENV_DAVRODS_IRODS_VERSION
         - ENV_DAVRODS_VERSION
+    depends_on:
+      - irods
     environment:
       VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
       LOGSTASH_TAGS: DAVRODS
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
     networks:
       - default
       - common_default
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
   metalnx:
     build: externals/rit-metalnx-web/
+    depends_on:
+      - irods
     hostname: metalnx
     environment:
       IRODS_HOST: irods
@@ -257,6 +272,8 @@ services:
       args:
         - ENV_MIRTH_CONNECT_VERSION
         - ENV_FILEBEAT_VERSION
+    depends_on:
+      - epicpid
     hostname: mirthconnect
     ports:
       - "8443:8443"
@@ -279,19 +296,16 @@ services:
       - ./channels-backup:/opt/channels-backup
   crossref-lookup:
     build: externals/crossref-lookup
-    volumes:
-      - ./externals/crossref-lookup/app:/usr/src/app
-      - /etc/localtime:/etc/localtime:ro
     environment:
       VIRTUAL_HOST: crossref-lookup.${RIT_ENV}.rit.unimaas.nl
       LOGSTASH_TAGS: CROSSREF_LOOKUP
     networks:
       - default
+    volumes:
+      - ./externals/crossref-lookup/app:/usr/src/app
+      - /etc/localtime:/etc/localtime:ro
   epicpid:
     build: externals/epicpid-microservice/docker
-    volumes:
-      - ./externals/epicpid-microservice/:/opt/app
-      - /etc/localtime:/etc/localtime:ro
     environment:
       VIRTUAL_HOST: epicpid.${RIT_ENV}.rit.unimaas.nl
       LOGSTASH_TAGS: EPIC_PID
@@ -307,20 +321,23 @@ services:
     networks:
       - default
       - common_default
+    volumes:
+      - ./externals/epicpid-microservice/:/opt/app
+      - /etc/localtime:/etc/localtime:ro
   minio1:
     image: minio/minio:RELEASE.2019-05-23T00-29-34Z
     environment:
       VIRTUAL_HOST: minio1.${RIT_ENV}.rit.unimaas.nl
-      MINIO_ACCESS_KEY: ABCDEFGHIJKLMNOPQRST
-      MINIO_SECRET_KEY: ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNO
+      MINIO_ACCESS_KEY: ${ENV_S3_ACCESS_KEY1}
+      MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY1}
     entrypoint: sh
     command: -c 'mkdir -p /data/dh-irods-bucket-dev && /usr/bin/minio server /data'
   minio2:
     image: minio/minio:RELEASE.2019-05-23T00-29-34Z
     environment:
       VIRTUAL_HOST: minio2.${RIT_ENV}.rit.unimaas.nl
-      MINIO_ACCESS_KEY: BCDEFGHIJKLMNOPQRSTU
-      MINIO_SECRET_KEY: BCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP
+      MINIO_ACCESS_KEY: ${ENV_S3_ACCESS_KEY2}
+      MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
     entrypoint: sh
     command: -c 'mkdir -p /data/dh-irods-bucket-dev && /usr/bin/minio server /data'
 networks:
