@@ -13,6 +13,8 @@ sleep `expr ${HOSTNAME: -1} \* 3`
 if [ "$(iadmin lr replRescUMCeph01)" == "No rows found" ];
 then
   iadmin mkresc replRescUMCeph01 replication;
+  iadmin modresc replRescUMCeph01 comment Replicated-resource-for-S3
+  imeta add -R replRescUMCeph01 NCIT:C88193 0.062
 else
   echo "Replication resource already exists";
 fi
@@ -22,11 +24,9 @@ iadmin addchildtoresc replRescUMCeph01 ${ENV_S3_RESC_NAME}
 
 # Add comment to resource for better identification in pacman's createProject dropdown
 iadmin modresc ${HOSTNAME}Resource comment DO-NOT-USE
-iadmin modresc replRescUMCeph01 comment Replicated-resource-for-S3
 
 # Add storage pricing to resources
 imeta add -R ${HOSTNAME}Resource NCIT:C88193 999
-imeta add -R replRescUMCeph01 NCIT:C88193 0.062
 
 ###########
 ## Projects and project permissions
