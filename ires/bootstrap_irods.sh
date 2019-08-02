@@ -22,7 +22,6 @@ imeta add -R replRescUM01 NCIT:C88193 0.189
 ## Projects and project permissions
 domain="maastrichtuniversity.nl"
 
-# TODO: Make createProject rule compatible with simultaneous execution (see createProjectCollection retry mechanism for inspiration)
 for i in {01..2}; do
     PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
     project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${HOSTNAME}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'" "*principalInvestigator='p.vanschayck@${domain}'" "*respCostCenter='UM-30001234X'")
