@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 
 function retry {
   local retries=$1
@@ -42,68 +42,30 @@ then
   /opt/jboss/keycloak/bin/kcadm.sh create realms -f /tmp/realm-export_env.json
 fi
 
-echo "Create Users"
 #Create Users
+echo "Create Users"
+# Maastrichtuniversity
+rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy r.niesten r.brecheisen jonathan.melius k.heinen s.nijhuis"
 
+for user in $rit; do
+  # Check if user already exists, if not create user and set password
+  if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username="${user}"  | grep -q "id");
+  then
+    /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username="${user}" -s enabled=true -s email="${user}"@maastrichtuniversity.nl
+    /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username "${user}" --new-password 'foobar'
+  fi
+done
 
-if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username=d.theunissen  | grep -q "id");
-then
-  /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username=d.theunissen -s enabled=true -s email=d.theunissen@maastrichtuniversity.nl
-  /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username d.theunissen --new-password 'foobar'
-fi
+# Scannexus
+scannexus="rick.voncken"
 
-if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username=p.vanschayck  | grep -q "id");
-then
-  /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username=p.vanschayck -s enabled=true -s email=p.vanschayck@maastrichtuniversity.nl
-  /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username p.vanschayck --new-password 'foobar'
-fi
-
-if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username=m.coonen  | grep -q "id");
-then
-  /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username=m.coonen -s enabled=true -s email=m.coonen@maastrichtuniversity.nl
-  /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username m.coonen --new-password 'foobar'
-fi
-
-if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username=r.niesten  | grep -q "id");
-then
-  /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username=r.niesten -s enabled=true -s email=r.niesten@maastrichtuniversity.nl
-  /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username r.niesten --new-password 'foobar'
-fi
-
-if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username=r.brecheisen  | grep -q "id");
-then
-  /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username=r.brecheisen -s enabled=true -s email=r.brecheisen@maastrichtuniversity.nl
-  /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username r.brecheisen --new-password 'foobar'
-fi
-
-if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username=jonathan.melius  | grep -q "id");
-then
-  /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username=jonathan.melius -s enabled=true -s email=jonathan.meliusn@maastrichtuniversity.nl
-  /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username jonathan.melius --new-password 'foobar'
-fi
-
-if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username=k.heinen  | grep -q "id");
-then
-  /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username=k.heinen -s enabled=true -s email=k.heinen@maastrichtuniversity.nl
-  /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username k.heinen --new-password 'foobar'
-fi
-
-if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username=s.nijhuis  | grep -q "id");
-then
-  /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username=s.nijhuis -s enabled=true -s email=s.nijhuis@maastrichtuniversity.nl
-  /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username s.nijhuis --new-password 'foobar'
-fi
-
-if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username=p.suppers  | grep -q "id");
-then
-  /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username=p.suppers -s enabled=true -s email=p.suppers@maastrichtuniversity.nl
-  /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username p.suppers --new-password 'foobar'
-fi
-
-if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username=rick.voncken  | grep -q "id");
-then
-  /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username=rick.voncken -s enabled=true -s email=rick.voncken@scannexus.nl
-  /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username rick.voncken --new-password 'foobar'
-fi
+for user in $scannexus; do
+  # Check if user already exists, if not create user and set password
+  if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username="${user}"  | grep -q "id");
+  then
+    /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username="${user}" -s enabled=true -s email="${user}"@scannexus.nl
+    /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username "${user}" --new-password 'foobar'
+  fi
+done
 
 echo "Users Created"
