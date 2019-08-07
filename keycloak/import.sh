@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex
+set -e
 
 function retry {
   local retries=$1
