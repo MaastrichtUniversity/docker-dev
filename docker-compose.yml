@@ -43,6 +43,7 @@ services:
       DH_MAILER_TO_ADDRESS: m.coonen@maastrichtuniversity.nl
       DH_MAILER_USERNAME: user
       DH_MAILER_PASSWORD: password
+      DRUPAL_BASE_URL: http://pacman.{RIT_ENV}.rit.unimaas.nl
       SIMPLESAMLPHP_PASSWORD: password
       SIMPLESAMLPHP_SALT: 04ewyapckg6lj4wn7emchwu8kojtjaoh
   keycloak:
