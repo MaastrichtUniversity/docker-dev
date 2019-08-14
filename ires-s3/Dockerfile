@@ -13,6 +13,7 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
     apt-transport-https \
     wget \
+    less \
     unixodbc \
     super \
     libfuse2 \
@@ -26,16 +27,23 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     sudo \
     lsof \
     fortune-mod \
-    cifs-utils  \
     curl \
+    joe \
     nano \
+    uuid-dev \
+    libssl-dev \
+    build-essential \
+    libxml2-dev \
+    lsb-release \
+    libcurl4-gnutls-dev \
+    libs3-2 \
+    libc++-dev \
     # packages required for building ruleset and microservices {{
     libssl-dev \
-    libcurl4-openssl-dev \
     g++ \
     make \
     cmake \
-    python-pip
+    git
     # }} end
 
 ENV IRODS_VERSION ${ENV_IRODS_VERSION}
@@ -52,22 +60,14 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key a
     # packages required for building microservices
     irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
     irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION} \
-    # packages required for python rule engine
-    irods-rule-engine-plugin-python
+    irods-externals-libs3a30e55e8-0
 
 # install Metalnx RMD
 ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
 RUN dpkg -i /tmp/emc-metalnx-rmd-1.0-1.deb
 
-RUN mkdir /opt/irods
-
-# Bug in cifs-utils package causes setcifsacl not to work without setting this symlink
-# https://bugs.launchpad.net/ubuntu/+source/cifs-utils/+bug/1372120
-RUN mkdir /etc/cifs-utils && ln -s /usr/lib/x86_64-linux-gnu/cifs-utils/idmapwb.so /etc/cifs-utils/idmap-plugin
-
-# Overwrite the default setcifsacl with our own recompiled version
-ADD ./setcifsacl /usr/bin/setcifsacl
-RUN chmod a+x /usr/bin/setcifsacl
+# iRODS S3 resource plugin
+ADD ./irods-resource-plugin-s3_2.6.1~xenial_amd64.deb /tmp/irods-resource-plugin-s3_2.6.1~xenial_amd64.deb
 
 # Filebeat
 RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-amd64.deb -O /tmp/filebeat.deb \
@@ -78,16 +78,13 @@ ADD filebeat.yml /etc/filebeat/filebeat.yml
 RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKERIZE_VERSION}/dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz -o dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz
 
-# Python requirements
-ADD python_requirements.txt /opt
-RUN pip install -r /opt/python_requirements.txt
-
 # Finalize
+RUN mkdir /opt/irods
+
 ADD ./setup_responses /etc/irods/setup_responses
 ADD ./bootstrap.sh /opt/irods/bootstrap.sh
 ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
 ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
-ADD ./add_rule_engine.py /opt/irods/add_rule_engine
 ADD ./add_env_var.py /opt/irods/add_env_var.py
 RUN chmod a+x /opt/irods/*
 

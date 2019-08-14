@@ -1,6 +1,7 @@
 FROM ubuntu:16.04
 
 # Load build arguments from environment
+ARG ENV_POSTGRES_VERSION
 ARG ENV_IRODS_VERSION
 ARG ENV_IRODS_EXT_CLANG_VERSION
 ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
@@ -14,8 +15,6 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     wget \
     unixodbc \
     super \
-    odbc-postgresql \
-    postgresql-client \
     libfuse2 \
     libjson-perl \
     librabbitmq-dev \
@@ -37,10 +36,17 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     python-pip
     # }} end
 
-ENV IRODS_VERSION ${ENV_IRODS_VERSION}
+# Make sure to use the same postgres version for client and irods-db server
+RUN wget -qO - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
+    && echo 'deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main' | sudo tee /etc/apt/sources.list.d/pgdg.list \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    postgresql-client-${ENV_POSTGRES_VERSION} \
+    odbc-postgresql
 
 # install iRODS
-RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key add - \
+ENV IRODS_VERSION ${ENV_IRODS_VERSION}
+RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | apt-key add - \
     && echo "deb [arch=amd64] https://packages.irods.org/apt/ xenial main" | sudo tee /etc/apt/sources.list.d/renci-irods.list \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -53,17 +59,24 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key a
     irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
     irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION} \
     # packages required for python rule engine
-    irods-rule-engine-plugin-python 
+    irods-rule-engine-plugin-python
 
 # install Metalnx RMD
 ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
 RUN dpkg -i /tmp/emc-metalnx-rmd-1.0-1.deb
 
-RUN mkdir /opt/irods
+# Filebeat
 
+RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-amd64.deb -O /tmp/filebeat.deb \
+ && dpkg -i /tmp/filebeat.deb
+
+ADD filebeat.yml /etc/filebeat/filebeat.yml
+
+# Finalize
+
+RUN mkdir /opt/irods
 ADD ./setup_responses /etc/irods/setup_responses
 ADD ./setupdb.sh /opt/irods/setupdb.sh
-ADD ./config.sh /opt/irods/config.sh
 ADD ./bootstrap.sh /opt/irods/bootstrap.sh
 ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
 ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
@@ -71,24 +84,10 @@ ADD ./add_rule_engine.py /opt/irods/add_rule_engine.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
 RUN chmod a+x /opt/irods/*
 
-EXPOSE 1248 1247 8000
-
-###############################################################################
-#                                INSTALLATION FILEBEAT
-###############################################################################
-
-RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-amd64.deb -O /tmp/filebeat.deb \
- && dpkg -i /tmp/filebeat.deb
-
-ADD filebeat.yml /etc/filebeat/filebeat.yml
-
-###############################################################################
-
-
 # Python requirements
 ADD python_requirements.txt /opt
 RUN pip install -r /opt/python_requirements.txt
 
+EXPOSE 1248 1247 8000
 VOLUME [ "/rules", "/helpers", "/microservices" ]
-
 ENTRYPOINT [ "/opt/irods/bootstrap.sh" ]

@@ -17,22 +17,6 @@ mkdir -p /tmp/microservices-build && \
 # Update RIT helpers
 cp /helpers/* /var/lib/irods/msiExecCmd_bin/.
 
-# Mount ingest zones
-# Note: 'mkdir -p' is idempotent and will not error if folder already exists
-mkdir -p /mnt/ingest/zones && chmod 777 /mnt/ingest/zones
-
-if [ "${USE_SAMBA}" = "true" ] ; then
-    if [ -z "${INGEST_MOUNT}" ] || [ -z "${INGEST_USER}" ] || [ -z "${INGEST_PASSWORD}" ] || [ -z "${LDAP_PASSWORD}" ]; then     # -z is true when var is unset or equals empty string
-         echo "ERROR: Make sure to specify INGEST_MOUNT, INGEST_USER, INGEST_PASSWORD and LDAP_PASSWORD values in secrets file when USE_SAMBA is true"
-         exit 1
-    else
-         # mount CIFS on top of the created /mnt/ingest/zones folder
-         mount -t cifs ${INGEST_MOUNT} /mnt/ingest/zones -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999,vers=1.0
-    fi
-else 
-    echo "Using docker volume bind for dropzones instead of CIFS mount"
-fi
-
 # Check if this is a first run of this container
 if [[ ! -e /var/run/irods_installed ]]; then
 
@@ -50,27 +34,15 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projects
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projectCollection
 
-    # Add python rule engine to iRODS
-    /opt/irods/add_rule_engine.py /etc/irods/server_config.json python 1
-
     # Add config variable to iRODS
     /opt/irods/add_env_var.py /etc/irods/server_config.json MIRTH_METADATA_CHANNEL ${MIRTH_METADATA_CHANNEL}
     /opt/irods/add_env_var.py /etc/irods/server_config.json MIRTH_VALIDATION_CHANNEL ${MIRTH_VALIDATION_CHANNEL}
     /opt/irods/add_env_var.py /etc/irods/server_config.json IRODS_INGEST_REMOVE_DELAY ${IRODS_INGEST_REMOVE_DELAY}
-    
+
     # Dirty temp.password workaround
     sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 86400\,/' /etc/irods/server_config.json
 
-    # iRODS settings
-    ## Add resource vaults (i.e. dummy-mounts in development)
-    mkdir -p /mnt/UM-hnas-4k
-    chown irods:irods /mnt/UM-hnas-4k
-    mkdir -p /mnt/UM-hnas-4k-repl
-    chown irods:irods /mnt/UM-hnas-4k-repl
-
-
-
-    su - irods -c "/opt/irods/bootstrap_irods.sh"
+    # Execution of irods_bootstrap.sh moved further down
 
     touch /var/run/irods_installed
 
@@ -81,8 +53,41 @@ fi
 # Force start of Metalnx RMD
 service rmd restart
 
-# logstash
+# Logstash
 /etc/init.d/filebeat start
+
+# Remove the multiline comment tags to build the plugin from source
+<<COMMENT
+# Install iRODS S3 plugin
+# Compile plugin from source:
+BuildFromSource=true
+echo "download S3 plugin"
+cd /tmp
+git clone https://github.com/irods/irods_resource_plugin_s3
+cd /tmp/irods_resource_plugin_s3 && git checkout 4-2-stable
+sed -i 's/4\.2\.6/4\.2\.5/' CMakeLists.txt
+echo "compiling iRODS S3 plugin"
+mkdir build && cd build && cmake /tmp/irods_resource_plugin_s3 && make package
+echo "Installing built s3 dpkg"
+dpkg -i /tmp/irods_resource_plugin_s3/build/irods-resource-plugin-s3*.deb
+COMMENT
+
+# Or use precompiled plugin based on https://github.com/irods/irods_resource_plugin_s3/commit/6a24dd8e3b0f68e50324a877d1cbd0fdca051a46
+if [ "$BuildFromSource" != true ] ; then
+    echo "Installing precompiled s3 dpkg"
+    dpkg -i /tmp/irods-resource-plugin-s3_2.6.1~xenial_amd64.deb
+fi
+
+# Create secrets file
+touch /var/lib/irods/minio.keypair && chown irods /var/lib/irods/minio.keypair && chmod 400 /var/lib/irods/minio.keypair
+echo ${ENV_S3_ACCESS_KEY} >  /var/lib/irods/minio.keypair
+echo ${ENV_S3_SECRET_KEY} >> /var/lib/irods/minio.keypair
+
+# Create cache dir for S3 plugin
+mkdir /cache && chown irods /cache
+
+# iRODS bootstrap script must be executed after installing the S3 plugin
+su irods -c "/opt/irods/bootstrap_irods.sh"     # su without "-" to preserve env vars in child script
 
 # this script must end with a persistent foreground process
 tail -F /var/lib/irods/log/rodsLog.*

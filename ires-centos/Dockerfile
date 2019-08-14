@@ -26,6 +26,7 @@ RUN yum install -y \
     python-jsonschema \
     python-ldap \
     lsof \
+    fortune-mod \
     nano \
     cifs-utils  \
     openssl \
@@ -53,8 +54,7 @@ RUN rpm --import https://packages.irods.org/irods-signing-key.asc \
     irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
     irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION} \
     # packages required for python rule engine
-    irods-rule-engine-plugin-python 
-
+    irods-rule-engine-plugin-python
 
 # install Metalnx RMD
 # Installation of rpm tries to start the rmd service, which causes D-Bus errors to appear. These can be safely ignored
@@ -62,13 +62,26 @@ RUN rpm --import https://packages.irods.org/irods-signing-key.asc \
 RUN wget https://bintray.com/metalnx/rpm/download_file?file_path=emc-metalnx-rmd-1.0-22.noarch.rpm -O /tmp/emc-metalnx-rmd.rpm \
     && rpm -Uvh /tmp/emc-metalnx-rmd.rpm
 
-RUN mkdir /opt/irods
+# Overwrite the default setcifsacl with our own recompiled version
+ADD ./setcifsacl /usr/bin/setcifsacl
+RUN chmod a+x /usr/bin/setcifsacl
 
-## Bug in cifs-utils package causes setcifsacl not to work without setting this symlink
-## https://bugs.launchpad.net/ubuntu/+source/cifs-utils/+bug/1372120
-#RUN mkdir /etc/cifs-utils && ln -s /usr/lib/x86_64-linux-gnu/cifs-utils/idmapwb.so /etc/cifs-utils/idmap-plugin
+# Filebeat
+RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-x86_64.rpm -O /tmp/filebeat.rpm \
+ && rpm -Uvh /tmp/filebeat.rpm
+ADD filebeat.yml /etc/filebeat/filebeat.yml
+
+# Dockerize
+RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKERIZE_VERSION}/dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz -o dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz
+
+# Python requirements
+ADD python_requirements.txt /opt
+RUN pip install -r /opt/python_requirements.txt
+
+# Finalize
+RUN mkdir /opt/irods
 ADD ./setup_responses /etc/irods/setup_responses
-ADD ./config.sh /opt/irods/config.sh
 ADD ./bootstrap.sh /opt/irods/bootstrap.sh
 ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
 ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
@@ -76,29 +89,5 @@ ADD ./add_rule_engine.py /opt/irods/add_rule_engine.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
 RUN chmod a+x /opt/irods/*
 
-# Overwrite the default setcifsacl with our own recompiled version
-ADD ./setcifsacl /usr/bin/setcifsacl
-RUN chmod a+x /usr/bin/setcifsacl
-
-EXPOSE 1248 1247 8000
-
-
-###############################################################################
-#                                INSTALLATION FILEBEAT
-###############################################################################
-
-RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-x86_64.rpm -O /tmp/filebeat.rpm \
- && rpm -Uvh /tmp/filebeat.rpm
-
-ADD filebeat.yml /etc/filebeat/filebeat.yml
-
-###############################################################################
-
-# Python requirements
-ADD python_requirements.txt /opt
-RUN pip install -r /opt/python_requirements.txt
-
-RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKERIZE_VERSION}/dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz -o dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz
-
 CMD dockerize -wait tcp://irods:1247 -timeout 200s /opt/irods/bootstrap.sh
+EXPOSE 1248 1247 8000
