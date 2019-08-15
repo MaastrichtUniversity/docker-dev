@@ -7,6 +7,9 @@ until psql -h irods-db -U postgres -c '\l'; do
   sleep 1
 done
 
+# Python requirements
+pip install -r /rules/python/python_requirements.txt
+
 # Update RIT rules
 cd /rules && make
 

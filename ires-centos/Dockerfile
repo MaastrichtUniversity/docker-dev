@@ -54,7 +54,7 @@ RUN rpm --import https://packages.irods.org/irods-signing-key.asc \
     irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
     irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION} \
     # packages required for python rule engine
-    irods-rule-engine-plugin-python
+    irods-rule-engine-plugin-python-${IRODS_VERSION}
 
 # install Metalnx RMD
 # Installation of rpm tries to start the rmd service, which causes D-Bus errors to appear. These can be safely ignored
@@ -74,10 +74,6 @@ ADD filebeat.yml /etc/filebeat/filebeat.yml
 # Dockerize
 RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKERIZE_VERSION}/dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz -o dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz
-
-# Python requirements
-ADD python_requirements.txt /opt
-RUN pip install -r /opt/python_requirements.txt
 
 # Finalize
 RUN mkdir /opt/irods

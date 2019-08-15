@@ -59,21 +59,18 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | apt-key add - 
     irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
     irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION} \
     # packages required for python rule engine
-    irods-rule-engine-plugin-python
+    irods-rule-engine-plugin-python=${IRODS_VERSION}
 
 # install Metalnx RMD
 ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
 RUN dpkg -i /tmp/emc-metalnx-rmd-1.0-1.deb
 
 # Filebeat
-
 RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-amd64.deb -O /tmp/filebeat.deb \
  && dpkg -i /tmp/filebeat.deb
-
 ADD filebeat.yml /etc/filebeat/filebeat.yml
 
 # Finalize
-
 RUN mkdir /opt/irods
 ADD ./setup_responses /etc/irods/setup_responses
 ADD ./setupdb.sh /opt/irods/setupdb.sh
@@ -83,10 +80,6 @@ ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
 ADD ./add_rule_engine.py /opt/irods/add_rule_engine.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
 RUN chmod a+x /opt/irods/*
-
-# Python requirements
-ADD python_requirements.txt /opt
-RUN pip install -r /opt/python_requirements.txt
 
 EXPOSE 1248 1247 8000
 VOLUME [ "/rules", "/helpers", "/microservices" ]
