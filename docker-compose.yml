@@ -242,8 +242,6 @@ services:
         - ENV_IRODS_REST_VERSION
         - ENV_CLOUDBROWSER_VERSION
         - ENV_FILEBEAT_VERSION
-    depends_on:
-      - irods
     hostname: irods-frontend
     environment:
       VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
