@@ -29,6 +29,11 @@ services:
       - ./externals/datahub_drupal_theme:/var/www/html/sites/all/themes/datahub
     environment:
       RIT_ENV: ${RIT_ENV}
+      DB_NAME: pacman
+      DB_HOST: db
+      DB_PASS: foobar
+      PACMAN_ADMIN_NAME: rit-admin
+      PACMAN_ADMIN_PASS: foobar
       IRODS_FRONTEND_ENV_VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
       IRODS_WEBDAV_ENV_VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
       IRODS_HOST: irods
