@@ -295,6 +295,7 @@ services:
         - ENV_FILEBEAT_VERSION
     depends_on:
       - epicpid
+      - irods-frontend
     hostname: mirthconnect
     ports:
       - "8443:8443"
