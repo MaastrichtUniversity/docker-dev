@@ -2,18 +2,20 @@ version: '2'
 services:
   pacman:
     build:
-      context: pacman/
+      context: externals/dh-rdm-service-docker/dev
       args:
         - ENV_XDEBUG_VERSION
         - ENV_DRUPAL_VERSION
         - ENV_DRUPAL_VERSION_MD5
         - ENV_ISLANDORA_VERSION
         - ENV_DOCKERIZE_VERSION
-        - ENV_FILEBEAT_VERSION
+        - ENV_SIMPLESAML_VERSION
+        - ENV_SIMPLESAML_HASH
     depends_on:
       - irods
       - db
       - crossref-lookup
+      - keycloak
     hostname: pacman
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -24,22 +26,44 @@ services:
       - ./externals/rit_landing_page:/var/www/html/sites/all/modules/rit_landing_page
       - ./externals/rit_forms:/var/www/html/sites/all/modules/rit_forms
       - ./externals/rit_faker:/var/www/html/sites/all/modules/rit_faker
-      - ./externals/fhml_um_theme_demo:/var/www/html/sites/all/themes/fhml_um_theme_demo
+      - ./externals/datahub_drupal_theme:/var/www/html/sites/all/themes/datahub
     environment:
+      RIT_ENV: ${RIT_ENV}
+      DB_NAME: pacman
+      DB_HOST: db
+      DB_PASS: foobar
+      PACMAN_ADMIN_NAME: rit-admin
+      PACMAN_ADMIN_PASS: foobar
       IRODS_FRONTEND_ENV_VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
       IRODS_WEBDAV_ENV_VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
       IRODS_HOST: irods
       IRODS_ENV_RODS_PASSWORD: irods
-      DWH_FRONTEND_ENV_VIRTUAL_HOST: dwh.${RIT_ENV}.rit.unimaas.nl
       CROSSREF_LOOKUP_HOST: crossref-lookup
       VIRTUAL_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
       OLS_URL: http://ols.tst.rit.unimaas.nl
       LOGSTASH_TAGS: PACMAN
-      JWT_SECRET: foobar
       DH_MAILER_HOST: mailer
       DH_MAILER_TO_ADDRESS: m.coonen@maastrichtuniversity.nl
       DH_MAILER_USERNAME: user
       DH_MAILER_PASSWORD: password
+      DRUPAL_BASE_URL: http://pacman.{RIT_ENV}.rit.unimaas.nl
+      SIMPLESAMLPHP_PASSWORD: password
+      SIMPLESAMLPHP_SALT: 04ewyapckg6lj4wn7emchwu8kojtjaoh
+  keycloak:
+    image: jboss/keycloak:6.0.1
+    hostname: keycloak
+    environment:
+      VIRTUAL_HOST: keycloak.${RIT_ENV}.dh.unimaas.nl
+      VIRTUAL_PORT: 8080
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      RIT_ENV: ${RIT_ENV}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./keycloak/realm-export.json:/tmp/realm-export.json
+      - ./keycloak/import.sh:/tmp/import.sh
+      - ./keycloak/startup.sh:/opt/jboss/startup-scripts/startup.sh
+      - ./keycloak/datahub-keycloak-theme:/opt/jboss/keycloak/themes/datahub
   irods:
     build:
       context: icat/
@@ -221,8 +245,6 @@ services:
         - ENV_IRODS_REST_VERSION
         - ENV_CLOUDBROWSER_VERSION
         - ENV_FILEBEAT_VERSION
-    depends_on:
-      - irods
     hostname: irods-frontend
     environment:
       VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
@@ -274,6 +296,7 @@ services:
         - ENV_FILEBEAT_VERSION
     depends_on:
       - epicpid
+      - irods-frontend
     hostname: mirthconnect
     ports:
       - "8443:8443"
