@@ -70,6 +70,7 @@ services:
       args:
         - ENV_POSTGRES_VERSION
         - ENV_IRODS_VERSION
+        - ENV_IRODS_MSI_CURL_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_FILEBEAT_VERSION
@@ -100,6 +101,7 @@ services:
       context: ires/
       args:
         - ENV_IRODS_VERSION
+        - ENV_IRODS_MSI_CURL_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_DOCKERIZE_VERSION
@@ -131,6 +133,7 @@ services:
       context: ires-centos/
       args:
         - ENV_IRODS_VERSION
+        - ENV_IRODS_MSI_CURL_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_DOCKERIZE_VERSION
@@ -162,6 +165,7 @@ services:
       context: ires-s3/
       args:
         - ENV_IRODS_VERSION
+        - ENV_IRODS_MSI_CURL_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_DOCKERIZE_VERSION
@@ -194,6 +198,7 @@ services:
       context: ires-s3/
       args:
         - ENV_IRODS_VERSION
+        - ENV_IRODS_MSI_CURL_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_DOCKERIZE_VERSION
@@ -310,7 +315,6 @@ services:
       LOGSPOUT: ignore
     networks:
       - default
-      - oculus_default
       - common_default
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -364,7 +368,5 @@ services:
     entrypoint: sh
     command: -c 'mkdir -p /data/dh-irods-bucket-dev && /usr/bin/minio server /data'
 networks:
-  oculus_default:
-    external: true
   common_default:
     external: true

@@ -2,6 +2,7 @@ FROM ubuntu:16.04
 
 # Load build arguments from environment
 ARG ENV_IRODS_VERSION
+ARG ENV_IRODS_MSI_CURL_VERSION
 ARG ENV_IRODS_EXT_CLANG_VERSION
 ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
 ARG ENV_DOCKERIZE_VERSION
@@ -48,6 +49,7 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key a
     irods-dev=${IRODS_VERSION} \
     irods-runtime=${IRODS_VERSION} \
     irods-icommands=${IRODS_VERSION} \
+    irods-microservice-plugins-curl=${ENV_IRODS_MSI_CURL_VERSION} \
     # packages required for building microservices
     irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
     irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION}

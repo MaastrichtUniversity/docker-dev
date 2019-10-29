@@ -42,7 +42,7 @@ for snUser in $snUsers; do
     iadmin moduser "${snUser}@${snDomain}" password foobar
 done
 
-serviceUsers="service-dropzones service-mdl service-dwh service-pid service-disqover"
+serviceUsers="service-dropzones service-mdl service-pid service-disqover"
 
 for user in $serviceUsers; do
     iadmin mkuser "${user}" rodsuser
