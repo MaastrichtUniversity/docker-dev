@@ -60,6 +60,8 @@ service rmd restart
 # Remove the multiline comment tags to build the plugin from source
 <<COMMENT
 # Install iRODS S3 plugin
+# remove deb package (installed in Dockerfile)
+apt purge irods-resource-plugin-s3
 # Compile plugin from source:
 BuildFromSource=true
 echo "download S3 plugin"
@@ -72,12 +74,6 @@ mkdir build && cd build && cmake /tmp/irods_resource_plugin_s3 && make package
 echo "Installing built s3 dpkg"
 dpkg -i /tmp/irods_resource_plugin_s3/build/irods-resource-plugin-s3*.deb
 COMMENT
-
-# Or use precompiled plugin based on https://github.com/irods/irods_resource_plugin_s3/commit/6a24dd8e3b0f68e50324a877d1cbd0fdca051a46
-if [ "$BuildFromSource" != true ] ; then
-    echo "Installing precompiled s3 dpkg"
-    dpkg -i /tmp/irods-resource-plugin-s3_2.6.1~xenial_amd64.deb
-fi
 
 # Create secrets file
 touch /var/lib/irods/minio.keypair && chown irods /var/lib/irods/minio.keypair && chmod 400 /var/lib/irods/minio.keypair

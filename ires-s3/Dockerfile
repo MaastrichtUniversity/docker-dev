@@ -62,14 +62,12 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key a
     # packages required for building microservices
     irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
     irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION} \
-    irods-externals-libs3a30e55e8-0
+    irods-externals-libs3a30e55e8-0 \
+    irods-resource-plugin-s3
 
 # install Metalnx RMD
 ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
 RUN dpkg -i /tmp/emc-metalnx-rmd-1.0-1.deb
-
-# iRODS S3 resource plugin
-ADD ./irods-resource-plugin-s3_2.6.1~xenial_amd64.deb /tmp/irods-resource-plugin-s3_2.6.1~xenial_amd64.deb
 
 # Filebeat
 RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-amd64.deb -O /tmp/filebeat.deb \
