@@ -5,6 +5,7 @@ ARG ENV_IRODS_VERSION
 ARG ENV_IRODS_MSI_CURL_VERSION
 ARG ENV_IRODS_EXT_CLANG_VERSION
 ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+ARG ENV_IRODS_RESC_PLUGIN_S3_VERSION
 ARG ENV_DOCKERIZE_VERSION
 ARG ENV_FILEBEAT_VERSION
 
@@ -62,8 +63,9 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key a
     # packages required for building microservices
     irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
     irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION} \
-    irods-externals-libs3a30e55e8-0 \
-    irods-resource-plugin-s3
+    # packages required for S3 storage plugin
+    #irods-externals-libs3a30e55e8-0 \
+    irods-resource-plugin-s3=${ENV_IRODS_RESC_PLUGIN_S3_VERSION}
 
 # install Metalnx RMD
 ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
