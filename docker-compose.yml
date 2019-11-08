@@ -193,7 +193,6 @@ services:
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
-      - ./externals/irods_resource_plugin_s3:/irods_resource_plugin_s3
   ires-s3-2:
     build:
       context: ires-s3/
@@ -227,7 +226,6 @@ services:
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
-      - ./externals/irods_resource_plugin_s3:/irods_resource_plugin_s3
   db:
     image: mysql:${ENV_MYSQL_VERSION}
     hostname: db
