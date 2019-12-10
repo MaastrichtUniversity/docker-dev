@@ -37,7 +37,6 @@ services:
       PACMAN_ADMIN_PASS: foobar
       PACMAN_ENABLE_MAINTENANCE_BANNER: "false"
       PACMAN_MAINTENANCE_BANNER_TEXT: "On Tuesday 10-10-2019 there will be maintenance on The ingest zones. It will not be available from 19:00 to max. 22:00"
-      IRODS_FRONTEND_ENV_VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
       IRODS_WEBDAV_ENV_VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
       IRODS_HOST: irods
       IRODS_ENV_RODS_PASSWORD: irods
@@ -254,7 +253,6 @@ services:
       context: externals/irods-frontend/
       args:
         - ENV_IRODS_REST_VERSION
-        - ENV_CLOUDBROWSER_VERSION
         - ENV_FILEBEAT_VERSION
     hostname: irods-frontend
     environment:
