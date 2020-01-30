@@ -12,6 +12,7 @@ services:
         - ENV_SIMPLESAML_VERSION
         - ENV_SIMPLESAML_HASH
         - ENV_FILEBEAT_VERSION
+        - ENV_HTTP_PROXY
     depends_on:
       - irods
       - db
