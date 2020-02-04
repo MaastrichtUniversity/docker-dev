@@ -368,7 +368,7 @@ services:
           - metalnx.dh.local
   mirthconnect:
     build:
-      context: mirthconnect/
+      context: externals/mirthconnect-docker
       args:
         - ENV_MIRTH_CONNECT_VERSION
         - ENV_FILEBEAT_VERSION

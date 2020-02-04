@@ -44,7 +44,8 @@ externals/rit-metalnx-web https://github.com/MaastrichtUniversity/rit-metalnx-we
 externals/rit-davrods https://github.com/MaastrichtUniversity/rit-davrods.git
 externals/crossref-lookup https://github.com/MaastrichtUniversity/crossref-lookup.git
 externals/epicpid-microservice https://github.com/MaastrichtUniversity/epicpid-microservice.git
-externals/dh-rdm-service-docker https://github.com/MaastrichtUniversity/dh-rdm-service-docker.git"
+externals/dh-rdm-service-docker https://github.com/MaastrichtUniversity/dh-rdm-service-docker.git
+externals/mirthconnect-docker https://github.com/MaastrichtUniversity/mirthconnect-docker.git"
 
 
 # do the required action in case of externals or exec
