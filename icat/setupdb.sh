@@ -9,7 +9,7 @@ DBNAME=`head -n 7 $RESPFILE | tail -n 1`
 DBUSER=`head -n 8 $RESPFILE | tail -n 1`
 DBPASS=`head -n 10 $RESPFILE | tail -n 1`
 
-psql -h irods-db -U postgres -d postgres <<- EOSQL
+psql -h irods-db.dh.local -U postgres -d postgres <<- EOSQL
 DROP DATABASE $DBNAME;
 DROP USER "$DBUSER";
 
