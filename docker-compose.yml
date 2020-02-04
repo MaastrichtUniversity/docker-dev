@@ -46,7 +46,7 @@ services:
       VIRTUAL_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
       OLS_URL: http://ols.tst.rit.unimaas.nl
       LOGSTASH_TAGS: PACMAN
-      DH_MAILER_HOST: mailer
+      DH_MAILER_HOST: mailer.dh.local
       DH_MAILER_TO_ADDRESS: m.coonen@maastrichtuniversity.nl
       DH_MAILER_USERNAME: user
       DH_MAILER_PASSWORD: password
