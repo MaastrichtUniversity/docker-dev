@@ -83,5 +83,5 @@ ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
 RUN chmod a+x /opt/irods/*
 
-CMD dockerize -wait tcp://irods:1247 -timeout 200s /opt/irods/bootstrap.sh
+CMD dockerize -wait tcp://irods.dh.local:1247 -timeout 200s /opt/irods/bootstrap.sh
 EXPOSE 1248 1247 8000
