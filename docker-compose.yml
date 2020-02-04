@@ -32,7 +32,7 @@ services:
     environment:
       RIT_ENV: ${RIT_ENV}
       DB_NAME: pacman
-      DB_HOST: db
+      DB_HOST: db.dh.local
       DB_PASS: foobar
       PACMAN_ADMIN_NAME: rit-admin
       PACMAN_ADMIN_PASS: foobar
