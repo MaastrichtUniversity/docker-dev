@@ -421,7 +421,7 @@ services:
       LOG_LEVEL: DEBUG
       USERNAME: user
       PASSWORD: foobar
-      RABBITMQ_HOST : rabbitmq
+      RABBITMQ_HOST : rabbitmq.dh.local
       RABBITMQ_USER : user
       RABBITMQ_PASS : password
       RABBITMQ_PORT: 5672
