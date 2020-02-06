@@ -373,6 +373,7 @@ services:
         - ENV_MIRTH_CONNECT_VERSION
         - ENV_FILEBEAT_VERSION
     depends_on:
+      - mirth-db
       - epicpid
       - irods-frontend
     hostname: mirthconnect
@@ -380,10 +381,17 @@ services:
       - "8443:8443"
       - "6661-6671:6661-6671"
     environment:
-      PGPASSWORD: foobar
+      MIRTH_POSTGRES_DB_HOST: ${ENV_MIRTH_POSTGRES_DB_HOST}
+      MIRTH_POSTGRES_DB: ${ENV_MIRTH_POSTGRES_DB}
+      MIRTH_POSTGRES_USER: ${ENV_MIRTH_POSTGRES_USER}
+      PGPASSWORD: ${ENV_MIRTH_POSTGRES_PASSWORD}
+      DROP_DB_ON_START: "true"
+      MIRTH_KEYSTORE_STOREPASS: foobar
+      MIRTH_KEYSTORE_KEYPASS: barfoo
+      MIRTH_ADMIN_USER: admin
+      MIRTH_ADMIN_PASSWORD: admin
       RIT_ENV: ${RIT_ENV}
       VIRTUAL_HOST: mirthconnect.${RIT_ENV}.rit.unimaas.nl
-      # dev only, in acc/prod MIRTH is not in a docker container
       LOGSTASH_TAGS: MIRTH-UM
       LOGSPOUT: ignore
     networks:
@@ -398,6 +406,24 @@ services:
       - ./externals/channels:/opt/channels
       - ./externals/alerts:/opt/alerts
       - ./channels-backup:/opt/channels-backup
+  mirth-db:
+    image: postgres:${ENV_MIRTH_POSTGRES_VERSION}
+    hostname: mirth-db
+    environment:
+      POSTGRES_DB: ${ENV_MIRTH_POSTGRES_DB}
+      POSTGRES_USER: ${ENV_MIRTH_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${ENV_MIRTH_POSTGRES_PASSWORD}
+      LOGSPOUT: ignore
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+#      - mirthpgdata:/var/lib/postgresql/data
+    networks:
+      default:
+        aliases:
+          - mirth-db.dh.local
+      common_default:
+        aliases:
+          - mirth-db.dh.local
   crossref-lookup:
     build: externals/crossref-lookup
     environment:
@@ -471,3 +497,6 @@ services:
 networks:
   common_default:
     external: true
+
+#volumes:
+#  mirthpgdata:
