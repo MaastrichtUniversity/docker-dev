@@ -388,7 +388,6 @@ services:
       DROP_DB_ON_START: "true"
       MIRTH_KEYSTORE_STOREPASS: foobar
       MIRTH_KEYSTORE_KEYPASS: barfoo
-      MIRTH_ADMIN_USER: admin
       MIRTH_ADMIN_PASSWORD: admin
       RIT_ENV: ${RIT_ENV}
       VIRTUAL_HOST: mirthconnect.${RIT_ENV}.rit.unimaas.nl
