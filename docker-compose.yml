@@ -416,7 +416,6 @@ services:
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
-#      - mirthpgdata:/var/lib/postgresql/data
     networks:
       default:
         aliases:
@@ -497,6 +496,3 @@ services:
 networks:
   common_default:
     external: true
-
-#volumes:
-#  mirthpgdata:
