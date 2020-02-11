@@ -388,6 +388,8 @@ services:
       DROP_DB_ON_START: "true"
       MIRTH_KEYSTORE_STOREPASS: foobar
       MIRTH_KEYSTORE_KEYPASS: barfoo
+      # The server id is a constant to load corresponding message history from an existing database
+      MIRTH_SERVER_ID: 08cd0e8c-da07-45ae-a820-4fba073a20f8
       MIRTH_ADMIN_PASSWORD: admin
       RIT_ENV: ${RIT_ENV}
       VIRTUAL_HOST: mirthconnect.${RIT_ENV}.rit.unimaas.nl
