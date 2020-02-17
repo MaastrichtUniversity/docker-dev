@@ -372,6 +372,7 @@ services:
       args:
         - ENV_MIRTH_CONNECT_VERSION
         - ENV_FILEBEAT_VERSION
+        - ENV_MIRTH_KEYSTORE_STOREPASS
     depends_on:
       - mirth-db
       - epicpid
@@ -386,7 +387,7 @@ services:
       MIRTH_POSTGRES_USER: ${ENV_MIRTH_POSTGRES_USER}
       PGPASSWORD: ${ENV_MIRTH_POSTGRES_PASSWORD}
       DROP_DB_ON_START: "true"
-      MIRTH_KEYSTORE_STOREPASS: foobar
+      MIRTH_KEYSTORE_STOREPASS: ${ENV_MIRTH_KEYSTORE_STOREPASS}
       MIRTH_KEYSTORE_KEYPASS: barfoo
       # The server id is a constant to load corresponding message history from an existing database
       MIRTH_SERVER_ID: 08cd0e8c-da07-45ae-a820-4fba073a20f8
