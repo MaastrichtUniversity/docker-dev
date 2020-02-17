@@ -30,6 +30,7 @@ services:
       - ./externals/rit_faker:/var/www/html/sites/all/modules/rit_faker
       - ./externals/datahub_drupal_theme:/var/www/html/sites/all/themes/datahub
     environment:
+      HTTP_PROXY: ${ENV_HTTP_PROXY}
       RIT_ENV: ${RIT_ENV}
       DB_NAME: pacman
       DB_HOST: db.dh.local
