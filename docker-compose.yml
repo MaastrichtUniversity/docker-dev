@@ -5,6 +5,9 @@ services:
       context: externals/dh-rdm-service-docker/dev
       args:
         - ENV_XDEBUG_VERSION
+        - ENV_COMPOSER_VERSION
+        - ENV_NODE_VERSION
+        - ENV_DRUSH_VERSION
         - ENV_DRUPAL_VERSION
         - ENV_DRUPAL_VERSION_MD5
         - ENV_ISLANDORA_VERSION
