@@ -53,6 +53,9 @@ services:
       DRUPAL_BASE_URL: http://pacman.{RIT_ENV}.rit.unimaas.nl
       SIMPLESAMLPHP_PASSWORD: password
       SIMPLESAMLPHP_SALT: 04ewyapckg6lj4wn7emchwu8kojtjaoh
+      IRODS_SURFARCHIVE_RESOURCE_NAME: replRescAZM01
+      IRODS_SURFARCHIVE_ADMIN_USER: service-surfarchive
+      IRODS_SURFARCHIVE_ADMIN_PASSWORD: foobar
     networks:
       default:
         aliases:
