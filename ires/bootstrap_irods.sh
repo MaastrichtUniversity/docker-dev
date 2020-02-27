@@ -12,6 +12,8 @@ iadmin addchildtoresc replRescUM01 UM-hnas-4k-repl
 
 # Create a resource for the the SURFsara Archive
 iadmin mkresc arcRescSURF01 unixfilesystem ${HOSTNAME}:/mnt/SURF-Archive
+# Add the archive service account to the Archive resource
+imeta add -R arcRescSURF01 service-account service-surfarchive
 
 # Add comment to resource for better identification in pacman's createProject dropdown
 iadmin modresc ${HOSTNAME}Resource comment UBUNTU-INGEST-RESOURCE
@@ -49,7 +51,11 @@ for i in {01..2}; do
     # Contributor access
     ichmod -r write rit-l /nlmumc/projects/${project}
 
+    # Enable Archiving for this project
     imeta set -C /nlmumc/projects/${project} enableSurfSaraArchive true
+    # Set an avu to describe the destination archive resource
+    imeta set -C /nlmumc/projects/${project} ArchiveDestinationResource arcRescSURF01
+
 
     # Viewer access
 done

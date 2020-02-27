@@ -69,8 +69,6 @@ if [[ ! -e /var/run/irods_installed ]]; then
     mkdir -p /mnt/SURF-Archive
     chown irods:irods /mnt/SURF-Archive
 
-
-
     su - irods -c "/opt/irods/bootstrap_irods.sh"
 
     touch /var/run/irods_installed
