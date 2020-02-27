@@ -10,6 +10,9 @@ iadmin mkresc replRescUM01 replication
 iadmin addchildtoresc replRescUM01 UM-hnas-4k
 iadmin addchildtoresc replRescUM01 UM-hnas-4k-repl
 
+# Create a resource for the the SURFsara Archive
+iadmin mkresc arcRescSURF01 unixfilesystem ${HOSTNAME}:/mnt/SURF-Archive
+
 # Add comment to resource for better identification in pacman's createProject dropdown
 iadmin modresc ${HOSTNAME}Resource comment UBUNTU-INGEST-RESOURCE
 iadmin modresc replRescUM01 comment Replicated-resource-for-UM
@@ -17,6 +20,7 @@ iadmin modresc replRescUM01 comment Replicated-resource-for-UM
 # Add storage pricing to resources
 imeta add -R ${HOSTNAME}Resource NCIT:C88193 999
 imeta add -R replRescUM01 NCIT:C88193 0.189
+imeta add -R arcRescSURF01 NCIT:C88193 0.02
 
 ###########
 ## Projects and project permissions
@@ -44,6 +48,8 @@ for i in {01..2}; do
 
     # Contributor access
     ichmod -r write rit-l /nlmumc/projects/${project}
+
+    imeta set -C /nlmumc/projects/${project} enableSurfSaraArchive true
 
     # Viewer access
 done

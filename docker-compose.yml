@@ -53,7 +53,7 @@ services:
       DRUPAL_BASE_URL: http://pacman.{RIT_ENV}.rit.unimaas.nl
       SIMPLESAMLPHP_PASSWORD: password
       SIMPLESAMLPHP_SALT: 04ewyapckg6lj4wn7emchwu8kojtjaoh
-      IRODS_SURFARCHIVE_RESOURCE_NAME: replRescAZM01
+      IRODS_SURFARCHIVE_RESOURCE_NAME: arcRescSURF01
       IRODS_SURFARCHIVE_ADMIN_USER: service-surfarchive
       IRODS_SURFARCHIVE_ADMIN_PASSWORD: foobar
     networks:
@@ -109,6 +109,7 @@ services:
       IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
       MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
       MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
+      IRODS_SURFARCHIVE_RESOURCE_NAME: replRescAZM01
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       default:
