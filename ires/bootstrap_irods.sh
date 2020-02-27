@@ -51,11 +51,10 @@ for i in {01..2}; do
     # Contributor access
     ichmod -r write rit-l /nlmumc/projects/${project}
 
-    # Enable Archiving for this project
-    imeta set -C /nlmumc/projects/${project} enableSurfSaraArchive true
-    # Set an avu to describe the destination archive resource
-    imeta set -C /nlmumc/projects/${project} ArchiveDestinationResource arcRescSURF01
-
+    # Enable archiving for this project
+    imeta set -C /nlmumc/projects/${project} enableArchive true
+    # Set the destination archive resource
+    imeta set -C /nlmumc/projects/${project} archiveDestinationResource arcRescSURF01
 
     # Viewer access
 done
