@@ -109,7 +109,6 @@ services:
       IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
       MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
       MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
-      IRODS_SURFARCHIVE_RESOURCE_NAME: replRescAZM01
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       default:
