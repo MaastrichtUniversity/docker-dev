@@ -15,6 +15,10 @@ iadmin addchildtoresc rootResc demoResc
 iadmin modresc rootResc comment DO-NOT-USE
 iadmin modresc demoResc comment DO-NOT-USE
 
+# Add storage pricing to resources
+imeta add -R rootResc NCIT:C88193 999
+imeta add -R demoResc NCIT:C88193 999
+
 ##############
 ## Collections
 imkdir -p /nlmumc/ingest/zones
@@ -38,7 +42,7 @@ for snUser in $snUsers; do
     iadmin moduser "${snUser}@${snDomain}" password foobar
 done
 
-serviceUsers="service-dropzones service-mdl service-dwh service-pid service-disqover"
+serviceUsers="service-dropzones service-mdl service-pid service-disqover"
 
 for user in $serviceUsers; do
     iadmin mkuser "${user}" rodsuser
@@ -104,6 +108,7 @@ ichmod write DH-project-admins /nlmumc/projects
 ## Projects and project permissions
 # Note: creation of projects will be handled by the respective resource servers
 
+
 ##########
 ## Special
 
@@ -112,8 +117,6 @@ imkdir -p /nlmumc/projects/P000000010
 imeta add -C /nlmumc/projects/P000000010 authorizationPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000010 dataRetentionPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000010 ingestResource ${HOSTNAME}Resource
-# TODO: Delete this AVU when RITDEV-653 has been merged
-imeta add -C /nlmumc/projects/P000000010 NCIT:C88193 0.32
 imeta add -C /nlmumc/projects/P000000010 OBI:0000103 p.suppers@maastrichtuniversity.nl
 imeta add -C /nlmumc/projects/P000000010 resource replRescAZM01
 imeta add -C /nlmumc/projects/P000000010 responsibleCostCenter AZM-123456
@@ -133,8 +136,6 @@ imkdir -p /nlmumc/projects/P000000011
 imeta add -C /nlmumc/projects/P000000011 authorizationPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000011 dataRetentionPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000011 ingestResource ${HOSTNAME}Resource
-# TODO: Delete this AVU when RITDEV-653 has been merged
-imeta add -C /nlmumc/projects/P000000011 NCIT:C88193 0.32
 imeta add -C /nlmumc/projects/P000000011 OBI:0000103 p.suppers@maastrichtuniversity.nl
 imeta add -C /nlmumc/projects/P000000011 resource replRescAZM01
 imeta add -C /nlmumc/projects/P000000011 responsibleCostCenter AZM-123456

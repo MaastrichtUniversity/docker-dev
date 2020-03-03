@@ -2,8 +2,10 @@ FROM ubuntu:16.04
 
 # Load build arguments from environment
 ARG ENV_IRODS_VERSION
+ARG ENV_IRODS_MSI_CURL_VERSION
 ARG ENV_IRODS_EXT_CLANG_VERSION
 ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+ARG ENV_IRODS_RESC_PLUGIN_S3_VERSION
 ARG ENV_DOCKERIZE_VERSION
 ARG ENV_FILEBEAT_VERSION
 
@@ -57,17 +59,16 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key a
     irods-dev=${IRODS_VERSION} \
     irods-runtime=${IRODS_VERSION} \
     irods-icommands=${IRODS_VERSION} \
+    irods-microservice-plugins-curl=${ENV_IRODS_MSI_CURL_VERSION} \
     # packages required for building microservices
     irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
     irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION} \
-    irods-externals-libs3a30e55e8-0
+    # packages required for S3 storage plugin
+    irods-resource-plugin-s3=${ENV_IRODS_RESC_PLUGIN_S3_VERSION}
 
 # install Metalnx RMD
 ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
 RUN dpkg -i /tmp/emc-metalnx-rmd-1.0-1.deb
-
-# iRODS S3 resource plugin
-ADD ./irods-resource-plugin-s3_2.6.1~xenial_amd64.deb /tmp/irods-resource-plugin-s3_2.6.1~xenial_amd64.deb
 
 # Filebeat
 RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-amd64.deb -O /tmp/filebeat.deb \
@@ -89,4 +90,4 @@ ADD ./add_env_var.py /opt/irods/add_env_var.py
 RUN chmod a+x /opt/irods/*
 
 EXPOSE 1248 1247 8000
-CMD dockerize -wait tcp://irods:1247 -timeout 200s /opt/irods/bootstrap.sh
+CMD dockerize -wait tcp://irods.dh.local:1247 -timeout 200s /opt/irods/bootstrap.sh

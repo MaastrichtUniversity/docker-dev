@@ -11,6 +11,8 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_SIMPLESAML_VERSION
         - ENV_SIMPLESAML_HASH
+        - ENV_FILEBEAT_VERSION
+        - ENV_HTTP_PROXY
     depends_on:
       - irods
       - db
@@ -32,19 +34,21 @@ services:
     environment:
       RIT_ENV: ${RIT_ENV}
       DB_NAME: pacman
-      DB_HOST: db
+      DB_HOST: db.dh.local
       DB_PASS: foobar
       PACMAN_ADMIN_NAME: rit-admin
       PACMAN_ADMIN_PASS: foobar
+      PACMAN_ENABLE_MAINTENANCE_BANNER: "false"
+      PACMAN_MAINTENANCE_BANNER_TEXT: "On Tuesday 10-10-2019 there will be maintenance on The ingest zones. It will not be available from 19:00 to max. 22:00"
       IRODS_FRONTEND_ENV_VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
       IRODS_WEBDAV_ENV_VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
-      IRODS_HOST: irods
+      IRODS_HOST: irods.dh.local
       IRODS_ENV_RODS_PASSWORD: irods
-      CROSSREF_LOOKUP_HOST: crossref-lookup
+      CROSSREF_LOOKUP_HOST: crossref-lookup.dh.local
       VIRTUAL_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
       OLS_URL: http://ols.tst.rit.unimaas.nl
       LOGSTASH_TAGS: PACMAN
-      DH_MAILER_HOST: mailer
+      DH_MAILER_HOST: mailer.dh.local
       DH_MAILER_TO_ADDRESS: m.coonen@maastrichtuniversity.nl
       DH_MAILER_USERNAME: user
       DH_MAILER_PASSWORD: password
@@ -57,6 +61,16 @@ services:
       RABBITMQ_USER: user
       RABBITMQ_PASS: password
       RABBITMQ_PORT: 5672
+      IRODS_SURFARCHIVE_RESOURCE_NAME: arcRescSURF01
+      IRODS_SURFARCHIVE_ADMIN_USER: service-surfarchive
+      IRODS_SURFARCHIVE_ADMIN_PASSWORD: foobar
+    networks:
+      default:
+        aliases:
+          - pacman.dh.local
+      common_default:
+        aliases:
+          - pacman.dh.local
   keycloak:
     image: jboss/keycloak:6.0.1
     hostname: keycloak
@@ -72,12 +86,20 @@ services:
       - ./keycloak/import.sh:/tmp/import.sh
       - ./keycloak/startup.sh:/opt/jboss/startup-scripts/startup.sh
       - ./keycloak/datahub-keycloak-theme:/opt/jboss/keycloak/themes/datahub
+    networks:
+      default:
+        aliases:
+          - keycloak.dh.local
+      common_default:
+        aliases:
+          - keycloak.dh.local
   irods:
     build:
       context: icat/
       args:
         - ENV_POSTGRES_VERSION
         - ENV_IRODS_VERSION
+        - ENV_IRODS_MSI_CURL_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_FILEBEAT_VERSION
@@ -97,8 +119,12 @@ services:
       MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
-      - default
-      - common_default
+      default:
+        aliases:
+          - irods.dh.local
+      common_default:
+        aliases:
+          - irods.dh.local
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/irods-ruleset:/rules
@@ -108,6 +134,7 @@ services:
       context: ires/
       args:
         - ENV_IRODS_VERSION
+        - ENV_IRODS_MSI_CURL_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_DOCKERIZE_VERSION
@@ -123,8 +150,12 @@ services:
       MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
-      - default
-      - common_default
+      default:
+        aliases:
+          - ires.dh.local
+      common_default:
+        aliases:
+          - ires.dh.local
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
@@ -139,6 +170,7 @@ services:
       context: ires-centos/
       args:
         - ENV_IRODS_VERSION
+        - ENV_IRODS_MSI_CURL_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_DOCKERIZE_VERSION
@@ -154,8 +186,12 @@ services:
       MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
-      - default
-      - common_default
+      default:
+        aliases:
+          - ires-centos.dh.local
+      common_default:
+        aliases:
+          - ires-centos.dh.local
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
@@ -170,8 +206,10 @@ services:
       context: ires-s3/
       args:
         - ENV_IRODS_VERSION
+        - ENV_IRODS_MSI_CURL_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+        - ENV_IRODS_RESC_PLUGIN_S3_VERSION
         - ENV_DOCKERIZE_VERSION
         - ENV_FILEBEAT_VERSION
     depends_on:
@@ -189,21 +227,29 @@ services:
       ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY1}
       ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY1}
       ENV_S3_RESC_NAME: "UM-Ceph-S3-AC"
-      ENV_S3_HOST: "minio1:9000"
+      ENV_S3_HOST: "minio1.dh.local:9000"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
-      - ./externals/irods_resource_plugin_s3:/irods_resource_plugin_s3
+    networks:
+      default:
+        aliases:
+          - ires-s3-1.dh.local
+      common_default:
+        aliases:
+          - ires-s3-1.dh.local
   ires-s3-2:
     build:
       context: ires-s3/
       args:
         - ENV_IRODS_VERSION
+        - ENV_IRODS_MSI_CURL_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+        - ENV_IRODS_RESC_PLUGIN_S3_VERSION
         - ENV_DOCKERIZE_VERSION
         - ENV_FILEBEAT_VERSION
     depends_on:
@@ -221,14 +267,20 @@ services:
       ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY2}
       ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
       ENV_S3_RESC_NAME: "UM-Ceph-S3-GL"
-      ENV_S3_HOST: "minio2:9000"
+      ENV_S3_HOST: "minio2.dh.local:9000"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
-      - ./externals/irods_resource_plugin_s3:/irods_resource_plugin_s3
+    networks:
+      default:
+        aliases:
+          - ires-s3-2.dh.local
+      common_default:
+        aliases:
+          - ires-s3-2.dh.local
   db:
     image: mysql:${ENV_MYSQL_VERSION}
     hostname: db
@@ -238,6 +290,13 @@ services:
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      default:
+        aliases:
+          - db.dh.local
+      common_default:
+        aliases:
+          - db.dh.local
   irods-db:
     image: postgres:${ENV_POSTGRES_VERSION}
     hostname: irods-db
@@ -246,6 +305,13 @@ services:
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      default:
+        aliases:
+          - irods-db.dh.local
+      common_default:
+        aliases:
+          - irods-db.dh.local
   irods-frontend:
     build:
       context: externals/irods-frontend/
@@ -260,8 +326,12 @@ services:
       # logs are sent via filebeat, so logspout should be ignored
       LOGSPOUT: ignore
     networks:
-      - default
-      - common_default
+      default:
+        aliases:
+          - irods-frontend.dh.local
+      common_default:
+        aliases:
+          - irods-frontend.dh.local
     volumes:
       - /etc/localtime:/etc/localtime:ro
   davrods:
@@ -276,8 +346,12 @@ services:
       VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
       LOGSTASH_TAGS: DAVRODS
     networks:
-      - default
-      - common_default
+      default:
+        aliases:
+          - davrods.dh.local
+      common_default:
+        aliases:
+          - davrods.dh.local
     volumes:
       - /etc/localtime:/etc/localtime:ro
   metalnx:
@@ -286,7 +360,7 @@ services:
       - irods
     hostname: metalnx
     environment:
-      IRODS_HOST: irods
+      IRODS_HOST: irods.dh.local
       IRODS_PORT: 1247
       IRODS_ZONE: nlmumc
       IRODS_USER: rods
@@ -296,13 +370,21 @@ services:
       LOGSTASH_TAGS: METALNX
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      default:
+        aliases:
+          - metalnx.dh.local
+      common_default:
+        aliases:
+          - metalnx.dh.local
   mirthconnect:
     build:
-      context: mirthconnect/
+      context: externals/mirthconnect-docker
       args:
         - ENV_MIRTH_CONNECT_VERSION
         - ENV_FILEBEAT_VERSION
     depends_on:
+      - mirth-db
       - epicpid
       - irods-frontend
     hostname: mirthconnect
@@ -310,28 +392,61 @@ services:
       - "8443:8443"
       - "6661-6671:6661-6671"
     environment:
-      PGPASSWORD: foobar
+      MIRTH_POSTGRES_DB_HOST: ${ENV_MIRTH_POSTGRES_DB_HOST}
+      MIRTH_POSTGRES_DB: ${ENV_MIRTH_POSTGRES_DB}
+      MIRTH_POSTGRES_USER: ${ENV_MIRTH_POSTGRES_USER}
+      PGPASSWORD: ${ENV_MIRTH_POSTGRES_PASSWORD}
+      DROP_DB_ON_START: "true"
+      MIRTH_KEYSTORE_STOREPASS: foobar
+      MIRTH_KEYSTORE_KEYPASS: barfoo
+      # The server id is a constant to load corresponding message history from an existing database
+      MIRTH_SERVER_ID: 08cd0e8c-da07-45ae-a820-4fba073a20f8
+      MIRTH_ADMIN_PASSWORD: admin
       RIT_ENV: ${RIT_ENV}
       VIRTUAL_HOST: mirthconnect.${RIT_ENV}.rit.unimaas.nl
-      # dev only, in acc/prod MIRTH is not in a docker container
       LOGSTASH_TAGS: MIRTH-UM
       LOGSPOUT: ignore
     networks:
-      - default
-      - oculus_default
-      - common_default
+      default:
+        aliases:
+          - mirthconnect.dh.local
+      common_default:
+        aliases:
+          - mirthconnect.dh.local
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/channels:/opt/channels
       - ./externals/alerts:/opt/alerts
       - ./channels-backup:/opt/channels-backup
+  mirth-db:
+    image: postgres:${ENV_MIRTH_POSTGRES_VERSION}
+    hostname: mirth-db
+    environment:
+      POSTGRES_DB: ${ENV_MIRTH_POSTGRES_DB}
+      POSTGRES_USER: ${ENV_MIRTH_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${ENV_MIRTH_POSTGRES_PASSWORD}
+      LOGSPOUT: ignore
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      default:
+        aliases:
+          - mirth-db.dh.local
+      common_default:
+        aliases:
+          - mirth-db.dh.local
   crossref-lookup:
     build: externals/crossref-lookup
     environment:
       VIRTUAL_HOST: crossref-lookup.${RIT_ENV}.rit.unimaas.nl
       LOGSTASH_TAGS: CROSSREF_LOOKUP
     networks:
-      - default
+      default:
+        aliases:
+          - crossref-lookup.dh.local
+      common_default:
+        aliases:
+          - crossref-lookup.dh.local
     volumes:
       - ./externals/crossref-lookup/app:/usr/src/app
       - /etc/localtime:/etc/localtime:ro
@@ -343,15 +458,19 @@ services:
       LOG_LEVEL: DEBUG
       USERNAME: user
       PASSWORD: foobar
-      RABBITMQ_HOST : rabbitmq
+      RABBITMQ_HOST : rabbitmq.dh.local
       RABBITMQ_USER : user
       RABBITMQ_PASS : password
       RABBITMQ_PORT: 5672
       EPIC_CREDENTIALS: my_credentials_test.json
       REQUESTS_CA_BUNDLE: /opt/epic5storagesurfsaranlCHAIN.crt
     networks:
-      - default
-      - common_default
+      default:
+        aliases:
+          - epicpid.dh.local
+      common_default:
+        aliases:
+          - epicpid.dh.local
     volumes:
       - ./externals/epicpid-microservice/:/opt/app
       - /etc/localtime:/etc/localtime:ro
@@ -363,6 +482,13 @@ services:
       MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY1}
     entrypoint: sh
     command: -c 'mkdir -p /data/dh-irods-bucket-dev && /usr/bin/minio server /data'
+    networks:
+      default:
+        aliases:
+          - minio1.dh.local
+      common_default:
+        aliases:
+          - minio1.dh.local
   minio2:
     image: minio/minio:RELEASE.2019-05-23T00-29-34Z
     environment:
@@ -371,8 +497,14 @@ services:
       MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
     entrypoint: sh
     command: -c 'mkdir -p /data/dh-irods-bucket-dev && /usr/bin/minio server /data'
+    networks:
+      default:
+        aliases:
+          - minio2.dh.local
+      common_default:
+        aliases:
+          - minio2.dh.local
+
 networks:
-  oculus_default:
-    external: true
   common_default:
     external: true

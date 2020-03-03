@@ -2,7 +2,7 @@
 
 set -e
 
-until psql -h irods-db -U postgres -c '\l'; do
+until psql -h irods-db.dh.local -U postgres -c '\l'; do
   >&2 echo "Postgres is unavailable - sleeping"
   sleep 1
 done
@@ -36,6 +36,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-ingest
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projects
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projectCollection
+    /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-tapeArchive
 
     # Add config variable to iRODS
     /opt/irods/add_env_var.py /etc/irods/server_config.json MIRTH_METADATA_CHANNEL ${MIRTH_METADATA_CHANNEL}

@@ -2,6 +2,7 @@ FROM ubuntu:16.04
 
 # Load build arguments from environment
 ARG ENV_IRODS_VERSION
+ARG ENV_IRODS_MSI_CURL_VERSION
 ARG ENV_IRODS_EXT_CLANG_VERSION
 ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
 ARG ENV_DOCKERIZE_VERSION
@@ -48,6 +49,7 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key a
     irods-dev=${IRODS_VERSION} \
     irods-runtime=${IRODS_VERSION} \
     irods-icommands=${IRODS_VERSION} \
+    irods-microservice-plugins-curl=${ENV_IRODS_MSI_CURL_VERSION} \
     # packages required for building microservices
     irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
     irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION}
@@ -81,7 +83,12 @@ ADD ./bootstrap.sh /opt/irods/bootstrap.sh
 ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
 ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
+
+# Add DMFS fakers (SURFsara tape)
+ADD ./DMFS/* /var/lib/irods/msiExecCmd_bin/
+RUN chmod 755 /var/lib/irods/msiExecCmd_bin/dm*
+
 RUN chmod a+x /opt/irods/*
 
 EXPOSE 1248 1247 8000
-CMD dockerize -wait tcp://irods:1247 -timeout 200s /opt/irods/bootstrap.sh
+CMD dockerize -wait tcp://irods.dh.local:1247 -timeout 200s /opt/irods/bootstrap.sh

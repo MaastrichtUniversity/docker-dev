@@ -2,6 +2,7 @@ FROM centos:7
 
 # Load build arguments from environment
 ARG ENV_IRODS_VERSION
+ARG ENV_IRODS_MSI_CURL_VERSION
 ARG ENV_IRODS_EXT_CLANG_VERSION
 ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
 ARG ENV_DOCKERIZE_VERSION
@@ -49,6 +50,7 @@ RUN rpm --import https://packages.irods.org/irods-signing-key.asc \
     && yum install -y \
     irods-server-${IRODS_VERSION} \
     irods-devel-${IRODS_VERSION} \
+    irods-microservice-plugins-curl-${ENV_IRODS_MSI_CURL_VERSION} \
     # packages required for building microservices
     irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
     irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION}
@@ -81,5 +83,5 @@ ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
 RUN chmod a+x /opt/irods/*
 
-CMD dockerize -wait tcp://irods:1247 -timeout 200s /opt/irods/bootstrap.sh
+CMD dockerize -wait tcp://irods.dh.local:1247 -timeout 200s /opt/irods/bootstrap.sh
 EXPOSE 1248 1247 8000

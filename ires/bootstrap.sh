@@ -49,6 +49,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-ingest
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projects
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projectCollection
+    /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-tapeArchive
 
     # Add config variable to iRODS
     /opt/irods/add_env_var.py /etc/irods/server_config.json MIRTH_METADATA_CHANNEL ${MIRTH_METADATA_CHANNEL}
@@ -64,8 +65,9 @@ if [[ ! -e /var/run/irods_installed ]]; then
     chown irods:irods /mnt/UM-hnas-4k
     mkdir -p /mnt/UM-hnas-4k-repl
     chown irods:irods /mnt/UM-hnas-4k-repl
-
-
+    # SURFsara Archive vault
+    mkdir -p /mnt/SURF-Archive
+    chown irods:irods /mnt/SURF-Archive
 
     su - irods -c "/opt/irods/bootstrap_irods.sh"
 

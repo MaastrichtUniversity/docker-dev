@@ -13,6 +13,8 @@ sleep `expr ${HOSTNAME: -1} \* 3`
 if [ "$(iadmin lr replRescUMCeph01)" == "No rows found" ];
 then
   iadmin mkresc replRescUMCeph01 replication;
+  iadmin modresc replRescUMCeph01 comment Replicated-resource-for-S3
+  imeta add -R replRescUMCeph01 NCIT:C88193 0.062
 else
   echo "Replication resource already exists";
 fi
@@ -22,7 +24,9 @@ iadmin addchildtoresc replRescUMCeph01 ${ENV_S3_RESC_NAME}
 
 # Add comment to resource for better identification in pacman's createProject dropdown
 iadmin modresc ${HOSTNAME}Resource comment DO-NOT-USE
-iadmin modresc replRescUMCeph01 comment Replicated-resource-for-S3
+
+# Add storage pricing to resources
+imeta add -R ${HOSTNAME}Resource NCIT:C88193 999
 
 ###########
 ## Projects and project permissions
@@ -30,7 +34,7 @@ domain="maastrichtuniversity.nl"
 
 for i in {01..2}; do
     PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='iresResource'" "*resource='replRescUMCeph01'" "*storageQuotaGb='10'" "*title='(s3) ${PROJECTNAME}'" "*principalInvestigator='p.suppers@${domain}'" "*respCostCenter='UM-30001234X'" "*pricePerGBPerYear='0.062'")
+    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='iresResource'" "*resource='replRescUMCeph01'" "*storageQuotaGb='10'" "*title='(s3) ${PROJECTNAME}'" "*principalInvestigator='p.suppers@${domain}'" "*respCostCenter='UM-30001234X'")
 
     # Manage access
     ichmod -r own "p.suppers@${domain}" /nlmumc/projects/${project}

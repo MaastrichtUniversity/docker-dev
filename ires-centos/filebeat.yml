@@ -20,4 +20,4 @@ filebeat.prospectors:
   tags: ["IRES_AZM","IRES"]
 
 output.logstash:
-    hosts: ["elk:5044"]
+    hosts: ["elk.dh.local:5044"]
