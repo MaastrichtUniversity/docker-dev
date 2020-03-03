@@ -55,7 +55,7 @@ services:
       DRUPAL_BASE_URL: http://pacman.{RIT_ENV}.rit.unimaas.nl
       SIMPLESAMLPHP_PASSWORD: password
       SIMPLESAMLPHP_SALT: 04ewyapckg6lj4wn7emchwu8kojtjaoh
-      DATAVERSE_ENDPOINT: https://act.dataverse.nl/
+      DATAVERSE_ENDPOINT: https://dataverse.nl/
       DATAVERSE_TREE_ROOT_ID: 679 # Maastricht University Dataverse's ID
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_USER: user
