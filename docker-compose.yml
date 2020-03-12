@@ -53,7 +53,7 @@ services:
       DRUPAL_BASE_URL: http://pacman.{RIT_ENV}.rit.unimaas.nl
       SIMPLESAMLPHP_PASSWORD: password
       SIMPLESAMLPHP_SALT: 04ewyapckg6lj4wn7emchwu8kojtjaoh
-      DATAVERSE_ENDPOINT: https://dataverse.nl/
+      DATAVERSE_ENDPOINT: https://demo.dataverse.nl/
       DATAVERSE_TREE_ROOT_ID: 679 # Maastricht University Dataverse's ID
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_USER: user
@@ -507,7 +507,12 @@ services:
     depends_on:
       - irods
     networks:
-      - common_default
+      default:
+        aliases:
+          - open-access-worker.dh.local
+      common_default:
+        aliases:
+          - open-access-worker.dh.local
     volumes:
       - ./externals/irods-open-access-repo/etl:/opt/app
     env_file:
