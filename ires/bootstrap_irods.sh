@@ -53,6 +53,8 @@ for i in {01..2}; do
 
     # Enable archiving for this project
     imeta set -C /nlmumc/projects/${project} enableArchive true
+    # Enable export to Open Access for this project
+    imeta set -C /nlmumc/projects/${project} enableOpenAccessExport true
     # Set the destination archive resource
     imeta set -C /nlmumc/projects/${project} archiveDestinationResource arcRescSURF01
 
