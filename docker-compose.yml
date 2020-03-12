@@ -19,8 +19,6 @@ services:
       - crossref-lookup
       - keycloak
     hostname: pacman
-    env_file:
-      - ./dataverse.secrets.cfg
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/handsontable:/var/www/html/sites/all/modules/handsontable
@@ -504,7 +502,29 @@ services:
       common_default:
         aliases:
           - minio2.dh.local
-
+  open-access-worker:
+    build: externals/irods-open-access-repo/docker
+    depends_on:
+      - irods
+    networks:
+      - common_default
+    volumes:
+      - ./externals/irods-open-access-repo/etl:/opt/app
+    env_file:
+      - irods.secrets.cfg # Using ONLY DATAVERSE_TOKEN
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: user
+      RABBITMQ_PASS: password
+      IRODS_HOST: irods.dh.local
+      IRODS_USER: rods
+      IRODS_PASS: irods
+      DATAVERSE_HOST: https://demo.dataverse.nl
+      DH_MAILER_HOST: mailer.dh.local
+      DH_MAILER_USERNAME: user
+      DH_MAILER_PASSWORD: password
+      LOG_LEVEL: INFO
+      LOGSTASH_TAGS: OPEN_ACCESS_WORKER
 networks:
   common_default:
     external: true
