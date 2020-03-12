@@ -515,6 +515,7 @@ services:
           - open-access-worker.dh.local
     volumes:
       - ./externals/irods-open-access-repo/etl:/opt/app
+      - /etc/localtime:/etc/localtime:ro
     env_file:
       - irods.secrets.cfg # Using ONLY DATAVERSE_TOKEN
     environment:
