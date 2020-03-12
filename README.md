@@ -6,6 +6,7 @@ INGEST_USER=
 INGEST_MOUNT=
 LDAP_PASSWORD=
 USE_SAMBA=false
+DATAVERSE_TOKEN=
 ```
 
 * Specify the default values and versions for environment vars in the _.env_ file
