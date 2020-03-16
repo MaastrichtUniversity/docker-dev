@@ -54,7 +54,7 @@ services:
       SIMPLESAMLPHP_PASSWORD: password
       SIMPLESAMLPHP_SALT: 04ewyapckg6lj4wn7emchwu8kojtjaoh
       DATAVERSE_ENDPOINT: https://demo.dataverse.nl/
-      DATAVERSE_TREE_ROOT_ID: 679 # Maastricht University Dataverse's ID
+      DATAVERSE_TREE_ROOT_ID: maastricht
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_USER: user
       RABBITMQ_PASS: password
@@ -504,8 +504,8 @@ services:
           - minio2.dh.local
   open-access-worker:
     build: externals/irods-open-access-repo/docker
-    depends_on:
-      - irods
+#    depends_on:
+#      - irods
     networks:
       default:
         aliases:
