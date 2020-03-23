@@ -55,6 +55,7 @@ services:
       SIMPLESAMLPHP_SALT: 04ewyapckg6lj4wn7emchwu8kojtjaoh
       DATAVERSE_ENDPOINT: https://demo.dataverse.nl/
       DATAVERSE_TREE_ROOT_ID: maastricht
+      DATAVERSE_TREE_TITLE_FILTER: "TEST_Datahub-iRods_MUMC_Dataverse,TEST_Datahub-iRods_Dataverse,DataHub,Maastricht UMC+"
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_USER: user
       RABBITMQ_PASS: password
