@@ -507,9 +507,6 @@ services:
     build: externals/irods-open-access-repo/docker
 #    depends_on:
 #      - irods
-    volumes:
-      - ./externals/irods-open-access-repo/etl:/opt/app
-      - /etc/localtime:/etc/localtime:ro
     env_file:
       - irods.secrets.cfg # Using ONLY DATAVERSE_TOKEN
     environment:
@@ -525,6 +522,9 @@ services:
       DH_MAILER_PASSWORD: password
       LOG_LEVEL: INFO
       LOGSTASH_TAGS: OPEN_ACCESS_WORKER
+    volumes:
+      - ./externals/irods-open-access-repo/etl:/opt/app
+      - /etc/localtime:/etc/localtime:ro
     networks:
       default:
         aliases:
