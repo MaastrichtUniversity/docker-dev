@@ -507,13 +507,6 @@ services:
     build: externals/irods-open-access-repo/docker
 #    depends_on:
 #      - irods
-    networks:
-      default:
-        aliases:
-          - open-access-worker.dh.local
-      common_default:
-        aliases:
-          - open-access-worker.dh.local
     volumes:
       - ./externals/irods-open-access-repo/etl:/opt/app
       - /etc/localtime:/etc/localtime:ro
@@ -532,6 +525,13 @@ services:
       DH_MAILER_PASSWORD: password
       LOG_LEVEL: INFO
       LOGSTASH_TAGS: OPEN_ACCESS_WORKER
+    networks:
+      default:
+        aliases:
+          - open-access-worker.dh.local
+      common_default:
+        aliases:
+          - open-access-worker.dh.local
 networks:
   common_default:
     external: true
