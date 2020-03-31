@@ -60,9 +60,6 @@ services:
       RABBITMQ_USER: user
       RABBITMQ_PASS: password
       RABBITMQ_PORT: 5672
-      IRODS_SURFARCHIVE_RESOURCE_NAME: arcRescSURF01
-      IRODS_SURFARCHIVE_ADMIN_USER: service-surfarchive
-      IRODS_SURFARCHIVE_ADMIN_PASSWORD: foobar
     networks:
       default:
         aliases:
