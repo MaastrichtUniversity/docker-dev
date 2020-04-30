@@ -1,0 +1,46 @@
+# LDIF Export for dc=datahubmaastricht,dc=nl
+
+version: 1
+
+# Entry 1: ou=groups,dc=datahubmaastricht,dc=nl
+dn: ou=groups,dc=datahubmaastricht,dc=nl
+objectclass: organizationalUnit
+objectclass: top
+ou: groups
+
+# Entry 2: cn=admin,ou=groups,dc=datahubmaastricht,dc=nl
+dn: cn=admin,ou=groups,dc=datahubmaastricht,dc=nl
+cn: admin
+gidnumber: 501
+memberuid: 1003
+objectclass: posixGroup
+objectclass: top
+
+# Entry 3: cn=developers,ou=groups,dc=datahubmaastricht,dc=nl
+dn: cn=developers,ou=groups,dc=datahubmaastricht,dc=nl
+cn: developers
+gidnumber: 500
+memberuid: 1000
+objectclass: posixGroup
+objectclass: top
+
+# Entry 4: ou=users,dc=datahubmaastricht,dc=nl
+dn: ou=users,dc=datahubmaastricht,dc=nl
+objectclass: organizationalUnit
+objectclass: top
+ou: users
+
+# Entry 5: cn=Daniel Theunissen,ou=users,dc=datahubmaastricht,dc=nl
+dn: cn=Daniel Theunissen,ou=users,dc=datahubmaastricht,dc=nl
+cn: Daniel Theunissen
+gidnumber: 500
+givenname: Daniel
+homedirectory: /home/users/dtheunissen
+objectclass: inetOrgPerson
+objectclass: posixAccount
+objectclass: top
+sn: Theunissen
+uid: d.theunissen
+uidnumber: 1000
+userpassword: {MD5}OFj2IjCsPJFfMAxmQxLGPw==
+mail: d.theunissen@maastrichtuniversity.nl

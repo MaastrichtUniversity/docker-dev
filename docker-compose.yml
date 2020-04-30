@@ -79,6 +79,7 @@ services:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
       RIT_ENV: ${RIT_ENV}
+      LDAP_ADMIN_PASSWORD: "admin"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./keycloak/realm-export.json:/tmp/realm-export.json
@@ -92,6 +93,20 @@ services:
       common_default:
         aliases:
           - keycloak.dh.local
+  ldap:
+    image: osixia/openldap:1.2.4
+    hostname: ldap
+    environment:
+      LDAP_ORGANISATION: "DataHub Maastricht"
+      LDAP_DOMAIN: "datahubmaastricht.nl"
+      LDAP_BASE_DN: ""
+      LDAP_ADMIN_PASSWORD: "admin"
+    command: [--copy-service]
+    ports:
+      - "389:389"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./ldap/ldap-datahubmaastricht-nl.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/ldap-datahubmaastricht-nl.ldif
   irods:
     build:
       context: icat/
