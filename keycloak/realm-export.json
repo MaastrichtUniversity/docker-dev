@@ -1570,7 +1570,7 @@
                   "true"
                 ],
                 "read.only": [
-                  "true"
+                  "false"
                 ],
                 "always.read.value.from.ldap": [
                   "false"
@@ -1596,7 +1596,7 @@
                   "true"
                 ],
                 "read.only": [
-                  "true"
+                  "false"
                 ],
                 "user.model.attribute": [
                   "firstName"
@@ -1662,7 +1662,7 @@
                   "true"
                 ],
                 "read.only": [
-                  "true"
+                  "false"
                 ],
                 "always.read.value.from.ldap": [
                   "true"
@@ -1685,7 +1685,7 @@
                   "false"
                 ],
                 "read.only": [
-                  "true"
+                  "false"
                 ],
                 "always.read.value.from.ldap": [
                   "false"
@@ -1717,7 +1717,7 @@
             "false"
           ],
           "importEnabled": [
-            "true"
+            "false"
           ],
           "enabled": [
             "true"
@@ -1750,7 +1750,7 @@
             "ldap://ldap"
           ],
           "syncRegistrations": [
-            "false"
+            "true"
           ],
           "authType": [
             "simple"
