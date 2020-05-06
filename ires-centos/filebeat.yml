@@ -13,5 +13,8 @@ filebeat.inputs:
   #Tags
   tags: ["IRES_AZM","IRES"]
 
+# Disable filebeat monitoring
+logging.metrics.enabled: false
+
 output.logstash:
   hosts: ["elk.dh.local:5044"]

@@ -13,5 +13,8 @@ filebeat.inputs:
     #Tags
     tags: ["ICAT"]
 
+# Disable filebeat monitoring
+logging.metrics.enabled: false
+
 output.logstash:
    hosts: ["elk.dh.local:5044"]
