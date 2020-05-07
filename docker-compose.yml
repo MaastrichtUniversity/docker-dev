@@ -86,6 +86,8 @@ services:
       - ./keycloak/import.sh:/tmp/import.sh
       - ./keycloak/startup.sh:/opt/jboss/startup-scripts/startup.sh
       - ./keycloak/datahub-keycloak-theme:/opt/jboss/keycloak/themes/datahub
+    depends_on:
+      - ldap
     networks:
       default:
         aliases:
@@ -107,6 +109,10 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./ldap/ldap-datahubmaastricht-nl.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/ldap-datahubmaastricht-nl.ldif
+    networks:
+      default:
+        aliases:
+          - ldap.dh.local
   irods:
     build:
       context: icat/
