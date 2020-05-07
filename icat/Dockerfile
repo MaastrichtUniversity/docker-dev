@@ -28,6 +28,7 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     lsof \
     fortune-mod \
     nano \
+    jq \
     # packages required for building ruleset and microservices {{
     libssl-dev \
     libcurl4-openssl-dev \
