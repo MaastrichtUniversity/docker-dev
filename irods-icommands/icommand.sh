@@ -12,11 +12,10 @@ cat << EOF > ~/.irods/irods_environment.json
 {
   "irods_port": 1247,
   "irods_user_name": "${user}",
-  "irods_host": "irods.dh.local",
+  "irods_host": "irods.local",
   "irods_zone_name": "nlmumc",
   "irods_cwd": "/nlmumc/projects",
-  "irods_home": "/nlmumc/projects",
-  "irods_ssl_ca_certificate_file": "/opt/irods_ssl/server.crt"
+  "irods_home": "/nlmumc/projects"
 }
 EOF
 

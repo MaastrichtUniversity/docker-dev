@@ -149,7 +149,6 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
-      - irods_ssl:/opt/irods_ssl
   ires:
     build:
       context: ires/
@@ -557,5 +556,3 @@ services:
 networks:
   common_default:
     external: true
-volumes:
-  irods_ssl:
