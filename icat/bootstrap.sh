@@ -28,6 +28,14 @@ if [[ ! -e /opt/irods_ssl/server.key ]]; then
     openssl dhparam -2 -out /opt/irods_ssl/dhparams.pem 2048
 fi
 
+# LDAP PAM
+#ldap://ldap.dh.local
+#ou=users,dc=datahubmaastricht,dc=nl
+# ldap v3
+# no local root admin
+# login required
+# Disable LDAP authentication for whole unix
+
 # Check if this is a first run of this container
 if [[ ! -e /var/run/irods_installed ]]; then
 
