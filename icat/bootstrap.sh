@@ -17,25 +17,6 @@ mkdir -p /tmp/microservices-build && \
     make && \
     make install
 
-# Generate SSL private key. certificate and Diffie-Hellman parameters
-if [[ ! -e /opt/irods_ssl/server.key ]]; then
-    openssl genrsa -out /opt/irods_ssl/server.key
-    openssl req \
-        -new -x509 -days 365 \
-        -key /opt/irods_ssl/server.key\
-        -out /opt/irods_ssl/server.crt \
-        -subj "/C=NL/L=Maastricht/O=DataHub/CN=irods.dh.local"
-    openssl dhparam -2 -out /opt/irods_ssl/dhparams.pem 2048
-fi
-
-# LDAP PAM
-#ldap://ldap.dh.local
-#ou=users,dc=datahubmaastricht,dc=nl
-# ldap v3
-# no local root admin
-# login required
-# Disable LDAP authentication for whole unix
-
 # Check if this is a first run of this container
 if [[ ! -e /var/run/irods_installed ]]; then
 
@@ -49,16 +30,6 @@ if [[ ! -e /var/run/irods_installed ]]; then
 
     # set up iRODS
     python /var/lib/irods/scripts/setup_irods.py < /etc/irods/setup_responses
-
-    # Add SSL config to the server connection
-    cat /var/lib/irods/.irods/irods_environment.json \
-        | jq '. + {"irods_ssl_certificate_chain_file":"/opt/irods_ssl/server.crt"}' \
-        | jq '. + {"irods_ssl_certificate_key_file":"/opt/irods_ssl/server.key"}' \
-        | jq '. + {"irods_ssl_dh_params_file":"/opt/irods_ssl/dhparams.pem"}' \
-        > /tmp/irods_environment.json
-    mv /tmp/irods_environment.json /var/lib/irods/.irods/irods_environment.json
-
-    #cat /var/lib/irods/.irods/irods_environment.json
 
     # Add the ruleset-rit to server config
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-misc
