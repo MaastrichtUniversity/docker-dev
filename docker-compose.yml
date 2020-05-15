@@ -108,7 +108,7 @@ services:
       - "389:389"
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./ldap/ldap-datahubmaastricht-nl.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/ldap-datahubmaastricht-nl.ldif
+      - ./ldap/ldif_custom:/container/service/slapd/assets/config/bootstrap/ldif/custom/
     networks:
       default:
         aliases:
