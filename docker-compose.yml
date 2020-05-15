@@ -553,6 +553,14 @@ services:
       common_default:
         aliases:
           - open-access-worker.dh.local
+  sram-sync:
+    build: sram-sync/
+    volumes:
+      - ./sram-sync:/opt/app
+    command: sram-sync.py
+    networks:
+      default:
+
 networks:
   common_default:
     external: true
