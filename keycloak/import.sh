@@ -51,14 +51,23 @@ fi
 echo "Create Users"
 
 # Maastrichtuniversity
-rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy r.niesten r.brecheisen jonathan.melius k.heinen s.nijhuis"
+usersJSON=$(cat /tmp/users.json | jq -c '.')
 
-for user in $rit; do
+echo $usersJSON | jq  -c '.[]'  | while read userJSON; do
+  userID="$(echo $userJSON | jq -c '.userName' )"  
+  displayName="$(echo $userJSON | jq -c '.displayName' )"
+  userEmail="$(echo $userJSON | jq -c '.email' )"
+
+  echo "userName/id: $userID displayName: $displayName email: $userEmail"
   # Check if user already exists, if not create user and set password
-  if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username="${user}"  | grep -q "id");
+  if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username="${userID}"  | grep -q "id");
   then
-    /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username="${user}" -s enabled=true -s email="${user}"@maastrichtuniversity.nl
-    /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username "${user}" --new-password 'foobar'
+    /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username="${userID}" -s enabled=true -s email="${userEmail}" -s "attributes.displayName=${displayName}"
+    #echo "setting now password... (for: ${userID})"
+    #/opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username "${userID}" --new-password 'foobar'
+    #echo "done."
+  else
+    echo "user ${userID} already found in keycloak..."
   fi
 done
 
@@ -82,3 +91,4 @@ echo "Full Sync LDAP"
 /opt/jboss/keycloak/bin/kcadm.sh create user-storage/10d55377-d139-4865-bd3e-1375ea079925/sync?action=triggerFullSync -r drupal
 
 echo "Done syncing LDAP"
+

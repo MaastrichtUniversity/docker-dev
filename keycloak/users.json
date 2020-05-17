@@ -1,0 +1,50 @@
+[
+  { "userName": "p.vanschayck@mu.nl",
+    "displayName": "Paul van Schayck",
+    "email": "p.vanschayck@maastrichtuniversity.nl"
+  },
+  { "userName": "p70067297",
+    "displayName": "Jan-Erek Thiede",
+    "email": "j.thiede@maastrichtuniversity.nl"
+  },
+  {
+    "userName": "m.coonen",
+    "displayName": "Martin Coonen",
+    "email": "m.coonen@maastrichtuniversity.nl"
+  },
+  {
+    "userName": "d.theunissen@mu.nl",
+    "displayName": "Daniel Theunissen",
+    "email": "d.theunissen@maastrichtuniversity.nl"
+  },
+  {
+    "userName": "p.suppers@mu.nl",
+    "displayName": "Pascal Suppers",
+    "email": "p.suppers@maastrichtuniversity.nl"
+  },
+  {
+    "userName": "delnoy",
+    "displayName": "",
+    "email": "delnoy@maastrichtuniversity.nl"
+  },
+  {
+    "userName": "r.brecheisen@mu.nl",
+    "displayName": "Ralph Brecheisen",
+    "email": "r.brecheisen@maastrichtuniversity.nl"
+  },
+  {
+    "userName": "j.melius@mu.nl",
+    "displayName": "Jonathan Melius",
+    "email": "j.melius@maastrichtuniversity.nl"
+  },
+  {
+    "userName": "k.heinen@mu.nl",
+    "displayName": "Kurt Heinen",
+    "email": "k.heinen@maastrichtuniversity.nl"
+  },
+  {
+    "userName": "s.nijhuis@mu.nl",
+    "displayName": "Nijhuis",
+    "email": "s.niejhuis@maastrichtuniversity.nl"
+  }
+]
