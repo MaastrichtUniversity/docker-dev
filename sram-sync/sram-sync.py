@@ -7,53 +7,157 @@ import string
 import random
 import smtplib
 import sys
+from enum import Enum
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 
+class UserAVU(Enum):
+    """Enum user AVU
+    """
+    DISPLAY_NAME = 'display-name'
+    EMAIL = "email"
+
+
 # Given an user's DN return the email address
-def get_email_by_dn(dn, l):
-    email = ''
-    baseDN = dn
+#def get_email_by_dn(dn, l):
+#    email = ''
+#    baseDN = dn
+#    searchScope = ldap.SCOPE_SUBTREE
+#    retrieveAttributes = ['mail']
+#    searchFilter = "(&(objectCategory=person)(objectClass=user))"
+#
+#    # Perform the LDAP search
+#    id = l.search(baseDN, searchScope, searchFilter, retrieveAttributes)
+#    result_type, result = l.result(id, 0)
+#    if result:
+#        for dn, attrb in result:
+#            if 'mail' in attrb and attrb['mail']:
+#                email = attrb['mail'][0].lower()
+#                break
+#    return email
+
+def simple_query_test(l):
+    baseDN = "dc=datahubmaastricht,dc=nl" #ADBaseDN
+    baseDN = "ou=users,dc=datahubmaastricht,dc=nl" #ldap.NO_SUCH_OBJECT: {'desc': 'No such object', 'matched': 'ou=users,dc=datahubmaastricht,dc=nl'}
+
     searchScope = ldap.SCOPE_SUBTREE
-    retrieveAttributes = ['mail']
-    searchFilter = "(&(objectCategory=person)(objectClass=user))"
-
-    # Perform the LDAP search
-    id = l.search(baseDN, searchScope, searchFilter, retrieveAttributes)
-    result_type, result = l.result(id, 0)
-    if result:
-        for dn, attrb in result:
-            if 'mail' in attrb and attrb['mail']:
-                email = attrb['mail'][0].lower()
-                break
-    return email
-
-
-# Given an AD group name, return mail addresses of members.
-def get_group_members(group_name, l, ):
-    baseDN = ADBaseDN
-    searchScope = ldap.SCOPE_SUBTREE
-    retrieveAttributes = ['*']
+    retrieveAttributes = ['*']  # all=*, ['uid', 'mail', 'cn', 'displayName']
     searchFilter = "(objectClass=*)"
 
     # Perform the LDAP search
     id = l.search(baseDN, searchScope, searchFilter, retrieveAttributes)
+    result_type, result = l.result(id, all=1)
+    print( "simple_query_test search result: "+ str(result) )
 
-    result_type, result = l.result(id, 0)
 
-    print(result)
-    members = []
-    if result:
+#get all the relevant attributes of all users in LDAP, returns an array with dictionaries
+def get_users_from_ldap(l):
+    ldap_users = []
 
-        if len(result[0]) >= 2 and 'member' in result[0][1]:
-            members_tmp = result[0][1]['member']
-            for m in members_tmp:
-                email = get_email_by_dn(m, l)
-                if email:
-                    members.append(email)
-    return members
+    baseDN = ADBaseDN
+    searchScope = ldap.SCOPE_SUBTREE
+    retrieveAttributes = ['uid', 'mail', 'cn', 'displayName']  # all=*
+    searchFilter = "(objectClass=*)"
+
+    # Perform the LDAP search
+    id = l.search(baseDN, searchScope, searchFilter, retrieveAttributes)
+    #all = 1
+    # If all is 0, search entries will be returned one at a time as they come in, via separate calls to result().
+    # If all is 1, the search response will be returned in its entirety, i.e. after all entries and the final search result have been received.
+
+    result_type, result = l.result(id, all=0)
+    while result:
+        #print( "get_users_from_ldap search result: "+ str(result) )
+
+        if result[0] and len( result[0] ) == 2:
+            entry= result[0][1]
+            if entry:
+                #print( entry )
+                uid = entry.get(  'uid', [""])[0].decode("utf-8")
+                mail = entry.get( 'mail', [""])[0].decode("utf-8")
+                cn = entry.get('cn', [""])[0].decode("utf-8")
+                #display name is an attribute
+                displayName = entry.get('displayName', [""])[0]
+
+                user = {"uid": uid, "mail": mail, "cn": cn, "displayName": displayName }
+                ldap_users.append( user )
+        result_type, result = l.result(id, all=0)
+    #print( "all users:")
+    print( ldap_users )
+    return ldap_users
+
+
+#change the attributes to a user class/dictionary
+def create_new_irods_user( irodsSession, user ):
+    print("--\tcreate new irods user:" + user['uid'] )
+    irodsUser = irodsSession.users.create( user['uid'], 'rodsuser')
+    #add AVUs	 
+    irodsUser.metadata.add(UserAVU.EMAIL.value, user['mail'])
+    irodsUser.metadata.add(UserAVU.DISPLAY_NAME.value, user['displayName'])
+    #add password
+    password = ''.join((random.choice(chars)) for x in range(pwdSize))
+    irodsSession.user.modify(user['uid'], 'password', password)
+    print("--\tcreate new irods user DONE")
+    return irodsUser
+    
+#change the attributes to a user class/dictionary
+def sync_existing_irods_user( irodsSession, irodsUser, user ):
+    logger.info("--\tchanging irods user:" + user['uid'] )
+    #read current AVUs and change if needed
+    existingAVUs = {}
+    for item in irodsUser.metadata.items():
+        existingAVUs[ item ] = item.value
+    #for x in existingUser.metadata.items():
+    #        self.imetadata.__dict__.update({x.name.lower().replace('dcat:', ''): x.value})
+    logger.info("--\t change user AVUs")
+    try:
+        if existingAVUs[UserAVU.EMAIL.value] != user['mail']:
+                self.coll.metadata.remove(UserAVU.EMAIL.value )
+        if user['email'] != '':
+                self.coll.metadata.add(UserAVU.EMAIL.value, user['mail'])
+                
+        if existingAVUs[UserAVU.DISPLAY_NAME.value] != user['displayName']:
+                self.coll.metadata.remove(UserAVU.DISPLAY_NAME.value )
+        if user['displayName'] != '':
+                self.coll.metadata.add(UserAVU.DISPLAY_NAME.value, user['displayname'] )
+    except iRODSException as error:
+       logger.error(f"{key} : {new_value}  {error}")
+    return irodsUser
+   
+   
+#get a mapping of groups to users   
+def get_ldap_groups_and_uuid( l ):
+    # NEEDS FIX A: implement me
+    pass	
+
+
+
+
+# Given an AD group name, return mail addresses of members.
+# def get_group_members(group_name, l, ):
+#    baseDN = ADBaseDN
+#    searchScope = ldap.SCOPE_SUBTREE
+#    retrieveAttributes = ['*']
+#    searchFilter = "(objectClass=*)"#
+#
+#    # Perform the LDAP search
+#    id = l.search(baseDN, searchScope, searchFilter, retrieveAttributes)#
+#
+#    result_type, result = l.result(id, 0)
+#
+#    print(result)
+#    members = []
+#    if result:
+#
+#        if len(result[0]) >= 2 and 'member' in result[0][1]:
+#            members_tmp = result[0][1]['member']
+#            for m in members_tmp:
+#                email = get_email_by_dn(m, l)
+#                if email:
+#                    members.append(email)
+#    return members
 
 
 def send_welcome_email(fromAddress, toAddress, smtpServer, smtpPort):
@@ -140,6 +244,10 @@ l = ldap.initialize(ADServer)
 l.protocol_version = ldap.VERSION3
 l.simple_bind_s(ADUserName, ADPassword)
 
+#simple test
+#simple_query_test( l )
+
+
 # Setup iRODS connection
 sess = iRODSSession(host=iRODShost, port=iRODSport, user=iRODSuser, password=iRODSpassword, zone=iRODSzone)
 
@@ -149,31 +257,33 @@ chars = "foobar"
 pwdSize = 20
 
 # Get user in groups from AD
-group_members = get_group_members(ADgroup, l)
+ldap_users = get_users_from_ldap(l)
+#group_members = get_group_members(ADgroup, l)
 
 # Loop over users
-for userName in group_members:
+for user in ldap_users:
     # Print username
-    print(userName)
-
+    print( "syncing LDAP user: " + user['uid'] )
+    uid = user['uid']
     user = None
 
     # Check if user exists
     existsUsername = True
     try:
-        user = sess.users.get(userName)
+        print("check if exists")
+        irodsUser = sess.users.get(uid)
+        print("exists")
     except UserDoesNotExist:
         existsUsername = False
+        print("doesnt exist")
 
     # If user does not exists create user
     if not existsUsername:
         try:
             if dryRun != "true":
-                user = sess.users.create(userName, 'rodsuser')
-                password = ''.join((random.choice(chars)) for x in range(pwdSize))
-                sess.users.modify(userName, 'password', password)
-            print("\t" + userName + " created")
-            toAddress = userName
+            	 create_new_irods_user( sess, user )
+            print("\t" + user['uuid'] + " created")
+            toAddress =  user['mail']
             # UNCOMMENT line below to override the user's e-mail address (for testing purposes)
             # toAddress = "m.coonen@maastrichtuniversity.nl"
             if dryRun != "true" and sendEmail == "true":
@@ -185,41 +295,42 @@ for userName in group_members:
             print("User creation error")
     else:
         print("\tUser already exists")
+        sync_existing_irods_user( irodsSession, irodsUser, user )
 
-    group = None
-
-    # Check if the group exists
-    existsGroup = True
-    try:
-        group = sess.user_groups.get(iRODSgroup)
-    except UserGroupDoesNotExist:
-        existsGroup = False
-
-    if not existsGroup:
-        try:
-            if dryRun != "true":
-                group = sess.user_groups.create(iRODSgroup)
-            print("\tGroup " + iRODSgroup + " created")
-        except:
-            print("Group Creation error")
-    else:
-        print("\tGroup already exists")
-
-    # Add the user to the iRODSgroup defined in config file
-    try:
-        if dryRun != "true":
-            group.addmember(user.name)
-            print("\t" + userName + " added to group " + iRODSgroup)
-    except CATALOG_ALREADY_HAS_ITEM_BY_THAT_NAME:
-        print("\tUser already in group " + iRODSgroup)
-    except:
-        print("could not add user to group " + iRODSgroup)
+#    group = None
+#
+#    # Check if the group exists
+#    existsGroup = True
+#    try:
+#        group = sess.user_groups.get(iRODSgroup)
+#    except UserGroupDoesNotExist:
+#        existsGroup = False#
+#
+#    if not existsGroup:
+#        try:
+#            if dryRun != "true":
+#                group = sess.user_groups.create(iRODSgroup)
+#            print("\tGroup " + iRODSgroup + " created")
+#        except:
+#            print("Group Creation error")
+#    else:
+#        print("\tGroup already exists")
+#
+#    # Add the user to the iRODSgroup defined in config file
+#    try:
+#        if dryRun != "true":
+#            group.addmember(user.name)
+#            print("\t" + userName + " added to group " + iRODSgroup)
+#    except CATALOG_ALREADY_HAS_ITEM_BY_THAT_NAME:
+#        print("\tUser already in group " + iRODSgroup)
+#    except:
+#        print("could not add user to group " + iRODSgroup)
 
     # Add the user to the group DH-ingest (= ensures that user is able to create and ingest dropzones)
     try:
         if dryRun != "true":
             ingestGroup = sess.user_groups.get("DH-ingest")
-            ingestGroup.addmember(user.name)
+            ingestGroup.addmember(user['uid'])
             print("\t" + userName + " added to group DH-ingest")
     except CATALOG_ALREADY_HAS_ITEM_BY_THAT_NAME:
         print("\tUser already in group DH-ingest")
