@@ -26,13 +26,13 @@ imkdir -p /nlmumc/projects
 
 ########
 ## Users
-users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy r.niesten r.brecheisen jonathan.melius k.heinen s.nijhuis"
+#users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy r.niesten r.brecheisen jonathan.melius k.heinen s.nijhuis"
 domain="maastrichtuniversity.nl"
 
-for user in $users; do
-    iadmin mkuser "${user}@${domain}" rodsuser
-    iadmin moduser "${user}@${domain}" password foobar
-done
+#for user in $users; do
+#    iadmin mkuser "${user}@${domain}" rodsuser
+#    iadmin moduser "${user}@${domain}" password foobar
+#done
 
 snUsers="rick.voncken"
 snDomain="scannexus.nl"
@@ -61,9 +61,9 @@ done
 nanoscopy="p.vanschayck g.tria rbg.ravelli"
 
 iadmin mkgroup nanoscopy-l
-for user in $nanoscopy; do
-    iadmin atg nanoscopy-l "${user}@${domain}"
-done
+#for user in $nanoscopy; do
+#    iadmin atg nanoscopy-l "${user}@${domain}"
+#done
 
 rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy r.niesten r.brecheisen jonathan.melius k.heinen s.nijhuis"
 
@@ -76,9 +76,9 @@ done
 
 # Add all users created so far to the DH-ingest group
 iadmin mkgroup DH-ingest
-for user in $users; do
-    iadmin atg DH-ingest "${user}@${domain}"
-done
+#for user in $users; do
+#    iadmin atg DH-ingest "${user}@${domain}"
+#done
 
 
 scannexus="rick.voncken"

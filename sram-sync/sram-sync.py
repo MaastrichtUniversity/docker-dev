@@ -1,17 +1,20 @@
 from irods.session import iRODSSession
 from irods.access import iRODSAccess
+from irods.column import Criterion
+from irods.models import User, UserGroup
 from irods.exception import *
+
 import configparser
 import ldap
 import string
 import random
 import smtplib
 import sys
-from enum import Enum
+import time
 
+from enum import Enum
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
 
 
 class UserAVU(Enum):
@@ -20,37 +23,51 @@ class UserAVU(Enum):
     DISPLAY_NAME = 'display-name'
     EMAIL = "email"
 
+##########################################################
+class mUser:
+	LDAP_ATTRIBUTES = ['uid', 'mail', 'cn', 'displayName']  # all=*
+	AVU_KEYS = ['test', UserAVU.DISPLAY_NAME.value, UserAVU.EMAIL.value]
 
-HANDLED_AVU_KEYS = ['xx', 'test', UserAVU.DISPLAY_NAME.value, UserAVU.EMAIL.value]
+	def __init__(self, uid, displayName, email):
+		self.uid = uid
+		self.displayName = displayName
+		self.email = email
 
 
 ##########################################################
-def simple_query_test(l):
-    baseDN = "dc=datahubmaastricht,dc=nl" #ADBaseDN
-    baseDN = "ou=users,dc=datahubmaastricht,dc=nl" #ldap.NO_SUCH_OBJECT: {'desc': 'No such object', 'matched': 'ou=users,dc=datahubmaastricht,dc=nl'}
-
-    searchScope = ldap.SCOPE_SUBTREE
-    retrieveAttributes = ['*']  # all=*, ['uid', 'mail', 'cn', 'displayName']
-    searchFilter = "(objectClass=*)"
-
-    # Perform the LDAP search
-    id = l.search(baseDN, searchScope, searchFilter, retrieveAttributes)
-    result_type, result = l.result(id, all=1)
-    print( "simple_query_test search result: "+ str(result) )
-
+def create_new_irods_user_password():
+	if developMode:
+		return 'foobar'
+		
+	# Setup random passwords
+	# Just alphanumeric characters
+	chars = "abcdefghijklmnopqrstuvw"
+	pwdSize = 20
+	return   ''.join((random.choice(chars)) for x in range(pwdSize))
+  
+  
+##########################################################
+def read_ldap_attribute(ldap_entry, key):
+	return ldap_entry.get(  key, [b""])[0].decode("utf-8").strip()
+	
+def get_user_from_ldap( ldap_entry ):
+	uid = read_ldap_attribute( ldap_entry, 'uid' )
+	mail= read_ldap_attribute( ldap_entry, 'mail' )
+	cn = read_ldap_attribute( ldap_entry, 'cn' )
+	displayName = read_ldap_attribute( ldap_entry, 'displayName' )
+	#user = {"uid": uid, "mail": mail, "cn": cn, "displayName": displayName }
+	return mUser( uid, displayName, mail )
 
 ##########################################################
 #get all the relevant attributes of all users in LDAP, returns an array with dictionaries
 def get_users_from_ldap(l):
     ldap_users = []
-
-    baseDN = ADBaseDN
     searchScope = ldap.SCOPE_SUBTREE
-    retrieveAttributes = ['uid', 'mail', 'cn', 'displayName']  # all=*
+    retrieveAttributes = mUser.LDAP_ATTRIBUTES
     searchFilter = "(objectClass=*)"
 
     # Perform the LDAP search
-    id = l.search(baseDN, searchScope, searchFilter, retrieveAttributes)
+    id = l.search(LDAPBaseDN, searchScope, searchFilter, retrieveAttributes)
     #all = 1
     # If all is 0, search entries will be returned one at a time as they come in, via separate calls to result().
     # If all is 1, the search response will be returned in its entirety, i.e. after all entries and the final search result have been received.
@@ -63,37 +80,28 @@ def get_users_from_ldap(l):
             entry= result[0][1]
             if entry:
                 #print( entry )
-                uid = entry.get(  'uid', [b""])[0].decode("utf-8").strip()
-                mail = entry.get( 'mail', [b""])[0].decode("utf-8").strip()
-                cn = entry.get('cn', [b""])[0].decode("utf-8").strip()
-                #display name is an attribute
-                displayName = entry.get('displayName', [b""])[0].decode("utf-8").strip()
-
-                user = {"uid": uid, "mail": mail, "cn": cn, "displayName": displayName }
+                user = get_user_from_ldap(entry)
                 ldap_users.append( user )
         result_type, result = l.result(id, all=0)
 
     return ldap_users
 
 
-
 ##########################################################
-#change the attributes to a user class/dictionary
 def create_new_irods_user( irodsSession, user ):
-    print("--\t\tcreate new irods user:" )
-    print( "\t\tuser-data:" + str(user) )
-    irodsUser = irodsSession.users.create( user['uid'], 'rodsuser')
-    #add AVUs	 
-    irodsUser.metadata.add(UserAVU.EMAIL.value, user['mail'])
-    irodsUser.metadata.add(UserAVU.DISPLAY_NAME.value, user['displayName'])
-    #add password
-    password = ''.join((random.choice(chars)) for x in range(pwdSize))
-    irodsSession.users.modify(user['uid'], 'password', password)
-    print("--\t\tcreate new irods user DONE")
-    return irodsUser
+	if dryRun == "true":
+	 	return
+	log( 1, "--\t\tcreate a new irods user: %s" % user.uid )
+	irodsUser = irodsSession.users.create( user.uid, 'rodsuser')
+	#add AVUs	 
+	irodsUser.metadata.add( UserAVU.EMAIL.value, user.mail )
+	irodsUser.metadata.add( UserAVU.DISPLAY_NAME.value, user.displayName )
+	#add password
+	password = create_new_irods_user_password() 
+	irodsSession.users.modify(user.uid, 'password', password)
+	return irodsUser
 
 ##########################################################
-
 def get_all_AVUs( irodsUser ):    
     existingAVUs = {}
     for item in irodsUser.metadata.items():
@@ -101,22 +109,21 @@ def get_all_AVUs( irodsUser ):
     return existingAVUs
     
 ##########################################################
-
 def remove_all_AVUs( irodsUser ):
-   #keys_to_be_removed = ['email', 'display-name']	
    #remove all existing AVUs (actually should check if in list of removable AVUs):
 	for item in irodsUser.metadata.items():
 		key, value = item.name, item.value
-		#if key in HANDLED_AVU_KEYS:
-		irodsUser.metadata.remove( key, value )
+		if key in mUser.AVU_KEYS:
+			irodsUser.metadata.remove( key, value )
 	 	  
-
 ##########################################################
 	 	  
 def set_singular_AVU( irodsUser, existingAVUs, AVUkey, AVUvalue ):
 	#print( "--- set a singular AVU")
-	if not AVUkey in HANDLED_AVU_KEYS:
-			print( "the key is not in the list of changeable attributes:" + AVUkey + " " + str(HANDLED_AVU_KEYS) )
+	if dryRun == "true":
+		return
+	if not AVUkey in mUser.AVU_KEYS:
+			log( 1, "/tthe key is not in the list of changeable attributes:" + AVUkey + " " + str(mUser.AVU_KEYS) )
 			return
 	#print( existingAVUs.items())
 	AVU_exists = False
@@ -135,43 +142,122 @@ def set_singular_AVU( irodsUser, existingAVUs, AVUkey, AVUvalue ):
 		irodsUser.metadata.add( AVUkey, AVUvalue )
     
     
-    
 ##########################################################
-#change the attributes to a user class/dictionary
+#
 def sync_existing_irods_user( irodsSession, irodsUser, user ):
-	print("--\t\tchanging irods user:" + user['uid'] )
-	print( "\t\tuser-data:" + str(user) )
+	log( 1, "--\t\tchanging existing irods user:" + user.uid )
 	
 	try:
 		#remove_all_AVUs( irodsUser )
 		#read current AVUs and change if needed
 		existingAVUs = get_all_AVUs( irodsUser )
-		print( "\t\texisting AVUs BEFORE: " + str(existingAVUs) )
+		log( 2, "\t\texisting AVUs BEFORE: " + str(existingAVUs) )
 		#careful: because the list of existing AVUs is not updated changing a key multiple times will lead to strange behavior! 
 		set_singular_AVU( irodsUser, existingAVUs, 'test', 'some new value' )
-		set_singular_AVU( irodsUser, existingAVUs, UserAVU.EMAIL.value, user['mail'] )
-		set_singular_AVU( irodsUser, existingAVUs, UserAVU.DISPLAY_NAME.value, user['displayName'] )
+		set_singular_AVU( irodsUser, existingAVUs, UserAVU.EMAIL.value, user.email )
+		set_singular_AVU( irodsUser, existingAVUs, UserAVU.DISPLAY_NAME.value, user.displayName )
 	
 	except iRODSException as error:
-		print( "error:" + str(error) )
+		log( 0, "error:" + str(error) )
 		
 	existingAVUs = get_all_AVUs( irodsUser )
-	print( "\t\texisting AVUs AFTER: " + str(existingAVUs) )
-	print( "--\t\tupdating existing irods user DONE." )
+	log( 2, "\t\texisting AVUs AFTER: " + str(existingAVUs) )
 	return irodsUser
    
    
 ##########################################################
-def remove_oboslete_irods_users():
-	pass
+def syncable_irods_users( sess, unsyncedUsers ):
+	#query = sess.query(User)
+	#result = query.all()
+	#print( result )
+	#print( type( result.rows  ) )
+	#print( type( result.rows[0]  ) )
+	
+	irodsUserNamesSet = set()
+	#filter only rodsusers, filter the special users, check wich one are not in the LDAP list
+	query = sess.query(User.name, User.id, User.type ).filter( 
+     Criterion('=', User.type, 'rodsuser') )
+	for result in query:
+		if not result[ User.name ] in unsyncedUsers:
+			irodsUserNamesSet.add( result[ User.name] )
+	
+	return irodsUserNamesSet
 
 ##########################################################
 #get a mapping of groups to users   
 def get_ldap_groups_and_uuid( l ):
     # NEEDS FIX A: implement me
-    pass	
+    group2users = { "nanoscopy": ["p.vanschayck", "g.tria", "rbg.ravelli"],
+    	"rit-l": ["p.vanschayck", "m.coonen", "d.theunissen", "p.suppers", "delnoy", "r.niesten", "r.brecheisen", "jonathan.melius", "k.heinen", "s.nijhuis" ],
+      "DH-project-admins": [],
+      "UM-SCANNEXUS" : [],
+      "DH-ingest" : []
+    } 
+    return group2users
+   
+  
+##########################################################  
+def provide_group( sess, groupName ):
+	group = None
+	# Check if the group exists
+	existsGroup = True
+	try:
+		group = sess.user_groups.get( groupName )
+	except UserGroupDoesNotExist:
+		existsGroup = False
+
+	if not existsGroup:
+		try:
+			if dryRun != "true":
+				group = sess.user_groups.create( groupName )
+				log( 1, "\tGroup %s created" %  groupName )
+		except:
+			log( 0, "Group %s Creation error" % groupName )
+	else:
+		log( 1,"\tGroup %s already exists" % groupName )
 
 
+########################################################## 
+def add_user_to_group( sess, groupName, userName ):
+	group = sess.user_groups.get( groupName )
+	try:
+		if dryRun != "true":
+			group.addmember(userName)
+			log( 1, "\t" + userName + " added to group " + groupName )
+	except CATALOG_ALREADY_HAS_ITEM_BY_THAT_NAME:
+		log( 2, "\tUser already in group " + groupName )
+	except Exception as e:
+		log( 1, "could not add user %s to group %s %s" % (userName, groupName, e) )
+
+
+##########################################################
+def remove_unused_metadata(session):
+    from irods.message import GeneralAdminRequest
+    from irods.api_number import api_number
+    message_body = GeneralAdminRequest( 'rm', 'unusedAVUs', '','','','')
+    req = iRODSMessage("RODS_API_REQ", msg = message_body,int_info=api_number['GENERAL_ADMIN_AN'])
+    with session.pool.get_connection() as conn:
+        conn.send(req)
+        response=conn.recv()
+        if (response.int_info != 0): raise RuntimeError("Error removing unused AVUs")
+
+
+##########################################################
+def remove_obsolete_irods_users( sess, ldap_users, irods_users ):
+	deletion_candidates = irods_users.copy()
+	for ldap_user in ldap_users:
+		deletion_candidates.discard( ldap_user.uid )
+	log( 0, "\twill delete %d irods users" % len(deletion_candidates) )
+	#print( deletion_candidates )	
+	for uid in deletion_candidates:
+		user = sess.users.get( uid )
+		log( 1, "\t\twill delete user %s" % uid )
+		if dryRun != "true":
+			#how to remove user from groups?
+			#group.removemember(user.name)
+			remove_all_AVUs( user )
+			user.remove()
+	#remove_unused_metadata( sess )
 
 ##########################################################
 def send_welcome_email(fromAddress, toAddress, smtpServer, smtpPort):
@@ -215,6 +301,10 @@ def send_welcome_email(fromAddress, toAddress, smtpServer, smtpPort):
     s.quit()
 
 
+##########################################################
+
+def log( lvl, msg ):
+	if vy >= lvl: print( msg )
 
 # #################MAIN##################
 
@@ -229,13 +319,16 @@ Config.read(config)
 # Options config
 dryRun = Config.get('OPTIONS', 'dry_run')
 sendEmail = Config.get('OPTIONS', 'send_email')
+developMode = Config.get( 'OPTIONS', 'develop_mode')
+vy = int(Config.get( 'OPTIONS', 'verbosety_level' ))
+unsyncedUsers = Config.get('OPTIONS', 'unsynced_users').split(',')
 
-# AD config
-ADUserName = Config.get('LDAP', 'ADUserName')
-ADPassword = Config.get('LDAP', 'ADPassword')
-ADgroup = Config.get('LDAP', 'ADgroup')
-ADServer = Config.get('LDAP', 'ADServer')
-ADBaseDN = Config.get('LDAP', 'ADBaseDN')
+# LDAP config
+LDAPUserName = Config.get('LDAP', 'LDAPUserName')
+LDAPPassword = Config.get('LDAP', 'LDAPPassword')
+LDAPgroup = Config.get('LDAP', 'LDAPgroup')
+LDAPServer = Config.get('LDAP', 'LDAPServer')
+LDAPBaseDN = Config.get('LDAP', 'LDAPBaseDN')
 
 # iRODS config
 iRODShost = Config.get('iRODS', 'host')
@@ -253,106 +346,90 @@ smtpPort = Config.get('EMAIL', 'SMTP_PORT')
 if dryRun == "true":
     print("EXECUTING SCRIPT IN DRY MODE! No changes will be made to iCAT. No e-mails will be sent. \n")
 
-# Setup AD connection
-l = ldap.initialize(ADServer)
-l.protocol_version = ldap.VERSION3
-l.simple_bind_s(ADUserName, ADPassword)
 
-#simple test
-#simple_query_test( l )
-
-
-# Setup iRODS connection
-sess = iRODSSession(host=iRODShost, port=iRODSport, user=iRODSuser, password=iRODSpassword, zone=iRODSzone)
-
-# Setup random passwords
-# Just alphanumeric characters
-chars = "foobar"
-pwdSize = 20
-
-# Get user in groups from AD
-print( "getting list of users from LDAP" )
+for n in range(6):
+	try:
+		# Setup LDAP connection
+		l = ldap.initialize(LDAPServer)
+		l.protocol_version = ldap.VERSION3
+		l.simple_bind_s(LDAPUserName, LDAPPassword)
+		break
+	except ldap.LDAPError as e:  
+		log( 0, e )
+		log( 0, "retry {0} / 5".format( n ))
+		time.sleep( 4 )
+	if n >= 5:
+		raise "couldn't connect to LDAP"
+	
+for n in range(6):
+	try:
+		# Setup iRODS connection
+		sess = iRODSSession(host=iRODShost, port=iRODSport, user=iRODSuser, password=iRODSpassword, zone=iRODSzone)
+		break	
+	except irods.exception.NetworkException as e: 
+		log( 0, e )
+		log( 0, "retry {0} / 5".format( n ))
+		time.sleep( 4 )
+	if n >= 5:
+		raise "couldn't connect to iRods"
+	
+	
+# Get users from LDAP
+log( 2, "getting list of users from LDAP" )
 ldap_users = get_users_from_ldap(l)
-print( "LDAP users found: %d" % len(ldap_users) )
-#group_members = get_group_members(ADgroup, l)
+log( 1, "LDAP users found: %d" % len(ldap_users) )
+# Get users from irods
+irods_users = syncable_irods_users( sess, unsyncedUsers )
+log( 1, "iRods users found: %d" % len(irods_users) )
 
-# Loop over users
+# remove obsolete users from irods
+remove_obsolete_irods_users( sess, ldap_users, irods_users)
+
+log( 1, "Syncing groups to irods (NOT IMPLEMENTED YET!)")
+group2users = get_ldap_groups_and_uuid( l )
+for group in group2users:
+	provide_group( sess, group )
+
+# Loop over ldap users and create or update as necessary
+log( 1, "Syncing found LDAP entries to iRods:" )
+n=0
 for user in ldap_users:
     # Print username
-    print( "\tsyncing LDAP user: " + user['uid'] )
-    uid = user['uid']
-    irodUser = None
+    log( 1, "\tsyncing LDAP user: " + user.uid )
+    if user.uid in unsyncedUsers:
+    	log( 0, "\tfound an ldap-user with username %s, who is in list of unsynced_users. Ignoring it." % user.uid )
+    	continue
+    irodsUser = None
 
     # Check if user exists
     existsUsername = True
     try:
-        print("\tcheck if exists...")
-        irodsUser = sess.users.get(uid)
-        print("\texists")
+        irodsUser = sess.users.get( user.uid )
     except UserDoesNotExist:
         existsUsername = False
-        print("\tdoesnt exist")
 
     # If user does not exists create user
     if not existsUsername:
         try:
             if dryRun != "true":
             	 create_new_irods_user( sess, user )
-            print("\t" + user['uuid'] + " created")
-            toAddress =  user['mail']
+            log( 1, "\t" + user.uid + " created")
+            toAddress =  user.mail
             # UNCOMMENT line below to override the user's e-mail address (for testing purposes)
             # toAddress = "m.coonen@maastrichtuniversity.nl"
             if dryRun != "true" and sendEmail == "true":
                 send_welcome_email(fromAddress, toAddress, smtpServer, smtpPort)
             if sendEmail == "true":
                 # Print debug statement regardless of dryRun option
-                print("\tWelcome e-mail sent to " + toAddress)
+                log( 2, "\tWelcome e-mail sent to " + toAddress)
         except Exception as e:
-            print("\tUser creation error")
-            print( e )
+            log( 0, "\tUser creation error")
+            log( 0, e )
     else:
-        print("\tUser already exists")
         sync_existing_irods_user( sess, irodsUser, user )
     
-    #break
-
-#    group = None
-#
-#    # Check if the group exists
-#    existsGroup = True
-#    try:
-#        group = sess.user_groups.get(iRODSgroup)
-#    except UserGroupDoesNotExist:
-#        existsGroup = False#
-#
-#    if not existsGroup:
-#        try:
-#            if dryRun != "true":
-#                group = sess.user_groups.create(iRODSgroup)
-#            print("\tGroup " + iRODSgroup + " created")
-#        except:
-#            print("Group Creation error")
-#    else:
-#        print("\tGroup already exists")
-#
-#    # Add the user to the iRODSgroup defined in config file
-#    try:
-#        if dryRun != "true":
-#            group.addmember(user.name)
-#            print("\t" + userName + " added to group " + iRODSgroup)
-#    except CATALOG_ALREADY_HAS_ITEM_BY_THAT_NAME:
-#        print("\tUser already in group " + iRODSgroup)
-#    except:
-#        print("could not add user to group " + iRODSgroup)
-
     # Add the user to the group DH-ingest (= ensures that user is able to create and ingest dropzones)
-    try:
-        if dryRun != "true":
-            ingestGroup = sess.user_groups.get("DH-ingest")
-            ingestGroup.addmember(user['uid'])
-            print("\t" + userName + " added to group DH-ingest")
-    except CATALOG_ALREADY_HAS_ITEM_BY_THAT_NAME:
-        print("\tUser already in group DH-ingest")
-    except:
-        print("could not add user to group DH-ingest")
-    print( "------")
+    add_user_to_group( sess, "DH-ingest", user.uid )
+   
+    n=n+1
+log( 1, "synced %d LDAP Entries to iRods" % n )
