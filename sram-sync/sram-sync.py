@@ -163,7 +163,7 @@ def sync_existing_irods_user( irodsSession, irodsUser, user ):
    
 ##########################################################
 def remove_oboslete_irods_users():
-	
+	pass
 
 ##########################################################
 #get a mapping of groups to users   
@@ -273,7 +273,7 @@ pwdSize = 20
 # Get user in groups from AD
 print( "getting list of users from LDAP" )
 ldap_users = get_users_from_ldap(l)
-print( "LDAP users found: " + len(ldap_users) )
+print( "LDAP users found: %d" % len(ldap_users) )
 #group_members = get_group_members(ADgroup, l)
 
 # Loop over users
