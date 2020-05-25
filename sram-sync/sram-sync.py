@@ -13,6 +13,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 
+
 class UserAVU(Enum):
     """Enum user AVU
     """
@@ -20,24 +21,10 @@ class UserAVU(Enum):
     EMAIL = "email"
 
 
-# Given an user's DN return the email address
-#def get_email_by_dn(dn, l):
-#    email = ''
-#    baseDN = dn
-#    searchScope = ldap.SCOPE_SUBTREE
-#    retrieveAttributes = ['mail']
-#    searchFilter = "(&(objectCategory=person)(objectClass=user))"
-#
-#    # Perform the LDAP search
-#    id = l.search(baseDN, searchScope, searchFilter, retrieveAttributes)
-#    result_type, result = l.result(id, 0)
-#    if result:
-#        for dn, attrb in result:
-#            if 'mail' in attrb and attrb['mail']:
-#                email = attrb['mail'][0].lower()
-#                break
-#    return email
+HANDLED_AVU_KEYS = ['xx', 'test', UserAVU.DISPLAY_NAME.value, UserAVU.EMAIL.value]
 
+
+##########################################################
 def simple_query_test(l):
     baseDN = "dc=datahubmaastricht,dc=nl" #ADBaseDN
     baseDN = "ou=users,dc=datahubmaastricht,dc=nl" #ldap.NO_SUCH_OBJECT: {'desc': 'No such object', 'matched': 'ou=users,dc=datahubmaastricht,dc=nl'}
@@ -52,6 +39,7 @@ def simple_query_test(l):
     print( "simple_query_test search result: "+ str(result) )
 
 
+##########################################################
 #get all the relevant attributes of all users in LDAP, returns an array with dictionaries
 def get_users_from_ldap(l):
     ldap_users = []
@@ -75,58 +63,109 @@ def get_users_from_ldap(l):
             entry= result[0][1]
             if entry:
                 #print( entry )
-                uid = entry.get(  'uid', [""])[0].decode("utf-8")
-                mail = entry.get( 'mail', [""])[0].decode("utf-8")
-                cn = entry.get('cn', [""])[0].decode("utf-8")
+                uid = entry.get(  'uid', [b""])[0].decode("utf-8").strip()
+                mail = entry.get( 'mail', [b""])[0].decode("utf-8").strip()
+                cn = entry.get('cn', [b""])[0].decode("utf-8").strip()
                 #display name is an attribute
-                displayName = entry.get('displayName', [""])[0]
+                displayName = entry.get('displayName', [b""])[0].decode("utf-8").strip()
 
                 user = {"uid": uid, "mail": mail, "cn": cn, "displayName": displayName }
                 ldap_users.append( user )
         result_type, result = l.result(id, all=0)
-    #print( "all users:")
-    print( ldap_users )
+
     return ldap_users
 
 
+
+##########################################################
 #change the attributes to a user class/dictionary
 def create_new_irods_user( irodsSession, user ):
-    print("--\tcreate new irods user:" + user['uid'] )
+    print("--\t\tcreate new irods user:" )
+    print( "\t\tuser-data:" + str(user) )
     irodsUser = irodsSession.users.create( user['uid'], 'rodsuser')
     #add AVUs	 
     irodsUser.metadata.add(UserAVU.EMAIL.value, user['mail'])
     irodsUser.metadata.add(UserAVU.DISPLAY_NAME.value, user['displayName'])
     #add password
     password = ''.join((random.choice(chars)) for x in range(pwdSize))
-    irodsSession.user.modify(user['uid'], 'password', password)
-    print("--\tcreate new irods user DONE")
+    irodsSession.users.modify(user['uid'], 'password', password)
+    print("--\t\tcreate new irods user DONE")
     return irodsUser
-    
-#change the attributes to a user class/dictionary
-def sync_existing_irods_user( irodsSession, irodsUser, user ):
-    logger.info("--\tchanging irods user:" + user['uid'] )
-    #read current AVUs and change if needed
+
+##########################################################
+
+def get_all_AVUs( irodsUser ):    
     existingAVUs = {}
     for item in irodsUser.metadata.items():
-        existingAVUs[ item ] = item.value
-    #for x in existingUser.metadata.items():
-    #        self.imetadata.__dict__.update({x.name.lower().replace('dcat:', ''): x.value})
-    logger.info("--\t change user AVUs")
-    try:
-        if existingAVUs[UserAVU.EMAIL.value] != user['mail']:
-                self.coll.metadata.remove(UserAVU.EMAIL.value )
-        if user['email'] != '':
-                self.coll.metadata.add(UserAVU.EMAIL.value, user['mail'])
-                
-        if existingAVUs[UserAVU.DISPLAY_NAME.value] != user['displayName']:
-                self.coll.metadata.remove(UserAVU.DISPLAY_NAME.value )
-        if user['displayName'] != '':
-                self.coll.metadata.add(UserAVU.DISPLAY_NAME.value, user['displayname'] )
-    except iRODSException as error:
-       logger.error(f"{key} : {new_value}  {error}")
-    return irodsUser
+       existingAVUs[ item.name ] = item.value   
+    return existingAVUs
+    
+##########################################################
+
+def remove_all_AVUs( irodsUser ):
+   #keys_to_be_removed = ['email', 'display-name']	
+   #remove all existing AVUs (actually should check if in list of removable AVUs):
+	for item in irodsUser.metadata.items():
+		key, value = item.name, item.value
+		#if key in HANDLED_AVU_KEYS:
+		irodsUser.metadata.remove( key, value )
+	 	  
+
+##########################################################
+	 	  
+def set_singular_AVU( irodsUser, existingAVUs, AVUkey, AVUvalue ):
+	#print( "--- set a singular AVU")
+	if not AVUkey in HANDLED_AVU_KEYS:
+			print( "the key is not in the list of changeable attributes:" + AVUkey + " " + str(HANDLED_AVU_KEYS) )
+			return
+	#print( existingAVUs.items())
+	AVU_exists = False
+	for item in existingAVUs.items():
+		key, value = item
+		#print( "  --> " + key + " " + value )
+		if key == AVUkey and value != AVUvalue:
+			#print( "  --> removing " + key + " " + value )
+			irodsUser.metadata.remove( key, value )
+		if key == AVUkey and value == AVUvalue:
+			#print( "AVU already exists, no changes")
+			AVU_exists = True
+  
+	if AVUvalue and not AVU_exists:
+		#print( "create new AVU")
+		irodsUser.metadata.add( AVUkey, AVUvalue )
+    
+    
+    
+##########################################################
+#change the attributes to a user class/dictionary
+def sync_existing_irods_user( irodsSession, irodsUser, user ):
+	print("--\t\tchanging irods user:" + user['uid'] )
+	print( "\t\tuser-data:" + str(user) )
+	
+	try:
+		#remove_all_AVUs( irodsUser )
+		#read current AVUs and change if needed
+		existingAVUs = get_all_AVUs( irodsUser )
+		print( "\t\texisting AVUs BEFORE: " + str(existingAVUs) )
+		#careful: because the list of existing AVUs is not updated changing a key multiple times will lead to strange behavior! 
+		set_singular_AVU( irodsUser, existingAVUs, 'test', 'some new value' )
+		set_singular_AVU( irodsUser, existingAVUs, UserAVU.EMAIL.value, user['mail'] )
+		set_singular_AVU( irodsUser, existingAVUs, UserAVU.DISPLAY_NAME.value, user['displayName'] )
+	
+	except iRODSException as error:
+		print( "error:" + str(error) )
+		
+	existingAVUs = get_all_AVUs( irodsUser )
+	print( "\t\texisting AVUs AFTER: " + str(existingAVUs) )
+	print( "--\t\tupdating existing irods user DONE." )
+	return irodsUser
    
    
+##########################################################
+def remove_oboslete_irods_users():
+	
+
+##########################################################
 #get a mapping of groups to users   
 def get_ldap_groups_and_uuid( l ):
     # NEEDS FIX A: implement me
@@ -134,32 +173,7 @@ def get_ldap_groups_and_uuid( l ):
 
 
 
-
-# Given an AD group name, return mail addresses of members.
-# def get_group_members(group_name, l, ):
-#    baseDN = ADBaseDN
-#    searchScope = ldap.SCOPE_SUBTREE
-#    retrieveAttributes = ['*']
-#    searchFilter = "(objectClass=*)"#
-#
-#    # Perform the LDAP search
-#    id = l.search(baseDN, searchScope, searchFilter, retrieveAttributes)#
-#
-#    result_type, result = l.result(id, 0)
-#
-#    print(result)
-#    members = []
-#    if result:
-#
-#        if len(result[0]) >= 2 and 'member' in result[0][1]:
-#            members_tmp = result[0][1]['member']
-#            for m in members_tmp:
-#                email = get_email_by_dn(m, l)
-#                if email:
-#                    members.append(email)
-#    return members
-
-
+##########################################################
 def send_welcome_email(fromAddress, toAddress, smtpServer, smtpPort):
     # Create message container - the correct MIME type is multipart/alternative.
     msg = MIMEMultipart('alternative')
@@ -257,25 +271,27 @@ chars = "foobar"
 pwdSize = 20
 
 # Get user in groups from AD
+print( "getting list of users from LDAP" )
 ldap_users = get_users_from_ldap(l)
+print( "LDAP users found: " + len(ldap_users) )
 #group_members = get_group_members(ADgroup, l)
 
 # Loop over users
 for user in ldap_users:
     # Print username
-    print( "syncing LDAP user: " + user['uid'] )
+    print( "\tsyncing LDAP user: " + user['uid'] )
     uid = user['uid']
-    user = None
+    irodUser = None
 
     # Check if user exists
     existsUsername = True
     try:
-        print("check if exists")
+        print("\tcheck if exists...")
         irodsUser = sess.users.get(uid)
-        print("exists")
+        print("\texists")
     except UserDoesNotExist:
         existsUsername = False
-        print("doesnt exist")
+        print("\tdoesnt exist")
 
     # If user does not exists create user
     if not existsUsername:
@@ -291,11 +307,14 @@ for user in ldap_users:
             if sendEmail == "true":
                 # Print debug statement regardless of dryRun option
                 print("\tWelcome e-mail sent to " + toAddress)
-        except:
-            print("User creation error")
+        except Exception as e:
+            print("\tUser creation error")
+            print( e )
     else:
         print("\tUser already exists")
-        sync_existing_irods_user( irodsSession, irodsUser, user )
+        sync_existing_irods_user( sess, irodsUser, user )
+    
+    #break
 
 #    group = None
 #
@@ -336,3 +355,4 @@ for user in ldap_users:
         print("\tUser already in group DH-ingest")
     except:
         print("could not add user to group DH-ingest")
+    print( "------")
