@@ -359,7 +359,7 @@ for n in range(6):
 		log( 0, "retry {0} / 5".format( n ))
 		time.sleep( 4 )
 	if n >= 5:
-		raise "couldn't connect to LDAP"
+		raise Exception("couldn't connect to LDAP")
 	
 for n in range(6):
 	try:
@@ -371,7 +371,7 @@ for n in range(6):
 		log( 0, "retry {0} / 5".format( n ))
 		time.sleep( 4 )
 	if n >= 5:
-		raise "couldn't connect to iRods"
+		raise Exception("couldn't connect to iRods")
 	
 	
 # Get users from LDAP
