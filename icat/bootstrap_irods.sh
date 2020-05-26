@@ -26,29 +26,23 @@ imkdir -p /nlmumc/projects
 
 ########
 ## Users
-#users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy r.niesten r.brecheisen jonathan.melius k.heinen s.nijhuis"
-domain="maastrichtuniversity.nl"
+## for the most part users will by synced from LDAP, user defined here might be removed during synchronization!
 
-#for user in $users; do
-#    iadmin mkuser "${user}@${domain}" rodsuser
-#    iadmin moduser "${user}@${domain}" password foobar
-#done
-
-snUsers="rick.voncken"
+snUsers="rick.voncken obsolete.user can.delete test.test"
 snDomain="scannexus.nl"
-
 for snUser in $snUsers; do
     iadmin mkuser "${snUser}@${snDomain}" rodsuser
     iadmin moduser "${snUser}@${snDomain}" password foobar
 done
 
+## technical users, not synced by sram-sync!
 serviceUsers="service-dropzones service-mdl service-pid service-disqover"
 
 for user in $serviceUsers; do
     iadmin mkuser "${user}" rodsuser
     iadmin moduser "${user}" password foobar
 done
-
+## technical users, not synced by sram-sync!
 serviceAdmins="service-surfarchive"
 
 for user in $serviceAdmins; do
@@ -58,36 +52,21 @@ done
 
 #########
 ## Groups
-nanoscopy="p.vanschayck g.tria rbg.ravelli"
+## currently the sram-sync script doesnt synchronize groups! However groups are created and filled with hardcoded users.
+## For testing purposes we leave one externaly created (preexisting group here)
 
 iadmin mkgroup nanoscopy-l
-#for user in $nanoscopy; do
-#    iadmin atg nanoscopy-l "${user}@${domain}"
-#done
-
-rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy r.niesten r.brecheisen jonathan.melius k.heinen s.nijhuis"
-
-iadmin mkgroup rit-l
-iadmin mkgroup DH-project-admins
-for user in $rit; do
-    iadmin atg rit-l "${user}@${domain}"
-    iadmin atg DH-project-admins "${user}@${domain}"
-done
-
-# Add all users created so far to the DH-ingest group
-iadmin mkgroup DH-ingest
-#for user in $users; do
-#    iadmin atg DH-ingest "${user}@${domain}"
-#done
-
 
 scannexus="rick.voncken"
-
 iadmin mkgroup UM-SCANNEXUS
 for user in $scannexus; do
     iadmin atg UM-SCANNEXUS "${user}@${snDomain}"
     iadmin atg DH-ingest "${user}@${snDomain}"
 done
+
+##############
+## Sync LDAP Users
+python3 ../sram-sync/sram-sync.py
 
 ##############
 ## Permissions
