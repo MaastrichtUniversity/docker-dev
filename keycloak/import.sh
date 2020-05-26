@@ -53,21 +53,20 @@ echo "Create Users"
 # Maastrichtuniversity
 usersJSON=$(cat /tmp/users.json | jq -c '.')
 
-echo $usersJSON | jq  -c '.[]'  | while read userJSON; do
-  userID="$(echo $userJSON | jq -c '.userName' )"  
-  displayName="$(echo $userJSON | jq -c '.displayName' )"
-  userEmail="$(echo $userJSON | jq -c '.email' )"
-
+echo $usersJSON | jq  -r -c '.[]'  | while read userJSON; do
+  userID=$(echo $userJSON | jq -r -c '.userName' )
+  displayName=$(echo $userJSON | jq -r -c '.displayName' )
+  userEmail=$(echo $userJSON | jq -r -c '.email' )
   echo "userName/id: $userID displayName: $displayName email: $userEmail"
   # Check if user already exists, if not create user and set password
-  if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username="${userID}"  | grep -q "id");
+  if (/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username="${userID}" | grep -q "id");
   then
+    echo "user ${userID} already found in keycloak..."
+  else
     /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username="${userID}" -s enabled=true -s email="${userEmail}" -s "attributes.displayName=${displayName}"
     #echo "setting now password... (for: ${userID})"
-    #/opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username "${userID}" --new-password 'foobar'
+    /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username ${userID} --new-password 'foobar'
     #echo "done."
-  else
-    echo "user ${userID} already found in keycloak..."
   fi
 done
 
@@ -79,7 +78,7 @@ for user in $scannexus; do
   if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username="${user}"  | grep -q "id");
   then
     /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username="${user}" -s enabled=true -s email="${user}"@scannexus.nl
-    /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username "${user}" --new-password 'foobar'
+    /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username ${user} --new-password 'foobar'
   fi
 done
 
