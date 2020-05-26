@@ -94,7 +94,7 @@ def create_new_irods_user( irodsSession, user ):
 	log( 1, "--\t\tcreate a new irods user: %s" % user.uid )
 	irodsUser = irodsSession.users.create( user.uid, 'rodsuser')
 	#add AVUs	 
-	irodsUser.metadata.add( UserAVU.EMAIL.value, user.mail )
+	irodsUser.metadata.add( UserAVU.EMAIL.value, user.email )
 	irodsUser.metadata.add( UserAVU.DISPLAY_NAME.value, user.displayName )
 	#add password
 	password = create_new_irods_user_password() 
