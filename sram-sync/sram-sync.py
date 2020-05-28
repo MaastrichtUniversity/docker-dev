@@ -414,7 +414,7 @@ for user in ldap_users:
             if dryRun != "true":
             	 create_new_irods_user( sess, user )
             log( 1, "\t" + user.uid + " created")
-            toAddress =  user.mail
+            toAddress =  user.email
             # UNCOMMENT line below to override the user's e-mail address (for testing purposes)
             # toAddress = "m.coonen@maastrichtuniversity.nl"
             if dryRun != "true" and sendEmail == "true":

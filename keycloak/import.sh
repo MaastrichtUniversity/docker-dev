@@ -70,18 +70,6 @@ echo $usersJSON | jq  -r -c '.[]'  | while read userJSON; do
   fi
 done
 
-# Scannexus
-scannexus="rick.voncken"
-
-for user in $scannexus; do
-  # Check if user already exists, if not create user and set password
-  if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username="${user}"  | grep -q "id");
-  then
-    /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username="${user}" -s enabled=true -s email="${user}"@scannexus.nl
-    /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username ${user} --new-password 'foobar'
-  fi
-done
-
 echo "Users Created"
 
 # Trigger full sync of the ldap

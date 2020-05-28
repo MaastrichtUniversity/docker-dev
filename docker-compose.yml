@@ -150,6 +150,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
+
   ires:
     build:
       context: ires/
@@ -561,6 +562,7 @@ services:
     command: sram-sync.py
     networks:
       default:
+      common_default:
 
 networks:
   common_default:

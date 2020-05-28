@@ -1,26 +1,26 @@
 [
-  { "userName": "p.vanschayck@mu.nl",
+  { "userName": "p.vanschayck@maastrichtuniversity.nl",
     "displayName": "Paul van Schayck",
-    "email": "p.vanschayck@maastrichtuniversity.nl"
+    "email": "p.vanschayck@mu.nl"
   },
   { "userName": "p70067297",
     "displayName": "Jan-Erek Thiede",
     "email": "j.thiede@maastrichtuniversity.nl"
   },
   {
-    "userName": "m.coonen",
-    "displayName": "Martin Coonen",
-    "email": "m.coonen@maastrichtuniversity.nl"
+    "userName": "m.coonen@maastrichtuniversity.nl",
+    "displayName": "Maarten Coonen",
+    "email": "m.coonen@mu.nl"
   },
   {
-    "userName": "d.theunissen@mu.nl",
+    "userName": "d.theunissen@maastrichtuniversity.nl",
     "displayName": "Daniel Theunissen",
-    "email": "d.theunissen@maastrichtuniversity.nl"
+    "email": "d.theunissen@mu.nl"
   },
   {
-    "userName": "p.suppers@mu.nl",
+    "userName": "p.suppers@maastrichtuniversity.nl",
     "displayName": "Pascal Suppers",
-    "email": "p.suppers@maastrichtuniversity.nl"
+    "email": "p.suppers@mu.nl"
   },
   {
     "userName": "delnoy",
@@ -28,23 +28,38 @@
     "email": "delnoy@maastrichtuniversity.nl"
   },
   {
-    "userName": "r.brecheisen@mu.nl",
+    "userName": "r.brecheisen@maastrichtuniversity.nl",
     "displayName": "Ralph Brecheisen",
-    "email": "r.brecheisen@maastrichtuniversity.nl"
+    "email": "r.brecheisen@mu.nl"
   },
   {
-    "userName": "j.melius@mu.nl",
+    "userName": "j.melius@maastrichtuniversity.nl",
     "displayName": "Jonathan Melius",
-    "email": "j.melius@maastrichtuniversity.nl"
+    "email": "j.melius@mu.nl"
   },
   {
-    "userName": "k.heinen@mu.nl",
-    "displayName": "Kurt Heinen",
-    "email": "k.heinen@maastrichtuniversity.nl"
+    "userName": "k.heinen@maastrichtuniversity.nl",
+    "displayName": "Koert Heinen",
+    "email": "k.heinen@mu.nl"
   },
   {
-    "userName": "s.nijhuis@mu.nl",
+    "userName": "s.nijhuis@maastrichtuniversity.nl",
     "displayName": "Nijhuis",
-    "email": "s.niejhuis@maastrichtuniversity.nl"
+    "email": "s.niejhuis@mu.nl"
+  },
+  {
+    "userName": "minimalist",
+    "displayName": "",
+    "email": ""
+  },
+  {
+    "userName": "rick.voncken@scannexus.nl",
+    "displayName": "",
+    "email": "rick.voncken@scannexus.nl"
+  },
+  {
+    "userName": "additional.user",
+    "displayName": "Additional User newly created in LDAP",
+    "email": ""
   }
 ]
