@@ -1,26 +1,28 @@
 [
-  { "userName": "p.vanschayck@maastrichtuniversity.nl",
+  {
+    "userName": "p.vanschayck@maastrichtuniversity.nl",
     "displayName": "Paul van Schayck",
-    "email": "p.vanschayck@mu.nl"
+    "email": "p.vanschayck@maastrichtuniversity.nl"
   },
-  { "userName": "p70067297",
+  {
+    "userName": "p70067297",
     "displayName": "Jan-Erek Thiede",
     "email": "j.thiede@maastrichtuniversity.nl"
   },
   {
     "userName": "m.coonen@maastrichtuniversity.nl",
     "displayName": "Maarten Coonen",
-    "email": "m.coonen@mu.nl"
+    "email": "m.coonen@maastrichtuniversity.nl"
   },
   {
     "userName": "d.theunissen@maastrichtuniversity.nl",
     "displayName": "Daniel Theunissen",
-    "email": "d.theunissen@mu.nl"
+    "email": "d.theunissen@maastrichtuniversity.nl"
   },
   {
     "userName": "p.suppers@maastrichtuniversity.nl",
     "displayName": "Pascal Suppers",
-    "email": "p.suppers@mu.nl"
+    "email": "p.suppers@maastrichtuniversity.nl"
   },
   {
     "userName": "delnoy",
@@ -30,22 +32,37 @@
   {
     "userName": "r.brecheisen@maastrichtuniversity.nl",
     "displayName": "Ralph Brecheisen",
-    "email": "r.brecheisen@mu.nl"
+    "email": "r.brecheisen@maastrichtuniversity.nl"
   },
   {
     "userName": "j.melius@maastrichtuniversity.nl",
     "displayName": "Jonathan Melius",
-    "email": "j.melius@mu.nl"
+    "email": "j.melius@maastrichtuniversity.nl"
   },
   {
     "userName": "k.heinen@maastrichtuniversity.nl",
     "displayName": "Koert Heinen",
-    "email": "k.heinen@mu.nl"
+    "email": "k.heinen@maastrichtuniversity.nl"
   },
   {
     "userName": "s.nijhuis@maastrichtuniversity.nl",
     "displayName": "Nijhuis",
-    "email": "s.niejhuis@mu.nl"
+    "email": "s.niejhuis@maastrichtuniversity.nl"
+  },
+  {
+    "userName": "rbg.ravelli@maastrichtuniversity.nl",
+    "displayName": "Raimond Ravelli",
+    "email": "rbg.ravelli@maastrichtuniversity.nl"
+  },
+  {
+    "userName": "g.tria@maastrichtuniversity.nl",
+    "displayName": "G. Tria",
+    "email": "g.tria@maastrichtuniversity.nl"
+  },
+  {
+    "userName": "p.ahles@maastrichtuniversity.nl",
+    "displayName": "Patrick Ahles",
+    "email": "p.ahles@maastrichtuniversity.nl"
   },
   {
     "userName": "minimalist",
