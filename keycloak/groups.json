@@ -1,0 +1,11 @@
+[
+   { "groupId": "101",
+     "name":   "nanoscopy"
+   },
+   { "groupId": "201",
+     "name":    "rit"
+   },
+   { "groupId": "301",
+     "name":    "scannexus"
+   }
+]
