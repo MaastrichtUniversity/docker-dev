@@ -7,5 +7,14 @@
    },
    { "groupId": "301",
      "name":    "scannexus"
+   },
+   { "groupId": "401",
+     "name":    "additional group"
+   },
+   { "groupId": "501",
+     "name":    "additional group 2"
+   },
+   { "groupId": "601",
+     "name":    "additional group 3"
    }
 ]

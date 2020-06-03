@@ -93,6 +93,6 @@
     "userName": "additional.user",
     "displayName": "Additional User newly created in LDAP",
     "email": "",
-    "memberOf": [ ]
+    "memberOf": [ "additional group" ]
   }
 ]
