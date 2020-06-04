@@ -24,19 +24,63 @@ from enum import Enum
 
 from ldap_helper import *
 from irods_helper import *
-
+import argparse
 
 # Setup logging
 log_level = os.environ['LOG_LEVEL']
 logging.basicConfig(level=logging.getLevelName(log_level), format='%(asctime)s %(levelname)s %(message)s')
 logger = logging.getLogger('root')
 
+# Options config
+# TO DO: ALL golbals in CAPITAL_CASE_WITH_UNDERSCORE
+DEFAULT_USER_PASSWORD = os.environ['DEFAULT_USER_PASSWORD']
+
+SYNC_USERS = True
+DELETE_USERS = True
+SYNC_GROUPS = True
+DELETE_GROUPS = True
+
+#NEEDS FIX A: instead of blacklists we should use an AVY on groups/users indicating weather it should be synced or not
+UNSYNCED_USERS  = "service-pid,service-mdl,service-disqover,service-dropzones,service-surfarchive,DH-project-admins".split(',')
+UNSYNCED_GROUPS = "rodsadmin,DH-ingest,public,DH-project-admins".split(',')
+
+# LDAP config
+LDAP_USER = os.environ['LDAP_USER']
+LDAP_PASS = os.environ['LDAP_PASS']
+#LDAPgroup = Config.get('LDAP', 'LDAPgroup')
+LDAP_HOST = os.environ['LDAP_HOST']
+
+LDAP_GROUP = "Users"
+LDAP_USER_BASE_DN = "ou=users,DC=datahubmaastricht,DC=nl"
+LDAP_GROUPS_BASE_DN = "ou=groups,DC=datahubmaastricht,DC=nl"
+
+# iRODS config
+IRODS_HOST = os.environ['IRODS_HOST']
+IRODS_USER = os.environ['IRODS_USER']
+IRODS_PASS = os.environ['IRODS_PASS']
+
+#IRODS_GROUP = Config.get('iRODS', 'group')
+IRODS_PORT = 1247
+IRODS_ZONE = "nlmumc"
+
+##########################################################
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description=__doc__,  # printed with -h/--help
+        # Don't mess with format of description
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument("commit", action='store_true', help="write any updates/changes to iRODS")
+    parser.add_argument("scheduled", action='store_true', help="if set runs every few minutes")
+    settings = parser.parse_args()    
+    return settings
                                                           
 ##########################################################
 # either a default password is given (via config.ini), or a random alpha string is generated
 def create_new_irods_user_password():
-	if newUsersPassword:
-		return newUsersPassword
+	if DEFAULT_USER_PASSWORD == '':
+		return DEFAULT_USER_PASSWORD
 	chars = "abcdefghijklmnopqrstuvw"
 	pwdSize = 20
 	return ''.join((random.choice(chars)) for x in range(pwdSize))
@@ -52,91 +96,87 @@ class UserAVU(Enum):
 class mUser:
 	LDAP_ATTRIBUTES = ['uid', 'mail', 'cn', 'displayName']  # all=*
 
-	def __init__(self, uid, displayName, email):
+	def __init__(self, uid, display_name, email):
 		self.uid = uid
-		self.displayName = displayName
+		self.display_name = display_name
 		self.email = email
-		self.iRodsUser = None
+		self.irods_user = None
 		
 	def __repr__(self):
-		return "User( uid:{}, displayName: {}, email: {}, iRodsUser: {})".format( self.uid, self.displayName, self.email, self.iRodsUser )
+		return "User( uid:{}, displayName: {}, email: {}, iRodsUser: {})".format( self.uid, self.display_name, self.email, self.irods_user )
 		
 	@classmethod
-	def createForLDAPEntry( self, ldap_entry ):
+	def create_for_ldap_entry( self, ldap_entry ):
 		uid = read_ldap_attribute( ldap_entry, 'uid' )
 		mail= read_ldap_attribute( ldap_entry, 'mail' )
 		cn = read_ldap_attribute( ldap_entry, 'cn' )
-		displayName = read_ldap_attribute( ldap_entry, 'displayName' )
-		#name = uid
-		#if not cn: name = '' #cn
+		display_name = read_ldap_attribute( ldap_entry, 'displayName' )
+		#here we could decided weather to use the cn or uid as displayName...
 		return mUser( uid, cn, mail )
 		
 		
 	#simply write the model user to irods, 
 	#set password and AVUs for existing attributes
-	def createNewUser( self, irodsSession, dryRun ):
-		if dryRun:
+	def create_new_user( self, irods_session, dry_run ):
+		if dry_run:
 			return
-		logger.info( "\t\tcreate a new irods user: %s" % self.uid )
-		NewIRodsUser = irodsSession.users.create( self.uid, 'rodsuser')
+		logger.info( "create a new irods user: %s" % self.uid )
+		NewIRodsUser = irods_session.users.create( self.uid, 'rodsuser')
 		if self.email: NewIRodsUser.metadata.add( UserAVU.EMAIL.value, self.email )
-		if self.displayName: NewIRodsUser.metadata.add( UserAVU.DISPLAY_NAME.value, self.displayName )
+		if self.display_name: NewIRodsUser.metadata.add( UserAVU.DISPLAY_NAME.value, self.display_name )
 		password = create_new_irods_user_password() 
-		irodsSession.users.modify( self.uid, 'password', password )
+		irods_session.users.modify( self.uid, 'password', password )
 		self.iRodsUser = NewIRodsUser
 		# TO DO: is this the correct place? Any other must have groups that I'm missing?
 		# Add the user to the group DH-ingest (= ensures that user is able to create and ingest dropzones)
-		add_user_to_group( irodsSession, "DH-ingest", self.uid )
-		return self.iRodsUser
+		add_user_to_group( irods_session, "DH-ingest", self.uid )
+		return self.irods_user
 
     
-	def updateExistingUser( self, irodsSession, dryRun ):
-		if dryRun:
+	def update_existing_user( self, irods_session, dry_run ):
+		if dry_run:
 			return
-		logger.info( "\t\tchanging existing irods user:" + self.uid )
+		logger.info( "changing existing irods user:" + self.uid )
 		try:
 			#read current AVUs and change if needed
-			existingAVUs = get_all_AVUs( self.iRodsUser )
-			logger.debug( "\t\texisting AVUs BEFORE: " + str(existingAVUs) )
+			existing_avus = get_all_avus( self.irods_user )
+			logger.debug( "existing AVUs BEFORE: " + str(existing_avus) )
 			#careful: because the list of existing AVUs is not updated changing a key multiple times will lead to strange behavior! 
-			set_singular_AVU( self.iRodsUser, UserAVU.EMAIL.value, self.email )
-			set_singular_AVU( self.iRodsUser, UserAVU.DISPLAY_NAME.value, self.displayName )
+			set_singular_avu( self.irods_user, UserAVU.EMAIL.value, self.email )
+			set_singular_avu( self.irods_user, UserAVU.DISPLAY_NAME.value, self.display_name )
 		except iRODSException as error:
-			logger.error( " error changing AVUs" + str(error) )	
-		existingAVUs = get_all_AVUs( self.iRodsUser )
-		logger.debug( "\t\texisting AVUs AFTER: " + str(existingAVUs) )
-		return self.iRodsUser
+			logger.error( "error changing AVUs" + str(error) )	
+		existing_avus = get_all_avus( self.irods_user)
+		logger.debug( "existing AVUs AFTER: " + str(existing_avus) )
+		return self.irods_user
 
 
-	def syncToIRods( self, irodsSession, dryRun, created, updated, failed ):
+	def sync_to_irods( self, irods_session, dry_run, created, updated, failed ):
 		# Check if user exists
-		existsUsername = True
-		existString = "existing"
+		exists_username = True
 		try:
-			existingIRodsUser = irodsSession.users.get( self.uid )
-			self.iRodsUser = existingIRodsUser
+			self.irods_user = irods_session.users.get( self.uid )
 		except UserDoesNotExist:
-			existsUsername = False
-			existString = "non-existing"
+			exists_username = False
 		# If user does not exists create user
-		if not existsUsername:
+		if not exists_username:
 			try:
-				if not dryRun:
-					self.iRodsUser = self.createNewUser( irodsSession, dryRun )
-				logger.debug( "\t" + self.uid + " created")
+				if not dry_run:
+					self.irods_user = self.create_new_user( irods_session, dry_run )
+				logger.debug( "User: " + self.uid + " created")
 				if created:
 					created()
 			except Exception as e:
-				logger.error( "\tUser creation error: "+str(e) )
+				logger.error( "User creation error: "+str(e) )
 				if failed:
 					failed()
 		else:
 			try:
-				if not dryRun:
-					self.iRodsUser = self.updateExistingUser( irodsSession, dryRun )	
-				logger.debug( "\t" + self.uid + " updated")
+				if not dry_run:
+					self.irods_user = self.update_existing_user( irods_session, dry_run )	
+				logger.debug( "User: " + self.uid + " updated")
 			except Exception as e:
-				logger.error( "\tUser update error: " +str(e) )
+				logger.error( "User update error: " +str(e) )
 				if failed:
 					failed()
 
@@ -145,113 +185,112 @@ class mGroup:
 	LDAP_ATTRIBUTES = ['*']  # all=*
 	AVU_KEYS = []
 
-	def __init__(self, groupName, memberUids=[]):
-		self.groupName = groupName
-		self.memberUids = memberUids
-		self.iRodsGroup = None
+	def __init__(self, group_name, member_uids=[]):
+		self.group_name = group_name
+		self.member_uids = member_uids
+		self.irods_group = None
 
 	def __repr__(self):
-		return "Group( groupName:{}, memberUids: {},  iRodGroup: {})".format( self.groupName, self.memberUids, self.iRodsGroup )
+		return "Group( group_name:{}, member_uids: {},  irods_group: {})".format( self.group_name, self.member_uids, self.iRodsGroup )
+
 		
 	@classmethod
 	# b'uid=p.vanschayck@maastrichtuniversity.nl,ou=users,dc=datahubmaastricht,dc=nl'
-	def getGroupMemberUids( cls, userDN ):
-		dn = userDN.decode("utf-8").strip()
-		userDict = dict(re.findall(r'([\w]+)=([\w\.@]+)', dn))
-		return userDict.get( 'uid', None)
+	def get_group_member_uids( cls, user_dn ):
+		dn = user_dn.decode("utf-8").strip()
+		user_dict = dict(re.findall(r'([\w]+)=([\w\.@]+)', dn))
+		return user_dict.get( 'uid', None)
 		
 	@classmethod
-	def createForLDAPEntry( cls, ldap_entry ):
-		groupName = read_ldap_attribute( ldap_entry, 'cn' )
+	def create_for_ldap_entry( cls, ldap_entry ):
+		group_name = read_ldap_attribute( ldap_entry, 'cn' )
 		#get us an array of all member-attributes, which contains DNs: [ b'cn=empty-membership-placeholder',  b'uid=p.vanschayck@maastrichtuniversity.nl,ou=users,dc=datahubmaastricht,dc=nl', ...]
-		groupMemberDNs = ldap_entry.get(  'member', [b""])
-		groupMemberUids = list( filter( lambda x: not x == None, map( mGroup.getGroupMemberUids, groupMemberDNs ) ) )
-		return mGroup( groupName, groupMemberUids )
+		group_member_dns = ldap_entry.get(  'member', [b""])
+		group_member_uids = list( filter( lambda x: not x == None, map( mGroup.get_group_member_uids, group_member_dns ) ) )
+		return mGroup( group_name, group_member_uids )
 		
-	def writeToIrods( self, sess, dryRun, created, updated, failed ):
-		group = None
+	def write_to_irods( self, sess, dry_run, created, updated, failed ):
 		# Check if the group exists
-		existsGroup = True
+		exists_group = True
 		try:
-			group = sess.user_groups.get( self.groupName )   
-			self.iRodsGroup = group
+			self.irods_group = sess.user_groups.get( self.group_name )   
 		except UserGroupDoesNotExist:
-			existsGroup = False
+			exists_group = False
 
-		if not existsGroup:
+		if not exists_group:
 			try:
-				if not dryRun:
-					iRodsGroup = sess.user_groups.create( self.groupName )
-					logger.info( "\t\t\tGroup %s created" %  self.groupName )
+				if not dry_run:
+					self.irods_group = sess.user_groups.create( self.group_name )
+					logger.info( "Group %s created" %  self.group_name )
 					if created:
 						created()
 			except:
-				logger.error( "Group %s Creation error" % self.groupName )
+				logger.error( "Group %s Creation error" % self.group_name )
 				if failed:
 					failed()
 		else:
-			logger.info( "\t\t\tGroup %s already exists" % self.groupName )
+			logger.info( "Group %s already exists" % self.group_name )
 			#TO DO: is there a difference between Group-ID and Group-DisplayName? If so, set an AVU here!
 			if updated:
 				updated()
 				
-		return group
+		return self.irods_group
 		
 	@classmethod
-	def removeGroupFromIRods( cls, sess, groupName ):
-		sess.users.remove( groupName, user_zone="nlmumc")
+	def remove_group_from_irods( cls, sess, group_name ):
+		sess.users.remove( group_name, user_zone=IRODS_ZONE)
 	      
 ##########################################################
 ##########################################################
 ##########################################################
 
 
-def syncable_irods_users( sess, unsyncedUsers ):
-	irodsUserNamesSet = set()
+def syncable_irods_users( sess, unsynced_users ):
+	irods_user_names_set = set()
 	#filter only rodsusers, filter the special users, check wich one are not in the LDAP list
-	query = sess.query(User.name, User.id, User.type ).filter( 
+	query = sess.query( User.name, User.id, User.type ).filter( 
      Criterion('=', User.type, 'rodsuser') )
 	n = 0
 	for result in query:
 		n=n+1
-		if not result[ User.name ] in unsyncedUsers:
-			irodsUserNamesSet.add( result[ User.name] )
-	logger.debug( "\tiRods users found: {} (allowed for synchronization: {})".format( n, len(irodsUserNamesSet) ) )
-	return irodsUserNamesSet
+		if not result[ User.name ] in unsynced_users:
+			irods_user_names_set.add( result[ User.name] )
+	logger.debug( "iRods users found: {} (allowed for synchronization: {})".format( n, len(irods_user_names_set) ) )
+	return irods_user_names_set
 	
 ##########################################################
 #get all the relevant attributes of all users in LDAP, returns an array with dictionaries
 def get_users_from_ldap(l):
     searchFilter = "(objectClass=*)"
-    return for_ldap_entries_do( l, LDAPUsersBaseDN, searchFilter, mUser.LDAP_ATTRIBUTES, mUser.createForLDAPEntry )	
+    return for_ldap_entries_do( l, LDAP_USER_BASE_DN, searchFilter, mUser.LDAP_ATTRIBUTES, mUser.create_for_ldap_entry )	
 
 ##########################################################
 def remove_obsolete_irods_users( sess, ldap_users, irods_users ):
-	logger.info( "\tdeleting obsolete irods users..." )
+	logger.info( "deleting obsolete irods users..." )
 	deletion_candidates = irods_users.copy()
 	for ldap_user in ldap_users:
 		deletion_candidates.discard( ldap_user.uid )
-	logger.info( "\tidentified %d obsolete irods users for deletion" % len(deletion_candidates) )
+	logger.info( "identified %d obsolete irods users for deletion" % len(deletion_candidates) )
 	#print( deletion_candidates )	
 	for uid in deletion_candidates:
 		user = sess.users.get( uid )
-		logger.debug( "\t\tdeleting user: {}".format( uid ) )
-		if not dryRun:
+		logger.debug( "deleting user: {}".format( uid ) )
+		if not dry_run:
 			user.remove()
 
 ##########################################################
 
-def syncLDAPUsersToIrods( ldap, irods, dryRun, deleteUsers ):
+def sync_ldap_users_to_irods( ldap, irods, dry_run ):
 	logger.info( "Syncing users to iRods:" )
 	
 	ldap_users = get_users_from_ldap( ldap )
 	logger.info( "LDAP users found: %d" % len(ldap_users) )
 
    #TO DO: give irods users an AVU to mark them as SRAM_SYNCED true/false, instead of using a blacklist in config.ini
-	irods_users = syncable_irods_users( irods, unsyncedUsers )
+	irods_users = syncable_irods_users( irods, UNSYNCED_USERS )
 	
 	# remove obsolete users from irods
-	if not dryRun and deleteUsers:
+	if not dry_run and DELETE_USERS:
 		remove_obsolete_irods_users( irods, ldap_users, irods_users)
 
 	# Loop over ldap users and create or update as necessary
@@ -260,13 +299,13 @@ def syncLDAPUsersToIrods( ldap, irods, dryRun, deleteUsers ):
 	for user in ldap_users:
 		n=n+1
 		# Print username
-		logger.info( "--\tsyncing LDAP user {}/{}: {}".format( n, len(ldap_users), user.uid ) )
+		logger.info( "--syncing LDAP user {}/{}: {}".format( n, len(ldap_users), user.uid ) )
     
-		if dryRun or (not syncUsers):
-			logger.info( "\tsyncing of users not permitted. User {} will no be changed/created".format( user.uid ) )
+		if dry_run or (not SYNC_USERS):
+			logger.info( "syncing of users not permitted. User {} will no be changed/created".format( user.uid ) )
 			continue
 		 	
-		user.syncToIRods( irods, dryRun, None, None, None ) 	
+		user.sync_to_irods( irods, dry_run, None, None, None ) 	
     	
 	return ldap_users
 
@@ -275,81 +314,81 @@ def syncLDAPUsersToIrods( ldap, irods, dryRun, deleteUsers ):
 ##########################################################	
 
 def remove_obsolete_irods_groups( sess, ldap_group_names, irods_group_names ):
-	logger.info( "\tdeleting obsolete irods groups..." )
+	logger.info( "deleting obsolete irods groups..." )
 	deletion_candidates = set()
 	for irods_group in irods_group_names:
 		if (irods_group not in ldap_group_names):
 			deletion_candidates.add( irods_group )
-	logger.info( "\tidentified %d obsolete irods groups for deletion" % len(deletion_candidates) )
+	logger.info( "identified %d obsolete irods groups for deletion" % len(deletion_candidates) )
 	#print( deletion_candidates )	
 	for group_name in deletion_candidates:
-		logger.debug( "\t\tdeleting group: {}".format( group_name ) )
-		mGroup.removeGroupFromIRods( sess, group_name ) 
+		logger.debug( "tdeleting group: {}".format( group_name ) )
+		mGroup.remove_group_from_irods( sess, group_name ) 
 
 ##########################################################
 
 #get all groups from LDAP
 def get_ldap_groups( l ):
-	groupName2groups = dict()
-	arrayOfGroups = for_ldap_entries_do( l, LDAPGroupsBaseDN, "(objectClass=groupOfNames)", ["*"], mGroup.createForLDAPEntry )	
-	for group in arrayOfGroups:
-		groupName2groups[ group.groupName ] = group 
-	return groupName2groups
+	group_name_2_groups = dict()
+	ldap_groups = for_ldap_entries_do( l, LDAP_GROUPS_BASE_DN, "(objectClass=groupOfNames)", ["*"], mGroup.create_for_ldap_entry )	
+	for group in ldap_groups:
+		group_name_2_groups[ group.group_name ] = group 
+	return group_name_2_groups
 
 ########################################################## 
-def add_user_to_group( sess, groupName, userName ):
-	group = sess.user_groups.get( groupName )
+def add_user_to_group( sess, group_name, user_name ):
+	irods_group = sess.user_groups.get( group_name )
 	try:
-		if not dryRun:
-			group.addmember(userName)
-			logger.debug( "\t" + userName + " added to group " + groupName )
+		if not dry_run:
+			irods_group.addmember(user_name)
+			logger.debug( "User: " + user_name + " added to group " + group_name )
 	except CATALOG_ALREADY_HAS_ITEM_BY_THAT_NAME:
-		logger.debug( "\tUser {} already in group {} ".format( userName, groupName ) )
+		logger.debug( "User {} already in group {} ".format( user_name, group_name ) )
 	except Exception as e:
-		logger.info( "could not add user {} to group {} {}".format(userName, groupName, e) )
+		logger.info( "could not add user {} to group {}. '{}'".format(user_name, group_name, e) )
 
 
 ########################################################## 
-def remove_user_from_group( sess, groupName, userName ):
-	group = sess.user_groups.get( groupName )
+def remove_user_from_group( sess, group_name, user_name ):
+	irods_group = sess.user_groups.get( group_name )
 	try:
-		if not dryRun:
-			group.removemember( userName )
-			logger.debug( "\t" + userName + " removed from group " + groupName )
+		if not dry_run:
+			irods_group.removemember( user_name )
+			logger.debug( "User: " + user_name + " removed from group " + group_name )
 	except Exception as e:
-		logger.info( "could not remove user {} from group {} {}".format(userName, groupName, e) )
+		logger.info( "could not remove user {} from group {}. '{}'".format( user_name, group_name, e ) )
 		
 ##########################################################
 
 #TO DO: change to.format()
-def syncLDAPGroupsToIrods( ldap, irods, dryRun, deleteGroups ):
+def sync_ldap_groups_to_irods( ldap, irods, dry_run ):
 	logger.info( "Syncing groups to irods:")
 	 
-	groupName2group = get_ldap_groups( ldap )
-	logger.debug( "\tLDAP groups found: %d" % len(groupName2group) )
+	group_name_2_group = get_ldap_groups( ldap )
+	logger.debug( "LDAP groups found: %d" % len(group_name_2_group) )
 	
 	irods_groups_query = irods.query(User).filter( User.type == 'rodsgroup' )
 	irods_group_names = [x[User.name] for x in irods_groups_query]
-	syncable_irods_groups = set( filter( lambda x: not x in unsyncedGroups, irods_group_names  ) )
-	logger.debug( "\tiRods groups found: {} (allowed for synchronization: {})".format( len(irods_group_names), len(syncable_irods_groups) ) )
+	syncable_irods_groups = set( filter( lambda x: not x in UNSYNCED_GROUPS, irods_group_names  ) )
+	logger.debug( "iRods groups found: {} (allowed for synchronization: {})".format( len(irods_group_names), len(syncable_irods_groups) ) )
 	
-	if not dryRun and deleteGroups:
-		remove_obsolete_irods_groups( irods, groupName2group.keys(), syncable_irods_groups)
+	if not dry_run and DELETE_GROUPS:
+		remove_obsolete_irods_groups( irods, group_name_2_group.keys(), syncable_irods_groups)
 		
 	n=0
-	for (groupName, group) in groupName2group.items():
+	for (group_name, group) in group_name_2_group.items():
 		n=n+1
-		logger.info( "--\tsyncing LDAP group {}/{}: {}".format( n, len(groupName2group), groupName ) )
-		if not dryRun: 
-			group.writeToIrods( irods, dryRun, None, None, None )
+		logger.info( "--syncing LDAP group {}/{}: {}".format( n, len(group_name_2_group), group_name ) )
+		if not dry_run: 
+			group.write_to_irods( irods, dry_run, None, None, None )
 		else: 
-			logger.info( "\tsyncing of groups not permitted. Group {} will no be changed/created".format( groupName ) )
+			logger.info( "syncing of groups not permitted. Group {} will no be changed/created".format( group_name ) )
 		
-	return groupName2group
+	return group_name_2_group
 
 
 ##########################################################
-def diffUserLists( ldapMembers, iRodsMembers ):
+def diff_member_lists( ldapMembers, iRodsMembers ):
 	if not bool(iRodsMembers):
 		return set(), ldapMembers, set()
 	if not bool(ldapMembers):
@@ -360,112 +399,65 @@ def diffUserLists( ldapMembers, iRodsMembers ):
 	return stay, add, remove	
 	
 ##########################################################
-def syncGroupMemberships( ldap, irods, ldapUsers, ldapGroups, dryRun ):
+def sync_group_memberships( ldap, irods, ldap_groups, dry_run ):
 	logger.info( "Syncing group members to irods:")
 	
-	irodsGroups2Users = dict()
-	
+	#create a mapping of irods group names to the member uids
+	irods_groups_2_users = dict()
 	for result in irods.query(UserGroup,User): 
-		irodsGroup = iRODSUserGroup( irods.user_groups, result)
-		irodsUser = iRODSUser(irods.users, result) 
-		if irodsGroup.id == irodsUser.id:
+		irods_group = iRODSUserGroup( irods.user_groups, result)
+		irods_user = iRODSUser(irods.users, result) 
+		if irods_group.id == irods_user.id:
 			continue
-		#print( "TEST {} --> {}".format( irodsGroup.name, irodsUser.name ) )
-		if irodsGroup.name not in irodsGroups2Users:
-			irodsGroups2Users[ irodsGroup.name ] = set()
+		if irods_group.name not in irods_groups_2_users:
+			irods_groups_2_users[ irods_group.name ] = set()
 		else:
-			irodsGroups2Users[ irodsGroup.name ].add( irodsUser.name )
+			irods_groups_2_users[ irods_group.name ].add( irods_user.name )
 	
-
-	#check each ldapGroup agains each irodsGroup	
+	#check each LDAP Group against each irodsGroup	
 	n=0
-	for (groupName, group) in ldapGroups.items():
+	for (group_name, group) in ldap_groups.items():
 		n=n+1
-		print( " --> {}".format( groupName ) )
-		iRodsMemberList = irodsGroups2Users.get(groupName, set() )
-		#print( iRodsMemberList )	
-		#print( group.memberUids )
-		stay, add, remove = diffUserLists( group.memberUids, iRodsMemberList )
-		logger.debug( "\t = {}".format( len(stay) ) )
-		logger.debug( "\t + {}".format( len(add) ) )
-		logger.debug( "\t - {}".format( len(remove) ) )
+		logger.info( "syncing memberships for group {}...".format( group_name ) )
+		irods_member_list = irods_groups_2_users.get( group_name, set() )
+		stay, add, remove = diff_member_lists( group.member_uids, irods_member_list )
+		logger.info( "memberships for group {}: {} same, {} added, {} removed".format( group_name, len(stay), len(add), len(remove) ) )
 	
-		for uid in add:
-			add_user_to_group( irods, groupName, uid )
+		if not dry_run:
+			for uid in add:
+				add_user_to_group( irods, group_name, uid )
 		
-		for uid in remove:
-			remove_user_from_group( irods, groupName, uid )
+			for uid in remove:
+				remove_user_from_group( irods, group_name, uid )
 
 
 ##########################################################
 ##########################################################
 ##########################################################
 
-def main():
-	startTime = datetime.now()
-	logger.info( "SRAM-SYNC started at: {}".format( startTime ) )
-	# Config Parser
-	Config = configparser.ConfigParser()
-	if len(sys.argv) > 1:
-	    config = sys.argv[1]
-	else:
- 		config = 'config.ini'
-	Config.read(config)
+def main( dry_run ):
+	start_time = datetime.now()
+	logger.info( "SRAM-SYNC started at: {}".format( start_time ) )
 
-	# Options config
-	global dryRun
-	dryRun = os.environ['LOG_LEVEL'] == "true"
-	
-	global newUsersPassword, syncUsers, deleteUsers, syncGroups
-	global deleteGroups, unsyncedUsers, unsyncedGroups
-	newUsersPassword = Config.get( 'OPTIONS', 'new_users_password')
-	syncUsers = Config.get( 'OPTIONS', 'sync_users') == "true"
-	deleteUsers = Config.get( 'OPTIONS', 'delete_existing_users' ) == "true"
-	syncGroups = Config.get( 'OPTIONS', 'sync_groups') == "true"
-	deleteGroups = Config.get( 'OPTIONS', 'delete_existing_groups') == "true"
-	vy = int(Config.get( 'OPTIONS', 'verbosity' ))
-	unsyncedUsers = Config.get('OPTIONS', 'unsynced_users').split(',')
-	unsyncedGroups = Config.get('OPTIONS', 'unsynced_groups').split(',')
-
-	#global LDAPUserName, LDAPPassword, LDAPgroup, LDAPServer
-	global LDAPUsersBaseDN, LDAPGroupsBaseDN
-	# LDAP config
-	LDAPUserName = Config.get('LDAP', 'LDAPUserName')
-	LDAPPassword = Config.get('LDAP', 'LDAPPassword')
-	LDAPgroup = Config.get('LDAP', 'LDAPgroup')
-	LDAPServer = Config.get('LDAP', 'LDAPServer')
-	LDAPUsersBaseDN = Config.get('LDAP', 'LDAPUsersBaseDN')
-	LDAPGroupsBaseDN = Config.get('LDAP', 'LDAPGroupsBaseDN')
-
-	# iRODS config
-	global iRODShost, iRODSport, iRODSuser, iRODSpassword, iRODSzone, iRODSgroup
-	iRODShost = Config.get('iRODS', 'host')
-	iRODSport = Config.get('iRODS', 'port')
-	iRODSuser = Config.get('iRODS', 'user')
-	iRODSpassword = Config.get('iRODS', 'password')
-	iRODSzone = Config.get('iRODS', 'zone')
-	iRODSgroup = Config.get('iRODS', 'group')
-
-
-	if dryRun:
+	if dry_run:
 		logger.info("EXECUTING SCRIPT IN DRY MODE! No changes will be made to iCAT.")
 
-	ldap = getLDAPConnection(LDAPServer, LDAPUserName, LDAPPassword)
-	irods = getIRodsConnection(iRODShost, iRODSport, iRODSuser, iRODSpassword, iRODSzone)
+	ldap = get_ldap_connection(LDAP_HOST, LDAP_USER, LDAP_PASS )
+	irods = get_irods_connection( IRODS_HOST, IRODS_PORT, IRODS_USER, IRODS_PASS, IRODS_ZONE )
 
-	ldapUsers = None
-	ldapGroups = None
-	if syncUsers:
-		ldapUsers = syncLDAPUsersToIrods( ldap, irods, dryRun, deleteUsers )
+	ldap_users = None
+	ldap_groups = None
+	if SYNC_USERS:
+		ldap_users = sync_ldap_users_to_irods( ldap, irods, dry_run )
 
-	if syncGroups:
-		ldapGroups = syncLDAPGroupsToIrods( ldap, irods, dryRun, deleteGroups )
+	if SYNC_GROUPS:
+		ldap_groups = sync_ldap_groups_to_irods( ldap, irods, dry_run )
 	
-	if syncUsers and syncGroups:
-		syncGroupMemberships( ldap, irods, ldapUsers, ldapGroups, dryRun )
+	if SYNC_USERS and SYNC_GROUPS:
+		sync_group_memberships( ldap, irods, ldap_groups, dry_run )
 	
-	endTime = datetime.now()
-	logger.info( "SRAM-SYNC finished at: {} (took {} sec)".format( endTime, (endTime-startTime).total_seconds() ) )
+	end_time = datetime.now()
+	logger.info( "SRAM-SYNC finished at: {} (took {} sec)".format( end_time, (end_time-start_time).total_seconds() ) )
     
  
 ##########################################################   
@@ -475,9 +467,17 @@ def sigterm_handler(_signal, _stack_frame):
 if __name__ == "__main__":
     # Handle the SIGTERM signal from Docker
     signal.signal(signal.SIGTERM, sigterm_handler)
- 
+    settings = parse_arguments()
+    
+    dry_run = ( settings.commit == False )
+
     try:
-        sys.exit(main())
+      exit_code = main( dry_run )
+      if settings.scheduled:
+         while True:
+            main( dry_run ) 
+            time.sleep(5*60)
+      sys.exit( exit_code )
     finally:
         # Perform any clean up of connections on closing here
         logger.info("Exiting")

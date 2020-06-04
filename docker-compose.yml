@@ -562,8 +562,14 @@ services:
       - ./sram-sync:/opt/app
     environment:
       LOG_LEVEL: INFO
-      DRY_RUN: "false"
-    command: sram-sync.py
+      IRODS_HOST: irods.dh.local
+      IRODS_USER: rods
+      IRODS_PASS: irods
+      LDAP_USER: cn=admin,dc=datahubmaastricht,dc=nl
+      LDAP_PASS: admin
+      LDAP_HOST: ldap://ldap.dh.local
+      DEFAULT_USER_PASSWORD: foobar
+    command: sram-sync.py --commit --scheduled
     networks:
       default:
       common_default:
