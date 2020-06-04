@@ -1,12 +1,12 @@
 [
    { "groupId": "101",
-     "name":   "nanoscopy"
+     "name":   "nanoscopy-l"
    },
    { "groupId": "201",
-     "name":    "rit"
+     "name":    "rit-l"
    },
    { "groupId": "301",
-     "name":    "scannexus"
+     "name":    "UM-SCANNEXUS"
    },
    { "groupId": "401",
      "name":    "additional group"

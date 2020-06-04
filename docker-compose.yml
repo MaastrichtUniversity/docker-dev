@@ -560,6 +560,9 @@ services:
     build: sram-sync/
     volumes:
       - ./sram-sync:/opt/app
+    environment:
+      LOG_LEVEL: INFO
+      DRY_RUN: "false"
     command: sram-sync.py
     networks:
       default:

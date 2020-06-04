@@ -3,31 +3,31 @@
     "userName": "p.vanschayck@maastrichtuniversity.nl",
     "displayName": "Paul van Schayck",
     "email": "p.vanschayck@maastrichtuniversity.nl",
-    "memberOf": [ "rit", "nanoscopy" ]
+    "memberOf": [ "rit-l", "nanoscopy-l" ]
   },
   {
     "userName": "p70067297",
     "displayName": "Jan-Erek Thiede",
     "email": "j.thiede@maastrichtuniversity.nl",
-    "memberOf": [ "rit", "nanoscopy" ]
+    "memberOf": [ "rit-l", "nanoscopy-l" ]
   },
   {
     "userName": "m.coonen@maastrichtuniversity.nl",
     "displayName": "Maarten Coonen",
     "email": "m.coonen@maastrichtuniversity.nl",
-    "memberOf": [ "rit" ]
+    "memberOf": [ "rit-l" ]
   },
   {
     "userName": "d.theunissen@maastrichtuniversity.nl",
     "displayName": "Daniel Theunissen",
     "email": "d.theunissen@maastrichtuniversity.nl",
-    "memberOf": [ "rit" ]
+    "memberOf": [ "rit-l" ]
   },
   {
     "userName": "p.suppers@maastrichtuniversity.nl",
     "displayName": "Pascal Suppers",
     "email": "p.suppers@maastrichtuniversity.nl",
-    "memberOf": [ "rit" ]
+    "memberOf": [ "rit-l" ]
   },
   {
     "userName": "delnoy",
@@ -39,31 +39,31 @@
     "userName": "r.brecheisen@maastrichtuniversity.nl",
     "displayName": "Ralph Brecheisen",
     "email": "r.brecheisen@maastrichtuniversity.nl",
-    "memberOf": [ "rit" ]
+    "memberOf": [ "rit-l" ]
   },
   {
     "userName": "j.melius@maastrichtuniversity.nl",
     "displayName": "Jonathan Melius",
     "email": "j.melius@maastrichtuniversity.nl",
-    "memberOf": [ "rit" ]
+    "memberOf": [ "rit-l" ]
   },
   {
     "userName": "k.heinen@maastrichtuniversity.nl",
     "displayName": "Koert Heinen",
     "email": "k.heinen@maastrichtuniversity.nl",
-    "memberOf": [ "rit" ]
+    "memberOf": [ "rit-l" ]
   },
   {
     "userName": "s.nijhuis@maastrichtuniversity.nl",
     "displayName": "Nijhuis",
     "email": "s.niejhuis@maastrichtuniversity.nl",
-    "memberOf": [ "rit" ]
+    "memberOf": [ "rit-l" ]
   },
   {
     "userName": "rbg.ravelli@maastrichtuniversity.nl",
     "displayName": "Raimond Ravelli",
     "email": "rbg.ravelli@maastrichtuniversity.nl",
-    "memberOf": [ "nanoscopy" ]
+    "memberOf": [ "nanoscopy-l" ]
   },
   {
     "userName": "g.tria@maastrichtuniversity.nl",
@@ -87,7 +87,7 @@
     "userName": "rick.voncken@scannexus.nl",
     "displayName": "",
     "email": "rick.voncken@scannexus.nl",
-    "memberOf": [ "scannexus" ]
+    "memberOf": [ "UM-SCANNEXUS" ]
   },
   {
     "userName": "additional.user",
