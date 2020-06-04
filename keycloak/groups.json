@@ -1,20 +1,14 @@
 [
    { "groupId": "101",
-     "name":   "nanoscopy-l"
+     "name":    "DataHub"
    },
    { "groupId": "201",
-     "name":    "rit-l"
+     "name":    "M4I-Nanoscopy"
    },
    { "groupId": "301",
-     "name":    "UM-SCANNEXUS"
+     "name":    "M4I-Massspec"
    },
    { "groupId": "401",
-     "name":    "additional group"
-   },
-   { "groupId": "501",
-     "name":    "additional group 2"
-   },
-   { "groupId": "601",
-     "name":    "additional group 3"
+     "name":    "UM-SCANNEXUS"
    }
 ]

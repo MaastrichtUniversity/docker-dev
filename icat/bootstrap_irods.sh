@@ -60,17 +60,17 @@ done
 ## Groups
 nanoscopy="p.vanschayck g.tria rbg.ravelli"
 
-iadmin mkgroup nanoscopy-l
+iadmin mkgroup M4I-Nanoscopy
 for user in $nanoscopy; do
-    iadmin atg nanoscopy-l "${user}@${domain}"
+    iadmin atg M4I-Nanoscopy "${user}@${domain}"
 done
 
 rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy r.niesten r.brecheisen jonathan.melius k.heinen s.nijhuis"
 
-iadmin mkgroup rit-l
+iadmin mkgroup DataHub
 iadmin mkgroup DH-project-admins
 for user in $rit; do
-    iadmin atg rit-l "${user}@${domain}"
+    iadmin atg DataHub "${user}@${domain}"
     iadmin atg DH-project-admins "${user}@${domain}"
 done
 
@@ -125,7 +125,7 @@ imeta add -C /nlmumc/projects/P000000010 title "(MDL) Placeholder project"
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000010'" "*title='(MDL) Placeholder collection'"
 ichmod -r own "p.suppers@maastrichtuniversity.nl" /nlmumc/projects/P000000010
 ichmod -r write "service-mdl" /nlmumc/projects/P000000010
-ichmod -r read "rit-l" /nlmumc/projects/P000000010
+ichmod -r read "DataHub" /nlmumc/projects/P000000010
 # Add additional AVUs
 imeta add -C /nlmumc/projects/P000000010/C000000001 creator irods_bootstrap@docker.dev
 imeta add -C /nlmumc/projects/P000000010/C000000001 dcat:byteSize 0
@@ -144,7 +144,7 @@ imeta add -C /nlmumc/projects/P000000011 title "(HVC) Placeholder project"
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000011'" "*title='(HVC) Placeholder collection'"
 ichmod -r own "p.suppers@maastrichtuniversity.nl" /nlmumc/projects/P000000011
 ichmod -r write "service-mdl" /nlmumc/projects/P000000011
-ichmod -r read "rit-l" /nlmumc/projects/P000000011
+ichmod -r read "DataHub" /nlmumc/projects/P000000011
 # Add additional AVUs
 imeta add -C /nlmumc/projects/P000000011/C000000001 creator irods_bootstrap@docker.dev
 imeta add -C /nlmumc/projects/P000000011/C000000001 dcat:byteSize 0
