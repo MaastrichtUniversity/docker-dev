@@ -24,7 +24,6 @@ logging.basicConfig(level=logging.getLevelName(log_level), format='%(asctime)s %
 logger = logging.getLogger('root')
 
 # Options config
-# TODO: ALL globals in CAPITAL_CASE_WITH_UNDERSCORE
 DEFAULT_USER_PASSWORD = os.environ['DEFAULT_USER_PASSWORD']
 
 SYNC_USERS = True
@@ -376,7 +375,7 @@ def sync_ldap_groups_to_irods(ldap, irods, dry_run):
 
     irods_groups_query = irods.query(User).filter(User.type == 'rodsgroup')
     irods_group_names = [x[User.name] for x in irods_groups_query]
-    syncable_irods_groups = set(filter(lambda x: not x in UNSYNCED_GROUPS, irods_group_names))
+    syncable_irods_groups = set(filter(lambda x: x not in UNSYNCED_GROUPS, irods_group_names))
     logger.debug("iRods groups found: {} (allowed for synchronization: {})".format(len(irods_group_names),
                                                                                    len(syncable_irods_groups)))
 

@@ -17,39 +17,39 @@ def read_ldap_attribute(ldap_entry, key):
 
 ##########################################################
 
-def for_ldap_entries_do(l, base_dn, search_filter, retrieve_attributes, callback):
+def for_ldap_entries_do(c, base_dn, search_filter, retrieve_attributes, callback):
     return_array = []
     search_scope = ldap.SCOPE_SUBTREE
 
     # Perform the LDAP search
-    id = l.search(base_dn, search_scope, search_filter, retrieve_attributes)
+    id = c.search(base_dn, search_scope, search_filter, retrieve_attributes)
     # all = 1
     # If all is 0, search entries will be returned one at a time as they come in, via separate calls to result().
     # If all is 1, the search response will be returned in its entirety, i.e. after all entries and the final search
     # result have been received.
-    result_type, result = l.result(id, all=0)
+    result_type, result = c.result(id, all=0)
     while result:
         if result[0] and len(result[0]) == 2:
             entry = result[0][1]
             if entry:
                 function_result = callback(entry)
                 return_array.append(function_result)
-        result_type, result = l.result(id, all=0)
+        result_type, result = c.result(id, all=0)
     return return_array
 
 
 ##########################################################
 
-def get_ldap_connection(LDAP_HOST, LDAP_USER, LDAP_PASS):
+def get_ldap_connection(ldap_host, ldap_user, ldap_pass):
     max_tries = 5
     sleep_interval = 4
     for n in range(max_tries + 1):
         try:
             # Setup LDAP connection
-            l = ldap.initialize(LDAP_HOST)
-            l.protocol_version = ldap.VERSION3
-            l.simple_bind_s(LDAP_USER, LDAP_PASS)
-            return l
+            c = ldap.initialize(ldap_host)
+            c.protocol_version = ldap.VERSION3
+            c.simple_bind_s(ldap_user, ldap_pass)
+            return c
         except ldap.LDAPError as e:
             logger.error(str(e))
             logger.info("retry {0} / {1}".format(n, max_tries))
