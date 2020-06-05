@@ -36,17 +36,17 @@ def set_singular_avu(irods_user, avu_key, avu_value):
 
 ##########################################################
 
-def get_irods_connection(IRODS_HOST, IRODS_PORT, IRODS_USER, IRODS_PASS, IRODS_ZONE):
-    MAX_TRIES = 5
-    SLEEP_INTERVAL = 4
-    for n in range(MAX_TRIES + 1):
+def get_irods_connection(irods_host, irods_port, irods_user, irods_pass, irods_zone):
+    max_tries = 5
+    sleep_interval = 4
+    for n in range(max_tries + 1):
         try:
             # Setup iRODS connection
-            sess = iRODSSession(host=IRODS_HOST, port=IRODS_PORT, user=IRODS_USER, password=IRODS_PASS, zone=IRODS_ZONE)
+            sess = iRODSSession(host=irods_host, port=irods_port, user=irods_user, password=irods_pass, zone=irods_zone)
             return sess
         except NetworkException as e:
             logger.error(str(e))
-            logger.info("retry {0} / {1}".format(n, MAX_TRIES))
-            time.sleep(SLEEP_INTERVAL)
-        if n >= MAX_TRIES:
+            logger.info("retry {0} / {1}".format(n, max_tries))
+            time.sleep(sleep_interval)
+        if n >= max_tries:
             raise Exception("couldn't connect to iRods")
