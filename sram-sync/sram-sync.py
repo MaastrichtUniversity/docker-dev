@@ -47,7 +47,6 @@ UNSYNCED_GROUPS = "rodsadmin,DH-ingest,public,DH-project-admins".split(',')
 # LDAP config
 LDAP_USER = os.environ['LDAP_USER']
 LDAP_PASS = os.environ['LDAP_PASS']
-#LDAPgroup = Config.get('LDAP', 'LDAPgroup')
 LDAP_HOST = os.environ['LDAP_HOST']
 
 LDAP_GROUP = "Users"
@@ -59,7 +58,6 @@ IRODS_HOST = os.environ['IRODS_HOST']
 IRODS_USER = os.environ['IRODS_USER']
 IRODS_PASS = os.environ['IRODS_PASS']
 
-#IRODS_GROUP = Config.get('iRODS', 'group')
 IRODS_PORT = 1247
 IRODS_ZONE = "nlmumc"
 
