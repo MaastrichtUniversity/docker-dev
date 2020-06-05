@@ -31,7 +31,7 @@ DELETE_USERS = True
 SYNC_GROUPS = True
 DELETE_GROUPS = True
 
-# TODO: instead of blacklists we should use an AVY on groups/users indicating weather it should be synced or not
+# TO DO: instead of blacklists we should use an AVY on groups/users indicating weather it should be synced or not
 UNSYNCED_USERS = "service-pid,service-mdl,service-disqover,service-dropzones,service-surfarchive,DH-project-admins".split(
     ',')
 UNSYNCED_GROUPS = "rodsadmin,DH-ingest,public,DH-project-admins".split(',')
@@ -97,12 +97,12 @@ class LdapUser:
                                                                                  self.email, self.irods_user)
 
     @classmethod
-    def create_for_ldap_entry(self, ldap_entry):
+    def create_for_ldap_entry(cls, ldap_entry):
         uid = read_ldap_attribute(ldap_entry, 'uid')
         mail = read_ldap_attribute(ldap_entry, 'mail')
         cn = read_ldap_attribute(ldap_entry, 'cn')
-        display_name = read_ldap_attribute(ldap_entry, 'displayName')
-        # TODO: here we could decided weather to use the cn or uid as displayName...
+        #display_name = read_ldap_attribute(ldap_entry, 'displayName')
+        # TO DO: here we could decided weather to use the cn or uid as displayName...
         return LdapUser(uid, cn, mail)
 
     # simply write the model user to irods,
@@ -118,7 +118,7 @@ class LdapUser:
         irods_session.users.modify(self.uid, 'password', password)
         self.irods_user = new_irods_user
 
-        # TODO: is this the correct place? Any other must have groups that I'm missing?
+        # TO DO: is this the correct place? Any other must have groups that I'm missing?
         # Add the user to the group DH-ingest (= ensures that user is able to create and ingest dropzones)
         add_user_to_group(irods_session, "DH-ingest", self.uid)
 
@@ -157,8 +157,7 @@ class LdapUser:
                 logger.debug("User: " + self.uid + " created")
                 if created:
                     created()
-            # TODO: This should not catch all exceptions. Be specific!
-            except Exception as e:
+            except PycommandsException as e:
                 logger.error("User creation error: " + str(e))
                 if failed:
                     failed()
@@ -167,8 +166,9 @@ class LdapUser:
                 if not dry_run:
                     self.irods_user = self.update_existing_user(irods_session, dry_run)
                 logger.debug("User: " + self.uid + " updated")
-            # TODO: This should not catch all exceptions. Be specific!
-            except Exception as e:
+                if updated:
+                    updated()
+            except PycommandsException as e:
                 logger.error("User update error: " + str(e))
                 if failed:
                     failed()
@@ -202,7 +202,7 @@ class LdapGroup:
         # DNs: [ b'cn=empty-membership-placeholder',  b'uid=p.vanschayck@maastrichtuniversity.nl,ou=users,dc=datahubmaastricht,dc=nl', ...]
         group_member_dns = ldap_entry.get('member', [b""])
         group_member_uids = list(
-            filter(lambda x: not x == None, map(LdapGroup.get_group_member_uids, group_member_dns)))
+            filter(lambda x: x is not None, map(LdapGroup.get_group_member_uids, group_member_dns)))
         return LdapGroup(group_name, group_member_uids)
 
     def write_to_irods(self, sess, dry_run, created, updated, failed):
@@ -220,14 +220,13 @@ class LdapGroup:
                     logger.info("Group %s created" % self.group_name)
                     if created:
                         created()
-            # TODO: This should not catch all exceptions!
-            except:
-                logger.error("Group %s Creation error" % self.group_name)
+            except PycommandsException as e:
+                logger.error("Group {} Creation error: {}".format( self.group_name, str(e) ) )
                 if failed:
                     failed()
         else:
             logger.info("Group %s already exists" % self.group_name)
-            # TODO: is there a difference between Group-ID and Group-DisplayName? If so, set an AVU here!
+            # TO DO: is there a difference between Group-ID and Group-DisplayName? If so, set an AVU here!
             if updated:
                 updated()
 
@@ -260,8 +259,8 @@ def syncable_irods_users(sess, unsynced_users):
 ##########################################################
 # get all the relevant attributes of all users in LDAP, returns an array with dictionaries
 def get_users_from_ldap(l):
-    searchFilter = "(objectClass=*)"
-    return for_ldap_entries_do(l, LDAP_USER_BASE_DN, searchFilter, LdapUser.LDAP_ATTRIBUTES,
+    search_filter = "(objectClass=*)"
+    return for_ldap_entries_do(l, LDAP_USER_BASE_DN, search_filter, LdapUser.LDAP_ATTRIBUTES,
                                LdapUser.create_for_ldap_entry)
 
 
@@ -276,8 +275,7 @@ def remove_obsolete_irods_users(sess, ldap_users, irods_users):
     for uid in deletion_candidates:
         user = sess.users.get(uid)
         logger.debug("deleting user: {}".format(uid))
-        if not dry_run:
-            user.remove()
+        user.remove()
 
 
 ##########################################################
@@ -343,12 +341,11 @@ def get_ldap_groups(l):
 def add_user_to_group(sess, group_name, user_name):
     irods_group = sess.user_groups.get(group_name)
     try:
-        if not dry_run:
-            irods_group.addmember(user_name)
-            logger.debug("User: " + user_name + " added to group " + group_name)
+        irods_group.addmember(user_name)
+        logger.debug("User: " + user_name + " added to group " + group_name)
     except CATALOG_ALREADY_HAS_ITEM_BY_THAT_NAME:
         logger.debug("User {} already in group {} ".format(user_name, group_name))
-    except Exception as e:
+    except PycommandsException as e:
         logger.info("could not add user {} to group {}. '{}'".format(user_name, group_name, e))
 
 
@@ -356,22 +353,20 @@ def add_user_to_group(sess, group_name, user_name):
 def remove_user_from_group(sess, group_name, user_name):
     irods_group = sess.user_groups.get(group_name)
     try:
-        if not dry_run:
-            irods_group.removemember(user_name)
-            logger.debug("User: " + user_name + " removed from group " + group_name)
-    # TODO: This should not catch all exceptions!
-    except Exception as e:
+        irods_group.removemember(user_name)
+        logger.debug("User: " + user_name + " removed from group " + group_name)
+    # TO DO: This should not catch all exceptions!
+    except PycommandsException as e:
         logger.info("could not remove user {} from group {}. '{}'".format(user_name, group_name, e))
 
 
 ##########################################################
 
-# TO DO: change to.format()
 def sync_ldap_groups_to_irods(ldap, irods, dry_run):
     logger.info("Syncing groups to irods:")
 
     group_name_2_group = get_ldap_groups(ldap)
-    logger.debug("LDAP groups found: %d" % len(group_name_2_group))
+    logger.debug("LDAP groups found: {}".format( len(group_name_2_group) ) )
 
     irods_groups_query = irods.query(User).filter(User.type == 'rodsgroup')
     irods_group_names = [x[User.name] for x in irods_groups_query]
@@ -407,12 +402,12 @@ def diff_member_lists(ldap_members, irods_members):
 
 
 ##########################################################
-def sync_group_memberships(ldap, irods, ldap_groups, dry_run):
+def sync_group_memberships(irods, ldap_groups, dry_run):
     logger.info("Syncing group members to irods:")
 
     # create a mapping of irods group names to the member uids
     irods_groups_2_users = dict()
-    for result in irods.query(UserGroup, LdapUser):
+    for result in irods.query(UserGroup, User):
         irods_group = iRODSUserGroup(irods.user_groups, result)
         irods_user = iRODSUser(irods.users, result)
         if irods_group.id == irods_user.id:
@@ -453,16 +448,15 @@ def main(dry_run):
     ldap = get_ldap_connection(LDAP_HOST, LDAP_USER, LDAP_PASS)
     irods = get_irods_connection(IRODS_HOST, IRODS_PORT, IRODS_USER, IRODS_PASS, IRODS_ZONE)
 
-    ldap_users = None
     ldap_groups = None
     if SYNC_USERS:
-        ldap_users = sync_ldap_users_to_irods(ldap, irods, dry_run)
+        sync_ldap_users_to_irods(ldap, irods, dry_run)
 
     if SYNC_GROUPS:
         ldap_groups = sync_ldap_groups_to_irods(ldap, irods, dry_run)
 
     if SYNC_USERS and SYNC_GROUPS:
-        sync_group_memberships(ldap, irods, ldap_groups, dry_run)
+        sync_group_memberships(irods, ldap_groups, dry_run)
 
     end_time = datetime.now()
     logger.info("SRAM-SYNC finished at: {} (took {} sec)".format(end_time, (end_time - start_time).total_seconds()))
@@ -486,7 +480,7 @@ if __name__ == "__main__":
         exit_code = main(not settings.commit)
         if settings.scheduled:
             while True:
-                main(not settings.commi)
+                main(not settings.commit)
                 time.sleep(5 * 60)
         sys.exit(exit_code)
     finally:
