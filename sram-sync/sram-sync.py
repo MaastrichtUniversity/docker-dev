@@ -10,7 +10,7 @@ from datetime import datetime
 from enum import Enum
 
 from irods.column import Criterion
-from irods.exception import iRODSException, UserDoesNotExist, UserGroupDoesNotExist, \
+from irods.exception import PycommandsException, iRODSException, UserDoesNotExist, UserGroupDoesNotExist, \
     CATALOG_ALREADY_HAS_ITEM_BY_THAT_NAME
 from irods.models import User, UserGroup
 from irods.user import iRODSUser, iRODSUserGroup
@@ -160,7 +160,7 @@ class LdapUser:
                 logger.info("User: " + self.uid + " created")
                 if created:
                     created()
-            except PycommandsException as e:
+            except (PycommandsException, PycommandsException) as e:
                 logger.error("User creation error: " + str(e))
                 if failed:
                     failed()
@@ -171,7 +171,7 @@ class LdapUser:
                 logger.debug("User: " + self.uid + " updated")
                 if updated:
                     updated()
-            except PycommandsException as e:
+            except (PycommandsException, iRODSException ) as e:
                 logger.error("User update error: " + str(e))
                 if failed:
                     failed()
@@ -226,7 +226,7 @@ class LdapGroup:
                     logger.info("Group %s created" % self.group_name)
                     if created:
                         created()
-            except PycommandsException as e:
+            except (PycommandsException, iRODSException ) as e:
                 logger.error("Group {} Creation error: {}".format( self.group_name, str(e) ) )
                 if failed:
                     failed()
@@ -351,7 +351,7 @@ def add_user_to_group(sess, group_name, user_name):
         logger.info("User: " + user_name + " added to group " + group_name)
     except CATALOG_ALREADY_HAS_ITEM_BY_THAT_NAME:
         logger.info("User {} already in group {} ".format(user_name, group_name))
-    except PycommandsException as e:
+    except (PycommandsException, iRODSException ) as e:
         logger.error("could not add user {} to group {}. '{}'".format(user_name, group_name, e))
 
 
@@ -362,7 +362,7 @@ def remove_user_from_group(sess, group_name, user_name):
         irods_group.removemember(user_name)
         logger.info("User: " + user_name + " removed from group " + group_name)
     # TO DO: This should not catch all exceptions!
-    except PycommandsException as e:
+    except (PycommandsException, iRODSException ) as e:
         logger.error("could not remove user {} from group {}. '{}'".format(user_name, group_name, e))
 
 
