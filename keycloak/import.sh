@@ -54,7 +54,7 @@ groupsJSON=$(cat /tmp/groups.json | jq -c '.')
 
 echo $groupsJSON | jq  -r -c '.[]'  | while read groupJSON; do
   groupName=$(echo $groupJSON | jq -r -c '.name' )
-  echo "groupId: $groupID Name: $groupName members: -"
+  echo "groupName: $groupName"
   #for starters dont try to sync anything just create new groups if this group doesnt exist yet
   if (/opt/jboss/keycloak/bin/kcadm.sh get groups -r drupal | jq -c -r ".[] " | grep -q "rit" );
   then
