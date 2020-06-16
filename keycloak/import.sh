@@ -35,37 +35,84 @@ echo "Set the correct DEV envonment"
 # Set the correct DEV envonment
 sed 's/RIT_ENV/'"$RIT_ENV"'/g' /tmp/realm-export.json > /tmp/realm-export_env.json
 
+echo "Set the correct ldap admin password envonment"
+# Set the correct ldap admin password envonment
+sed 's/\*\*\*\*\*\*\*\*\*\*/'"$LDAP_ADMIN_PASSWORD"'/g'  /tmp/realm-export_env.json >  /tmp/realm-export_env_pw.json
+
+
 # If drupal realm does not yet exist load it from config
 if ! $(/opt/jboss/keycloak/bin/kcadm.sh get realms | grep -q "drupal");
 then
   echo "Import Drupal realm"
-  /opt/jboss/keycloak/bin/kcadm.sh create realms -f /tmp/realm-export_env.json
+  /opt/jboss/keycloak/bin/kcadm.sh create realms -f /tmp/realm-export_env_pw.json
 fi
 
-#Create Users
-echo "Create Users"
-# Maastrichtuniversity
-rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy r.niesten r.brecheisen jonathan.melius k.heinen s.nijhuis"
+# Create Groups
+echo "Create Groups"
 
-for user in $rit; do
-  # Check if user already exists, if not create user and set password
-  if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username="${user}"  | grep -q "id");
+groupsJSON=$(cat /tmp/groups.json | jq -c '.')
+
+echo $groupsJSON | jq  -r -c '.[]'  | while read groupJSON; do
+  groupName=$(echo $groupJSON | jq -r -c '.name' )
+  echo "groupName: $groupName"
+  #for starters dont try to sync anything just create new groups if this group doesnt exist yet
+  if (/opt/jboss/keycloak/bin/kcadm.sh get groups -r drupal | jq -c -r ".[] " | grep -q "rit" );
   then
-    /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username="${user}" -s enabled=true -s email="${user}"@maastrichtuniversity.nl
-    /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username "${user}" --new-password 'foobar'
+     echo "GroupName ${groupName} already found in keycloak..."
+  else
+     /opt/jboss/keycloak/bin/kcadm.sh create groups -r drupal -b "{ \"name\": \"${groupName}\" }"
   fi
 done
 
-# Scannexus
-scannexus="rick.voncken"
+echo "Groups Created"
 
-for user in $scannexus; do
+
+# Create Users
+echo "Create Users"
+
+usersJSON=$(cat /tmp/users.json | jq -c '.')
+
+echo $usersJSON | jq  -r -c '.[]'  | while read userJSON; do
+  userID=$(echo $userJSON | jq -r -c '.userName' )
+  displayName=$(echo $userJSON | jq -r -c '.displayName' )
+  userEmail=$(echo $userJSON | jq -r -c '.email' )
+  groupsMemberOf=$(echo $userJSON | jq -r -c '.memberOf' )
+  echo "userName/id: $userID displayName: $displayName email: $userEmail"
   # Check if user already exists, if not create user and set password
-  if ! $(/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username="${user}"  | grep -q "id");
+  if (/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username="${userID}" | grep -q "id");
   then
-    /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username="${user}" -s enabled=true -s email="${user}"@scannexus.nl
-    /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username "${user}" --new-password 'foobar'
+    echo "user ${userID} already found in keycloak..."
+  else
+    keycloakUserID=$( /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username="${userID}" -s enabled=true -s email="${userEmail}" -s "attributes.displayName=${displayName}" -i )
+    echo "created new user ${userID} with keycloakId: ${keycloakUserID}"
+    #echo "setting now password... (for: ${userID})"
+    /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username ${userID} --new-password 'foobar'
+    #echo "done."
+
+    #go through the list of group memberships and add the user to the correct group
+    echo "$groupsMemberOf"
+    echo $groupsMemberOf | jq -r -c '.[]' | while read groupName; do
+       keycloakGroupID=$( /opt/jboss/keycloak/bin/kcadm.sh get groups -r drupal | jq -c -r ".[] " | grep "${groupName}" | jq -c -r ".id" )
+       if [ -z $keycloakGroupID ]
+       then
+           echo "cant add user ${keycloakUserID} to ${groupName}, could not find group  in keycloak!"
+       else
+          echo "adding user ${keycloakUserID} to ${groupName} ($keycloakGroupID)"
+          #https://www.keycloak.org/docs/latest/server_admin/#_group_operations
+          /opt/jboss/keycloak/bin/kcadm.sh update users/${keycloakUserID}/groups/${keycloakGroupID} -r drupal
+       fi 
+    done
   fi
+
 done
 
 echo "Users Created"
+
+
+# Trigger full sync of the ldap
+# TODO: Is this needed?
+echo "Full Sync LDAP"
+/opt/jboss/keycloak/bin/kcadm.sh create user-storage/10d55377-d139-4865-bd3e-1375ea079925/sync?action=triggerFullSync -r drupal
+
+echo "Done syncing LDAP"
+

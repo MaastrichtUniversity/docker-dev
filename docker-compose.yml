@@ -79,12 +79,17 @@ services:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
       RIT_ENV: ${RIT_ENV}
+      LDAP_ADMIN_PASSWORD: "admin"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./keycloak/realm-export.json:/tmp/realm-export.json
+      - ./keycloak/users.json:/tmp/users.json
+      - ./keycloak/groups.json:/tmp/groups.json
       - ./keycloak/import.sh:/tmp/import.sh
       - ./keycloak/startup.sh:/opt/jboss/startup-scripts/startup.sh
       - ./keycloak/datahub-keycloak-theme:/opt/jboss/keycloak/themes/datahub
+    depends_on:
+      - ldap
     networks:
       default:
         aliases:
@@ -92,6 +97,24 @@ services:
       common_default:
         aliases:
           - keycloak.dh.local
+  ldap:
+    image: osixia/openldap:1.3.0
+    hostname: ldap
+    environment:
+      LDAP_ORGANISATION: "DataHub Maastricht"
+      LDAP_DOMAIN: "datahubmaastricht.nl"
+      LDAP_BASE_DN: ""
+      LDAP_ADMIN_PASSWORD: "admin"
+    command: [--copy-service]
+    ports:
+      - "389:389"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./ldap/ldif_custom:/container/service/slapd/assets/config/bootstrap/ldif/custom/
+    networks:
+      default:
+        aliases:
+          - ldap.dh.local
   irods:
     build:
       context: icat/
@@ -128,6 +151,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
+
   ires:
     build:
       context: ires/
@@ -532,6 +556,24 @@ services:
       common_default:
         aliases:
           - open-access-worker.dh.local
+  sram-sync:
+    build: sram-sync/
+    volumes:
+      - ./sram-sync:/opt/app
+    environment:
+      LOG_LEVEL: INFO
+      IRODS_HOST: irods.dh.local
+      IRODS_USER: rods
+      IRODS_PASS: irods
+      LDAP_USER: cn=admin,dc=datahubmaastricht,dc=nl
+      LDAP_PASS: admin
+      LDAP_HOST: ldap://ldap.dh.local
+      DEFAULT_USER_PASSWORD: foobar
+    command: sram-sync.py --commit --scheduled
+    networks:
+      default:
+      common_default:
+
 networks:
   common_default:
     external: true
