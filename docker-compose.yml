@@ -105,6 +105,7 @@ services:
       LDAP_DOMAIN: "datahubmaastricht.nl"
       LDAP_BASE_DN: ""
       LDAP_ADMIN_PASSWORD: "admin"
+      LOGSTASH_TAGS: LDAP
     command: [--copy-service]
     ports:
       - "389:389"
@@ -559,6 +560,7 @@ services:
   sram-sync:
     build: sram-sync/
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - ./sram-sync:/opt/app
     environment:
       LOG_LEVEL: INFO
@@ -569,6 +571,7 @@ services:
       LDAP_PASS: admin
       LDAP_HOST: ldap://ldap.dh.local
       DEFAULT_USER_PASSWORD: foobar
+      LOGSTASH_TAGS: SRAMSYNC
     command: sram-sync.py --commit --scheduled
     networks:
       default:
