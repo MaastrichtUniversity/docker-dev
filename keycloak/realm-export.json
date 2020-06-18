@@ -509,7 +509,7 @@
           "attributes": {}
         }
       ],
-      "http://pacman.local.rit.unimaas.nl/simplesaml/module.php/saml/sp/metadata.php/default-sp": [],
+      "http://pacman.RIT_ENV.rit.unimaas.nl/simplesaml/module.php/saml/sp/metadata.php/default-sp": [],
       "account": [
         {
           "id": "ae14b3e5-e2e8-4fa6-9dbe-ddf23dae45d3",
@@ -577,18 +577,18 @@
   "clients": [
     {
       "id": "b45a029c-cb99-4e5d-a60b-adfb8353ec4e",
-      "clientId": "http://pacman.local.rit.unimaas.nl/simplesaml/module.php/saml/sp/metadata.php/default-sp",
+      "clientId": "http://pacman.RIT_ENV.rit.unimaas.nl/simplesaml/module.php/saml/sp/metadata.php/default-sp",
       "surrogateAuthRequired": false,
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
       "redirectUris": [
-        "http://pacman.local.rit.unimaas.nl/*",
-        "http://pacman.local.rit.unimaas.nl/simplesaml/module.php/saml/sp/saml2-acs.php/default-sp",
-        "http://pacman.local.rit.unimaas.nl/user/logout"
+        "http://pacman.RIT_ENV.rit.unimaas.nl/*",
+        "http://pacman.RIT_ENV.rit.unimaas.nl/simplesaml/module.php/saml/sp/saml2-acs.php/default-sp",
+        "http://pacman.RIT_ENV.rit.unimaas.nl/user/logout"
       ],
       "webOrigins": [
-        "http://pacman.local.rit.unimaas.nl"
+        "http://pacman.RIT_ENV.rit.unimaas.nl"
       ],
       "notBefore": 0,
       "bearerOnly": false,
@@ -606,12 +606,12 @@
         "saml.multivalued.roles": "false",
         "saml_single_logout_service_url_post": "",
         "saml.encrypt": "true",
-        "saml_assertion_consumer_url_post": "http://pacman.local.rit.unimaas.nl/simplesaml/module.php/saml/sp/saml2-acs.php/default-sp",
+        "saml_assertion_consumer_url_post": "http://pacman.RIT_ENV.rit.unimaas.nl/simplesaml/module.php/saml/sp/saml2-acs.php/default-sp",
         "saml.server.signature": "false",
         "saml.server.signature.keyinfo.ext": "false",
         "exclude.session.state.from.auth.response": "false",
         "saml.signing.certificate": "MIIDgTCCAmmgAwIBAgIJAMOp+ir6y0YKMA0GCSqGSIb3DQEBCwUAMFcxCzAJBgNVBAYTAk5MMRAwDgYDVQQIDAdMaW1idXJnMRMwEQYDVQQHDApNYWFzdHJpY2h0MSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQwHhcNMTkwNDE2MTE0NzI5WhcNMjkwNDE1MTE0NzI5WjBXMQswCQYDVQQGEwJOTDEQMA4GA1UECAwHTGltYnVyZzETMBEGA1UEBwwKTWFhc3RyaWNodDEhMB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzj6g6Nj/BMILXoCODAugZjfAuBGWY3agoxw9HjLcfXLmCU9Ckuk6NIMUXnVDdFFTevPPA/3s8kIgH5hWETOq6Z1+7n8glMYQPlxflNQYMWZxSixmXVQ5QL7qWX6HSOcJpIg7HoRQzLogcpv/cmoZqrAldhThUv/5BGCdo7BrePh1bgI5HvY5V03H9tT4lJ7hjZkVjCCHryldIT8gEL+uPSxtZiC2D1SlNf01n51wANGmRA3lXasI+1ws6iGi8uFLWn1eQl5D7nbI2PTQ6v2/LDRVyp09ImyiD4w2+6CgE5AbHNC5i60NjQnhLqXXi0cqsu4bjJ4TfIT4ndlib3clRQIDAQABo1AwTjAdBgNVHQ4EFgQUNnx+BD5VAUmrMl7tSDtPno3GiR8wHwYDVR0jBBgwFoAUNnx+BD5VAUmrMl7tSDtPno3GiR8wDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAexLtahr1BO0Xgrc1FDA+76w6tE8Dww4iLc7uv3TEqsVqWn2BhBMKYf3JqRirSjguuD+E/R0m86rWLEuA2bAgY9GiL7F2rMAFJxkrd+IgRMqmogYDD5KNsrHmTDbZFrgupkh29Y5YixPIj/VT0Sz5DC8trWLRxA9p5U6p3NDfULMNu+iT46jjKc3VnDAmesVauYV9rmf4oecLFR9vOj0lIUQw8JmF/nG8wDRP1dO7Ngt8FNkG4sKcb+t19QJ5QrQYg4keIORd0JtknkAXU77giJVR45RpYhM9Ohm9B+v9+nGeuNHkLCKjtPHpkw6RG1F9034yqlrGY60Igaco4ZezTA==",
-        "saml_single_logout_service_url_redirect": "http://pacman.local.rit.unimaas.nl/simplesaml/module.php/saml/sp/saml2-logout.php/default-sp",
+        "saml_single_logout_service_url_redirect": "http://pacman.RIT_ENV.rit.unimaas.nl/simplesaml/module.php/saml/sp/saml2-logout.php/default-sp",
         "saml.signature.algorithm": "RSA_SHA256",
         "saml_force_name_id_format": "false",
         "saml.client.signature": "false",
