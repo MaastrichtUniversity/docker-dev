@@ -1,0 +1,14 @@
+[
+   { "groupId": "101",
+     "name":    "DataHub"
+   },
+   { "groupId": "201",
+     "name":    "M4I-Nanoscopy"
+   },
+   { "groupId": "301",
+     "name":    "M4I-Massspec"
+   },
+   { "groupId": "401",
+     "name":    "UM-SCANNEXUS"
+   }
+]

@@ -45,6 +45,9 @@ services:
       IRODS_WEBDAV_ENV_VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
       IRODS_HOST: irods.dh.local
       IRODS_ENV_RODS_PASSWORD: irods
+      IRODS_SURFARCHIVE_RESOURCE_NAME: arcRescSURF01
+      IRODS_SURFARCHIVE_ADMIN_USER: service-surfarchive
+      IRODS_SURFARCHIVE_ADMIN_PASSWORD: foobar
       CROSSREF_LOOKUP_HOST: crossref-lookup.dh.local
       VIRTUAL_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
       OLS_URL: http://ols.tst.rit.unimaas.nl
@@ -56,6 +59,13 @@ services:
       DRUPAL_BASE_URL: http://pacman.{RIT_ENV}.rit.unimaas.nl
       SIMPLESAMLPHP_PASSWORD: password
       SIMPLESAMLPHP_SALT: 04ewyapckg6lj4wn7emchwu8kojtjaoh
+      DATAVERSE_ENDPOINT: https://demo.dataverse.nl/
+      DATAVERSE_TREE_ROOT_ID: maastricht
+      DATAVERSE_TREE_TITLE_FILTER: "TEST_Datahub-iRods_MUMC_Dataverse,TEST_Datahub-iRods_Dataverse,DataHub,Maastricht UMC+"
+      RABBITMQ_HOST: rabbitmq.dh.local
+      RABBITMQ_USER: user
+      RABBITMQ_PASS: password
+      RABBITMQ_PORT: 5672
     networks:
       default:
         aliases:
@@ -72,12 +82,17 @@ services:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
       RIT_ENV: ${RIT_ENV}
+      LDAP_ADMIN_PASSWORD: "admin"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./keycloak/realm-export.json:/tmp/realm-export.json
+      - ./keycloak/users.json:/tmp/users.json
+      - ./keycloak/groups.json:/tmp/groups.json
       - ./keycloak/import.sh:/tmp/import.sh
       - ./keycloak/startup.sh:/opt/jboss/startup-scripts/startup.sh
       - ./keycloak/datahub-keycloak-theme:/opt/jboss/keycloak/themes/datahub
+    depends_on:
+      - ldap
     networks:
       default:
         aliases:
@@ -85,6 +100,24 @@ services:
       common_default:
         aliases:
           - keycloak.dh.local
+  ldap:
+    image: osixia/openldap:1.3.0
+    hostname: ldap
+    environment:
+      LDAP_ORGANISATION: "DataHub Maastricht"
+      LDAP_DOMAIN: "datahubmaastricht.nl"
+      LDAP_BASE_DN: ""
+      LDAP_ADMIN_PASSWORD: "admin"
+    command: [--copy-service]
+    ports:
+      - "389:389"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./ldap/ldif_custom:/container/service/slapd/assets/config/bootstrap/ldif/custom/
+    networks:
+      default:
+        aliases:
+          - ldap.dh.local
   irods:
     build:
       context: icat/
@@ -121,6 +154,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
+
   ires:
     build:
       context: ires/
@@ -496,6 +530,52 @@ services:
       common_default:
         aliases:
           - minio2.dh.local
+  open-access-worker:
+    build: externals/irods-open-access-repo/docker
+#    depends_on:
+#      - irods
+    env_file:
+      - irods.secrets.cfg # Using ONLY DATAVERSE_TOKEN
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: user
+      RABBITMQ_PASS: password
+      IRODS_HOST: irods.dh.local
+      IRODS_USER: rods
+      IRODS_PASS: irods
+      DATAVERSE_HOST: https://demo.dataverse.nl
+      DH_MAILER_HOST: mailer.dh.local
+      DH_MAILER_USERNAME: user
+      DH_MAILER_PASSWORD: password
+      LOG_LEVEL: INFO
+      LOGSTASH_TAGS: OPEN_ACCESS_WORKER
+    volumes:
+      - ./externals/irods-open-access-repo/etl:/opt/app
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      default:
+        aliases:
+          - open-access-worker.dh.local
+      common_default:
+        aliases:
+          - open-access-worker.dh.local
+  sram-sync:
+    build: sram-sync/
+    volumes:
+      - ./sram-sync:/opt/app
+    environment:
+      LOG_LEVEL: INFO
+      IRODS_HOST: irods.dh.local
+      IRODS_USER: rods
+      IRODS_PASS: irods
+      LDAP_USER: cn=admin,dc=datahubmaastricht,dc=nl
+      LDAP_PASS: admin
+      LDAP_HOST: ldap://ldap.dh.local
+      DEFAULT_USER_PASSWORD: foobar
+    command: sram-sync.py --commit --scheduled
+    networks:
+      default:
+      common_default:
 
 networks:
   common_default:

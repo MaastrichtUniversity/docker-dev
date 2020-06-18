@@ -83,6 +83,11 @@ ADD ./bootstrap.sh /opt/irods/bootstrap.sh
 ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
 ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
+
+# Add DMFS fakers (SURFsara tape)
+ADD ./DMFS/* /var/lib/irods/msiExecCmd_bin/
+RUN chmod 755 /var/lib/irods/msiExecCmd_bin/dm*
+
 RUN chmod a+x /opt/irods/*
 
 EXPOSE 1248 1247 8000
