@@ -45,9 +45,6 @@ services:
       IRODS_WEBDAV_ENV_VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
       IRODS_HOST: irods.dh.local
       IRODS_ENV_RODS_PASSWORD: irods
-      IRODS_SURFARCHIVE_RESOURCE_NAME: arcRescSURF01
-      IRODS_SURFARCHIVE_ADMIN_USER: service-surfarchive
-      IRODS_SURFARCHIVE_ADMIN_PASSWORD: foobar
       CROSSREF_LOOKUP_HOST: crossref-lookup.dh.local
       VIRTUAL_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
       OLS_URL: http://ols.tst.rit.unimaas.nl
