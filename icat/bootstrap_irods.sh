@@ -118,6 +118,7 @@ imeta add -C /nlmumc/projects/P000000010 authorizationPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000010 dataRetentionPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000010 ingestResource ${HOSTNAME}Resource
 imeta add -C /nlmumc/projects/P000000010 OBI:0000103 p.suppers@maastrichtuniversity.nl
+imeta add -C /nlmumc/projects/P000000010 dataSteward p.vanschayck@maastrichtuniversity.nl
 imeta add -C /nlmumc/projects/P000000010 resource replRescAZM01
 imeta add -C /nlmumc/projects/P000000010 responsibleCostCenter AZM-123456
 imeta add -C /nlmumc/projects/P000000010 storageQuotaGb 10
@@ -137,6 +138,7 @@ imeta add -C /nlmumc/projects/P000000011 authorizationPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000011 dataRetentionPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000011 ingestResource ${HOSTNAME}Resource
 imeta add -C /nlmumc/projects/P000000011 OBI:0000103 p.suppers@maastrichtuniversity.nl
+imeta add -C /nlmumc/projects/P000000011 dataSteward p.vanschayck@maastrichtuniversity.nl
 imeta add -C /nlmumc/projects/P000000011 resource replRescAZM01
 imeta add -C /nlmumc/projects/P000000011 responsibleCostCenter AZM-123456
 imeta add -C /nlmumc/projects/P000000011 storageQuotaGb 10
