@@ -149,3 +149,7 @@ ichmod -r read "DataHub" /nlmumc/projects/P000000011
 imeta add -C /nlmumc/projects/P000000011/C000000001 creator irods_bootstrap@docker.dev
 imeta add -C /nlmumc/projects/P000000011/C000000001 dcat:byteSize 0
 imeta add -C /nlmumc/projects/P000000011/C000000001 numFiles 0
+
+# Add data-steward
+imeta add -u p.vanschayck@maastrichtuniversity.nl specialty data-steward
+imeta add -u p70067297 specialty data-steward
