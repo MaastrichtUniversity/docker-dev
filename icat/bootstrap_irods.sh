@@ -26,7 +26,7 @@ imkdir -p /nlmumc/projects
 
 ########
 ## Users
-users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy r.niesten r.brecheisen jonathan.melius k.heinen s.nijhuis"
+users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy r.niesten r.brecheisen jonathan.melius k.heinen s.nijhuis o.palmen"
 domain="maastrichtuniversity.nl"
 
 for user in $users; do
@@ -151,5 +151,7 @@ imeta add -C /nlmumc/projects/P000000011/C000000001 dcat:byteSize 0
 imeta add -C /nlmumc/projects/P000000011/C000000001 numFiles 0
 
 # Add data-steward
-imeta add -u p.vanschayck@maastrichtuniversity.nl specialty data-steward
-imeta add -u p70067297 specialty data-steward
+imeta add -u "p.vanschayck@maastrichtuniversity.nl" "specialty" "data-steward"
+#imeta add -u "p70067297"  "specialty" "data-steward"
+imeta add -u "o.palmen@maastrichtuniversity.nl"  "specialty" "data-steward"
+
