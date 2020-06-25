@@ -39,6 +39,9 @@ for i in {01..2}; do
     # Manage access
     ichmod -r own "p.suppers@${domain}" /nlmumc/projects/${project}
 
+    # Data Steward gets manager rights
+    ichmod -r own "p.vanschayck@${domain}" /nlmumc/projects/${project}
+
     # Contributor access
     ichmod -r write DataHub /nlmumc/projects/${project}
 

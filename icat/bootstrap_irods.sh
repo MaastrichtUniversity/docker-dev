@@ -125,6 +125,8 @@ imeta add -C /nlmumc/projects/P000000010 storageQuotaGb 10
 imeta add -C /nlmumc/projects/P000000010 title "(MDL) Placeholder project"
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000010'" "*title='(MDL) Placeholder collection'"
 ichmod -r own "p.suppers@maastrichtuniversity.nl" /nlmumc/projects/P000000010
+# Data Steward gets manager rights
+ichmod -r own "p.vanschayck@maastrichtuniversity.nl" /nlmumc/projects/P000000010
 ichmod -r write "service-mdl" /nlmumc/projects/P000000010
 ichmod -r read "DataHub" /nlmumc/projects/P000000010
 # Add additional AVUs
@@ -145,6 +147,8 @@ imeta add -C /nlmumc/projects/P000000011 storageQuotaGb 10
 imeta add -C /nlmumc/projects/P000000011 title "(HVC) Placeholder project"
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000011'" "*title='(HVC) Placeholder collection'"
 ichmod -r own "p.suppers@maastrichtuniversity.nl" /nlmumc/projects/P000000011
+# Data Steward gets manager rights
+ichmod -r own "p.vanschayck@maastrichtuniversity.nl" /nlmumc/projects/P000000010
 ichmod -r write "service-mdl" /nlmumc/projects/P000000011
 ichmod -r read "DataHub" /nlmumc/projects/P000000011
 # Add additional AVUs
