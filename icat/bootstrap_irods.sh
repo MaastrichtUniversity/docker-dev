@@ -47,6 +47,7 @@ serviceUsers="service-dropzones service-mdl service-pid service-disqover"
 for user in $serviceUsers; do
     iadmin mkuser "${user}" rodsuser
     iadmin moduser "${user}" password foobar
+    imeta add -u "${user}#nlmumc" LDAPsync false
 done
 
 serviceAdmins="service-surfarchive"
@@ -54,6 +55,7 @@ serviceAdmins="service-surfarchive"
 for user in $serviceAdmins; do
     iadmin mkuser "${user}" rodsadmin
     iadmin moduser "${user}" password foobar
+    imeta add -u "${user}#nlmumc" LDAPsync false
 done
 
 #########
@@ -149,3 +151,8 @@ ichmod -r read "DataHub" /nlmumc/projects/P000000011
 imeta add -C /nlmumc/projects/P000000011/C000000001 creator irods_bootstrap@docker.dev
 imeta add -C /nlmumc/projects/P000000011/C000000001 dcat:byteSize 0
 imeta add -C /nlmumc/projects/P000000011/C000000001 numFiles 0
+# Add AVU on groups that should not be synced from LDAP
+nonSyncGroups="rodsadmin DH-ingest public DH-project-admins"
+for group in $nonSyncGroups; do
+    imeta add -u "${group}" LDAPsync false
+done
