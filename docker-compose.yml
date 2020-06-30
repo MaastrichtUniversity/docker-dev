@@ -5,6 +5,9 @@ services:
       context: externals/dh-rdm-service-docker/dev
       args:
         - ENV_XDEBUG_VERSION
+        - ENV_COMPOSER_VERSION
+        - ENV_NODE_VERSION
+        - ENV_DRUSH_VERSION
         - ENV_DRUPAL_VERSION
         - ENV_DRUPAL_VERSION_MD5
         - ENV_ISLANDORA_VERSION
@@ -42,9 +45,6 @@ services:
       IRODS_WEBDAV_ENV_VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
       IRODS_HOST: irods.dh.local
       IRODS_ENV_RODS_PASSWORD: irods
-      IRODS_SURFARCHIVE_RESOURCE_NAME: arcRescSURF01
-      IRODS_SURFARCHIVE_ADMIN_USER: service-surfarchive
-      IRODS_SURFARCHIVE_ADMIN_PASSWORD: foobar
       CROSSREF_LOOKUP_HOST: crossref-lookup.dh.local
       VIRTUAL_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
       OLS_URL: http://ols.tst.rit.unimaas.nl
