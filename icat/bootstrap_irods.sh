@@ -26,7 +26,7 @@ imkdir -p /nlmumc/projects
 
 ########
 ## Users
-users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy r.niesten r.brecheisen jonathan.melius k.heinen s.nijhuis o.palmen"
+users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy r.brecheisen jonathan.melius k.heinen s.nijhuis o.palmen"
 domain="maastrichtuniversity.nl"
 
 for user in $users; do
@@ -65,7 +65,7 @@ for user in $nanoscopy; do
     iadmin atg M4I-Nanoscopy "${user}@${domain}"
 done
 
-rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy r.niesten r.brecheisen jonathan.melius k.heinen s.nijhuis"
+rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy r.brecheisen jonathan.melius k.heinen s.nijhuis"
 
 iadmin mkgroup DataHub
 iadmin mkgroup DH-project-admins
@@ -126,7 +126,7 @@ imeta add -C /nlmumc/projects/P000000010 title "(MDL) Placeholder project"
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000010'" "*title='(MDL) Placeholder collection'"
 ichmod -r own "p.suppers@maastrichtuniversity.nl" /nlmumc/projects/P000000010
 # Data Steward gets manager rights
-ichmod -r own "p.vanschayck@maastrichtuniversity.nl" /nlmumc/projects/P000000010
+ichmod -r own "o.palmen@maastrichtuniversity.nl" /nlmumc/projects/P000000010
 ichmod -r write "service-mdl" /nlmumc/projects/P000000010
 ichmod -r read "DataHub" /nlmumc/projects/P000000010
 # Add additional AVUs
@@ -148,7 +148,7 @@ imeta add -C /nlmumc/projects/P000000011 title "(HVC) Placeholder project"
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000011'" "*title='(HVC) Placeholder collection'"
 ichmod -r own "p.suppers@maastrichtuniversity.nl" /nlmumc/projects/P000000011
 # Data Steward gets manager rights
-ichmod -r own "p.vanschayck@maastrichtuniversity.nl" /nlmumc/projects/P000000010
+ichmod -r own "o.palmen@maastrichtuniversity.nl" /nlmumc/projects/P000000011
 ichmod -r write "service-mdl" /nlmumc/projects/P000000011
 ichmod -r read "DataHub" /nlmumc/projects/P000000011
 # Add additional AVUs
@@ -156,8 +156,9 @@ imeta add -C /nlmumc/projects/P000000011/C000000001 creator irods_bootstrap@dock
 imeta add -C /nlmumc/projects/P000000011/C000000001 dcat:byteSize 0
 imeta add -C /nlmumc/projects/P000000011/C000000001 numFiles 0
 
-# Add data-steward
-imeta add -u "p.vanschayck@maastrichtuniversity.nl" "specialty" "data-steward"
-#imeta add -u "p70067297"  "specialty" "data-steward"
-imeta add -u "o.palmen@maastrichtuniversity.nl"  "specialty" "data-steward"
 
+# Add data-steward specialty to certain users
+imeta add -u "p.vanschayck@maastrichtuniversity.nl" "specialty" "data-steward"
+imeta add -u "o.palmen@maastrichtuniversity.nl" "specialty" "data-steward"
+# The user below does not exist at this point. It will be created via sram-sync with LDAP
+#imeta add -u "p70067297" "specialty" "data-steward"
