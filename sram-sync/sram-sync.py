@@ -31,8 +31,8 @@ DELETE_USERS = True
 SYNC_GROUPS = True
 DELETE_GROUPS = True
 
-# TO DO: instead of blacklists we should use an AVY on groups/users indicating weather it should be synced or not
-UNSYNCED_USERS = "service-pid,service-mdl,service-disqover,service-dropzones,service-surfarchive,DH-project-admins".split(
+# TO DO: instead of blacklists we should use an AVU on groups/users indicating weather it should be synced or not
+UNSYNCED_USERS = "service-pid,service-mdl,service-disqover,service-dropzones,service-surfarchive".split(
     ',')
 UNSYNCED_GROUPS = "rodsadmin,DH-ingest,public,DH-project-admins".split(',')
 

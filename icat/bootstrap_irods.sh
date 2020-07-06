@@ -47,6 +47,7 @@ serviceUsers="service-dropzones service-mdl service-pid service-disqover"
 for user in $serviceUsers; do
     iadmin mkuser "${user}" rodsuser
     iadmin moduser "${user}" password foobar
+    imeta add -u "${user}#nlmumc" ldapSync false
 done
 
 serviceAdmins="service-surfarchive"
@@ -54,6 +55,7 @@ serviceAdmins="service-surfarchive"
 for user in $serviceAdmins; do
     iadmin mkuser "${user}" rodsadmin
     iadmin moduser "${user}" password foobar
+    imeta add -u "${user}#nlmumc" ldapSync false
 done
 
 #########
@@ -156,9 +158,14 @@ imeta add -C /nlmumc/projects/P000000011/C000000001 creator irods_bootstrap@dock
 imeta add -C /nlmumc/projects/P000000011/C000000001 dcat:byteSize 0
 imeta add -C /nlmumc/projects/P000000011/C000000001 numFiles 0
 
-
 # Add data-steward specialty to certain users
 imeta add -u "p.vanschayck@maastrichtuniversity.nl" "specialty" "data-steward"
 imeta add -u "o.palmen@maastrichtuniversity.nl" "specialty" "data-steward"
 # The user below does not exist at this point. It will be created via sram-sync with LDAP
 #imeta add -u "p70067297" "specialty" "data-steward"
+
+# Add AVU on groups that should not be synced from LDAP
+nonSyncGroups="rodsadmin DH-ingest public DH-project-admins"
+for group in $nonSyncGroups; do
+    imeta add -u "${group}" ldapSync false
+done
