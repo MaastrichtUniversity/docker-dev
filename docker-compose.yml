@@ -570,6 +570,8 @@ services:
       LDAP_USER: cn=admin,dc=datahubmaastricht,dc=nl
       LDAP_PASS: admin
       LDAP_HOST: ldap://ldap.dh.local
+      LDAP_USERS_BASE_DN: ou=users,DC=datahubmaastricht,DC=nl
+      LDAP_GROUPS_BASE_DN: ou=groups,DC=datahubmaastricht,DC=nl
       DEFAULT_USER_PASSWORD: foobar
       LOGSTASH_TAGS: SRAMSYNC
     command: sram-sync.py --commit --scheduled

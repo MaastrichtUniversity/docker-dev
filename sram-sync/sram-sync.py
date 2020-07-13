@@ -41,9 +41,9 @@ LDAP_USER = os.environ['LDAP_USER']
 LDAP_PASS = os.environ['LDAP_PASS']
 LDAP_HOST = os.environ['LDAP_HOST']
 
-LDAP_GROUP = "Users"
-LDAP_USER_BASE_DN = "ou=users,DC=datahubmaastricht,DC=nl"
-LDAP_GROUPS_BASE_DN = "ou=groups,DC=datahubmaastricht,DC=nl"
+#LDAP_GROUP = "Users"
+LDAP_USER_BASE_DN = os.environ['LDAP_USER_BASE_DN']   #"ou=users,DC=datahubmaastricht,DC=nl"
+LDAP_GROUPS_BASE_DN = os.environ['LDAP_GROUPS_BASE_DN'] #"ou=groups,DC=datahubmaastricht,DC=nl"
 
 # iRODS config
 IRODS_HOST = os.environ['IRODS_HOST']
