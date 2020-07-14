@@ -558,10 +558,10 @@ services:
         aliases:
           - open-access-worker.dh.local
   sram-sync:
-    build: sram-sync/
+    build: externals/sram-sync/
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./sram-sync:/opt/app
+      - ./externals/sram-sync/:/opt/app
     environment:
       LOG_LEVEL: INFO
       IRODS_HOST: irods.dh.local
@@ -574,6 +574,11 @@ services:
       LDAP_GROUPS_BASE_DN: ou=groups,DC=datahubmaastricht,DC=nl
       DEFAULT_USER_PASSWORD: foobar
       LOGSTASH_TAGS: SRAMSYNC
+      SYNC_USERS: "True"
+      DELETE_USERS: "True"
+      DELETE_USERS_LIMIT: 3
+      SYNC_GROUPS: "True"
+      DELETE_GROUPS: "True"
     command: sram-sync.py --commit --scheduled
     networks:
       default:

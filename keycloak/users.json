@@ -48,6 +48,12 @@
     "memberOf": [ "DataHub" ]
   },
   {
+    "userName": "o.palmen@maastrichtuniversity.nl",
+    "displayName": "Olav Palmen",
+    "email": "o.palmen@maastrichtuniversity.nl",
+    "memberOf": [ "DataHub" ]
+  },
+  {
     "userName": "k.heinen@maastrichtuniversity.nl",
     "displayName": "Koert Heinen",
     "email": "k.heinen@maastrichtuniversity.nl",
@@ -93,6 +99,6 @@
     "userName": "additional.user",
     "displayName": "Additional User newly created in LDAP",
     "email": "",
-    "memberOf": [ "additional group", "M4I-Massspec" ]
+    "memberOf": [ "additional group", "M4I-IMS" ]
   }
 ]

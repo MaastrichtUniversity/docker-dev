@@ -46,7 +46,8 @@ externals/crossref-lookup https://github.com/MaastrichtUniversity/crossref-looku
 externals/epicpid-microservice https://github.com/MaastrichtUniversity/epicpid-microservice.git
 externals/dh-rdm-service-docker https://github.com/MaastrichtUniversity/dh-rdm-service-docker.git
 externals/mirthconnect-docker https://github.com/MaastrichtUniversity/mirthconnect-docker.git
-externals/irods-open-access-repo https://github.com/MaastrichtUniversity/irods-open-access-repo.git"
+externals/irods-open-access-repo https://github.com/MaastrichtUniversity/irods-open-access-repo.git
+externals/sram-sync https://github.com/MaastrichtUniversity/sram-sync.git"
 
 
 # do the required action in case of externals or exec
@@ -74,7 +75,6 @@ if [[ $1 == "create-ingest-zones" ]]; then
         docker exec corpus_pacman_1 drush create-ingest-zone m.coonen@${domain}
         docker exec corpus_pacman_1 drush create-ingest-zone d.theunissen@${domain}
         docker exec corpus_pacman_1 drush create-ingest-zone p.suppers@${domain}
-        docker exec corpus_pacman_1 drush create-ingest-zone r.niesten@${domain}
         docker exec corpus_pacman_1 drush create-ingest-zone r.brecheisen@${domain}
         docker exec corpus_pacman_1 drush create-ingest-zone jonathan.melius@${domain}
     done
@@ -93,12 +93,10 @@ if [[ $1 == "create-project-collections" ]]; then
         echo "In P000000003"
         docker exec corpus_pacman_1 drush create-project-collection m.coonen@${domain} P000000003
         docker exec corpus_pacman_1 drush create-project-collection d.theunissen@${domain} P000000003
-        docker exec corpus_pacman_1 drush create-project-collection r.niesten@${domain} P000000003
         docker exec corpus_pacman_1 drush create-project-collection jonathan.melius@${domain} P000000003
         echo "In P000000004"
         docker exec corpus_pacman_1 drush create-project-collection m.coonen@${domain} P000000004
         docker exec corpus_pacman_1 drush create-project-collection d.theunissen@${domain} P000000004
-        docker exec corpus_pacman_1 drush create-project-collection r.niesten@${domain} P000000004
         docker exec corpus_pacman_1 drush create-project-collection jonathan.melius@${domain} P000000004
     done
 

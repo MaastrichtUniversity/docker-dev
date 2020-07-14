@@ -26,7 +26,7 @@ imkdir -p /nlmumc/projects
 
 ########
 ## Users
-users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy r.niesten r.brecheisen jonathan.melius k.heinen s.nijhuis"
+users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy r.brecheisen jonathan.melius k.heinen s.nijhuis o.palmen"
 domain="maastrichtuniversity.nl"
 
 for user in $users; do
@@ -47,7 +47,7 @@ serviceUsers="service-dropzones service-mdl service-pid service-disqover"
 for user in $serviceUsers; do
     iadmin mkuser "${user}" rodsuser
     iadmin moduser "${user}" password foobar
-    imeta add -u "${user}#nlmumc" LDAPsync false
+    imeta add -u "${user}#nlmumc" ldapSync false
 done
 
 serviceAdmins="service-surfarchive"
@@ -55,7 +55,7 @@ serviceAdmins="service-surfarchive"
 for user in $serviceAdmins; do
     iadmin mkuser "${user}" rodsadmin
     iadmin moduser "${user}" password foobar
-    imeta add -u "${user}#nlmumc" LDAPsync false
+    imeta add -u "${user}#nlmumc" ldapSync false
 done
 
 #########
@@ -67,7 +67,7 @@ for user in $nanoscopy; do
     iadmin atg M4I-Nanoscopy "${user}@${domain}"
 done
 
-rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy r.niesten r.brecheisen jonathan.melius k.heinen s.nijhuis"
+rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy r.brecheisen jonathan.melius k.heinen s.nijhuis"
 
 iadmin mkgroup DataHub
 iadmin mkgroup DH-project-admins
@@ -120,12 +120,15 @@ imeta add -C /nlmumc/projects/P000000010 authorizationPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000010 dataRetentionPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000010 ingestResource ${HOSTNAME}Resource
 imeta add -C /nlmumc/projects/P000000010 OBI:0000103 p.suppers@maastrichtuniversity.nl
+imeta add -C /nlmumc/projects/P000000010 dataSteward o.palmen@maastrichtuniversity.nl
 imeta add -C /nlmumc/projects/P000000010 resource replRescAZM01
 imeta add -C /nlmumc/projects/P000000010 responsibleCostCenter AZM-123456
 imeta add -C /nlmumc/projects/P000000010 storageQuotaGb 10
 imeta add -C /nlmumc/projects/P000000010 title "(MDL) Placeholder project"
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000010'" "*title='(MDL) Placeholder collection'"
 ichmod -r own "p.suppers@maastrichtuniversity.nl" /nlmumc/projects/P000000010
+# Data Steward gets manager rights
+ichmod -r own "o.palmen@maastrichtuniversity.nl" /nlmumc/projects/P000000010
 ichmod -r write "service-mdl" /nlmumc/projects/P000000010
 ichmod -r read "DataHub" /nlmumc/projects/P000000010
 # Add additional AVUs
@@ -139,20 +142,30 @@ imeta add -C /nlmumc/projects/P000000011 authorizationPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000011 dataRetentionPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000011 ingestResource ${HOSTNAME}Resource
 imeta add -C /nlmumc/projects/P000000011 OBI:0000103 p.suppers@maastrichtuniversity.nl
+imeta add -C /nlmumc/projects/P000000011 dataSteward o.palmen@maastrichtuniversity.nl
 imeta add -C /nlmumc/projects/P000000011 resource replRescAZM01
 imeta add -C /nlmumc/projects/P000000011 responsibleCostCenter AZM-123456
 imeta add -C /nlmumc/projects/P000000011 storageQuotaGb 10
 imeta add -C /nlmumc/projects/P000000011 title "(HVC) Placeholder project"
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000011'" "*title='(HVC) Placeholder collection'"
 ichmod -r own "p.suppers@maastrichtuniversity.nl" /nlmumc/projects/P000000011
+# Data Steward gets manager rights
+ichmod -r own "o.palmen@maastrichtuniversity.nl" /nlmumc/projects/P000000011
 ichmod -r write "service-mdl" /nlmumc/projects/P000000011
 ichmod -r read "DataHub" /nlmumc/projects/P000000011
 # Add additional AVUs
 imeta add -C /nlmumc/projects/P000000011/C000000001 creator irods_bootstrap@docker.dev
 imeta add -C /nlmumc/projects/P000000011/C000000001 dcat:byteSize 0
 imeta add -C /nlmumc/projects/P000000011/C000000001 numFiles 0
+
+# Add data-steward specialty to certain users
+imeta add -u "p.vanschayck@maastrichtuniversity.nl" "specialty" "data-steward"
+imeta add -u "o.palmen@maastrichtuniversity.nl" "specialty" "data-steward"
+# The user below does not exist at this point. It will be created via sram-sync with LDAP
+#imeta add -u "p70067297" "specialty" "data-steward"
+
 # Add AVU on groups that should not be synced from LDAP
 nonSyncGroups="rodsadmin DH-ingest public DH-project-admins"
 for group in $nonSyncGroups; do
-    imeta add -u "${group}" LDAPsync false
+    imeta add -u "${group}" ldapSync false
 done
