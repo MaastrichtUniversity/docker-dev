@@ -26,10 +26,11 @@ logger = logging.getLogger('root')
 # Options config
 DEFAULT_USER_PASSWORD = os.environ['DEFAULT_USER_PASSWORD']
 
-SYNC_USERS = True
-DELETE_USERS = True
-SYNC_GROUPS = True
-DELETE_GROUPS = True
+SYNC_USERS = True if os.environ['SYNC_USERS'] == 'True' else False
+DELETE_USERS = True if os.environ['DELETE_USERS'] == 'True' else False
+DELETE_USERS_LIMIT = int(os.environ['DELETE_USERS_LIMIT'])
+SYNC_GROUPS = True if os.environ['SYNC_GROUPS'] == 'True' else False
+DELETE_GROUPS = True if os.environ['DELETE_GROUPS'] == 'True' else False
 
 # TO DO: instead of blacklists we should use an AVU on groups/users indicating weather it should be synced or not
 UNSYNCED_USERS = "service-pid,service-mdl,service-disqover,service-dropzones,service-surfarchive".split(
@@ -276,12 +277,18 @@ def remove_obsolete_irods_users(sess, ldap_users, irods_users):
     deletion_candidates = irods_users.copy()
     for ldap_user in ldap_users:
         deletion_candidates.discard(ldap_user.uid)
-    logger.info("identified %d obsolete irods users for deletion" % len(deletion_candidates))
-    # print( deletion_candidates )
-    for uid in deletion_candidates:
-        user = sess.users.get(uid)
-        logger.info("deleting user: {}".format(uid))
-        user.remove()
+
+    number_deletions = len(deletion_candidates)
+    logger.info("identified %d obsolete irods users for deletion" % number_deletions)
+
+    if number_deletions >= DELETE_USERS_LIMIT:
+        logger.error("The limit of deletions (%d) in one synchronization have been reached. "
+                     "Deletions aborted" % number_deletions)
+    else:
+        for uid in deletion_candidates:
+            user = sess.users.get(uid)
+            logger.info("deleting user: {}".format(uid))
+            user.remove()
 
 
 ##########################################################
