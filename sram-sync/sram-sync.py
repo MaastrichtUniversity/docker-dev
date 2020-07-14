@@ -111,7 +111,7 @@ class LdapUser:
     def create_new_user(self, irods_session, dry_run):
         if dry_run:
             return
-        logger.info("create a new irods user: %s" % self.uid)
+        logger.info("* Create a new irods user: %s" % self.uid)
         new_irods_user = irods_session.users.create(self.uid, 'rodsuser')
         if self.email: new_irods_user.metadata.add(UserAVU.EMAIL.value, self.email)
         if self.display_name: new_irods_user.metadata.add(UserAVU.DISPLAY_NAME.value, self.display_name)
@@ -128,21 +128,21 @@ class LdapUser:
     def update_existing_user(self, irods_session, dry_run):
         if dry_run:
             return self.irods_user
-        logger.debug("changing existing irods user:" + self.uid)
+        logger.debug("-- changing existing irods user:" + self.uid)
         try:
             # read current AVUs and change if needed
             existing_avus = get_all_avus(self.irods_user)
-            logger.debug("existing AVUs BEFORE: " + str(existing_avus))
+            logger.debug("-- existing AVUs BEFORE: " + str(existing_avus))
             # careful: because the list of existing AVUs is not updated changing a key multiple times will lead to
             # strange behavior!
             if set_singular_avu(self.irods_user, UserAVU.EMAIL.value, self.email):
-                logger.info( "user {} updated AVU: {} {}".format( self.uid, UserAVU.EMAIL.value, self.email ) )
+                logger.info( "-- user {} updated AVU: {} {}".format( self.uid, UserAVU.EMAIL.value, self.email ) )
             if set_singular_avu(self.irods_user, UserAVU.DISPLAY_NAME.value, self.display_name):
-                logger.info( "user {} updated AVU: {} {}".format( self.uid, UserAVU.DISPLAY_NAME.value, self.display_name ) )
+                logger.info( "-- user {} updated AVU: {} {}".format( self.uid, UserAVU.DISPLAY_NAME.value, self.display_name ) )
         except iRODSException as error:
-            logger.error("error changing AVUs" + str(error))
+            logger.error("-- error changing AVUs" + str(error))
         existing_avus = get_all_avus(self.irods_user)
-        logger.debug("existing AVUs AFTER: " + str(existing_avus))
+        logger.debug("-- existing AVUs AFTER: " + str(existing_avus))
         
         return self.irods_user
 
@@ -158,22 +158,22 @@ class LdapUser:
             try:
                 if not dry_run:
                     self.irods_user = self.create_new_user(irods_session, dry_run)
-                logger.info("User: " + self.uid + " created")
+                logger.info("-- User: " + self.uid + " created")
                 if created:
                     created()
             except (PycommandsException, PycommandsException) as e:
-                logger.error("User creation error: " + str(e))
+                logger.error("-- User creation error: " + str(e))
                 if failed:
                     failed()
         else:
             try:
                 if not dry_run:
                     self.irods_user = self.update_existing_user(irods_session, dry_run)
-                logger.debug("User: " + self.uid + " updated")
+                logger.debug("-- User: " + self.uid + " updated")
                 if updated:
                     updated()
             except (PycommandsException, iRODSException ) as e:
-                logger.error("User update error: " + str(e))
+                logger.error("-- User update error: " + str(e))
                 if failed:
                     failed()
 
@@ -224,15 +224,15 @@ class LdapGroup:
             try:
                 if not dry_run:
                     self.irods_group = sess.user_groups.create(self.group_name)
-                    logger.info("Group %s created" % self.group_name)
+                    logger.info("-- Group %s created" % self.group_name)
                     if created:
                         created()
             except (PycommandsException, iRODSException ) as e:
-                logger.error("Group {} Creation error: {}".format( self.group_name, str(e) ) )
+                logger.error("-- Group {} Creation error: {}".format( self.group_name, str(e) ) )
                 if failed:
                     failed()
         else:
-            logger.debug("Group %s already exists" % self.group_name)
+            logger.debug("-- Group %s already exists" % self.group_name)
             # TO DO: is there a difference between Group-ID and Group-DisplayName? If so, set an AVU here!
             if updated:
                 updated()
@@ -259,7 +259,7 @@ def syncable_irods_users(sess, unsynced_users):
         n = n + 1
         if not result[User.name] in unsynced_users:
             irods_user_names_set.add(result[User.name])
-    logger.debug("iRods users found: {} (allowed for synchronization: {})".format(n, len(irods_user_names_set)))
+    logger.debug("-- iRods users found: {} (allowed for synchronization: {})".format(n, len(irods_user_names_set)))
     return irods_user_names_set
 
 
@@ -273,21 +273,21 @@ def get_users_from_ldap(l):
 
 ##########################################################
 def remove_obsolete_irods_users(sess, ldap_users, irods_users):
-    logger.info("deleting obsolete irods users...")
+    logger.info("* Deleting obsolete irods users...")
     deletion_candidates = irods_users.copy()
     for ldap_user in ldap_users:
         deletion_candidates.discard(ldap_user.uid)
 
     number_deletions = len(deletion_candidates)
-    logger.info("identified %d obsolete irods users for deletion" % number_deletions)
+    logger.info("-- identified %d obsolete irods users for deletion" % number_deletions)
 
     if number_deletions >= DELETE_USERS_LIMIT:
-        logger.error("The limit of deletions (%d) in one synchronization have been reached. "
+        logger.error("-- The limit of deletions (%d) in one synchronization have been reached. "
                      "Deletions aborted" % number_deletions)
     else:
         for uid in deletion_candidates:
             user = sess.users.get(uid)
-            logger.info("deleting user: {}".format(uid))
+            logger.info("-- deleting user: {}".format(uid))
             user.remove()
 
 
@@ -297,7 +297,7 @@ def sync_ldap_users_to_irods(ldap, irods, dry_run):
     logger.info("Syncing users to iRods:")
 
     ldap_users = get_users_from_ldap(ldap)
-    logger.info("LDAP users found: %d" % len(ldap_users))
+    logger.info("* LDAP users found: %d" % len(ldap_users))
 
     # TO DO: give irods users an AVU to mark them as SRAM_SYNCED true/false, instead of using a blacklist in config.ini
     irods_users = syncable_irods_users(irods, UNSYNCED_USERS)
@@ -307,15 +307,15 @@ def sync_ldap_users_to_irods(ldap, irods, dry_run):
         remove_obsolete_irods_users(irods, ldap_users, irods_users)
 
     # Loop over ldap users and create or update as necessary
-    logger.debug("Syncing {} found LDAP entries to iRods:".format( len(ldap_users) ) )
+    logger.debug("* Syncing {} found LDAP entries to iRods:".format( len(ldap_users) ) )
     n = 0
     for user in ldap_users:
         n = n + 1
         # Print username
-        logger.debug("--syncing LDAP user {}/{}: {}".format(n, len(ldap_users), user.uid))
+        logger.debug("-- syncing LDAP user {}/{}: {}".format(n, len(ldap_users), user.uid))
 
         if dry_run or (not SYNC_USERS):
-            logger.info("syncing of users not permitted. User {} will no be changed/created".format(user.uid))
+            logger.info("-- syncing of users not permitted. User {} will no be changed/created".format(user.uid))
             continue
 
         user.sync_to_irods(irods, dry_run, None, None, None)
@@ -326,15 +326,15 @@ def sync_ldap_users_to_irods(ldap, irods, dry_run):
 ##########################################################
 
 def remove_obsolete_irods_groups(sess, ldap_group_names, irods_group_names):
-    logger.info("deleting obsolete irods groups...")
+    logger.info("* Deleting obsolete irods groups...")
     deletion_candidates = set()
     for irods_group in irods_group_names:
         if irods_group not in ldap_group_names:
             deletion_candidates.add(irods_group)
-    logger.info("identified %d obsolete irods groups for deletion" % len(deletion_candidates))
+    logger.info("-- identified %d obsolete irods groups for deletion" % len(deletion_candidates))
 
     for group_name in deletion_candidates:
-        logger.info("deleting group: {}".format(group_name))
+        logger.info("-- deleting group: {}".format(group_name))
         LdapGroup.remove_group_from_irods(sess, group_name)
 
 ##########################################################
@@ -355,11 +355,11 @@ def add_user_to_group(sess, group_name, user_name):
     irods_group = sess.user_groups.get(group_name)
     try:
         irods_group.addmember(user_name)
-        logger.info("User: " + user_name + " added to group " + group_name)
+        logger.info("-- User: " + user_name + " added to group " + group_name)
     except CATALOG_ALREADY_HAS_ITEM_BY_THAT_NAME:
-        logger.info("User {} already in group {} ".format(user_name, group_name))
+        logger.info("-- User {} already in group {} ".format(user_name, group_name))
     except (PycommandsException, iRODSException ) as e:
-        logger.error("could not add user {} to group {}. '{}'".format(user_name, group_name, e))
+        logger.error("-- could not add user {} to group {}. '{}'".format(user_name, group_name, e))
 
 
 ########################################################## 
@@ -367,10 +367,10 @@ def remove_user_from_group(sess, group_name, user_name):
     irods_group = sess.user_groups.get(group_name)
     try:
         irods_group.removemember(user_name)
-        logger.info("User: " + user_name + " removed from group " + group_name)
+        logger.info("-- User: " + user_name + " removed from group " + group_name)
     # TO DO: This should not catch all exceptions!
     except (PycommandsException, iRODSException ) as e:
-        logger.error("could not remove user {} from group {}. '{}'".format(user_name, group_name, e))
+        logger.error("-- could not remove user {} from group {}. '{}'".format(user_name, group_name, e))
 
 
 ##########################################################
@@ -379,12 +379,12 @@ def sync_ldap_groups_to_irods(ldap, irods, dry_run):
     logger.info("Syncing groups to irods:")
 
     group_name_2_group = get_ldap_groups(ldap)
-    logger.debug("LDAP groups found: {}".format( len(group_name_2_group) ) )
+    logger.debug("* LDAP groups found: {}".format( len(group_name_2_group) ) )
 
     irods_groups_query = irods.query(User).filter(User.type == 'rodsgroup')
     irods_group_names = [x[User.name] for x in irods_groups_query]
     syncable_irods_groups = set(filter(lambda x: x not in UNSYNCED_GROUPS, irods_group_names))
-    logger.debug("iRods groups found: {} (allowed for synchronization: {})".format(len(irods_group_names),
+    logger.debug("* iRods groups found: {} (allowed for synchronization: {})".format(len(irods_group_names),
                                                                                    len(syncable_irods_groups)))
 
     if not dry_run and DELETE_GROUPS:
@@ -393,11 +393,11 @@ def sync_ldap_groups_to_irods(ldap, irods, dry_run):
     n = 0
     for (group_name, group) in group_name_2_group.items():
         n = n + 1
-        logger.debug("--syncing LDAP group {}/{}: {}".format(n, len(group_name_2_group), group_name))
+        logger.debug("-- syncing LDAP group {}/{}: {}".format(n, len(group_name_2_group), group_name))
         if not dry_run:
             group.write_to_irods(irods, dry_run, None, None, None)
         else:
-            logger.info("syncing of groups not permitted. Group {} will no be changed/created".format(group_name))
+            logger.info("-- syncing of groups not permitted. Group {} will no be changed/created".format(group_name))
 
     return group_name_2_group
 
@@ -431,17 +431,17 @@ def sync_group_memberships(irods, ldap_groups, dry_run):
         if userGroup.name in UNSYNCED_GROUPS:
             continue
         member_names = set( user.name for user in userGroup.members )
-        logger.debug( "irods-group: {}, members: {}".format( userGroup.name, member_names ) )
+        logger.debug("-- irods-group: {}, members: {}".format( userGroup.name, member_names ) )
         irods_groups_2_users[userGroup.name] = member_names
 
     # check each LDAP Group against each irodsGroup
     n = 0
     for (group_name, group) in ldap_groups.items():
         n = n + 1
-        logger.info("syncing memberships for group {}...".format(group_name))
+        logger.info("* Syncing memberships for group {}...".format(group_name))
         irods_member_list = irods_groups_2_users.get(group_name, set())
         stay, add, remove = diff_member_lists(group.member_uids, irods_member_list)
-        logger.info("memberships for group {}: {} same, {} added, {} removed".format(group_name, len(stay), len(add),
+        logger.info("-- memberships for group {}: {} same, {} added, {} removed".format(group_name, len(stay), len(add),
                                                                                      len(remove)))
 
         if not dry_run:
