@@ -46,7 +46,8 @@ externals/crossref-lookup https://github.com/MaastrichtUniversity/crossref-looku
 externals/epicpid-microservice https://github.com/MaastrichtUniversity/epicpid-microservice.git
 externals/dh-rdm-service-docker https://github.com/MaastrichtUniversity/dh-rdm-service-docker.git
 externals/mirthconnect-docker https://github.com/MaastrichtUniversity/mirthconnect-docker.git
-externals/irods-open-access-repo https://github.com/MaastrichtUniversity/irods-open-access-repo.git"
+externals/irods-open-access-repo https://github.com/MaastrichtUniversity/irods-open-access-repo.git
+externals/sram-sync https://github.com/MaastrichtUniversity/sram-sync.git"
 
 
 # do the required action in case of externals or exec

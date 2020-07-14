@@ -558,10 +558,10 @@ services:
         aliases:
           - open-access-worker.dh.local
   sram-sync:
-    build: sram-sync/
+    build: externals/sram-sync/
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./sram-sync:/opt/app
+      - ./externals/sram-sync/:/opt/app
     environment:
       LOG_LEVEL: INFO
       IRODS_HOST: irods.dh.local
