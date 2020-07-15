@@ -1,14 +1,20 @@
 [
-   { "groupId": "101",
-     "name":    "DataHub"
+   { 
+     "name": "co_datahub",
+     "displayName":    "DataHub",
+     "description": "It's DataHub!"
    },
-   { "groupId": "201",
-     "name":    "M4I-Nanoscopy"
+   {
+     "name": "co_m4i_nanoscopy2",
+     "displayName":    "M4I-Nanoscopy",
+     "description": "electron microscopy"
    },
-   { "groupId": "301",
-     "name":    "M4I-Massspec"
+   {
+     "name": "ci_m4i_ims2",
+     "displayName":    "M4I-Massspec"
    },
-   { "groupId": "401",
-     "name":    "UM-SCANNEXUS"
+   { 
+     "name": "co_um_scannexus",
+     "displayName":    "UM-SCANNEXUS"
    }
 ]

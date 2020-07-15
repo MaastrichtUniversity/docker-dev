@@ -44,6 +44,7 @@ o: mumc_scz_datahub
 
 
 ### PEOPLE ###
+## People and Groups should be populated by keycloak ###
 
 dn: ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 objectclass: organizationalUnit
@@ -55,64 +56,68 @@ objectclass: extensibleObject
 objectclass: person
 #objectclass: voperson
 #objectclass: posixAccount
+objectclass: inetOrgPerson
 #objectclass: eduPerson
 objectclass: top
-cn: Jan-Erek
+cn: Thiede Jan-Erek
 sn: Thiede
 uid: jthiede
 #voPersonExternalID: P70067297@unimaas.nl
 #eduPersonUniqueId: aebf5474-5202-40d4-94c3-52e1dcb2650f@sram.surf.nl
 displayName: J.-E. Thiede
 givenName: Jan-Erek
-mail: J.Thiede@maastrichtuniversity.nl
+mail: J.Thiede@maastrichtuniversity.nl2
 
 dn: uid=pschayck,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 objectclass: extensibleObject
 objectclass: person
 #objectclass: voperson
 #objectclass: posixAccount
+objectclass: inetOrgPerson
 #objectclass: eduPerson
 objectclass: top
-cn: Paul van
+cn: Schayck Paul van
 sn: Schayck
 uid: pschayck
 #voPersonExternalID: P.vanSchayck@unimaas.nl
 #eduPersonUniqueId: 643cf169-a0e1-4b2b-99a7-4659b296b825@sram.surf.nl
 displayName: J.-E. Thiede
 givenName: Paul van Schayck
-mail: p.vanschayck@maastrichtuniversity.nl
+mail: p.vanschayck@maastrichtuniversity.nl2
 
 dn: uid=mcoonen,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 objectclass: extensibleObject
 objectclass: person
 #objectclass: voperson
 #objectclass: posixAccount
+objectclass: inetOrgPerson
 #objectclass: eduPerson
 objectclass: top
-cn: Maarten
+cn: Coonen Maarten
 sn: Coonen
 uid: mcoonen
 #voPersonExternalID: m.coonen@unimaas.nl
 #eduPersonUniqueId: 9e1fe11c-16a6-47db-b7ca-6c5a6c5343ee@sram.surf.nl
 displayName: M. Coonen
 givenName: Maarten
-mail: m.coonen@maastrichtuniversity.nl
+mail: m.coonen@maastrichtuniversity.nl2
 
 dn: uid=jmelius,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 objectclass: extensibleObject
 objectclass: person
 #objectclass: voperson
 #objectclass: posixAccount
+objectclass: inetOrgPerson
 #objectclass: eduPerson
 objectclass: top
-cn: Jonathan
+cn: Melius Jonathan
 sn: Melius
 uid: jmelius
 #voPersonExternalID: j.melius@unimaas.nl
 #eduPersonUniqueId: 7c78e849-28f1-4f67-a63c-c2435d5d920a@sram.surf.nl
 displayName: Jonathan Melius
 givenName: Jonathan
-mail: J.melius@maastrichtuniversity.nl
+mail: J.melius@maastrichtuniversity.nl2
 
 ### Groups ###
 

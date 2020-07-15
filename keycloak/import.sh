@@ -47,11 +47,9 @@ then
   /opt/jboss/keycloak/bin/kcadm.sh create realms -f /tmp/realm-export_env_pw.json
 fi
 
-# Create Groups
+
 echo "Create Groups"
-
 groupsJSON=$(cat /tmp/groups.json | jq -c '.')
-
 echo $groupsJSON | jq  -r -c '.[]'  | while read groupJSON; do
   groupName=$(echo $groupJSON | jq -r -c '.name' )
   echo "groupName: $groupName"
@@ -60,17 +58,14 @@ echo $groupsJSON | jq  -r -c '.[]'  | while read groupJSON; do
   then
      echo "GroupName ${groupName} already found in keycloak..."
   else
-     /opt/jboss/keycloak/bin/kcadm.sh create groups -r drupal -b "{ \"name\": \"${groupName}\" }"
+     /opt/jboss/keycloak/bin/kcadm.sh create groups -r drupal -b "{ \"name\": \"${groupName}\", \"attributes\": {\"gidNumber\":[\"999\"] } }"   
   fi
 done
-
 echo "Groups Created"
 
 
-# Create Users
 echo "Create Users"
-
-usersJSON=$(cat /tmp/users.json | jq -c '.')
+usersJSON=$(cat /tmp/users.json | jq -c '.')#
 
 echo $usersJSON | jq  -r -c '.[]'  | while read userJSON; do
   userID=$(echo $userJSON | jq -r -c '.userName' )
@@ -103,9 +98,7 @@ echo $usersJSON | jq  -r -c '.[]'  | while read userJSON; do
        fi 
     done
   fi
-
 done
-
 echo "Users Created"
 
 
