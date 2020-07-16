@@ -54,33 +54,39 @@ ou: People
 dn: uid=jthiede,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 objectclass: extensibleObject
 objectclass: person
-#objectclass: voperson
-#objectclass: posixAccount
+objectclass: voperson
+objectclass: posixAccount
 objectclass: inetOrgPerson
-#objectclass: eduPerson
+objectclass: eduPerson
 objectclass: top
 cn: Thiede Jan-Erek
+gidNumber: 999
+homeDirectory: /home/FAKE
+uidNumber: 999
 sn: Thiede
 uid: jthiede
-#voPersonExternalID: P70067297@unimaas.nl
-#eduPersonUniqueId: aebf5474-5202-40d4-94c3-52e1dcb2650f@sram.surf.nl
+voPersonExternalID: P70067297@unimaas.nl
+eduPersonUniqueId: aebf5474-5202-40d4-94c3-52e1dcb2650f@sram.surf.nl
 displayName: J.-E. Thiede
 givenName: Jan-Erek
-mail: J.Thiede@maastrichtuniversity.nl2
+mail: J.Thiede@maastrichtuniversity.nl
 
 dn: uid=pschayck,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 objectclass: extensibleObject
 objectclass: person
-#objectclass: voperson
-#objectclass: posixAccount
+objectclass: voperson
+objectclass: posixAccount
 objectclass: inetOrgPerson
-#objectclass: eduPerson
+objectclass: eduPerson
 objectclass: top
 cn: Schayck Paul van
+gidNumber: 999
+homeDirectory: /home/FAKE 
+uidNumber: 999
 sn: Schayck
 uid: pschayck
-#voPersonExternalID: P.vanSchayck@unimaas.nl
-#eduPersonUniqueId: 643cf169-a0e1-4b2b-99a7-4659b296b825@sram.surf.nl
+voPersonExternalID: P.vanSchayck@unimaas.nl
+eduPersonUniqueId: 643cf169-a0e1-4b2b-99a7-4659b296b825@sram.surf.nl
 displayName: J.-E. Thiede
 givenName: Paul van Schayck
 mail: p.vanschayck@maastrichtuniversity.nl2
@@ -88,16 +94,19 @@ mail: p.vanschayck@maastrichtuniversity.nl2
 dn: uid=mcoonen,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 objectclass: extensibleObject
 objectclass: person
-#objectclass: voperson
-#objectclass: posixAccount
+objectclass: voperson
+objectclass: posixAccount
 objectclass: inetOrgPerson
-#objectclass: eduPerson
+objectclass: eduPerson
 objectclass: top
 cn: Coonen Maarten
+gidNumber: 999
+homeDirectory: /home/FAKE 
+uidNumber: 999
 sn: Coonen
 uid: mcoonen
-#voPersonExternalID: m.coonen@unimaas.nl
-#eduPersonUniqueId: 9e1fe11c-16a6-47db-b7ca-6c5a6c5343ee@sram.surf.nl
+voPersonExternalID: m.coonen@unimaas.nl
+eduPersonUniqueId: 9e1fe11c-16a6-47db-b7ca-6c5a6c5343ee@sram.surf.nl
 displayName: M. Coonen
 givenName: Maarten
 mail: m.coonen@maastrichtuniversity.nl2
@@ -105,16 +114,19 @@ mail: m.coonen@maastrichtuniversity.nl2
 dn: uid=jmelius,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 objectclass: extensibleObject
 objectclass: person
-#objectclass: voperson
-#objectclass: posixAccount
+objectclass: voperson
+objectclass: posixAccount
 objectclass: inetOrgPerson
-#objectclass: eduPerson
+objectclass: eduPerson
 objectclass: top
 cn: Melius Jonathan
+gidNumber: 999
+homeDirectory: /home/FAKE 
+uidNumber: 999
 sn: Melius
 uid: jmelius
-#voPersonExternalID: j.melius@unimaas.nl
-#eduPersonUniqueId: 7c78e849-28f1-4f67-a63c-c2435d5d920a@sram.surf.nl
+voPersonExternalID: j.melius@unimaas.nl
+eduPersonUniqueId: 7c78e849-28f1-4f67-a63c-c2435d5d920a@sram.surf.nl
 displayName: Jonathan Melius
 givenName: Jonathan
 mail: J.melius@maastrichtuniversity.nl2
@@ -178,6 +190,7 @@ labeledURI: 0
 dn: o=datahubmaastricht:co_m4i_ims,dc=ordered,dc=datahubmaastricht,dc=nl
 objectClass: extensibleObject
 objectClass: organization
+objectClass: labeledURIObject
 objectClass: top
 o: datahubmaastricht:co_m4i_ims
 description: CO for all of MassSpec
@@ -187,18 +200,19 @@ displayName: M4I-IMS
 dn: o=datahubmaastricht:co_m4i_nano,dc=ordered,dc=datahubmaastricht,dc=nl
 objectClass: extensibleObject
 objectClass: organization
+objectClass: labeledURIObject
 objectClass: top
 o: datahubmaastricht:co_m4i_nano
 description: CO for all of Nanoscopy
 displayName: M4I-Nanoscopy
 
-#this entry exists in sram-ldap, containing the sami information as in the flat-view...
+#this entry exists in sram-ldap, containing the same information as in the flat-view...
 dn: ou=Groups,o=datahubmaastricht:co_m4i_nano,dc=ordered,dc=datahubmaastricht,dc=nl
 objectclass: organizationalUnit
 objectclass: top
 ou: Groups
 
-#this entry exists in sram-ldap, containing the sami information as in the flat-view...
+#this entry exists in sram-ldap, containing the same information as in the flat-view...
 dn: ou=People,o=datahubmaastricht:co_m4i_nano,dc=ordered,dc=datahubmaastricht,dc=nl
 objectclass: organizationalUnit
 objectclass: top
@@ -208,6 +222,7 @@ ou: People
 dn: o=datahubmaastricht:co_m4i_nano_insilicotem,dc=ordered,dc=datahubmaastricht,dc=nl
 objectClass: extensibleObject
 objectClass: organization
+objectClass: labeledURIObject
 objectClass: top
 o: datahubmaastricht:co_m4i_nano_insilicotem
 description: CO for project: inSilicoTEM
@@ -217,36 +232,10 @@ displayName: inSilicoTEM
 dn: o=datahubmaastricht:co_m4i_nano_phd2016_P4711,dc=ordered,dc=datahubmaastricht,dc=nl
 objectClass: extensibleObject
 objectClass: organization
+objectClass: labeledURIObject
 objectClass: top
 o: datahubmaastricht:co_m4i_nano_phd2016_P4711
 description: CO for PhD project of P4711
 displayName: Novel approach for smashing ions    
 
 
-#############################################################
-### legacy ###
-
-#dn: ou=groups,dc=datahubmaastricht,dc=nl
-#objectclass: organizationalUnit
-#objectclass: top
-#ou: groups
-
-#dn: cn=admin,ou=groups,dc=datahubmaastricht,dc=nl
-#cn: admin
-#gidnumber: 501
-#memberuid: 1003
-#objectclass: posixGroup
-#objectclass: top
-
-
-#dn: cn=developers,ou=groups,dc=datahubmaastricht,dc=nl
-#cn: developers
-#gidnumber: 500
-#memberuid: 1000
-#objectclass: posixGroup
-#objectclass: top
-
-#dn: ou=users,dc=datahubmaastricht,dc=nl
-#objectclass: organizationalUnit
-#objectclass: top
-#ou: users
