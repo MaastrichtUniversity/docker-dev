@@ -173,7 +173,7 @@ labeledURI: 0
 memberUid: uid=pschayck,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 
 
-dn: cn=o_m4i_nano_phd2016_P4711,ou=Groups,dc=flat,dc=datahubmaastricht,dc=nl
+dn: cn=co_m4i_nano_phd2016_P4711,ou=Groups,dc=flat,dc=datahubmaastricht,dc=nl
 objectClass: extensibleObject
 objectClass: labeledURIObject
 objectClass: posixGroup
