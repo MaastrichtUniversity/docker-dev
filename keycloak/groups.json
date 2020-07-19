@@ -1,20 +1,24 @@
 [
    { 
      "name": "co_datahub",
-     "displayName":    "DataHub",
+     "displayName": "DataHub",
      "description": "It's DataHub!"
    },
    {
-     "name": "co_m4i_nanoscopy2",
-     "displayName":    "M4I-Nanoscopy",
-     "description": "electron microscopy"
+     "name": "co_m4i_nano",
+     "displayName": "M4I-Nanoscopy",
+     "description": "EM-Microscopy"
    },
    {
-     "name": "ci_m4i_ims2",
-     "displayName":    "M4I-Massspec"
+     "name": "co_m4i_ims",
+     "displayName": "M4I-Massspec"
    },
    { 
      "name": "co_um_scannexus",
-     "displayName":    "UM-SCANNEXUS"
+     "displayName": "UM-SCANNEXUS"
+   },
+   {
+     "name": "co_m4i_nano_phd0815",
+     "displayName": "M4I PhD-Project P0815"
    }
 ]

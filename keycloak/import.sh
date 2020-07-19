@@ -52,33 +52,41 @@ echo "Create Groups"
 groupsJSON=$(cat /tmp/groups.json | jq -c '.')
 echo $groupsJSON | jq  -r -c '.[]'  | while read groupJSON; do
   groupName=$(echo $groupJSON | jq -r -c '.name' )
+  #for now these are not actually stored in keycloak, since they should belong to COs not groups.
+  displayName=$(echo $groupJSON | jq -r -c '.displayName' )
+  description=$(echo $groupJSON | jq -r -c '.description' )
   echo "groupName: $groupName"
   #for starters dont try to sync anything just create new groups if this group doesnt exist yet
-  if (/opt/jboss/keycloak/bin/kcadm.sh get groups -r drupal | jq -c -r ".[] " | grep -q "rit" );
+  if (/opt/jboss/keycloak/bin/kcadm.sh get groups -r drupal | jq -c -r ".[] " | grep -q "\"$groupName\"" );
   then
      echo "GroupName ${groupName} already found in keycloak..."
   else
-     /opt/jboss/keycloak/bin/kcadm.sh create groups -r drupal -b "{ \"name\": \"${groupName}\", \"attributes\": {\"gidNumber\":[\"999\"] } }"   
+     /opt/jboss/keycloak/bin/kcadm.sh create groups -r drupal -b "{ \"name\": \"${groupName}\", \"attributes\": {\"gidNumber\":[\"999\"] } }"
   fi
 done
 echo "Groups Created"
 
 
 echo "Create Users"
-usersJSON=$(cat /tmp/users.json | jq -c '.')#
+usersJSON=$(cat /tmp/users.json | jq -c '.')
+#echo $usersJSON
 
 echo $usersJSON | jq  -r -c '.[]'  | while read userJSON; do
   userID=$(echo $userJSON | jq -r -c '.userName' )
   displayName=$(echo $userJSON | jq -r -c '.displayName' )
   userEmail=$(echo $userJSON | jq -r -c '.email' )
+  eduPersonUniqueId=$(echo $userJSON | jq -r -c '.eduPersonUniqueId' )
+  voPersonExternalID=$(echo $userJSON | jq -r -c '.voPersonExternalID' )
+  voPersonExternalAffiliation=$(echo $userJSON | jq -r -c '.voPersonExternalAffiliation' )
   groupsMemberOf=$(echo $userJSON | jq -r -c '.memberOf' )
   echo "userName/id: $userID displayName: $displayName email: $userEmail"
+  #echo "eduPersonUniqueId: $eduPersonUniqueId, voPersonExternalID: $voPersonExternalID, voPersonExternalAffiliation: $voPersonExternalAffiliation"
   # Check if user already exists, if not create user and set password
   if (/opt/jboss/keycloak/bin/kcadm.sh get users -r drupal -q username="${userID}" | grep -q "id");
   then
     echo "user ${userID} already found in keycloak..."
   else
-    keycloakUserID=$( /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username="${userID}" -s enabled=true -s email="${userEmail}" -s "attributes.displayName=${displayName}" -i )
+    keycloakUserID=$( /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username="${userID}" -s enabled=true -s email="${userEmail}" -s "attributes.displayName=${displayName}" -s "attributes.eduPersonUniqueId=${eduPersonUniqueId}"  -s "attributes.voPersonExternalID=${voPersonExternalID}"  -s "attributes.voPersonExternalAffiliation=${voPersonExternalAffiliation}"  -i )
     echo "created new user ${userID} with keycloakId: ${keycloakUserID}"
     #echo "setting now password... (for: ${userID})"
     /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username ${userID} --new-password 'foobar'
@@ -87,14 +95,16 @@ echo $usersJSON | jq  -r -c '.[]'  | while read userJSON; do
     #go through the list of group memberships and add the user to the correct group
     echo "$groupsMemberOf"
     echo $groupsMemberOf | jq -r -c '.[]' | while read groupName; do
-       keycloakGroupID=$( /opt/jboss/keycloak/bin/kcadm.sh get groups -r drupal | jq -c -r ".[] " | grep "${groupName}" | jq -c -r ".id" )
-       if [ -z $keycloakGroupID ]
+       keycloakGroupID=$( /opt/jboss/keycloak/bin/kcadm.sh get groups -r drupal | jq -c -r ".[] " | grep "\"${groupName}\"" | jq -c -r ".id" )
+       echo "groupId in keycloak: $keycloakGroupID"
+       if [ -z "$keycloakGroupID" ]
        then
            echo "cant add user ${keycloakUserID} to ${groupName}, could not find group  in keycloak!"
        else
           echo "adding user ${keycloakUserID} to ${groupName} ($keycloakGroupID)"
+          echo "$keycloakGroupID"
           #https://www.keycloak.org/docs/latest/server_admin/#_group_operations
-          /opt/jboss/keycloak/bin/kcadm.sh update users/${keycloakUserID}/groups/${keycloakGroupID} -r drupal
+          /opt/jboss/keycloak/bin/kcadm.sh update "users/${keycloakUserID}/groups/${keycloakGroupID}" -r drupal
        fi 
     done
   fi

@@ -104,7 +104,7 @@ description: CO for project: inSilicoTEM
 displayName: inSilicoTEM    
 
 
-dn: o=datahubmaastricht:co_m4i_nano_phd2016_P4711,dc=ordered,dc=datahubmaastricht,dc=nl
+dn: o=datahubmaastricht:co_m4i_nano_phd0815,dc=ordered,dc=datahubmaastricht,dc=nl
 objectClass: extensibleObject
 objectClass: organization
 objectClass: labeledURIObject
