@@ -42,94 +42,12 @@ objectclass: top
 dc: ordered
 o: mumc_scz_datahub
 
-
-### PEOPLE ###
-## People and Groups should be populated by keycloak ###
+### People ###
 
 dn: ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 objectclass: organizationalUnit
 objectclass: top
 ou: People
-
-dn: uid=jthiede,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
-objectclass: extensibleObject
-objectclass: person
-objectclass: voperson
-objectclass: posixAccount
-objectclass: inetOrgPerson
-objectclass: eduPerson
-objectclass: top
-cn: Thiede Jan-Erek
-gidNumber: 999
-homeDirectory: /home/FAKE
-uidNumber: 999
-sn: Thiede
-uid: jthiede
-voPersonExternalID: P70067297@unimaas.nl
-eduPersonUniqueId: aebf5474-5202-40d4-94c3-52e1dcb2650f@sram.surf.nl
-displayName: J.-E. Thiede
-givenName: Jan-Erek
-mail: J.Thiede@maastrichtuniversity.nl
-
-dn: uid=pschayck,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
-objectclass: extensibleObject
-objectclass: person
-objectclass: voperson
-objectclass: posixAccount
-objectclass: inetOrgPerson
-objectclass: eduPerson
-objectclass: top
-cn: Schayck Paul van
-gidNumber: 999
-homeDirectory: /home/FAKE 
-uidNumber: 999
-sn: Schayck
-uid: pschayck
-voPersonExternalID: P.vanSchayck@unimaas.nl
-eduPersonUniqueId: 643cf169-a0e1-4b2b-99a7-4659b296b825@sram.surf.nl
-displayName: J.-E. Thiede
-givenName: Paul van Schayck
-mail: p.vanschayck@maastrichtuniversity.nl2
-
-dn: uid=mcoonen,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
-objectclass: extensibleObject
-objectclass: person
-objectclass: voperson
-objectclass: posixAccount
-objectclass: inetOrgPerson
-objectclass: eduPerson
-objectclass: top
-cn: Coonen Maarten
-gidNumber: 999
-homeDirectory: /home/FAKE 
-uidNumber: 999
-sn: Coonen
-uid: mcoonen
-voPersonExternalID: m.coonen@unimaas.nl
-eduPersonUniqueId: 9e1fe11c-16a6-47db-b7ca-6c5a6c5343ee@sram.surf.nl
-displayName: M. Coonen
-givenName: Maarten
-mail: m.coonen@maastrichtuniversity.nl2
-
-dn: uid=jmelius,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
-objectclass: extensibleObject
-objectclass: person
-objectclass: voperson
-objectclass: posixAccount
-objectclass: inetOrgPerson
-objectclass: eduPerson
-objectclass: top
-cn: Melius Jonathan
-gidNumber: 999
-homeDirectory: /home/FAKE 
-uidNumber: 999
-sn: Melius
-uid: jmelius
-voPersonExternalID: j.melius@unimaas.nl
-eduPersonUniqueId: 7c78e849-28f1-4f67-a63c-c2435d5d920a@sram.surf.nl
-displayName: Jonathan Melius
-givenName: Jonathan
-mail: J.melius@maastrichtuniversity.nl2
 
 ### Groups ###
 
@@ -138,49 +56,6 @@ objectclass: organizationalUnit
 objectclass: top
 ou: Groups
 
-dn: cn=co_m4i_ims,ou=Groups,dc=flat,dc=datahubmaastricht,dc=nl
-objectClass: extensibleObject
-objectClass: labeledURIObject
-objectClass: posixGroup
-#objectClass: sczGroup
-cn: co_m4i_ims
-gidNumber: 1010
-labeledURI: 0
-#sczMember
-#sczMember
-memberUid: uid=jmelius,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
-
-dn: cn=co_m4i_nano,ou=Groups,dc=flat,dc=datahubmaastricht,dc=nl
-objectClass: extensibleObject
-objectClass: labeledURIObject
-objectClass: posixGroup
-#objectClass: sczGroup
-cn: co_m4i_nano
-gidNumber: 1020
-labeledURI: 0
-#sczMember: 
-memberUid: uid=pschayck,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
-memberUid: uid=jthiede,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
-
-dn: cn=co_m4i_nano_insilicotem,ou=Groups,dc=flat,dc=datahubmaastricht,dc=nl
-objectClass: extensibleObject
-objectClass: labeledURIObject
-objectClass: posixGroup
-#objectClass: sczGroup
-cn: co_m4i_nano_insilicotem
-gidNumber: 1030
-labeledURI: 0
-memberUid: uid=pschayck,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
-
-
-dn: cn=co_m4i_nano_phd2016_P4711,ou=Groups,dc=flat,dc=datahubmaastricht,dc=nl
-objectClass: extensibleObject
-objectClass: labeledURIObject
-objectClass: posixGroup
-#objectClass: sczGroup
-cn: co_m4i_nano_phd2016_P4711
-gidNumber: 1040
-labeledURI: 0
 
 #############################################################
 ### Collaboration Organisations - COs ###
@@ -234,7 +109,7 @@ objectClass: extensibleObject
 objectClass: organization
 objectClass: labeledURIObject
 objectClass: top
-o: datahubmaastricht:co_m4i_nano_phd2016_P4711
+o: datahubmaastricht:co_m4i_nano_phd0815
 description: CO for PhD project of P4711
 displayName: Novel approach for smashing ions    
 
