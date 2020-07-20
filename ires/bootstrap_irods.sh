@@ -14,6 +14,8 @@ iadmin addchildtoresc replRescUM01 UM-hnas-4k-repl
 iadmin mkresc arcRescSURF01 unixfilesystem ${HOSTNAME}:/mnt/SURF-Archive
 # Add the archive service account to the Archive resource
 imeta add -R arcRescSURF01 service-account service-surfarchive
+# Set arcRescSURF01 as the archive destination resource, this AVU is required the createProject.r workflow
+imeta add -R arcRescSURF01 archiveDestResc true
 
 # Add comment to resource for better identification in pacman's createProject dropdown
 iadmin modresc ${HOSTNAME}Resource comment UBUNTU-INGEST-RESOURCE
