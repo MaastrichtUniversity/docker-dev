@@ -18,9 +18,11 @@ services:
         - ENV_HTTP_PROXY
     depends_on:
       - irods
+      - ires
       - db
       - crossref-lookup
       - keycloak
+      - sram-sync
     hostname: pacman
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -559,6 +561,9 @@ services:
           - open-access-worker.dh.local
   sram-sync:
     build: sram-sync/
+    depends_on:
+      - irods
+      - ldap
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./sram-sync:/opt/app
