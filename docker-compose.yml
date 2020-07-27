@@ -65,6 +65,7 @@ services:
       RABBITMQ_USER: user
       RABBITMQ_PASS: password
       RABBITMQ_PORT: 5672
+      AUTHORIZED_AVU_CHANGE: "enableArchive,enableOpenAccessExport"
     networks:
       default:
         aliases:
