@@ -43,6 +43,7 @@ services:
       PACMAN_ADMIN_PASS: foobar
       PACMAN_ENABLE_MAINTENANCE_BANNER: "false"
       PACMAN_MAINTENANCE_BANNER_TEXT: "On Tuesday 10-10-2019 there will be maintenance on The ingest zones. It will not be available from 19:00 to max. 22:00"
+      PACMAN_CHANGE_AVU_WHITELIST: "enableArchive,enableOpenAccessExport"
       IRODS_FRONTEND_ENV_VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
       IRODS_WEBDAV_ENV_VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
       IRODS_HOST: irods.dh.local
@@ -65,7 +66,6 @@ services:
       RABBITMQ_USER: user
       RABBITMQ_PASS: password
       RABBITMQ_PORT: 5672
-      AUTHORIZED_AVU_CHANGE: "enableArchive,enableOpenAccessExport"
     networks:
       default:
         aliases:
