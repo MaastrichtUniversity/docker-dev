@@ -18,9 +18,11 @@ services:
         - ENV_HTTP_PROXY
     depends_on:
       - irods
+      - ires
       - db
       - crossref-lookup
       - keycloak
+      - sram-sync
     hostname: pacman
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -58,7 +60,7 @@ services:
       SIMPLESAMLPHP_SALT: 04ewyapckg6lj4wn7emchwu8kojtjaoh
       DATAVERSE_ENDPOINT: https://demo.dataverse.nl/
       DATAVERSE_TREE_ROOT_ID: maastricht
-      DATAVERSE_TREE_TITLE_FILTER: "TEST_Datahub-iRods_MUMC_Dataverse,TEST_Datahub-iRods_Dataverse,DataHub,Maastricht UMC+"
+      DATAVERSE_TREE_TITLE_FILTER: "DataHub;Maastricht UMC+;Faculty of Health, Medicine and Life Sciences;MERLN"
       RABBITMQ_HOST: rabbitmq.dh.local
       RABBITMQ_USER: user
       RABBITMQ_PASS: password
@@ -559,6 +561,10 @@ services:
           - open-access-worker.dh.local
   sram-sync:
     build: externals/sram-sync/
+    build: sram-sync/
+    depends_on:
+      - irods
+      - ldap
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/sram-sync/:/opt/app
