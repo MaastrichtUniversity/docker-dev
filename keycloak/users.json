@@ -36,7 +36,7 @@
     "userName": "maarten.coonen@mumc.nl",
     "displayName": "Maarten Coonen (MUMC+)",
     "email": "maarten.coonen@mumc.nl",
-    "memberOf": [ "DataHub" ]
+    "memberOf": [ "co_datahub" ]
   },
   {
     "userName": "d.theunissen@maastrichtuniversity.nl",
@@ -147,6 +147,17 @@
     "voPersonExternalID": "p.ahles@unimaas.nl",
     "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
     "memberOf": [ ]
+  },
+  {
+    "userName": "o.palmen@maastrichtuniversity.nl",
+    "displayName": "Olav Palmen",
+    "email": "o.palmen@maastrichtuniversity.nl",
+    "lastName": "",
+    "firstName": "",
+    "eduPersonUniqueId": "z52a57a5-dd17-4959-ae7b-28a9124576mn@sram.surf.nl",
+    "voPersonExternalID": "o.palmen@unimaas.nl",
+    "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
+    "memberOf": [ "co_datahub" ]
   },
   {
     "userName": "minimalist",
