@@ -4,14 +4,14 @@ filebeat.inputs:
     paths:
       - /var/lib/irods/log/*Log*
 
-  #Multiline
-  multiline.pattern: '^[A-Z][a-z]{2}\s+\d'
-  multiline.negate: true
-  multiline.match: after
-  multiline.max_linex: 10000
+    #Multiline
+    multiline.pattern: '^[A-Z][a-z]{2}\s+\d'
+    multiline.negate: true
+    multiline.match: after
+    multiline.max_linex: 10000
 
-  #Tags
-  tags: ["IRES_AZM","IRES"]
+    #Tags
+    tags: ["IRES_AZM","IRES"]
 
 # Disable filebeat monitoring
 logging.metrics.enabled: false

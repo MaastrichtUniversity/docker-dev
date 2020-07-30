@@ -10,13 +10,6 @@ iadmin mkresc replRescUM01 replication
 iadmin addchildtoresc replRescUM01 UM-hnas-4k
 iadmin addchildtoresc replRescUM01 UM-hnas-4k-repl
 
-# Create a resource for the the SURFsara Archive
-iadmin mkresc arcRescSURF01 unixfilesystem ${HOSTNAME}:/mnt/SURF-Archive
-# Add the archive service account to the Archive resource
-imeta add -R arcRescSURF01 service-account service-surfarchive
-# Set arcRescSURF01 as the archive destination resource, this AVU is required the createProject.r workflow
-imeta add -R arcRescSURF01 archiveDestResc true
-
 # Add comment to resource for better identification in pacman's createProject dropdown
 iadmin modresc ${HOSTNAME}Resource comment UBUNTU-INGEST-RESOURCE
 iadmin modresc replRescUM01 comment Replicated-resource-for-UM
@@ -24,7 +17,6 @@ iadmin modresc replRescUM01 comment Replicated-resource-for-UM
 # Add storage pricing to resources
 imeta add -R ${HOSTNAME}Resource NCIT:C88193 999
 imeta add -R replRescUM01 NCIT:C88193 0.189
-imeta add -R arcRescSURF01 NCIT:C88193 0.02
 
 ###########
 ## Projects and project permissions
