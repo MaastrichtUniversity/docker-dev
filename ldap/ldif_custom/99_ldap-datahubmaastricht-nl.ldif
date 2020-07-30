@@ -1,0 +1,116 @@
+# LDIF Export for dc=datahubmaastricht,dc=nl
+
+#
+# Organisation: datahubmaastricht
+
+# COs: per project (multi-CO-approach), i.e. per phd-project, per research project, etc.
+#      A CO consists of an organisation-entry (containing displayName and description)
+#      below the organisation, Groups and People as defined for THIS co.
+#      each CO-organisation has at least one entry in Groups (the default group), but could have also subgroups!
+#      naming COs:
+#         * datahubmaastricht:co_m4i_ims
+#         * datahubmaastricht:co_m4i_nanoscopy
+#         * datahubmaastricht:co_m4i_nanoscopy_project5
+#      naming groups:
+#         * co_m4i_ims  (default group for the CO of the same name)
+#         * co_m4i_ims:subgroup (additional group for the same co)
+#         * co_m4i_nanoscopy (default group for the CO of the same name)
+#
+# flat: all Groups and Users known to the organisation (union of all users and groups of all COs)
+# ordered: only here the COs are defined  and groups and users are ordered by COs
+#
+#
+# Since keycloak can store users/groups only in one place, I think it would be possible to:
+# a) lets keycloak store users and groups ONLY in the flat section
+# b) the SRAM-SYNC script should only read the flat section to create/update/delete users, groups, and memberships
+# c) the only additional information from the ordered section (displayName & description) can be used even if the user lists are empty!
+
+version: 1
+
+################################################
+dn: dc=flat,dc=datahubmaastricht,dc=nl
+objectclass: organization
+objectclass: dcObject
+objectclass: top
+dc: flat
+o: mumc_scz_datahub
+
+dn: dc=ordered,dc=datahubmaastricht,dc=nl
+objectclass: organization
+objectclass: dcObject
+objectclass: top
+dc: ordered
+o: mumc_scz_datahub
+
+### People ###
+
+dn: ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+objectclass: organizationalUnit
+objectclass: top
+ou: People
+
+### Groups ###
+
+dn: ou=Groups,dc=flat,dc=datahubmaastricht,dc=nl
+objectclass: organizationalUnit
+objectclass: top
+ou: Groups
+
+
+#############################################################
+### Collaboration Organisations - COs ###
+
+
+
+dn: o=datahubmaastricht:co_m4i_ims,dc=ordered,dc=datahubmaastricht,dc=nl
+objectClass: extensibleObject
+objectClass: organization
+objectClass: labeledURIObject
+objectClass: top
+o: datahubmaastricht:co_m4i_ims
+description: CO for all of MassSpec
+displayName: M4I-IMS
+
+
+dn: o=datahubmaastricht:co_m4i_nano,dc=ordered,dc=datahubmaastricht,dc=nl
+objectClass: extensibleObject
+objectClass: organization
+objectClass: labeledURIObject
+objectClass: top
+o: datahubmaastricht:co_m4i_nano
+description: CO for all of Nanoscopy
+displayName: M4I-Nanoscopy
+
+#this entry exists in sram-ldap, containing the same information as in the flat-view...
+dn: ou=Groups,o=datahubmaastricht:co_m4i_nano,dc=ordered,dc=datahubmaastricht,dc=nl
+objectclass: organizationalUnit
+objectclass: top
+ou: Groups
+
+#this entry exists in sram-ldap, containing the same information as in the flat-view...
+dn: ou=People,o=datahubmaastricht:co_m4i_nano,dc=ordered,dc=datahubmaastricht,dc=nl
+objectclass: organizationalUnit
+objectclass: top
+ou: People
+
+
+dn: o=datahubmaastricht:co_m4i_nano_insilicotem,dc=ordered,dc=datahubmaastricht,dc=nl
+objectClass: extensibleObject
+objectClass: organization
+objectClass: labeledURIObject
+objectClass: top
+o: datahubmaastricht:co_m4i_nano_insilicotem
+description: CO for project: inSilicoTEM
+displayName: inSilicoTEM    
+
+
+dn: o=datahubmaastricht:co_m4i_nano_phd0815,dc=ordered,dc=datahubmaastricht,dc=nl
+objectClass: extensibleObject
+objectClass: organization
+objectClass: labeledURIObject
+objectClass: top
+o: datahubmaastricht:co_m4i_nano_phd0815
+description: CO for PhD project of P4711
+displayName: Novel approach for smashing ions    
+
+
