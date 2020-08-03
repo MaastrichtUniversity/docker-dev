@@ -66,6 +66,7 @@ services:
       RABBITMQ_USER: user
       RABBITMQ_PASS: password
       RABBITMQ_PORT: 5672
+      OPEN_ACCESS_REPOSITORIES_ENABLED: '{"Dataverse": "DataverseNL"}' # key->variable expected in the python module irods-open-access-repo; value->displayed value in the form
     networks:
       default:
         aliases:
