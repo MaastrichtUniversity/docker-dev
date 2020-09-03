@@ -71,17 +71,17 @@ done
 ## Groups
 nanoscopy="p.vanschayck g.tria rbg.ravelli"
 
-iadmin mkgroup M4I-Nanoscopy
+iadmin mkgroup SRAM-M4I-Nanoscopy
 for user in $nanoscopy; do
-    iadmin atg M4I-Nanoscopy "${user}@${domain}"
+    iadmin atg SRAM-M4I-Nanoscopy "${user}@${domain}"
 done
 
 rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy r.brecheisen jonathan.melius k.heinen s.nijhuis"
 
-iadmin mkgroup DataHub
+iadmin mkgroup SRAM-DataHub
 iadmin mkgroup DH-project-admins
 for user in $rit; do
-    iadmin atg DataHub "${user}@${domain}"
+    iadmin atg SRAM-DataHub "${user}@${domain}"
     iadmin atg DH-project-admins "${user}@${domain}"
 done
 
@@ -94,9 +94,9 @@ done
 
 scannexus="rick.voncken"
 
-iadmin mkgroup UM-SCANNEXUS
+iadmin mkgroup SRAM-SCANNEXUS
 for user in $scannexus; do
-    iadmin atg UM-SCANNEXUS "${user}@${snDomain}"
+    iadmin atg SRAM-SCANNEXUS "${user}@${snDomain}"
     iadmin atg DH-ingest "${user}@${snDomain}"
 done
 
@@ -139,7 +139,7 @@ ichmod -r own "p.suppers@maastrichtuniversity.nl" /nlmumc/projects/P000000010
 # Data Steward gets manager rights
 ichmod -r own "o.palmen@maastrichtuniversity.nl" /nlmumc/projects/P000000010
 ichmod -r write "service-mdl" /nlmumc/projects/P000000010
-ichmod -r read "DataHub" /nlmumc/projects/P000000010
+ichmod -r read "SRAM-DataHub" /nlmumc/projects/P000000010
 # Add additional AVUs
 imeta add -C /nlmumc/projects/P000000010/C000000001 creator irods_bootstrap@docker.dev
 imeta add -C /nlmumc/projects/P000000010/C000000001 dcat:byteSize 0
@@ -161,7 +161,7 @@ ichmod -r own "p.suppers@maastrichtuniversity.nl" /nlmumc/projects/P000000011
 # Data Steward gets manager rights
 ichmod -r own "o.palmen@maastrichtuniversity.nl" /nlmumc/projects/P000000011
 ichmod -r write "service-mdl" /nlmumc/projects/P000000011
-ichmod -r read "DataHub" /nlmumc/projects/P000000011
+ichmod -r read "SRAM-DataHub" /nlmumc/projects/P000000011
 # Add additional AVUs
 imeta add -C /nlmumc/projects/P000000011/C000000001 creator irods_bootstrap@docker.dev
 imeta add -C /nlmumc/projects/P000000011/C000000001 dcat:byteSize 0

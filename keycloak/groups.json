@@ -1,24 +1,25 @@
 [
-   { 
-     "name": "co_datahub",
+   {
+     "name": "SRAM-DataHub",
      "displayName": "DataHub",
      "description": "It's DataHub!"
    },
    {
-     "name": "co_m4i_nano",
+     "name": "SRAM-M4I-Nanoscopy",
      "displayName": "M4I-Nanoscopy",
-     "description": "EM-Microscopy"
+     "description": "Electron Microscopy"
    },
    {
-     "name": "co_m4i_ims",
-     "displayName": "M4I-Massspec"
+     "name": "SRAM-M4I-MassSpectrometry",
+     "displayName": "M4I-IMS",
+     "description": "Imaging Mass Spectrometry"
    },
-   { 
-     "name": "co_um_scannexus",
+   {
+     "name": "SRAM-SCANNEXUS",
      "displayName": "UM-SCANNEXUS"
    },
    {
-     "name": "co_m4i_nano_phd0815",
+     "name": "SRAM-M4I-Nanoscopy_phd0815",
      "displayName": "M4I PhD-Project P0815"
    }
 ]
