@@ -23,12 +23,23 @@
   },
   {
     "userName": "m.coonen@maastrichtuniversity.nl",
-    "displayName": "Maarten Coonen (MUMC+)",
+    "displayName": "Maarten Coonen",
     "email": "m.coonen@maastrichtuniversity.nl",
     "lastName": "Coonen",
     "firstName": "Maarten",
     "eduPersonUniqueId": "91ad41ad-22d1-43d2-a97d-c79ffe1b9355@sram.surf.nl",
     "voPersonExternalID": "m.coonen@unimaas.nl",
+    "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
+    "memberOf": [ "SRAM-DataHub" ]
+  },
+  {
+    "userName": "maarten.coonen@mumc.nl",
+    "displayName": "Dr. Maarten Coonen (MUMC+)",
+    "email": "maarten.coonen@mumc.nl",
+    "lastName": "Coonen",
+    "firstName": "Maarten",
+    "eduPersonUniqueId": "91ad41ad-22d1-43d2-a97d-c79ffe1b1597@sram.surf.nl",
+    "voPersonExternalID": "dr.coonen@unimaas.nl",
     "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
     "memberOf": [ "SRAM-DataHub" ]
   },

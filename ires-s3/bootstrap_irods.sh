@@ -43,7 +43,7 @@ for i in {01..2}; do
     ichmod -r own "p.vanschayck@${domain}" /nlmumc/projects/${project}
 
     # Contributor access
-    ichmod -r write DataHub /nlmumc/projects/${project}
+    ichmod -r write SRAM-DataHub /nlmumc/projects/${project}
 
     # Viewer access
 done
