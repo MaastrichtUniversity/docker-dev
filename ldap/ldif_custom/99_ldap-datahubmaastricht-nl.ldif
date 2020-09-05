@@ -60,57 +60,73 @@ ou: Groups
 #############################################################
 ### Collaboration Organisations - COs ###
 
-
-
-dn: o=datahubmaastricht:co_m4i_ims,dc=ordered,dc=datahubmaastricht,dc=nl
+dn: o=datahubmaastricht:SRAM-M4I-Massspectrometry,dc=ordered,dc=datahubmaastricht,dc=nl
 objectClass: extensibleObject
 objectClass: organization
 objectClass: labeledURIObject
 objectClass: top
-o: datahubmaastricht:co_m4i_ims
+o: datahubmaastricht:SRAM-M4I-Massspectrometry
 description: CO for all of MassSpec
 displayName: M4I-IMS
 
 
-dn: o=datahubmaastricht:co_m4i_nano,dc=ordered,dc=datahubmaastricht,dc=nl
+dn: o=datahubmaastricht:SRAM-M4I-Nanoscopy,dc=ordered,dc=datahubmaastricht,dc=nl
 objectClass: extensibleObject
 objectClass: organization
 objectClass: labeledURIObject
 objectClass: top
-o: datahubmaastricht:co_m4i_nano
+o: datahubmaastricht:SRAM-M4I-Nanoscopy
 description: CO for all of Nanoscopy
 displayName: M4I-Nanoscopy
 
 #this entry exists in sram-ldap, containing the same information as in the flat-view...
-dn: ou=Groups,o=datahubmaastricht:co_m4i_nano,dc=ordered,dc=datahubmaastricht,dc=nl
+dn: ou=Groups,o=datahubmaastricht:SRAM-M4I-Nanoscopy,dc=ordered,dc=datahubmaastricht,dc=nl
 objectclass: organizationalUnit
 objectclass: top
 ou: Groups
 
 #this entry exists in sram-ldap, containing the same information as in the flat-view...
-dn: ou=People,o=datahubmaastricht:co_m4i_nano,dc=ordered,dc=datahubmaastricht,dc=nl
+dn: ou=People,o=datahubmaastricht:SRAM-M4I-Nanoscopy,dc=ordered,dc=datahubmaastricht,dc=nl
 objectclass: organizationalUnit
 objectclass: top
 ou: People
 
 
-dn: o=datahubmaastricht:co_m4i_nano_insilicotem,dc=ordered,dc=datahubmaastricht,dc=nl
+dn: o=datahubmaastricht:SRAM-M4I-Nanoscopy_InSilicoTEM,dc=ordered,dc=datahubmaastricht,dc=nl
 objectClass: extensibleObject
 objectClass: organization
 objectClass: labeledURIObject
 objectClass: top
-o: datahubmaastricht:co_m4i_nano_insilicotem
+o: datahubmaastricht:SRAM-M4I-Nanoscopy_InSilicoTEM
 description: CO for project: inSilicoTEM
 displayName: inSilicoTEM    
 
 
-dn: o=datahubmaastricht:co_m4i_nano_phd0815,dc=ordered,dc=datahubmaastricht,dc=nl
+dn: o=datahubmaastricht:SRAM-M4I-Nanoscopy_Phd0815,dc=ordered,dc=datahubmaastricht,dc=nl
 objectClass: extensibleObject
 objectClass: organization
 objectClass: labeledURIObject
 objectClass: top
-o: datahubmaastricht:co_m4i_nano_phd0815
+o: datahubmaastricht:SRAM-M4I-Nanoscopy_Phd0815
 description: CO for PhD project of P4711
-displayName: Novel approach for smashing ions    
+displayName: Novel approach for smashing ions
+
+dn: o=datahubmaastricht:SRAM-DataHub,dc=ordered,dc=datahubmaastricht,dc=nl
+objectClass: extensibleObject
+objectClass: organization
+objectClass: labeledURIObject
+objectClass: top
+o: datahubmaastricht:SRAM-DataHub
+description: It's DataHub! The place to store your data.
+displayName: DataHub
+
+dn: o=datahubmaastricht:SRAM-SCANNEXUS,dc=ordered,dc=datahubmaastricht,dc=nl
+objectClass: extensibleObject
+objectClass: organization
+objectClass: labeledURIObject
+objectClass: top
+o: datahubmaastricht:SRAM-SCANNEXUS 
+description: UM-SCANNEXUS
+displayName: SCANNEXUS
 
 
