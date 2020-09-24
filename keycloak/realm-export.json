@@ -1627,6 +1627,29 @@
               }
             },
             {
+              "id": "327ff8e5-1d38-4797-8d1e-103a8b020bf3",
+              "name": "voPersonExternalAffiliation",
+              "providerId": "user-attribute-ldap-mapper",
+              "subComponents": {},
+              "config": {
+                "ldap.attribute": [
+                  "voPersonExternalAffiliation"
+                ],
+                "is.mandatory.in.ldap": [
+                  "false"
+                ],
+                "is.binary.attribute": [
+                  "false"
+                ],
+                "read.only": [
+                  "false"
+                ],
+                "user.model.attribute": [
+                  "voPersonExternalAffiliation"
+                ]
+              }
+            },
+            {
               "id": "827ff8e5-1d38-4797-8d1e-103a8b020bf4",
               "name": "voPersonExternalID",
               "providerId": "user-attribute-ldap-mapper",
