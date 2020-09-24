@@ -2,7 +2,7 @@
   {
     "userName": "pvanschay2",
     "displayName": "Paul van Schayck",
-    "email": "p.vanschayck@maastrichtuniversity.nl",
+    "email": "pvanschay2",
     "lastName": "van Schayck",
     "firstName": "Paul",
     "eduPersonUniqueId": "pvanschay2@sram.surf.nl",
@@ -13,7 +13,7 @@
   {
     "userName": "jthiede1",
     "displayName": "Jan-Erek Thiede",
-    "email": "j.thiede@maastrichtuniversity.nl",
+    "email": "jthiede1",
     "lastName": "Thiede",
     "firstName": "Jan-Erek",
     "eduPersonUniqueId": "jthiede1@sram.surf.nl",
@@ -24,7 +24,7 @@
   {
     "userName": "mcoonen",
     "displayName": "Maarten Coonen",
-    "email": "m.coonen@maastrichtuniversity.nl",
+    "email": "mcoonen",
     "lastName": "Coonen",
     "firstName": "Maarten",
     "eduPersonUniqueId": "mcoonen@sram.surf.nl",
@@ -35,7 +35,7 @@
   {
     "userName": "mcoonen2",
     "displayName": "Dr. Maarten Coonen (MUMC+)",
-    "email": "maarten.coonen@mumc.nl",
+    "email": "mcoonen2",
     "lastName": "Coonen",
     "firstName": "Maarten",
     "eduPersonUniqueId": "mcoonen2@sram.surf.nl",
@@ -46,7 +46,7 @@
   {
     "userName": "dtheuniss",
     "displayName": "Daniel Theunissen",
-    "email": "d.theunissen@maastrichtuniversity.nl", 
+    "email": "dtheuniss",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "dtheuniss@sram.surf.nl",
@@ -57,7 +57,7 @@
   {
     "userName": "psuppers",
     "displayName": "Pascal Suppers",
-    "email": "p.suppers@maastrichtuniversity.nl", 
+    "email": "psuppers",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "psuppers@sram.surf.nl",
@@ -68,7 +68,7 @@
   {
     "userName": "delnoy",
     "displayName": "",
-    "email": "delnoy@maastrichtuniversity.nl", 
+    "email": "delnoy",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "delnoy@sram.surf.nl",
@@ -79,7 +79,7 @@
   {
     "userName": "rbrecheis",
     "displayName": "Ralph Brecheisen",
-    "email": "r.brecheisen@maastrichtuniversity.nl", 
+    "email": "rbrecheis",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "rbrecheis@sram.surf.nl",
@@ -90,7 +90,7 @@
   {
     "userName": "jmelius",
     "displayName": "Jonathan Melius",
-    "email": "jonathan.melius@maastrichtuniversity.nl", 
+    "email": "jmelius",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "jmelius@sram.surf.nl",
@@ -101,7 +101,7 @@
   {
     "userName": "kheinen",
     "displayName": "Koert Heinen",
-    "email": "k.heinen@maastrichtuniversity.nl", 
+    "email": "kheinen",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "kheinen@sram.surf.nl",
@@ -112,7 +112,7 @@
   {
     "userName": "snijhuis",
     "displayName": "Nijhuis",
-    "email": "s.niejhuis@maastrichtuniversity.nl",
+    "email": "snijhuis",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "snijhuis@sram.surf.nl",
@@ -123,7 +123,7 @@
   {
     "userName": "rravelli",
     "displayName": "Raimond Ravelli",
-    "email": "rbg.ravelli@maastrichtuniversity.nl",
+    "email": "rravelli",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "rravelli@sram.surf.nl",
@@ -134,7 +134,7 @@
   {
     "userName": "gtria",
     "displayName": "G. Tria",
-    "email": "g.tria@maastrichtuniversity.nl",
+    "email": "gtria",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "gtria@sram.surf.nl",
@@ -145,7 +145,7 @@
   {
     "userName": "pahles",
     "displayName": "Patrick Ahles",
-    "email": "p.ahles@maastrichtuniversity.nl",
+    "email": "pahles",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "pahles@sram.surf.nl",
@@ -156,7 +156,7 @@
   {
     "userName": "opalmen",
     "displayName": "Olav Palmen",
-    "email": "o.palmen@maastrichtuniversity.nl",
+    "email": "opalmen",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "opalmen@sram.surf.nl",
@@ -178,7 +178,7 @@
   {
     "userName": "rvoncken",
     "displayName": "Rickest Rick",
-    "email": "rick.voncken@scannexus.nl",
+    "email": "rvoncken",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "rvoncken@sram.surf.nl",
@@ -189,7 +189,7 @@
   {
     "userName": "auser",
     "displayName": "Additional User newly created in LDAP",
-    "email": "",
+    "email": "auser",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "auser@sram.surf.nl",
