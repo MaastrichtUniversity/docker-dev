@@ -37,8 +37,9 @@ imkdir -p /nlmumc/projects
 ## Users
 users="pvanschay2 mcoonen mcoonen2 dtheuniss psuppers rravelli gtria pahles delnoy rbrecheis jmelius kheinen snijhuis opalmen"
 
-# In prod eduPersonUniqueId contains a hash
+# In the real SRAM on production eduPersonUniqueId is a hash before the @-sign. Like this.
 # "eduPersonUniqueId": "808d9b25-46da-4d5f-83ff-0d192368692f@sram.surf.nl"
+# For simplicity, here we reuse the username. But we can't rely on it to be readable!
 domain="sram.surf.nl"
 
 for user in $users; do
