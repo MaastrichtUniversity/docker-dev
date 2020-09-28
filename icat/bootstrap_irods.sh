@@ -40,6 +40,9 @@ usersJSON=$(cat /tmp/users.json | jq -c '.')
 
 echo $usersJSON | jq  -r -c '.[]'  | while read userJSON; do
     uid=$(echo $userJSON | jq -r -c '.userName' )
+    # In the real SRAM on production eduPersonUniqueId is a hash before the @-sign. Like this.
+    # "eduPersonUniqueId": "808d9b25-46da-4d5f-83ff-0d192368692f@sram.surf.nl"
+    # For simplicity, here we reuse the username. But we can't rely on it to be readable!
     eduPersonUniqueId=$(echo $userJSON | jq -r -c '.eduPersonUniqueId' )
     voPersonExternalID=$(echo $userJSON | jq -r -c '.voPersonExternalID' )
 
