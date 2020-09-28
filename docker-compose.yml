@@ -156,6 +156,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
+      - ./keycloak/users.json:/tmp/users.json
 
   ires:
     build:
