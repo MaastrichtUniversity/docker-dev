@@ -35,24 +35,19 @@ imkdir -p /nlmumc/projects
 
 ########
 ## Users
-users="pvanschay2 mcoonen mcoonen2 dtheuniss psuppers rravelli gtria pahles delnoy rbrecheis jmelius kheinen snijhuis opalmen"
 
-# In prod eduPersonUniqueId contains a hash
-# "eduPersonUniqueId": "808d9b25-46da-4d5f-83ff-0d192368692f@sram.surf.nl"
-domain="sram.surf.nl"
+usersJSON=$(cat /tmp/users.json | jq -c '.')
 
-for user in $users; do
-    iadmin mkuser "${user}" rodsuser
-    iadmin moduser "${user}" password foobar
-    imeta add -u  "${user}" eduPersonUniqueID "${user}@${domain}"
-done
+echo $usersJSON | jq  -r -c '.[]'  | while read userJSON; do
+    uid=$(echo $userJSON | jq -r -c '.userName' )
+    eduPersonUniqueId=$(echo $userJSON | jq -r -c '.eduPersonUniqueId' )
+    voPersonExternalID=$(echo $userJSON | jq -r -c '.voPersonExternalID' )
 
-snUsers="rvoncken"
+    iadmin mkuser "${uid}" rodsuser
+    iadmin moduser "${uid}" password foobar
+    imeta add -u  "${uid}" eduPersonUniqueID "${eduPersonUniqueId}"
+    imeta add -u  "${uid}" voPersonExternalID "${voPersonExternalID}"
 
-for snUser in $snUsers; do
-    iadmin mkuser "${snUser}" rodsuser
-    iadmin moduser "${snUser}" password foobar
-    imeta add -u  "${snUser}" eduPersonUniqueID "${snUser}@${domain}"
 done
 
 serviceUsers="service-dropzones service-mdl service-pid service-disqover"
