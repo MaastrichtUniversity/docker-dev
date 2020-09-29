@@ -30,17 +30,16 @@ imeta add -R ${HOSTNAME}Resource NCIT:C88193 999
 
 ###########
 ## Projects and project permissions
-domain="maastrichtuniversity.nl"
 
 for i in {01..2}; do
     PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='iresResource'" "*resource='replRescUMCeph01'" "*storageQuotaGb='10'" "*title='(s3) ${PROJECTNAME}'" "*principalInvestigator='p.suppers@${domain}'" "*dataSteward='p.vanschayck@${domain}'" "*respCostCenter='UM-30001234X'" "*openAccess='false'" "*tapeArchive='true'")
+    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='iresResource'" "*resource='replRescUMCeph01'" "*storageQuotaGb='10'" "*title='(s3) ${PROJECTNAME}'" "*principalInvestigator='psuppers'" "*dataSteward='pvanschay2'" "*respCostCenter='UM-30001234X'" "*openAccess='false'" "*tapeArchive='true'")
 
     # Manage access
-    ichmod -r own "p.suppers@${domain}" /nlmumc/projects/${project}
+    ichmod -r own "psuppers" /nlmumc/projects/${project}
 
     # Data Steward gets manager rights
-    ichmod -r own "p.vanschayck@${domain}" /nlmumc/projects/${project}
+    ichmod -r own "pvanschay2" /nlmumc/projects/${project}
 
     # Contributor access
     ichmod -r write SRAM-DataHub /nlmumc/projects/${project}

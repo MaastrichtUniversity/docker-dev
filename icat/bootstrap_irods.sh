@@ -35,20 +35,27 @@ imkdir -p /nlmumc/projects
 
 ########
 ## Users
-users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy r.brecheisen jonathan.melius k.heinen s.nijhuis o.palmen"
-domain="maastrichtuniversity.nl"
 
-for user in $users; do
-    iadmin mkuser "${user}@${domain}" rodsuser
-    iadmin moduser "${user}@${domain}" password foobar
-done
+# users.json comes from docker-dev/keycloak/users.json
+# To add new users or update an user, edit users.json
+usersJSON=$(cat /opt/irods/users.json | jq -c '.')
 
-snUsers="rick.voncken"
-snDomain="scannexus.nl"
+echo $usersJSON | jq  -r -c '.[]'  | while read userJSON; do
+    uid=$(echo $userJSON | jq -r -c '.userName' )
+    # In the real SRAM on production eduPersonUniqueId is a hash before the @-sign. Like this.
+    # "eduPersonUniqueId": "808d9b25-46da-4d5f-83ff-0d192368692f@sram.surf.nl"
+    # For simplicity, here we reuse the username. But we can't rely on it to be readable!
+    eduPersonUniqueId=$(echo $userJSON | jq -r -c '.eduPersonUniqueId' )
+    voPersonExternalID=$(echo $userJSON | jq -r -c '.voPersonExternalID' )
 
-for snUser in $snUsers; do
-    iadmin mkuser "${snUser}@${snDomain}" rodsuser
-    iadmin moduser "${snUser}@${snDomain}" password foobar
+    iadmin mkuser "${uid}" rodsuser
+    iadmin moduser "${uid}" password foobar
+
+    # eduPersonUniqueID is required for SRAM-sync to update the existing users
+    imeta add -u  "${uid}" eduPersonUniqueID "${eduPersonUniqueId}"
+    # voPersonExternalID is required for the drop-zone creation
+    imeta add -u  "${uid}" voPersonExternalID "${voPersonExternalID}"
+
 done
 
 serviceUsers="service-dropzones service-mdl service-pid service-disqover"
@@ -56,7 +63,7 @@ serviceUsers="service-dropzones service-mdl service-pid service-disqover"
 for user in $serviceUsers; do
     iadmin mkuser "${user}" rodsuser
     iadmin moduser "${user}" password foobar
-    imeta add -u "${user}#nlmumc" ldapSync false
+    imeta add -u "${user}" ldapSync false
 done
 
 serviceAdmins="service-surfarchive"
@@ -64,40 +71,40 @@ serviceAdmins="service-surfarchive"
 for user in $serviceAdmins; do
     iadmin mkuser "${user}" rodsadmin
     iadmin moduser "${user}" password foobar
-    imeta add -u "${user}#nlmumc" ldapSync false
+    imeta add -u "${user}" ldapSync false
 done
 
 #########
 ## Groups
-nanoscopy="p.vanschayck g.tria rbg.ravelli"
+nanoscopy="pvanschay2 gtria rravelli"
 
 iadmin mkgroup SRAM-M4I-Nanoscopy
 for user in $nanoscopy; do
-    iadmin atg SRAM-M4I-Nanoscopy "${user}@${domain}"
+    iadmin atg SRAM-M4I-Nanoscopy "${user}"
 done
 
-rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy r.brecheisen jonathan.melius k.heinen s.nijhuis"
+rit="pvanschay2 mcoonen mcoonen2 dtheuniss psuppers delnoy rbrecheis jmelius kheinen snijhuis"
 
 iadmin mkgroup SRAM-DataHub
 iadmin mkgroup DH-project-admins
 for user in $rit; do
-    iadmin atg SRAM-DataHub "${user}@${domain}"
-    iadmin atg DH-project-admins "${user}@${domain}"
+    iadmin atg SRAM-DataHub "${user}"
+    iadmin atg DH-project-admins "${user}"
 done
 
 # Add all users created so far to the DH-ingest group
 iadmin mkgroup DH-ingest
 for user in $users; do
-    iadmin atg DH-ingest "${user}@${domain}"
+    iadmin atg DH-ingest "${user}"
 done
 
 
-scannexus="rick.voncken"
+scannexus="rvoncken"
 
 iadmin mkgroup SRAM-SCANNEXUS
 for user in $scannexus; do
-    iadmin atg SRAM-SCANNEXUS "${user}@${snDomain}"
-    iadmin atg DH-ingest "${user}@${snDomain}"
+    iadmin atg SRAM-SCANNEXUS "${user}"
+    iadmin atg DH-ingest "${user}"
 done
 
 ##############
@@ -128,16 +135,16 @@ imkdir -p /nlmumc/projects/P000000010
 imeta add -C /nlmumc/projects/P000000010 authorizationPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000010 dataRetentionPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000010 ingestResource ${HOSTNAME}Resource
-imeta add -C /nlmumc/projects/P000000010 OBI:0000103 p.suppers@maastrichtuniversity.nl
-imeta add -C /nlmumc/projects/P000000010 dataSteward o.palmen@maastrichtuniversity.nl
+imeta add -C /nlmumc/projects/P000000010 OBI:0000103 psuppers
+imeta add -C /nlmumc/projects/P000000010 dataSteward opalmen
 imeta add -C /nlmumc/projects/P000000010 resource replRescAZM01
 imeta add -C /nlmumc/projects/P000000010 responsibleCostCenter AZM-123456
 imeta add -C /nlmumc/projects/P000000010 storageQuotaGb 10
 imeta add -C /nlmumc/projects/P000000010 title "(MDL) Placeholder project"
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000010'" "*title='(MDL) Placeholder collection'"
-ichmod -r own "p.suppers@maastrichtuniversity.nl" /nlmumc/projects/P000000010
+ichmod -r own "psuppers" /nlmumc/projects/P000000010
 # Data Steward gets manager rights
-ichmod -r own "o.palmen@maastrichtuniversity.nl" /nlmumc/projects/P000000010
+ichmod -r own "opalmen" /nlmumc/projects/P000000010
 ichmod -r write "service-mdl" /nlmumc/projects/P000000010
 ichmod -r read "SRAM-DataHub" /nlmumc/projects/P000000010
 # Add additional AVUs
@@ -150,16 +157,16 @@ imkdir -p /nlmumc/projects/P000000011
 imeta add -C /nlmumc/projects/P000000011 authorizationPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000011 dataRetentionPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000011 ingestResource ${HOSTNAME}Resource
-imeta add -C /nlmumc/projects/P000000011 OBI:0000103 p.suppers@maastrichtuniversity.nl
-imeta add -C /nlmumc/projects/P000000011 dataSteward o.palmen@maastrichtuniversity.nl
+imeta add -C /nlmumc/projects/P000000011 OBI:0000103 psuppers
+imeta add -C /nlmumc/projects/P000000011 dataSteward opalmen
 imeta add -C /nlmumc/projects/P000000011 resource replRescAZM01
 imeta add -C /nlmumc/projects/P000000011 responsibleCostCenter AZM-123456
 imeta add -C /nlmumc/projects/P000000011 storageQuotaGb 10
 imeta add -C /nlmumc/projects/P000000011 title "(HVC) Placeholder project"
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000011'" "*title='(HVC) Placeholder collection'"
-ichmod -r own "p.suppers@maastrichtuniversity.nl" /nlmumc/projects/P000000011
+ichmod -r own "psuppers" /nlmumc/projects/P000000011
 # Data Steward gets manager rights
-ichmod -r own "o.palmen@maastrichtuniversity.nl" /nlmumc/projects/P000000011
+ichmod -r own "opalmen" /nlmumc/projects/P000000011
 ichmod -r write "service-mdl" /nlmumc/projects/P000000011
 ichmod -r read "SRAM-DataHub" /nlmumc/projects/P000000011
 # Add additional AVUs
@@ -168,10 +175,8 @@ imeta add -C /nlmumc/projects/P000000011/C000000001 dcat:byteSize 0
 imeta add -C /nlmumc/projects/P000000011/C000000001 numFiles 0
 
 # Add data-steward specialty to certain users
-imeta add -u "p.vanschayck@maastrichtuniversity.nl" "specialty" "data-steward"
-imeta add -u "o.palmen@maastrichtuniversity.nl" "specialty" "data-steward"
-# The user below does not exist at this point. It will be created via sram-sync with LDAP
-#imeta add -u "p70067297" "specialty" "data-steward"
+imeta add -u "pvanschay2" "specialty" "data-steward"
+imeta add -u "opalmen" "specialty" "data-steward"
 
 # Add AVU on groups that should not be synced from LDAP
 nonSyncGroups="rodsadmin DH-ingest public DH-project-admins"

@@ -20,17 +20,16 @@ imeta add -R replRescUM01 NCIT:C88193 0.189
 
 ###########
 ## Projects and project permissions
-domain="maastrichtuniversity.nl"
 
 for i in {01..2}; do
     PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${HOSTNAME}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'" "*principalInvestigator='p.vanschayck@${domain}'" "*dataSteward='p.vanschayck@${domain}'" "*respCostCenter='UM-30001234X'" "*openAccess='false'" "*tapeArchive='true'")
+    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${HOSTNAME}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'" "*principalInvestigator='pvanschay2'" "*dataSteward='pvanschay2'" "*respCostCenter='UM-30001234X'" "*openAccess='false'" "*tapeArchive='true'")
 
     # Manage access
-    ichmod -r own "p.vanschayck@${domain}" /nlmumc/projects/${project}
+    ichmod -r own "pvanschay2" /nlmumc/projects/${project}
 
     # Data Steward gets manager rights
-    ichmod -r own "p.vanschayck@${domain}" /nlmumc/projects/${project}
+    ichmod -r own "pvanschay2" /nlmumc/projects/${project}
 
     # Contributor access
     ichmod -r write SRAM-M4I-Nanoscopy /nlmumc/projects/${project}
@@ -40,13 +39,13 @@ done
 
 for i in {01..2}; do
     PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${HOSTNAME}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'" "*principalInvestigator='p.suppers@${domain}'" "*dataSteward='o.palmen@${domain}'" "*respCostCenter='UM-30009998X'" "*openAccess='false'" "*tapeArchive='true'")
+    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${HOSTNAME}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'" "*principalInvestigator='psuppers'" "*dataSteward='opalmen'" "*respCostCenter='UM-30009998X'" "*openAccess='false'" "*tapeArchive='true'")
 
     # Manage access
-    ichmod -r own "p.suppers@${domain}" /nlmumc/projects/${project}
+    ichmod -r own "psuppers" /nlmumc/projects/${project}
 
     # Data Steward gets manager rights
-    ichmod -r own "o.palmen@${domain}" /nlmumc/projects/${project}
+    ichmod -r own "opalmen" /nlmumc/projects/${project}
 
     # Contributor access
     ichmod -r write SRAM-DataHub /nlmumc/projects/${project}
@@ -63,13 +62,13 @@ done
 
 for i in {01..1}; do
     PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${HOSTNAME}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='(ScaNxs) ${PROJECTNAME}'" "*principalInvestigator='m.coonen@${domain}'" "*dataSteward='o.palmen@${domain}'" "*respCostCenter='UM-30009999X'" "*openAccess='false'" "*tapeArchive='true'")
+    project=$(irule -F /rules/projects/createProject.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${HOSTNAME}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='(ScaNxs) ${PROJECTNAME}'" "*principalInvestigator='mcoonen'" "*dataSteward='opalmen'" "*respCostCenter='UM-30009999X'" "*openAccess='false'" "*tapeArchive='true'")
 
     # Manage access
-    ichmod -r own "m.coonen@${domain}" /nlmumc/projects/${project}
+    ichmod -r own "mcoonen" /nlmumc/projects/${project}
 
     # Data Steward gets manager rights
-    ichmod -r own "o.palmen@${domain}" /nlmumc/projects/${project}
+    ichmod -r own "opalmen" /nlmumc/projects/${project}
 
     # Contributor access
     ichmod -r write SRAM-SCANNEXUS /nlmumc/projects/${project}
