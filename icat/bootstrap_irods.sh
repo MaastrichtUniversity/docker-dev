@@ -33,6 +33,13 @@ imeta add -R arcRescSURF01 NCIT:C88193 0.02
 imkdir -p /nlmumc/ingest/zones
 imkdir -p /nlmumc/projects
 
+
+#######
+## DH-ingest
+
+# Create the group DH-ingest before the users, so we can add the new created users to it in the same loop
+iadmin mkgroup DH-ingest
+
 ########
 ## Users
 
@@ -56,6 +63,8 @@ echo $usersJSON | jq  -r -c '.[]'  | while read userJSON; do
     # voPersonExternalID is required for the drop-zone creation
     imeta add -u  "${uid}" voPersonExternalID "${voPersonExternalID}"
 
+    # Add all users created so far to the DH-ingest group
+    iadmin atg DH-ingest "${uid}"
 done
 
 serviceUsers="service-dropzones service-mdl service-pid service-disqover"
@@ -92,19 +101,12 @@ for user in $rit; do
     iadmin atg DH-project-admins "${user}"
 done
 
-# Add all users created so far to the DH-ingest group
-iadmin mkgroup DH-ingest
-for user in $users; do
-    iadmin atg DH-ingest "${user}"
-done
-
 
 scannexus="rvoncken"
 
 iadmin mkgroup SRAM-SCANNEXUS
 for user in $scannexus; do
     iadmin atg SRAM-SCANNEXUS "${user}"
-    iadmin atg DH-ingest "${user}"
 done
 
 ##############
