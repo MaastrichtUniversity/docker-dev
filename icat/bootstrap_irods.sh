@@ -36,7 +36,9 @@ imkdir -p /nlmumc/projects
 ########
 ## Users
 
-usersJSON=$(cat /tmp/users.json | jq -c '.')
+# users.json comes from docker-dev/keycloak/users.json
+# To add new users or update an user, edit users.json
+usersJSON=$(cat /opt/irods/users.json | jq -c '.')
 
 echo $usersJSON | jq  -r -c '.[]'  | while read userJSON; do
     uid=$(echo $userJSON | jq -r -c '.userName' )
@@ -48,7 +50,10 @@ echo $usersJSON | jq  -r -c '.[]'  | while read userJSON; do
 
     iadmin mkuser "${uid}" rodsuser
     iadmin moduser "${uid}" password foobar
+
+    # eduPersonUniqueID is required for SRAM-sync to update the existing users
     imeta add -u  "${uid}" eduPersonUniqueID "${eduPersonUniqueId}"
+    # voPersonExternalID is required for the drop-zone creation
     imeta add -u  "${uid}" voPersonExternalID "${voPersonExternalID}"
 
 done
