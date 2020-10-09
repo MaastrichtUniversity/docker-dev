@@ -103,6 +103,10 @@ if [[ $1 == "create-project-collections" ]]; then
     exit 0
 fi
 
+if [[ $1 == "login" ]]; then
+    docker login registry.dh.unimaas.nl
+    exit 0
+fi
 
 # set RIT_ENV if not set already
 env_selector
