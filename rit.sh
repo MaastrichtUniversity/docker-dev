@@ -104,7 +104,8 @@ if [[ $1 == "create-project-collections" ]]; then
 fi
 
 if [[ $1 == "login" ]]; then
-    docker login registry.dh.unimaas.nl
+    source './.env'
+    docker login $ENV_REGISTRY_HOST
     exit 0
 fi
 
