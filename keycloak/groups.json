@@ -1,24 +1,29 @@
 [
    {
+     "gidNumber": "11",
      "name": "SRAM-DataHub",
      "displayName": "DataHub",
      "description": "It's DataHub!"
    },
-   {
+   {     
+     "gidNumber": "12",
      "name": "SRAM-M4I-Nanoscopy",
      "displayName": "M4I-Nanoscopy",
      "description": "Electron Microscopy"
    },
-   {
+   {     
+     "gidNumber": "13",
      "name": "SRAM-M4I-MassSpectrometry",
      "displayName": "M4I-IMS",
      "description": "Imaging Mass Spectrometry"
    },
    {
+     "gidNumber": "14",
      "name": "SRAM-SCANNEXUS",
      "displayName": "UM-SCANNEXUS"
    },
    {
+     "gidNumber": "15",
      "name": "SRAM-M4I-Nanoscopy_phd0815",
      "displayName": "M4I PhD-Project P0815"
    }
