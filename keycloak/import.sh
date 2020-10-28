@@ -54,14 +54,15 @@ echo $groupsJSON | jq  -r -c '.[]'  | while read groupJSON; do
   groupName=$(echo $groupJSON | jq -r -c '.name' )
   #for now these are not actually stored in keycloak, since they should belong to COs not groups.
   displayName=$(echo $groupJSON | jq -r -c '.displayName' )
-  description=$(echo $groupJSON | jq -r -c '.description' )
+  description=$(echo $groupJSON | jq -r -c '.description' )  
+  gidNumber=$(echo $groupJSON | jq -r -c '.gidNumber' )
   echo "groupName: $groupName"
   #for starters dont try to sync anything just create new groups if this group doesnt exist yet
   if (/opt/jboss/keycloak/bin/kcadm.sh get groups -r drupal | jq -c -r ".[] " | grep -q "\"$groupName\"" );
   then
      echo "GroupName ${groupName} already found in keycloak..."
   else
-     /opt/jboss/keycloak/bin/kcadm.sh create groups -r drupal -b "{ \"name\": \"${groupName}\", \"attributes\": {\"gidNumber\":[\"999\"] } }"
+     /opt/jboss/keycloak/bin/kcadm.sh create groups -r drupal -b "{ \"name\": \"${groupName}\", \"attributes\": {\"gidNumber\":[\"${gidNumber}\"] } }"
   fi
 done
 echo "Groups Created"
