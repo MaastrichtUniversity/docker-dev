@@ -2,7 +2,7 @@
   {
     "userName": "pvanschay2",
     "displayName": "Paul van Schayck",
-    "email": "p.vanschayk@maastrichtuniversity.nl",
+    "email": "p.vanschayck@maastrichtuniversity.nl",
     "lastName": "van Schayck",
     "firstName": "Paul",
     "eduPersonUniqueId": "pvanschay2@sram.surf.nl",
@@ -68,7 +68,7 @@
   {
     "userName": "delnoy",
     "displayName": "",
-    "email": "delnoy",
+    "email": "delnoy@example.org",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "delnoy@sram.surf.nl",
@@ -79,7 +79,7 @@
   {
     "userName": "rbrecheis",
     "displayName": "Ralph Brecheisen",
-    "email": "rbrecheis",
+    "email": "rbrecheis@example.org",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "rbrecheis@sram.surf.nl",
@@ -101,7 +101,7 @@
   {
     "userName": "kheinen",
     "displayName": "Koert Heinen",
-    "email": "kheinen",
+    "email": "kheinen@example.org",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "kheinen@sram.surf.nl",
@@ -112,7 +112,7 @@
   {
     "userName": "snijhuis",
     "displayName": "Nijhuis",
-    "email": "snijhuis",
+    "email": "snijhuis@example.org",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "snijhuis@sram.surf.nl",
@@ -123,7 +123,7 @@
   {
     "userName": "rravelli",
     "displayName": "Raimond Ravelli",
-    "email": "rravelli",
+    "email": "rravelli@example.org",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "rravelli@sram.surf.nl",
@@ -134,7 +134,7 @@
   {
     "userName": "gtria",
     "displayName": "G. Tria",
-    "email": "gtria",
+    "email": "gtria@example.org",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "gtria@sram.surf.nl",
@@ -145,7 +145,7 @@
   {
     "userName": "pahles",
     "displayName": "Patrick Ahles",
-    "email": "pahles",
+    "email": "pahles@example.org",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "pahles@sram.surf.nl",
@@ -178,7 +178,7 @@
   {
     "userName": "rvoncken",
     "displayName": "Rickest Rick",
-    "email": "rvoncken",
+    "email": "rvoncken@example.org",
     "lastName": "",
     "firstName": "",
     "eduPersonUniqueId": "rvoncken@sram.surf.nl",
