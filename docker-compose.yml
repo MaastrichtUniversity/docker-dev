@@ -60,6 +60,12 @@ services:
       DRUPAL_BASE_URL: http://pacman.{RIT_ENV}.rit.unimaas.nl
       SIMPLESAMLPHP_PASSWORD: password
       SIMPLESAMLPHP_SALT: 04ewyapckg6lj4wn7emchwu8kojtjaoh
+      SAML_IDP_METADATA_URL: 'not_used_in_dev'
+      SAML_IDP_METADATA_FINGERPRINT: 'not_used_in_dev'
+      SAML_IDP_ENTITY_ID: 'not_used_in_dev'
+      SAML_DRUPAL_USERNAME_ATTR: 'username'
+      SAML_DRUPAL_UNIQUE_ID_ATTR: 'username'
+      SAML_DRUPAL_MAIL_ATTR: 'email'
       DATAVERSE_ENDPOINT: https://demo.dataverse.nl/
       DATAVERSE_TREE_ROOT_ID: maastricht
       DATAVERSE_TREE_TITLE_FILTER: "DataHub;Maastricht UMC+;Faculty of Health, Medicine and Life Sciences;MERLN"
