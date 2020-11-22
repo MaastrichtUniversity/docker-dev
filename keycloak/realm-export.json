@@ -548,7 +548,7 @@
       ]
     }
   },
-  "groups": [],
+  "groups": [ ],
   "defaultRoles": [
     "offline_access",
     "uma_authorization"
@@ -1452,13 +1452,13 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-address-mapper",
-            "saml-user-property-mapper",
-            "oidc-usermodel-property-mapper",
             "saml-role-list-mapper",
+            "saml-user-property-mapper",
             "oidc-sha256-pairwise-sub-mapper",
             "saml-user-attribute-mapper",
             "oidc-full-name-mapper",
+            "oidc-address-mapper",
+            "oidc-usermodel-property-mapper",
             "oidc-usermodel-attribute-mapper"
           ]
         }
@@ -1471,16 +1471,39 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-usermodel-property-mapper",
-            "oidc-usermodel-attribute-mapper",
-            "oidc-sha256-pairwise-sub-mapper",
-            "saml-role-list-mapper",
             "saml-user-property-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
             "saml-user-attribute-mapper",
-            "oidc-full-name-mapper",
-            "oidc-address-mapper"
+            "oidc-usermodel-attribute-mapper",
+            "saml-role-list-mapper",
+            "oidc-address-mapper",
+            "oidc-usermodel-property-mapper",
+            "oidc-full-name-mapper"
           ]
         }
+      },
+      {
+        "id": "420b9e05-0fe4-447f-8151-46418090b2b1",
+        "name": "Trusted Hosts",
+        "providerId": "trusted-hosts",
+        "subType": "anonymous",
+        "subComponents": {},
+        "config": {
+          "host-sending-registration-request-must-match": [
+            "true"
+          ],
+          "client-uris-must-match": [
+            "true"
+          ]
+        }
+      },
+      {
+        "id": "4cd4e75f-ae79-43b0-99cf-a72b75dd4b83",
+        "name": "Full Scope Disabled",
+        "providerId": "scope",
+        "subType": "anonymous",
+        "subComponents": {},
+        "config": {}
       },
       {
         "id": "056747d4-bebe-4488-8e9f-bb12ec65a234",
@@ -1513,29 +1536,6 @@
             "200"
           ]
         }
-      },
-      {
-        "id": "420b9e05-0fe4-447f-8151-46418090b2b1",
-        "name": "Trusted Hosts",
-        "providerId": "trusted-hosts",
-        "subType": "anonymous",
-        "subComponents": {},
-        "config": {
-          "host-sending-registration-request-must-match": [
-            "true"
-          ],
-          "client-uris-must-match": [
-            "true"
-          ]
-        }
-      },
-      {
-        "id": "4cd4e75f-ae79-43b0-99cf-a72b75dd4b83",
-        "name": "Full Scope Disabled",
-        "providerId": "scope",
-        "subType": "anonymous",
-        "subComponents": {},
-        "config": {}
       },
       {
         "id": "ed937068-9df8-478f-ad74-0fd32cedc23c",
@@ -1581,29 +1581,6 @@
               }
             },
             {
-              "id": "13233c7e-1a42-4686-b80b-6275bad4aff1",
-              "name": "eduPersonUniqueID",
-              "providerId": "user-attribute-ldap-mapper",
-              "subComponents": {},
-              "config": {
-                "ldap.attribute": [
-                  "eduPersonUniqueID"
-                ],
-                "is.mandatory.in.ldap": [
-                  "false"
-                ],
-                "is.binary.attribute": [
-                  "false"
-                ],
-                "read.only": [
-                  "false"
-                ],
-                "user.model.attribute": [
-                  "eduPersonUniqueID"
-                ]
-              }
-            },
-            {
               "id": "f39039d0-2bb7-4930-b2d4-b798e16d9cc0",
               "name": "username",
               "providerId": "user-attribute-ldap-mapper",
@@ -1623,29 +1600,6 @@
                 ],
                 "user.model.attribute": [
                   "username"
-                ]
-              }
-            },
-            {
-              "id": "327ff8e5-1d38-4797-8d1e-103a8b020bf3",
-              "name": "voPersonExternalAffiliation",
-              "providerId": "user-attribute-ldap-mapper",
-              "subComponents": {},
-              "config": {
-                "ldap.attribute": [
-                  "voPersonExternalAffiliation"
-                ],
-                "is.mandatory.in.ldap": [
-                  "false"
-                ],
-                "is.binary.attribute": [
-                  "false"
-                ],
-                "read.only": [
-                  "false"
-                ],
-                "user.model.attribute": [
-                  "voPersonExternalAffiliation"
                 ]
               }
             },
@@ -1696,6 +1650,29 @@
               }
             },
             {
+              "id": "13233c7e-1a42-4686-b80b-6275bad4aff1",
+              "name": "eduPersonUniqueID",
+              "providerId": "user-attribute-ldap-mapper",
+              "subComponents": {},
+              "config": {
+                "ldap.attribute": [
+                  "eduPersonUniqueID"
+                ],
+                "is.mandatory.in.ldap": [
+                  "false"
+                ],
+                "is.binary.attribute": [
+                  "false"
+                ],
+                "read.only": [
+                  "false"
+                ],
+                "user.model.attribute": [
+                  "eduPersonUniqueID"
+                ]
+              }
+            },
+            {
               "id": "066ea1a4-c8bb-4fb7-92db-55c982f1a69c",
               "name": "creation date",
               "providerId": "user-attribute-ldap-mapper",
@@ -1707,10 +1684,10 @@
                 "is.mandatory.in.ldap": [
                   "false"
                 ],
-                "always.read.value.from.ldap": [
+                "read.only": [
                   "true"
                 ],
-                "read.only": [
+                "always.read.value.from.ldap": [
                   "true"
                 ],
                 "user.model.attribute": [
@@ -1759,28 +1736,23 @@
                 "group.name.ldap.attribute": [
                   "cn"
                 ],
+                "preserve.group.inheritance": [
+                  "false"
+                ],
                 "ignore.missing.groups": [
                   "false"
                 ],
                 "membership.ldap.attribute": [
                   "member"
                 ],
-                "preserve.group.inheritance": [
-                  "false"
-                ],
-                "memberof.ldap.attribute": [
-                  "memberOf"
-                ],
                 "groups.dn": [
                   "ou=Groups,dc=flat,dc=datahubmaastricht,dc=nl"
                 ],
                 "group.object.classes": [
-                  "groupOfNames"
+                  "groupOfMembers"
                 ],
                 "drop.non.existing.groups.during.sync": [
                   "false"
-                ],
-                "mapped.group.attributes": [
                 ]
               }
             },
@@ -1808,6 +1780,29 @@
               }
             },
             {
+              "id": "327ff8e5-1d38-4797-8d1e-103a8b020bf3",
+              "name": "voPersonExternalAffiliation",
+              "providerId": "user-attribute-ldap-mapper",
+              "subComponents": {},
+              "config": {
+                "ldap.attribute": [
+                  "voPersonExternalAffiliation"
+                ],
+                "is.mandatory.in.ldap": [
+                  "false"
+                ],
+                "is.binary.attribute": [
+                  "false"
+                ],
+                "read.only": [
+                  "false"
+                ],
+                "user.model.attribute": [
+                  "voPersonExternalAffiliation"
+                ]
+              }
+            },
+            {
               "id": "e27576b1-fb5e-4620-adef-e0a6358de77f",
               "name": "last name",
               "providerId": "user-attribute-ldap-mapper",
@@ -1819,11 +1814,11 @@
                 "is.mandatory.in.ldap": [
                   "true"
                 ],
-                "read.only": [
-                  "false"
-                ],
                 "always.read.value.from.ldap": [
                   "true"
+                ],
+                "read.only": [
+                  "false"
                 ],
                 "user.model.attribute": [
                   "lastName"
@@ -1842,10 +1837,10 @@
                 "is.mandatory.in.ldap": [
                   "false"
                 ],
-                "read.only": [
+                "always.read.value.from.ldap": [
                   "false"
                 ],
-                "always.read.value.from.ldap": [
+                "read.only": [
                   "false"
                 ],
                 "user.model.attribute": [
@@ -1862,11 +1857,11 @@
           "fullSyncPeriod": [
             "1800"
           ],
-          "connectionPooling": [
-            "true"
-          ],
           "usersDn": [
             "ou=People,dc=flat,dc=datahubmaastricht,dc=nl"
+          ],
+          "connectionPooling": [
+            "true"
           ],
           "cachePolicy": [
             "DEFAULT"
@@ -1880,9 +1875,6 @@
           "enabled": [
             "true"
           ],
-          "bindCredential": [
-            "**********"
-          ],
           "bindDn": [
             "cn=admin,dc=datahubmaastricht,dc=nl"
           ],
@@ -1891,6 +1883,9 @@
           ],
           "changedSyncPeriod": [
             "300"
+          ],
+          "bindCredential": [
+            "**********"
           ],
           "lastSync": [
             "1564583382"
@@ -1901,11 +1896,11 @@
           "uuidLDAPAttribute": [
             "entryUUID"
           ],
-          "allowKerberosAuthentication": [
-            "false"
-          ],
           "connectionUrl": [
             "ldap://ldap"
+          ],
+          "allowKerberosAuthentication": [
+            "false"
           ],
           "syncRegistrations": [
             "true"
@@ -1986,7 +1981,7 @@
   "supportedLocales": [],
   "authenticationFlows": [
     {
-      "id": "baa7a14d-4346-4ff4-89b5-b133219a0d36",
+      "id": "56eb9529-0153-42ed-95df-01656293ccb3",
       "alias": "Handle Existing Account",
       "description": "Handle what to do if there is existing account with same email/username like authenticated identity provider",
       "providerId": "basic-flow",
@@ -2017,7 +2012,7 @@
       ]
     },
     {
-      "id": "2d8093fc-81dc-4f78-90ab-55f4914488c7",
+      "id": "7abad8e8-d0ea-4fd0-aead-3a2bf1b3502d",
       "alias": "Verify Existing Account by Re-authentication",
       "description": "Reauthentication of existing account",
       "providerId": "basic-flow",
@@ -2041,7 +2036,7 @@
       ]
     },
     {
-      "id": "025d91be-fe78-417f-8a34-37deb2e18488",
+      "id": "57a31ba9-b3af-412b-adbb-25d9d0699bd6",
       "alias": "browser",
       "description": "browser based authentication",
       "providerId": "basic-flow",
@@ -2079,7 +2074,7 @@
       ]
     },
     {
-      "id": "6156c0ae-773c-40fd-a303-a36936a4a651",
+      "id": "2643e40e-7bbd-4b3c-bbca-c7669f78b25a",
       "alias": "clients",
       "description": "Base authentication for clients",
       "providerId": "client-flow",
@@ -2117,7 +2112,7 @@
       ]
     },
     {
-      "id": "54447480-11e2-46d5-9068-949f40086dcb",
+      "id": "187e716b-144e-4c53-97b0-408ee0828a0d",
       "alias": "direct grant",
       "description": "OpenID Connect Resource Owner Grant",
       "providerId": "basic-flow",
@@ -2148,7 +2143,7 @@
       ]
     },
     {
-      "id": "3b83e658-9269-4e3e-bf2e-591982d77474",
+      "id": "2cb404ab-01ab-4e37-a444-24e53f923a05",
       "alias": "docker auth",
       "description": "Used by Docker clients to authenticate against the IDP",
       "providerId": "basic-flow",
@@ -2165,7 +2160,7 @@
       ]
     },
     {
-      "id": "b5879286-b9a0-4a1b-9903-afa9e168032e",
+      "id": "cc33bc41-2dd6-49b0-8700-dc9a0d095bdc",
       "alias": "first broker login",
       "description": "Actions taken after first broker login with identity provider account, which is not yet linked to any Keycloak account",
       "providerId": "basic-flow",
@@ -2198,7 +2193,7 @@
       ]
     },
     {
-      "id": "e7bdd236-33a3-44d0-ae64-91fe46674649",
+      "id": "b0e1362a-ea4b-43e5-a35a-02de1540d170",
       "alias": "forms",
       "description": "Username, password, otp and other auth forms.",
       "providerId": "basic-flow",
@@ -2222,7 +2217,7 @@
       ]
     },
     {
-      "id": "a9f9c926-e781-491f-adcb-f25d8c5e5d49",
+      "id": "f2549a2e-500a-449a-93ff-cff963dbeec8",
       "alias": "http challenge",
       "description": "An authentication flow based on challenge-response HTTP Authentication Schemes",
       "providerId": "basic-flow",
@@ -2260,7 +2255,7 @@
       ]
     },
     {
-      "id": "ca01d8e0-9ba3-4209-b46b-5203b15e8627",
+      "id": "b8ee2d53-c23d-404a-b358-6a855259dd03",
       "alias": "registration",
       "description": "registration flow",
       "providerId": "basic-flow",
@@ -2278,7 +2273,7 @@
       ]
     },
     {
-      "id": "44493a90-577b-4145-b57f-d92bd25e5632",
+      "id": "ffc47847-af4d-47ae-862d-bc5a8e9f06a9",
       "alias": "registration form",
       "description": "registration form",
       "providerId": "form-flow",
@@ -2316,7 +2311,7 @@
       ]
     },
     {
-      "id": "70772401-4464-4180-96cf-cb1583c493e3",
+      "id": "fa3aeba5-f81c-4c23-8498-132fe1ef2e75",
       "alias": "reset credentials",
       "description": "Reset credentials for a user if they forgot their password or something",
       "providerId": "basic-flow",
@@ -2354,7 +2349,7 @@
       ]
     },
     {
-      "id": "d1f425ba-cba7-47d2-94dc-035c2297fbdd",
+      "id": "a0eb5894-8d17-4d6a-8620-8f75f8dbb8ec",
       "alias": "saml ecp",
       "description": "SAML ECP Profile Authentication Flow",
       "providerId": "basic-flow",
@@ -2373,14 +2368,14 @@
   ],
   "authenticatorConfig": [
     {
-      "id": "ad5c628b-361f-424b-84cf-00cc5aaed0df",
+      "id": "789331b2-2ec4-48e8-bc8e-fd0d3be12eb7",
       "alias": "create unique user config",
       "config": {
         "require.password.update.after.registration": "false"
       }
     },
     {
-      "id": "7436efad-85ea-468f-8b9d-26fcbc985d62",
+      "id": "92ff7e02-4a9b-4a7f-9244-eee5b5a62872",
       "alias": "review profile config",
       "config": {
         "update.profile.on.first.login": "missing"
