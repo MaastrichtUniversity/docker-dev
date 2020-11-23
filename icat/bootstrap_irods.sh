@@ -87,9 +87,9 @@ done
 ## Groups
 nanoscopy="pvanschay2 gtria rravelli"
 
-iadmin mkgroup SRAM-M4I-Nanoscopy
+iadmin mkgroup m4i-nanoscopy
 for user in $nanoscopy; do
-    iadmin atg SRAM-M4I-Nanoscopy "${user}"
+    iadmin atg m4i-nanoscopy "${user}"
 done
 
 rit="pvanschay2 mcoonen mcoonen2 dtheuniss psuppers delnoy rbrecheis jmelius kheinen snijhuis"
@@ -104,9 +104,9 @@ done
 
 scannexus="rvoncken"
 
-iadmin mkgroup SRAM-SCANNEXUS
+iadmin mkgroup scannexus
 for user in $scannexus; do
-    iadmin atg SRAM-SCANNEXUS "${user}"
+    iadmin atg scannexus "${user}"
 done
 
 ##############
@@ -148,7 +148,7 @@ ichmod -r own "psuppers" /nlmumc/projects/P000000010
 # Data Steward gets manager rights
 ichmod -r own "opalmen" /nlmumc/projects/P000000010
 ichmod -r write "service-mdl" /nlmumc/projects/P000000010
-ichmod -r read "SRAM-DataHub" /nlmumc/projects/P000000010
+ichmod -r read "datahub" /nlmumc/projects/P000000010
 # Add additional AVUs
 imeta add -C /nlmumc/projects/P000000010/C000000001 creator irods_bootstrap@docker.dev
 imeta add -C /nlmumc/projects/P000000010/C000000001 dcat:byteSize 0
@@ -170,7 +170,7 @@ ichmod -r own "psuppers" /nlmumc/projects/P000000011
 # Data Steward gets manager rights
 ichmod -r own "opalmen" /nlmumc/projects/P000000011
 ichmod -r write "service-mdl" /nlmumc/projects/P000000011
-ichmod -r read "SRAM-DataHub" /nlmumc/projects/P000000011
+ichmod -r read "datahub" /nlmumc/projects/P000000011
 # Add additional AVUs
 imeta add -C /nlmumc/projects/P000000011/C000000001 creator irods_bootstrap@docker.dev
 imeta add -C /nlmumc/projects/P000000011/C000000001 dcat:byteSize 0
