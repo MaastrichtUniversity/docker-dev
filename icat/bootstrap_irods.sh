@@ -94,10 +94,10 @@ done
 
 rit="pvanschay2 mcoonen mcoonen2 dtheuniss psuppers delnoy rbrecheis jmelius kheinen snijhuis"
 
-iadmin mkgroup SRAM-DataHub
+iadmin mkgroup datahub
 iadmin mkgroup DH-project-admins
 for user in $rit; do
-    iadmin atg SRAM-DataHub "${user}"
+    iadmin atg datahub "${user}"
     iadmin atg DH-project-admins "${user}"
 done
 
