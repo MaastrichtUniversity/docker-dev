@@ -1,4 +1,4 @@
-# LDIF Export for dc=mumc,dc=nl
+# LDIF Export for dc=datahubmaastricht,dc=nl
 
 #
 # Organisation: mumc
@@ -8,22 +8,27 @@
 #      below the organisation, Groups and People as defined for THIS co.
 #      each CO-organisation has at least one entry in Groups (the default group), but could have also subgroups!
 #      naming COs:
-#         * mumc:co_m4i_ims
-#         * mumc:co_m4i_nanoscopy
-#         * mumc:co_m4i_nanoscopy_project5
+#         * mumc.datahub
+#         * mumc.m4i-nanoscopy
+#         * mumc.m4i-nanoscopy-phd0815
+#         * mumc.vitrojet                   (CO for which there is no group)
 #      naming groups:
-#         * co_m4i_ims  (default group for the CO of the same name)
-#         * co_m4i_ims:subgroup (additional group for the same co)
-#         * co_m4i_nanoscopy (default group for the CO of the same name)
+#         * mumc.datahub.@all               (default group for the CO of the same name)
+#         * mumc.m4i-nanoscopy.@all         (default group for the CO of the same name)
+#         * mumc.m4i-nanoscopy-phd0815.@all (default group for the CO of the same name)
 #
-# flat: all Groups and Users known to the organisation (union of all users and groups of all COs)
-# ordered: only here the COs are defined  and groups and users are ordered by COs
+# dc=flat: all Groups and Users known to the organisation (union of all users and groups of all COs)
+# dc=ordered: only here the COs are defined and groups and users are ordered by COs
 #
 #
-# Since keycloak can store users/groups only in one place, I think it would be possible to:
-# a) lets keycloak store users and groups ONLY in the flat section
+# Since keycloak can store users/groups only in one place, we've implemented it like this:
+# a) let keycloak store users and groups that appear in the flat section ONLY
 # b) the SRAM-SYNC script should only read the flat section to create/update/delete users, groups, and memberships
 # c) the only additional information from the ordered section (displayName & description) can be used even if the user lists are empty!
+#
+# Howto add a new CO?
+# 1. Add it to this file. They will end up in the 'dc=ordered' structure in LDAP.
+# 2. Add the corresponding group to the ../keycloak/groups.json file. They will end up in the 'dc=flat,ou=Groups' structure in LDAP.
 
 version: 1
 
