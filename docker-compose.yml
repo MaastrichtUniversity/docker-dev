@@ -387,7 +387,7 @@ services:
       - irods
     environment:
       VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
-      LOGSTASH_TAGS: DAVRODS
+      LOGSPOUT: ignore
     networks:
       default:
         aliases:
