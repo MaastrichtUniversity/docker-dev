@@ -32,7 +32,7 @@ for i in {01..2}; do
     ichmod -r own "opalmen" /nlmumc/projects/${project}
 
     # Contributor access
-    ichmod -r write SRAM-DataHub /nlmumc/projects/${project}
+    ichmod -r write datahub /nlmumc/projects/${project}
 
     # Viewer access
 done

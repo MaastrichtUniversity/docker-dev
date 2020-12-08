@@ -32,7 +32,7 @@ for i in {01..2}; do
     ichmod -r own "pvanschay2" /nlmumc/projects/${project}
 
     # Contributor access
-    ichmod -r write SRAM-M4I-Nanoscopy /nlmumc/projects/${project}
+    ichmod -r write m4i-nanoscopy /nlmumc/projects/${project}
 
     # Viewer access
 done
@@ -48,7 +48,7 @@ for i in {01..2}; do
     ichmod -r own "opalmen" /nlmumc/projects/${project}
 
     # Contributor access
-    ichmod -r write SRAM-DataHub /nlmumc/projects/${project}
+    ichmod -r write datahub /nlmumc/projects/${project}
 
     # Enable archiving for this project
     imeta set -C /nlmumc/projects/${project} enableArchive true
@@ -71,10 +71,10 @@ for i in {01..1}; do
     ichmod -r own "opalmen" /nlmumc/projects/${project}
 
     # Contributor access
-    ichmod -r write SRAM-SCANNEXUS /nlmumc/projects/${project}
+    ichmod -r write scannexus /nlmumc/projects/${project}
 
     # Viewer access
-    ichmod -r read SRAM-DataHub /nlmumc/projects/${project}
+    ichmod -r read datahub /nlmumc/projects/${project}
 done
 
 ##########

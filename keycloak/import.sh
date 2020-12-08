@@ -51,18 +51,23 @@ fi
 echo "Create Groups"
 groupsJSON=$(cat /tmp/groups.json | jq -c '.')
 echo $groupsJSON | jq  -r -c '.[]'  | while read groupJSON; do
-  groupName=$(echo $groupJSON | jq -r -c '.name' )
-  #for now these are not actually stored in keycloak, since they should belong to COs not groups.
-  displayName=$(echo $groupJSON | jq -r -c '.displayName' )
-  description=$(echo $groupJSON | jq -r -c '.description' )  
-  gidNumber=$(echo $groupJSON | jq -r -c '.gidNumber' )
-  echo "groupName: $groupName"
+  #the groups.json containes all kinds of information
+  #but note that most of this should actually belong to COs (o) under dc=ordered 
+  #which we cant manage vie keycloak. Only the cn and the uniqueIdetntifier are part of groups.
+  #Even description and displayName are not the same as for COs
+  uniqueIdentifier=$(echo  $groupJSON | jq -r -c '.uniqueIdentifier' )
+  cn=$(echo  $groupJSON | jq -r -c '.cn' )
+  #o=$(echo  $groupJSON | jq -r -c '.o' )
+  #groupName=$(echo $groupJSON | jq -r -c '.name' ) 
+  #displayName=$(echo $groupJSON | jq -r -c '.displayName' )
+  #description=$(echo $groupJSON | jq -r -c '.description' )
+  echo "group/cn: $cn"
   #for starters dont try to sync anything just create new groups if this group doesnt exist yet
-  if (/opt/jboss/keycloak/bin/kcadm.sh get groups -r drupal | jq -c -r ".[] " | grep -q "\"$groupName\"" );
+  if (/opt/jboss/keycloak/bin/kcadm.sh get groups -r drupal | jq -c -r ".[] " | grep -q "\"$cn\"" );
   then
-     echo "GroupName ${groupName} already found in keycloak..."
+     echo "Group ${cn} already found in keycloak..."
   else
-     /opt/jboss/keycloak/bin/kcadm.sh create groups -r drupal -b "{ \"name\": \"${groupName}\", \"attributes\": {\"gidNumber\":[\"${gidNumber}\"] } }"
+     /opt/jboss/keycloak/bin/kcadm.sh create groups -r drupal -b "{ \"name\": \"${cn}\", \"attributes\": {\"uniqueIdentifier\":[\"$uniqueIdentifier\"] } }"
   fi
 done
 echo "Groups Created"
