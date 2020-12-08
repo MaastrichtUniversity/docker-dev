@@ -1,30 +1,56 @@
 [
    {
-     "gidNumber": "11",
-     "name": "SRAM-DataHub",
-     "displayName": "DataHub",
-     "description": "It's DataHub!"
-   },
-   {     
-     "gidNumber": "12",
-     "name": "SRAM-M4I-Nanoscopy",
-     "displayName": "M4I-Nanoscopy",
-     "description": "Electron Microscopy"
-   },
-   {     
-     "gidNumber": "13",
-     "name": "SRAM-M4I-MassSpectrometry",
-     "displayName": "M4I-IMS",
-     "description": "Imaging Mass Spectrometry"
+     "uniqueIdentifier": "fb078411-d280-42e1-9d5f-a057f0734f5f",
+     "cn": "mumc.datahub.@all",
+     "o": "mumc.datahub",
+     "displayName": "All Members of DataHub",
+     "description": "All CO members"
    },
    {
-     "gidNumber": "14",
-     "name": "SRAM-SCANNEXUS",
-     "displayName": "UM-SCANNEXUS"
+     "uniqueIdentifier": "d8bd5ad2-0249-400c-a9da-b75ca6eacb9a",
+     "cn": "mumc.m4i-nanoscopy.@all",
+     "o": "mumc.m4i-nanoscopy",
+     "displayName": "All Members of Nanoscopy",
+     "description": "All CO members"
    },
    {
-     "gidNumber": "15",
-     "name": "SRAM-M4I-Nanoscopy_phd0815",
-     "displayName": "M4I PhD-Project P0815"
+     "uniqueIdentifier": "d119f34c-e5c4-4e5c-8c15-46d93a37b035",
+     "cn": "mumc.m4i-massspec.@all",
+     "o": "mumc.m4i-masspec",
+     "displayName": "All members of MassSpec",
+     "description": "All CO members"
+   },
+   {
+     "uniqueIdentifier": "563ebcd8-6552-4dc1-babd-a13bc6531a22",
+     "cn": "mumc.scannexus.@all",
+     "o": "mumc.scannexus",
+     "displayName": "All Members of scannexus",
+     "description": "All CO members"
+   },
+   {
+     "uniqueIdentifier": "eb33717b-4a7c-4939-9eb8-f9a0d52dd877",
+     "cn": "mumc.m4i-nanoscopy-phd0815.@all",
+     "o": "mumc.m4i-nanoscopy-phd0815",
+     "displayName": "All Members of PhD0815",
+     "description": "All CO members"
+   },
+   {
+     "uniqueIdentifier": "3e27ccd8-1516-4765-8fc6-9f37e91e847c",
+     "cn": "mumc.vitrojet.@all",
+     "o": "mumc.vitrojet",
+     "displayName": "All Members of VitroJet",
+     "description": "All CO members"
+   },
+   {
+     "uniqueIdentifier": "f0f514be-2bb9-4619-ab31-2a1902e96a98",
+     "cn": "mumc.vitrojet.subgroup1",
+     "o": "mumc.vitrojet",
+     "displayName": "subgroup1"
+   },
+   {
+     "uniqueIdentifier": "40e772a6-494d-4e81-a399-ca705c3c85ad",
+     "cn": "mumc.vitrojet.subgroup2",
+     "o": "mumc.vitrojet",
+     "displayName": "subgroup2"
    }
 ]

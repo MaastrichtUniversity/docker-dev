@@ -1,46 +1,44 @@
 # LDIF Export for dc=datahubmaastricht,dc=nl
 
 #
-# Organisation: datahubmaastricht
+# Organisation: mumc
 
 # COs: per project (multi-CO-approach), i.e. per phd-project, per research project, etc.
 #      A CO consists of an organisation-entry (containing displayName and description)
 #      below the organisation, Groups and People as defined for THIS co.
 #      each CO-organisation has at least one entry in Groups (the default group), but could have also subgroups!
 #      naming COs:
-#         * datahubmaastricht:co_m4i_ims
-#         * datahubmaastricht:co_m4i_nanoscopy
-#         * datahubmaastricht:co_m4i_nanoscopy_project5
+#         * mumc.datahub
+#         * mumc.m4i-nanoscopy
+#         * mumc.m4i-nanoscopy-phd0815
+#         * mumc.vitrojet                   (CO for which there is no group)
 #      naming groups:
-#         * co_m4i_ims  (default group for the CO of the same name)
-#         * co_m4i_ims:subgroup (additional group for the same co)
-#         * co_m4i_nanoscopy (default group for the CO of the same name)
+#         * mumc.datahub.@all               (default group for the CO of the same name)
+#         * mumc.m4i-nanoscopy.@all         (default group for the CO of the same name)
+#         * mumc.m4i-nanoscopy-phd0815.@all (default group for the CO of the same name)
 #
-# flat: all Groups and Users known to the organisation (union of all users and groups of all COs)
-# ordered: only here the COs are defined  and groups and users are ordered by COs
+# dc=flat: all Groups and Users known to the organisation (union of all users and groups of all COs)
+# dc=ordered: only here the COs are defined and groups and users are ordered by COs
 #
 #
-# Since keycloak can store users/groups only in one place, I think it would be possible to:
-# a) lets keycloak store users and groups ONLY in the flat section
+# Since keycloak can store users/groups only in one place, we've implemented it like this:
+# a) let keycloak store users and groups that appear in the flat section ONLY
 # b) the SRAM-SYNC script should only read the flat section to create/update/delete users, groups, and memberships
 # c) the only additional information from the ordered section (displayName & description) can be used even if the user lists are empty!
+#
+# Howto add a new CO?
+# 1. Add it to this file. They will end up in the 'dc=ordered' structure in LDAP.
+# 2. Add the corresponding group to the ../keycloak/groups.json file. They will end up in the 'dc=flat,ou=Groups' structure in LDAP.
 
 version: 1
 
 ################################################
 dn: dc=flat,dc=datahubmaastricht,dc=nl
-objectclass: organization
+objectclass: organizationalUnit
 objectclass: dcObject
 objectclass: top
 dc: flat
-o: mumc_scz_datahub
-
-dn: dc=ordered,dc=datahubmaastricht,dc=nl
-objectclass: organization
-objectclass: dcObject
-objectclass: top
-dc: ordered
-o: mumc_scz_datahub
+ou: flat
 
 ### People ###
 
@@ -56,77 +54,81 @@ objectclass: organizationalUnit
 objectclass: top
 ou: Groups
 
-
 #############################################################
 ### Collaboration Organisations - COs ###
 
-dn: o=datahubmaastricht:SRAM-M4I-Massspectrometry,dc=ordered,dc=datahubmaastricht,dc=nl
+dn: dc=ordered,dc=datahubmaastricht,dc=nl
+objectclass: organizationalUnit
+objectclass: dcObject
+objectclass: top
+dc: ordered
+ou: ordered
+
+dn: o=mumc.m4i-nanoscopy,dc=ordered,dc=datahubmaastricht,dc=nl
 objectClass: extensibleObject
 objectClass: organization
-objectClass: labeledURIObject
 objectClass: top
-o: datahubmaastricht:SRAM-M4I-Massspectrometry
-description: CO for all of MassSpec
-displayName: M4I-IMS
-
-
-dn: o=datahubmaastricht:SRAM-M4I-Nanoscopy,dc=ordered,dc=datahubmaastricht,dc=nl
-objectClass: extensibleObject
-objectClass: organization
-objectClass: labeledURIObject
-objectClass: top
-o: datahubmaastricht:SRAM-M4I-Nanoscopy
-description: CO for all of Nanoscopy
-displayName: M4I-Nanoscopy
+o: mumc.m4i-nanoscopy
+uniqueIdentifier: d8bd5ad2-0249-400c-a9da-b75ca6eacb9a
+description: CO for all of nanoscopy
+displayName: Nanoscopy
 
 #this entry exists in sram-ldap, containing the same information as in the flat-view...
-dn: ou=Groups,o=datahubmaastricht:SRAM-M4I-Nanoscopy,dc=ordered,dc=datahubmaastricht,dc=nl
+dn: ou=Groups,o=mumc.m4i-nanoscopy,dc=ordered,dc=datahubmaastricht,dc=nl
 objectclass: organizationalUnit
 objectclass: top
 ou: Groups
 
 #this entry exists in sram-ldap, containing the same information as in the flat-view...
-dn: ou=People,o=datahubmaastricht:SRAM-M4I-Nanoscopy,dc=ordered,dc=datahubmaastricht,dc=nl
+dn: ou=People,o=mumc.m4i-nanoscopy,dc=ordered,dc=datahubmaastricht,dc=nl
 objectclass: organizationalUnit
 objectclass: top
 ou: People
 
 
-dn: o=datahubmaastricht:SRAM-M4I-Nanoscopy_InSilicoTEM,dc=ordered,dc=datahubmaastricht,dc=nl
+dn: o=mumc.m4i-masspec,dc=ordered,dc=datahubmaastricht,dc=nl
 objectClass: extensibleObject
 objectClass: organization
-objectClass: labeledURIObject
 objectClass: top
-o: datahubmaastricht:SRAM-M4I-Nanoscopy_InSilicoTEM
-description: CO for project: inSilicoTEM
-displayName: inSilicoTEM    
+o: mumc:m4i-masspec
+uniqueIdentifier: d119f34c-e5c4-4e5c-8c15-46d93a37b035
+description: CO for all of MassSpectrometry
+displayName: Massspectrometry
 
 
-dn: o=datahubmaastricht:SRAM-M4I-Nanoscopy_Phd0815,dc=ordered,dc=datahubmaastricht,dc=nl
+dn: o=mumc.vitrojet,dc=ordered,dc=datahubmaastricht,dc=nl
 objectClass: extensibleObject
 objectClass: organization
-objectClass: labeledURIObject
 objectClass: top
-o: datahubmaastricht:SRAM-M4I-Nanoscopy_Phd0815
-description: CO for PhD project of P4711
+o: mumc.vitrojet
+uniqueIdentifier: 3e27ccd8-1516-4765-8fc6-9f37e91e847c
+description: CO for project: VitroJet
+displayName: VitroJet
+
+
+dn: o=mumc.m4i-nanoscopy-phd0815,dc=ordered,dc=datahubmaastricht,dc=nl
+objectClass: extensibleObject
+objectClass: organization
+objectClass: top
+o: mumc.m4i-nanoscopy-phd0815
+uniqueIdentifier: eb33717b-4a7c-4939-9eb8-f9a0d52dd877
+description: CO for PhD project of P7000815
 displayName: Novel approach for smashing ions
 
-dn: o=datahubmaastricht:SRAM-DataHub,dc=ordered,dc=datahubmaastricht,dc=nl
+dn: o=mumc.datahub,dc=ordered,dc=datahubmaastricht,dc=nl
 objectClass: extensibleObject
 objectClass: organization
-objectClass: labeledURIObject
 objectClass: top
-o: datahubmaastricht:SRAM-DataHub
+o: mumc.datahub
+uniqueIdentifier: fb078411-d280-42e1-9d5f-a057f0734f5f
 description: It's DataHub! The place to store your data.
 displayName: DataHub
 
-dn: o=datahubmaastricht:SRAM-SCANNEXUS,dc=ordered,dc=datahubmaastricht,dc=nl
+dn: o=mumc.scannexus,dc=ordered,dc=datahubmaastricht,dc=nl
 objectClass: extensibleObject
 objectClass: organization
-objectClass: labeledURIObject
 objectClass: top
-o: datahubmaastricht:SRAM-SCANNEXUS 
+o: mumc.scannexus 
+uniqueIdentifier: 563ebcd8-6552-4dc1-babd-a13bc6531a22
 description: UM-SCANNEXUS
 displayName: SCANNEXUS
-
-
