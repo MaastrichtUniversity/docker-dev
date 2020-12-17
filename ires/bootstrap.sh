@@ -65,8 +65,9 @@ if [[ ! -e /var/run/irods_installed ]]; then
     chown irods:irods /mnt/UM-hnas-4k
     mkdir -p /mnt/UM-hnas-4k-repl
     chown irods:irods /mnt/UM-hnas-4k-repl
-
-
+    # SURFsara Archive vault
+    mkdir -p /mnt/SURF-Archive
+    chown irods:irods /mnt/SURF-Archive
 
     su - irods -c "/opt/irods/bootstrap_irods.sh"
 

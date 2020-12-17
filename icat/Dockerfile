@@ -28,6 +28,8 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     lsof \
     fortune-mod \
     nano \
+    # packages required to parse keycloak/user.json
+    jq \
     # packages required for building ruleset and microservices {{
     libssl-dev \
     libcurl4-openssl-dev \
@@ -70,6 +72,7 @@ RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FI
  && dpkg -i /tmp/filebeat.deb
 
 ADD filebeat.yml /etc/filebeat/filebeat.yml
+RUN chmod go-w /etc/filebeat/filebeat.yml 
 
 # Finalize
 

@@ -15,31 +15,56 @@ iadmin addchildtoresc rootResc demoResc
 iadmin modresc rootResc comment DO-NOT-USE
 iadmin modresc demoResc comment DO-NOT-USE
 
+# Create a resource for the the SURFsara Archive
+# Note: done by the icat container as all the projects created by ires containers are depending on this resource being available
+iadmin mkresc arcRescSURF01 unixfilesystem ${HOSTNAME}:/mnt/SURF-Archive
+# Add the archive service account to the Archive resource
+imeta add -R arcRescSURF01 service-account service-surfarchive
+# Set arcRescSURF01 as the archive destination resource, this AVU is required the createProject.r workflow
+imeta add -R arcRescSURF01 archiveDestResc true
+
 # Add storage pricing to resources
 imeta add -R rootResc NCIT:C88193 999
 imeta add -R demoResc NCIT:C88193 999
+imeta add -R arcRescSURF01 NCIT:C88193 0.02
 
 ##############
 ## Collections
 imkdir -p /nlmumc/ingest/zones
 imkdir -p /nlmumc/projects
 
+
+#######
+## DH-ingest
+
+# Create the group DH-ingest before the users, so we can add the new created users to it in the same loop
+iadmin mkgroup DH-ingest
+
 ########
 ## Users
-users="p.vanschayck m.coonen d.theunissen p.suppers rbg.ravelli g.tria p.ahles delnoy r.niesten r.brecheisen jonathan.melius k.heinen s.nijhuis"
-domain="maastrichtuniversity.nl"
 
-for user in $users; do
-    iadmin mkuser "${user}@${domain}" rodsuser
-    iadmin moduser "${user}@${domain}" password foobar
-done
+# users.json comes from docker-dev/keycloak/users.json
+# To add new users or update an user, edit users.json
+usersJSON=$(cat /opt/irods/users.json | jq -c '.')
 
-snUsers="rick.voncken"
-snDomain="scannexus.nl"
+echo $usersJSON | jq  -r -c '.[]'  | while read userJSON; do
+    uid=$(echo $userJSON | jq -r -c '.userName' )
+    # In the real SRAM on production eduPersonUniqueId is a hash before the @-sign. Like this.
+    # "eduPersonUniqueId": "808d9b25-46da-4d5f-83ff-0d192368692f@sram.surf.nl"
+    # For simplicity, here we reuse the username. But we can't rely on it to be readable!
+    eduPersonUniqueId=$(echo $userJSON | jq -r -c '.eduPersonUniqueId' )
+    voPersonExternalID=$(echo $userJSON | jq -r -c '.voPersonExternalID' )
 
-for snUser in $snUsers; do
-    iadmin mkuser "${snUser}@${snDomain}" rodsuser
-    iadmin moduser "${snUser}@${snDomain}" password foobar
+    iadmin mkuser "${uid}" rodsuser
+    iadmin moduser "${uid}" password foobar
+
+    # eduPersonUniqueID is required for SRAM-sync to update the existing users
+    imeta add -u  "${uid}" eduPersonUniqueID "${eduPersonUniqueId}"
+    # voPersonExternalID is required for the drop-zone creation
+    imeta add -u  "${uid}" voPersonExternalID "${voPersonExternalID}"
+
+    # Add all users created so far to the DH-ingest group
+    iadmin atg DH-ingest "${uid}"
 done
 
 serviceUsers="service-dropzones service-mdl service-pid service-disqover"
@@ -47,6 +72,7 @@ serviceUsers="service-dropzones service-mdl service-pid service-disqover"
 for user in $serviceUsers; do
     iadmin mkuser "${user}" rodsuser
     iadmin moduser "${user}" password foobar
+    imeta add -u "${user}" ldapSync false
 done
 
 serviceAdmins="service-surfarchive"
@@ -54,39 +80,33 @@ serviceAdmins="service-surfarchive"
 for user in $serviceAdmins; do
     iadmin mkuser "${user}" rodsadmin
     iadmin moduser "${user}" password foobar
+    imeta add -u "${user}" ldapSync false
 done
 
 #########
 ## Groups
-nanoscopy="p.vanschayck g.tria rbg.ravelli"
+nanoscopy="pvanschay2 gtria rravelli"
 
-iadmin mkgroup nanoscopy-l
+iadmin mkgroup m4i-nanoscopy
 for user in $nanoscopy; do
-    iadmin atg nanoscopy-l "${user}@${domain}"
+    iadmin atg m4i-nanoscopy "${user}"
 done
 
-rit="p.vanschayck m.coonen d.theunissen p.suppers delnoy r.niesten r.brecheisen jonathan.melius k.heinen s.nijhuis"
+rit="pvanschay2 mcoonen mcoonen2 dtheuniss psuppers delnoy rbrecheis jmelius kheinen snijhuis"
 
-iadmin mkgroup rit-l
+iadmin mkgroup datahub
 iadmin mkgroup DH-project-admins
 for user in $rit; do
-    iadmin atg rit-l "${user}@${domain}"
-    iadmin atg DH-project-admins "${user}@${domain}"
-done
-
-# Add all users created so far to the DH-ingest group
-iadmin mkgroup DH-ingest
-for user in $users; do
-    iadmin atg DH-ingest "${user}@${domain}"
+    iadmin atg datahub "${user}"
+    iadmin atg DH-project-admins "${user}"
 done
 
 
-scannexus="rick.voncken"
+scannexus="rvoncken"
 
-iadmin mkgroup UM-SCANNEXUS
+iadmin mkgroup scannexus
 for user in $scannexus; do
-    iadmin atg UM-SCANNEXUS "${user}@${snDomain}"
-    iadmin atg DH-ingest "${user}@${snDomain}"
+    iadmin atg scannexus "${user}"
 done
 
 ##############
@@ -117,15 +137,18 @@ imkdir -p /nlmumc/projects/P000000010
 imeta add -C /nlmumc/projects/P000000010 authorizationPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000010 dataRetentionPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000010 ingestResource ${HOSTNAME}Resource
-imeta add -C /nlmumc/projects/P000000010 OBI:0000103 p.suppers@maastrichtuniversity.nl
+imeta add -C /nlmumc/projects/P000000010 OBI:0000103 psuppers
+imeta add -C /nlmumc/projects/P000000010 dataSteward opalmen
 imeta add -C /nlmumc/projects/P000000010 resource replRescAZM01
 imeta add -C /nlmumc/projects/P000000010 responsibleCostCenter AZM-123456
 imeta add -C /nlmumc/projects/P000000010 storageQuotaGb 10
 imeta add -C /nlmumc/projects/P000000010 title "(MDL) Placeholder project"
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000010'" "*title='(MDL) Placeholder collection'"
-ichmod -r own "p.suppers@maastrichtuniversity.nl" /nlmumc/projects/P000000010
+ichmod -r own "psuppers" /nlmumc/projects/P000000010
+# Data Steward gets manager rights
+ichmod -r own "opalmen" /nlmumc/projects/P000000010
 ichmod -r write "service-mdl" /nlmumc/projects/P000000010
-ichmod -r read "rit-l" /nlmumc/projects/P000000010
+ichmod -r read "datahub" /nlmumc/projects/P000000010
 # Add additional AVUs
 imeta add -C /nlmumc/projects/P000000010/C000000001 creator irods_bootstrap@docker.dev
 imeta add -C /nlmumc/projects/P000000010/C000000001 dcat:byteSize 0
@@ -136,16 +159,29 @@ imkdir -p /nlmumc/projects/P000000011
 imeta add -C /nlmumc/projects/P000000011 authorizationPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000011 dataRetentionPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000011 ingestResource ${HOSTNAME}Resource
-imeta add -C /nlmumc/projects/P000000011 OBI:0000103 p.suppers@maastrichtuniversity.nl
+imeta add -C /nlmumc/projects/P000000011 OBI:0000103 psuppers
+imeta add -C /nlmumc/projects/P000000011 dataSteward opalmen
 imeta add -C /nlmumc/projects/P000000011 resource replRescAZM01
 imeta add -C /nlmumc/projects/P000000011 responsibleCostCenter AZM-123456
 imeta add -C /nlmumc/projects/P000000011 storageQuotaGb 10
 imeta add -C /nlmumc/projects/P000000011 title "(HVC) Placeholder project"
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000011'" "*title='(HVC) Placeholder collection'"
-ichmod -r own "p.suppers@maastrichtuniversity.nl" /nlmumc/projects/P000000011
+ichmod -r own "psuppers" /nlmumc/projects/P000000011
+# Data Steward gets manager rights
+ichmod -r own "opalmen" /nlmumc/projects/P000000011
 ichmod -r write "service-mdl" /nlmumc/projects/P000000011
-ichmod -r read "rit-l" /nlmumc/projects/P000000011
+ichmod -r read "datahub" /nlmumc/projects/P000000011
 # Add additional AVUs
 imeta add -C /nlmumc/projects/P000000011/C000000001 creator irods_bootstrap@docker.dev
 imeta add -C /nlmumc/projects/P000000011/C000000001 dcat:byteSize 0
 imeta add -C /nlmumc/projects/P000000011/C000000001 numFiles 0
+
+# Add data-steward specialty to certain users
+imeta add -u "pvanschay2" "specialty" "data-steward"
+imeta add -u "opalmen" "specialty" "data-steward"
+
+# Add AVU on groups that should not be synced from LDAP
+nonSyncGroups="rodsadmin DH-ingest public DH-project-admins"
+for group in $nonSyncGroups; do
+    imeta add -u "${group}" ldapSync false
+done
