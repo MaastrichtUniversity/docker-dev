@@ -8,6 +8,7 @@ services:
     environment:
       VIRTUAL_HOST: mdr.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 8000
+      RIT_ENV: ${RIT_ENV}
     networks:
       default:
         aliases:
