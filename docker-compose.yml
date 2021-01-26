@@ -11,6 +11,7 @@ services:
       VIRTUAL_HOST: mdr.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 8000
       LOGSPOUT: ignore
+      RIT_ENV: ${RIT_ENV}
     networks:
       default:
         aliases:
