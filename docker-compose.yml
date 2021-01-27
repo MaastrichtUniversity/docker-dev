@@ -7,11 +7,16 @@ services:
       args:
         - ENV_FILEBEAT_VERSION
     image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/mdr:${ENV_TAG}
+    depends_on:
+      - keycloak
     environment:
       VIRTUAL_HOST: mdr.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 8000
       LOGSPOUT: ignore
       RIT_ENV: ${RIT_ENV}
+      IRODS_HOST: irods.dh.local
+      IRODS_USER: rods
+      IRODS_PASS: irods
     networks:
       default:
         aliases:
