@@ -1,5 +1,5 @@
 #!/bin/bash
-
+sleep 10
 set -e
 
 source /etc/secrets
