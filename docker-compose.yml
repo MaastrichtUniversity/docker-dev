@@ -14,8 +14,8 @@ services:
       VIRTUAL_PORT: 8000
       LOGSPOUT: ignore
       RIT_ENV: ${RIT_ENV}
-      # TODO: use metadata URL for both keycloak and SURFconext/SRAM
-      SAML_IDP_METADATA_URL: https://placeholder.example.org
+      SAML_IDP_METADATA_SOURCETYPE: METADATA_LOCAL_FILE_PATH    # Allowed values: 'METADATA_LOCAL_FILE_PATH' or 'METADATA_AUTO_CONF_URL'
+      SAML_IDP_METADATA_LOCATION: /opt/core/descriptor.xml      # Point to the local file or URL (depends on your choice above)
       SAML_SP_ENTITY_ID: http://mdr.${RIT_ENV}.dh.unimaas.nl/saml2_auth/acs/
       SAML_DJANGO_USERNAME_ATTR: username
       SAML_DJANGO_FIRSTNAME_ATTR: email
