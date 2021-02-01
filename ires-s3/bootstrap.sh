@@ -1,8 +1,11 @@
 #!/bin/bash
-
+sleep 10
 set -e
 
 source /etc/secrets
+
+# Python requirements
+pip install -r /rules/python/python_requirements.txt
 
 # Update RIT rules
 cd /rules && make
@@ -34,6 +37,9 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projects
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projectCollection
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-tapeArchive
+
+    # Add python rule engine to iRODS
+    /opt/irods/add_rule_engine.py /etc/irods/server_config.json python 1
 
     # Add config variable to iRODS
     /opt/irods/add_env_var.py /etc/irods/server_config.json MIRTH_METADATA_CHANNEL ${MIRTH_METADATA_CHANNEL}

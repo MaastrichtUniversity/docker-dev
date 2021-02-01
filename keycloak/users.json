@@ -196,5 +196,16 @@
     "voPersonExternalID": "a.user@unimaas.nl",
     "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
     "memberOf": [ "mumc.m4i-nanoscopy-phd0815.@all", "mumc.m4i-nanoscopy.@all" ]
+  },
+  {
+    "userName": "dlinssen",
+    "displayName": "Dean Linssen",
+    "email": "d.linssen@maastrichtuniversity.nl",
+    "lastName": "",
+    "firstName": "",
+    "eduPersonUniqueId": "dlinssen@sram.surf.nl",
+    "voPersonExternalID": "p70072425@unimaas.nl",
+    "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
+    "memberOf": [ "mumc.datahub.@all" ]
   }
 ]
