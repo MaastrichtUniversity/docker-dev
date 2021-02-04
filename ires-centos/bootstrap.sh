@@ -30,7 +30,7 @@ if [ "${USE_SAMBA}" = "true" ] ; then
          exit 1
     else
          # mount CIFS on top of the created /mnt/ingest/zones folder
-         mount -t cifs ${INGEST_MOUNT} /mnt/ingest/zones -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999,vers=1.0
+         mount -t cifs ${INGEST_MOUNT} /mnt/ingest/zones -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999,vers=2.0
     fi
 else 
     echo "Using docker volume bind for dropzones instead of CIFS mount"
