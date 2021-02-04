@@ -666,6 +666,123 @@
       ]
     },
     {
+      "id": "ab5c2910-371b-488d-92e1-1bdd9d4fd3f0",
+      "clientId": "http://mdr.RIT_ENV.dh.unimaas.nl/saml2_auth/acs/",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "**********",
+      "redirectUris": [
+        "http://mdr.RIT_ENV.dh.unimaas.nl/saml2_auth/acs/*",
+        "http://mdr.RIT_ENV.dh.unimaas.nl/*",
+        "http://mdr.RIT_ENV.dh.unimaas.nl/saml2_auth/acs/"
+      ],
+      "webOrigins": [
+        "http://mdr.RIT_ENV.dh.unimaas.nl"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "saml",
+      "attributes": {
+        "saml.assertion.signature": "true",
+        "saml.force.post.binding": "true",
+        "saml.multivalued.roles": "false",
+        "saml_single_logout_service_url_post": "",
+        "saml.encrypt": "false",
+        "saml_assertion_consumer_url_post": "",
+        "saml.server.signature": "false",
+        "saml.server.signature.keyinfo.ext": "false",
+        "exclude.session.state.from.auth.response": "false",
+        "saml.signing.certificate": "MIIDgTCCAmmgAwIBAgIJAMOp+ir6y0YKMA0GCSqGSIb3DQEBCwUAMFcxCzAJBgNVBAYTAk5MMRAwDgYDVQQIDAdMaW1idXJnMRMwEQYDVQQHDApNYWFzdHJpY2h0MSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQwHhcNMTkwNDE2MTE0NzI5WhcNMjkwNDE1MTE0NzI5WjBXMQswCQYDVQQGEwJOTDEQMA4GA1UECAwHTGltYnVyZzETMBEGA1UEBwwKTWFhc3RyaWNodDEhMB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzj6g6Nj/BMILXoCODAugZjfAuBGWY3agoxw9HjLcfXLmCU9Ckuk6NIMUXnVDdFFTevPPA/3s8kIgH5hWETOq6Z1+7n8glMYQPlxflNQYMWZxSixmXVQ5QL7qWX6HSOcJpIg7HoRQzLogcpv/cmoZqrAldhThUv/5BGCdo7BrePh1bgI5HvY5V03H9tT4lJ7hjZkVjCCHryldIT8gEL+uPSxtZiC2D1SlNf01n51wANGmRA3lXasI+1ws6iGi8uFLWn1eQl5D7nbI2PTQ6v2/LDRVyp09ImyiD4w2+6CgE5AbHNC5i60NjQnhLqXXi0cqsu4bjJ4TfIT4ndlib3clRQIDAQABo1AwTjAdBgNVHQ4EFgQUNnx+BD5VAUmrMl7tSDtPno3GiR8wHwYDVR0jBBgwFoAUNnx+BD5VAUmrMl7tSDtPno3GiR8wDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAexLtahr1BO0Xgrc1FDA+76w6tE8Dww4iLc7uv3TEqsVqWn2BhBMKYf3JqRirSjguuD+E/R0m86rWLEuA2bAgY9GiL7F2rMAFJxkrd+IgRMqmogYDD5KNsrHmTDbZFrgupkh29Y5YixPIj/VT0Sz5DC8trWLRxA9p5U6p3NDfULMNu+iT46jjKc3VnDAmesVauYV9rmf4oecLFR9vOj0lIUQw8JmF/nG8wDRP1dO7Ngt8FNkG4sKcb+t19QJ5QrQYg4keIORd0JtknkAXU77giJVR45RpYhM9Ohm9B+v9+nGeuNHkLCKjtPHpkw6RG1F9034yqlrGY60Igaco4ZezTA==",
+        "saml_single_logout_service_url_redirect": "",
+        "saml.signature.algorithm": "RSA_SHA256",
+        "saml_force_name_id_format": "false",
+        "saml.client.signature": "false",
+        "saml.encryption.certificate": "MIIDgTCCAmmgAwIBAgIJAMOp+ir6y0YKMA0GCSqGSIb3DQEBCwUAMFcxCzAJBgNVBAYTAk5MMRAwDgYDVQQIDAdMaW1idXJnMRMwEQYDVQQHDApNYWFzdHJpY2h0MSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQwHhcNMTkwNDE2MTE0NzI5WhcNMjkwNDE1MTE0NzI5WjBXMQswCQYDVQQGEwJOTDEQMA4GA1UECAwHTGltYnVyZzETMBEGA1UEBwwKTWFhc3RyaWNodDEhMB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzj6g6Nj/BMILXoCODAugZjfAuBGWY3agoxw9HjLcfXLmCU9Ckuk6NIMUXnVDdFFTevPPA/3s8kIgH5hWETOq6Z1+7n8glMYQPlxflNQYMWZxSixmXVQ5QL7qWX6HSOcJpIg7HoRQzLogcpv/cmoZqrAldhThUv/5BGCdo7BrePh1bgI5HvY5V03H9tT4lJ7hjZkVjCCHryldIT8gEL+uPSxtZiC2D1SlNf01n51wANGmRA3lXasI+1ws6iGi8uFLWn1eQl5D7nbI2PTQ6v2/LDRVyp09ImyiD4w2+6CgE5AbHNC5i60NjQnhLqXXi0cqsu4bjJ4TfIT4ndlib3clRQIDAQABo1AwTjAdBgNVHQ4EFgQUNnx+BD5VAUmrMl7tSDtPno3GiR8wHwYDVR0jBBgwFoAUNnx+BD5VAUmrMl7tSDtPno3GiR8wDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAexLtahr1BO0Xgrc1FDA+76w6tE8Dww4iLc7uv3TEqsVqWn2BhBMKYf3JqRirSjguuD+E/R0m86rWLEuA2bAgY9GiL7F2rMAFJxkrd+IgRMqmogYDD5KNsrHmTDbZFrgupkh29Y5YixPIj/VT0Sz5DC8trWLRxA9p5U6p3NDfULMNu+iT46jjKc3VnDAmesVauYV9rmf4oecLFR9vOj0lIUQw8JmF/nG8wDRP1dO7Ngt8FNkG4sKcb+t19QJ5QrQYg4keIORd0JtknkAXU77giJVR45RpYhM9Ohm9B+v9+nGeuNHkLCKjtPHpkw6RG1F9034yqlrGY60Igaco4ZezTA==",
+        "tls.client.certificate.bound.access.tokens": "false",
+        "saml.authnstatement": "true",
+        "display.on.consent.screen": "false",
+        "saml_name_id_format": "username",
+        "saml.onetimeuse.condition": "false",
+        "saml_signature_canonicalization_method": "http://www.w3.org/2001/10/xml-exc-c14n#"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "protocolMappers": [
+        {
+          "id": "b44cc188-5def-40eb-b77f-617bf03f3717",
+          "name": "X500 surname",
+          "protocol": "saml",
+          "protocolMapper": "saml-user-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "attribute.nameformat": "urn:oasis:names:tc:SAML:2.0:attrname-format:uri",
+            "user.attribute": "lastName",
+            "friendly.name": "surname",
+            "attribute.name": "urn:oid:2.5.4.4"
+          }
+        },
+        {
+          "id": "3baca6e8-8bf3-4722-b8e6-6fb0cad18ecf",
+          "name": "X500 email",
+          "protocol": "saml",
+          "protocolMapper": "saml-user-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "attribute.nameformat": "urn:oasis:names:tc:SAML:2.0:attrname-format:uri",
+            "user.attribute": "email",
+            "friendly.name": "email",
+            "attribute.name": "email"
+          }
+        },
+        {
+          "id": "7f90baa1-c38e-429e-8234-8d3e194ac437",
+          "name": "X500 givenName",
+          "protocol": "saml",
+          "protocolMapper": "saml-user-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "attribute.nameformat": "urn:oasis:names:tc:SAML:2.0:attrname-format:uri",
+            "user.attribute": "firstName",
+            "friendly.name": "givenName",
+            "attribute.name": "urn:oid:2.5.4.42"
+          }
+        },
+        {
+          "id": "485839e6-6256-4c1c-a323-f82e903a65bd",
+          "name": "username",
+          "protocol": "saml",
+          "protocolMapper": "saml-user-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "username",
+            "friendly.name": "username",
+            "attribute.name": "username"
+          }
+        }
+      ],
+      "defaultClientScopes": [
+        "web-origins",
+        "role_list",
+        "roles",
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access"
+      ]
+    },
+    {
       "id": "4019dae2-749a-4ae4-aa83-9b373228f6b6",
       "clientId": "drupal-realm",
       "name": "drupal Realm",

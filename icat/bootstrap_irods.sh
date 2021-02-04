@@ -92,7 +92,7 @@ for user in $nanoscopy; do
     iadmin atg m4i-nanoscopy "${user}"
 done
 
-rit="pvanschay2 mcoonen mcoonen2 dtheuniss psuppers delnoy rbrecheis jmelius kheinen snijhuis"
+rit="pvanschay2 mcoonen mcoonen2 dtheuniss psuppers delnoy rbrecheis jmelius kheinen snijhuis dlinssen"
 
 iadmin mkgroup datahub
 iadmin mkgroup DH-project-admins

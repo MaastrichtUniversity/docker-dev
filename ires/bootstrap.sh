@@ -1,8 +1,11 @@
 #!/bin/bash
-
+sleep 10
 set -e
 
 source /etc/secrets
+
+# Python requirements
+pip install -r /rules/python/python_requirements.txt
 
 # Update RIT rules
 cd /rules && make
@@ -27,7 +30,7 @@ if [ "${USE_SAMBA}" = "true" ] ; then
          exit 1
     else
          # mount CIFS on top of the created /mnt/ingest/zones folder
-         mount -t cifs ${INGEST_MOUNT} /mnt/ingest/zones -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999,vers=1.0
+         mount -t cifs ${INGEST_MOUNT} /mnt/ingest/zones -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999,vers=2.0
     fi
 else 
     echo "Using docker volume bind for dropzones instead of CIFS mount"
@@ -51,11 +54,14 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projectCollection
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-tapeArchive
 
+    # Add python rule engine to iRODS
+    /opt/irods/add_rule_engine.py /etc/irods/server_config.json python 1
+
     # Add config variable to iRODS
     /opt/irods/add_env_var.py /etc/irods/server_config.json MIRTH_METADATA_CHANNEL ${MIRTH_METADATA_CHANNEL}
     /opt/irods/add_env_var.py /etc/irods/server_config.json MIRTH_VALIDATION_CHANNEL ${MIRTH_VALIDATION_CHANNEL}
     /opt/irods/add_env_var.py /etc/irods/server_config.json IRODS_INGEST_REMOVE_DELAY ${IRODS_INGEST_REMOVE_DELAY}
-
+    
     # Dirty temp.password workaround
     sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 86400\,/' /etc/irods/server_config.json
 

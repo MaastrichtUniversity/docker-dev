@@ -38,7 +38,8 @@ RUN yum install -y \
     gcc-c++ \
     make \
     rpm-build \
-    cmake3
+    cmake3 \
+    python-pip
     # }} end
 
 
@@ -53,7 +54,9 @@ RUN rpm --import https://packages.irods.org/irods-signing-key.asc \
     irods-microservice-plugins-curl-${ENV_IRODS_MSI_CURL_VERSION} \
     # packages required for building microservices
     irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
-    irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION}
+    irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION} \
+    # packages required for python rule engine
+    irods-rule-engine-plugin-python-${IRODS_VERSION}
 
 # install Metalnx RMD
 # Installation of rpm tries to start the rmd service, which causes D-Bus errors to appear. These can be safely ignored
@@ -81,6 +84,7 @@ ADD ./setup_responses /etc/irods/setup_responses
 ADD ./bootstrap.sh /opt/irods/bootstrap.sh
 ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
 ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
+ADD ./add_rule_engine.py /opt/irods/add_rule_engine.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
 RUN chmod a+x /opt/irods/*
 

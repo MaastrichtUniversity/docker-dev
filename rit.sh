@@ -45,6 +45,8 @@ externals/rit-davrods https://github.com/MaastrichtUniversity/rit-davrods.git
 externals/crossref-lookup https://github.com/MaastrichtUniversity/crossref-lookup.git
 externals/epicpid-microservice https://github.com/MaastrichtUniversity/epicpid-microservice.git
 externals/dh-rdm-service-docker https://github.com/MaastrichtUniversity/dh-rdm-service-docker.git
+externals/dh-mdr https://github.com/MaastrichtUniversity/dh-mdr.git
+externals/irods-rule-wrapper https://github.com/MaastrichtUniversity/irods-rule-wrapper.git
 externals/mirthconnect-docker https://github.com/MaastrichtUniversity/mirthconnect-docker.git
 externals/irods-open-access-repo https://github.com/MaastrichtUniversity/irods-open-access-repo.git
 externals/sram-sync https://github.com/MaastrichtUniversity/sram-sync.git"
