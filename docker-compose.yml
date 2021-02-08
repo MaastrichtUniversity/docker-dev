@@ -24,6 +24,10 @@ services:
       IRODS_HOST: irods.dh.local
       IRODS_USER: rods
       IRODS_PASS: irods
+      DH_MAILER_HOST: mailer.dh.local
+      DH_MAILER_TO_ADDRESS: m.coonen@maastrichtuniversity.nl
+      DH_MAILER_USERNAME: user
+      DH_MAILER_PASSWORD: password
     networks:
       default:
         aliases:
