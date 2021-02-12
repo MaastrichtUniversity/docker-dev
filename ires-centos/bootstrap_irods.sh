@@ -11,7 +11,7 @@ iadmin addchildtoresc replRescAZM01 AZM-storage
 iadmin addchildtoresc replRescAZM01 AZM-storage-repl
 
 # Add comment to resource for better identification in pacman's createProject dropdown
-iadmin modresc ${HOSTNAME}Resource comment CENTOS-INGEST-RESOURCE
+iadmin modresc ${HOSTNAME}Resource comment AZM-CENTOS-INGEST-RESOURCE
 iadmin modresc replRescAZM01 comment Replicated-resource-for-AZM
 
 # Add storage pricing to resources
