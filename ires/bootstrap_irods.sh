@@ -11,7 +11,7 @@ iadmin addchildtoresc replRescUM01 UM-hnas-4k
 iadmin addchildtoresc replRescUM01 UM-hnas-4k-repl
 
 # Add comment to resource for better identification in pacman's createProject dropdown
-iadmin modresc ${HOSTNAME}Resource comment UBUNTU-INGEST-RESOURCE
+iadmin modresc ${HOSTNAME}Resource comment UM-UBUNTU-INGEST-RESOURCE
 iadmin modresc replRescUM01 comment Replicated-resource-for-UM
 
 # Add storage pricing to resources
