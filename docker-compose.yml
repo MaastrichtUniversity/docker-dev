@@ -29,6 +29,7 @@ services:
       DH_MAILER_TO_ADDRESS: m.coonen@maastrichtuniversity.nl
       DH_MAILER_USERNAME: user
       DH_MAILER_PASSWORD: password
+      DISQOVER_URL: https://disqover.datahubmaastricht.nl/
     networks:
       default:
         aliases:
