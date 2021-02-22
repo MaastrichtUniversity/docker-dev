@@ -667,15 +667,15 @@
     },
     {
       "id": "ab5c2910-371b-488d-92e1-1bdd9d4fd3f0",
-      "clientId": "http://mdr.RIT_ENV.dh.unimaas.nl/saml2_auth/acs/",
+      "clientId": "http://mdr.RIT_ENV.dh.unimaas.nl/saml2/metadata/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
       "redirectUris": [
-        "http://mdr.RIT_ENV.dh.unimaas.nl/saml2_auth/acs/*",
+        "http://mdr.RIT_ENV.dh.unimaas.nl/saml2/acs/*",
         "http://mdr.RIT_ENV.dh.unimaas.nl/*",
-        "http://mdr.RIT_ENV.dh.unimaas.nl/saml2_auth/acs/"
+        "http://mdr.RIT_ENV.dh.unimaas.nl/saml2/acs/"
       ],
       "webOrigins": [
         "http://mdr.RIT_ENV.dh.unimaas.nl"
