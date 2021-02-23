@@ -19,6 +19,8 @@ services:
       LOGSPOUT: ignore
       SAML_IDP_METADATA_FILE_LOCATION: /opt/core/keycloak_descriptor.xml     # Point to the local file or URL (depends on your choice above)
       SAML_DJANGO_BASE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl
+      SAML_DJANGO_WANT_ASSERTIONS_SIGNED: "True"                               # SURFconext: True, SRAM: False
+      SAML_DJANGO_WANT_RESPONSE_SIGNED: "False"                                # SURFconext: True, SRAM: True
       SAML_DJANGO_USERNAME_ATTR: username
       SAML_DJANGO_FIRSTNAME_ATTR: email
       SAML_DJANGO_LASTNAME_ATTR: email
