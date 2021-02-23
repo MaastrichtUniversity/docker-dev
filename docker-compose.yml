@@ -17,10 +17,8 @@ services:
       VIRTUAL_HOST: mdr.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 8000
       LOGSPOUT: ignore
-      SAML_IDP_METADATA_SOURCETYPE: METADATA_LOCAL_FILE_PATH            # Allowed values: 'METADATA_LOCAL_FILE_PATH' or 'METADATA_AUTO_CONF_URL'
       SAML_IDP_METADATA_FILE_LOCATION: /opt/core/keycloak_descriptor.xml     # Point to the local file or URL (depends on your choice above)
       SAML_DJANGO_BASE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl
-      SAML_SP_ENTITY_ID: http://mdr.${RIT_ENV}.dh.unimaas.nl/saml2/metadata/
       SAML_DJANGO_USERNAME_ATTR: username
       SAML_DJANGO_FIRSTNAME_ATTR: email
       SAML_DJANGO_LASTNAME_ATTR: email
