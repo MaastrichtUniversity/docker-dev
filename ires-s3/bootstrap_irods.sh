@@ -13,7 +13,7 @@ sleep `expr ${HOSTNAME: -1} \* 3`
 if [ "$(iadmin lr replRescUMCeph01)" == "No rows found" ];
 then
   iadmin mkresc replRescUMCeph01 replication;
-  iadmin modresc replRescUMCeph01 comment Replicated-resource-for-S3
+  iadmin modresc replRescUMCeph01 comment Replicated-Ceph-resource-for-UM
   imeta add -R replRescUMCeph01 NCIT:C88193 0.062
 else
   echo "Replication resource already exists";
