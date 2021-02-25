@@ -6,10 +6,8 @@ services:
       dockerfile: Dockerfile
       args:
         - ENV_FILEBEAT_VERSION
-        - RIT_ENV
         - ENV_RULE_WRAPPER_VERSION
         - SAML_DJANGO_BASE_URL=http://mdr.${RIT_ENV}.dh.unimaas.nl
-        - SAML_IDP_METADATA_FILE_LOCATION=/opt/core/keycloak_descriptor.xml     # Point to the local file or URL (depends on your choice above)
         - SAML_DJANGO_WANT_ASSERTIONS_SIGNED=True
         - SAML_DJANGO_WANT_RESPONSE_SIGNED=False
     image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/mdr:${ENV_TAG}
@@ -19,7 +17,7 @@ services:
       VIRTUAL_HOST: mdr.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 8000
       LOGSPOUT: ignore
-      SAML_IDP_METADATA_FILE_LOCATION: /opt/core/keycloak_descriptor.xml     # Point to the local file or URL (depends on your choice above)
+      SAML_IDP_METADATA_URL: http://keycloak.dev1.dh.unimaas.nl:8080/auth/realms/drupal/protocol/saml/descriptor
       SAML_DJANGO_BASE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl
       SAML_DJANGO_WANT_ASSERTIONS_SIGNED: "True"                               # SURFconext: True, SRAM: False
       SAML_DJANGO_WANT_RESPONSE_SIGNED: "False"                                # SURFconext: True, SRAM: True
@@ -140,12 +138,16 @@ services:
       - ./keycloak/import.sh:/tmp/import.sh
       - ./keycloak/startup.sh:/opt/jboss/startup-scripts/startup.sh
       - ./keycloak/datahub-keycloak-theme:/opt/jboss/keycloak/themes/datahub
+    ports:
+      # TODO: Find a better way to support both mdr->keycloak container traffic and browser->keycloak client traffic
+      - "8080:8080"   # In order to bypass nginx-virtual-proxy while being redirected during Saml logins
     depends_on:
       - ldap
     networks:
       default:
         aliases:
           - keycloak.dh.local
+          - keycloak.${RIT_ENV}.dh.unimaas.nl   # having this alias lets the mdr-container connect to the keycloak metadata URL
       common_default:
         aliases:
           - keycloak.dh.local
