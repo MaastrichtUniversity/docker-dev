@@ -21,10 +21,11 @@ services:
       SAML_DJANGO_BASE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl
       SAML_DJANGO_WANT_ASSERTIONS_SIGNED: "True"                               # SURFconext: True, SRAM: False
       SAML_DJANGO_WANT_RESPONSE_SIGNED: "False"                                # SURFconext: True, SRAM: True
-      SAML_DJANGO_USERNAME_ATTR: username
-      SAML_DJANGO_FIRSTNAME_ATTR: email
-      SAML_DJANGO_LASTNAME_ATTR: email
-      SAML_DJANGO_MAIL_ATTR: email
+      # Must use friendly names here (not the urn:oid values, as those are being translated by pysaml2 already)
+      SAML_DJANGO_USERNAME_ATTR: uid
+      SAML_DJANGO_FIRSTNAME_ATTR: givenName
+      SAML_DJANGO_LASTNAME_ATTR: sn
+      SAML_DJANGO_MAIL_ATTR: mail
       IRODS_HOST: irods.dh.local
       IRODS_USER: rods
       IRODS_PASS: irods
