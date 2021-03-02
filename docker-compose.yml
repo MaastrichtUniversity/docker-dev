@@ -90,7 +90,7 @@ services:
       IRODS_ENV_RODS_PASSWORD: irods
       CROSSREF_LOOKUP_HOST: crossref-lookup.dh.local
       VIRTUAL_HOST: pacman.${RIT_ENV}.rit.unimaas.nl
-      OLS_URL: http://ols.tst.rit.unimaas.nl
+      OLS_URL: https://ols.acc.rit.unimaas.nl
       LOGSTASH_TAGS: PACMAN
       DH_MAILER_HOST: mailer.dh.local
       DH_MAILER_TO_ADDRESS: m.coonen@maastrichtuniversity.nl
