@@ -36,6 +36,7 @@ services:
       DISQOVER_URL: https://disqover.datahubmaastricht.nl/
       CROSSREF_LOOKUP_HOST: crossref-lookup.dh.local
       OLS_URL: https://ols.acc.rit.unimaas.nl
+      WEBDAV_URL: webdav.${RIT_ENV}.rit.unimaas.nl
     networks:
       default:
         aliases:
