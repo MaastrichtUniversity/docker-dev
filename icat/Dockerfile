@@ -84,6 +84,13 @@ ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
 ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
 ADD ./add_rule_engine.py /opt/irods/add_rule_engine.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
+
+# Temporary fix for the CAT_STATEMENT_TABLE_FULL error in iRODS 4.2.6
+# https://github.com/irods/irods/issues/4438
+# https://github.com/irods/irods_rule_engine_plugin_python/commit/9f957078569c75a4f539c297138a0bb0d3e1824c 
+ADD ./genquery.py /etc/irods/genquery.py
+
+
 RUN chmod a+x /opt/irods/*
 
 EXPOSE 1248 1247 8000
