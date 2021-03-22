@@ -6,8 +6,11 @@ services:
       dockerfile: Dockerfile
       args:
         - ENV_FILEBEAT_VERSION
-        - RIT_ENV
         - ENV_RULE_WRAPPER_VERSION
+        - SAML_DJANGO_BASE_URL=http://mdr.${RIT_ENV}.dh.unimaas.nl
+        - SAML_DJANGO_WANT_ASSERTIONS_SIGNED=True
+        - SAML_DJANGO_WANT_RESPONSE_SIGNED=False
+        - DJANGO_ENABLE_DEBUG=True
     image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/mdr:${ENV_TAG}
     depends_on:
       - keycloak
@@ -15,15 +18,16 @@ services:
       VIRTUAL_HOST: mdr.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 8000
       LOGSPOUT: ignore
-      DJANGO_ENABLE_DEBUG: "True"                                       # dev/acc: "True", prod: "False"
-      DJANGO_ALLOWED_HOSTS: "mdr.${RIT_ENV}.dh.unimaas.nl"
-      SAML_IDP_METADATA_SOURCETYPE: METADATA_LOCAL_FILE_PATH            # Allowed values: 'METADATA_LOCAL_FILE_PATH' or 'METADATA_AUTO_CONF_URL'
-      SAML_IDP_METADATA_LOCATION: /opt/core/keycloak_descriptor.xml     # Point to the local file or URL (depends on your choice above)
-      SAML_SP_ENTITY_ID: http://mdr.${RIT_ENV}.dh.unimaas.nl/saml2_auth/acs/
-      SAML_DJANGO_USERNAME_ATTR: username
-      SAML_DJANGO_FIRSTNAME_ATTR: email
-      SAML_DJANGO_LASTNAME_ATTR: email
-      SAML_DJANGO_MAIL_ATTR: email
+      DJANGO_ENABLE_DEBUG: "True"   # dev/acc: "True", prod: "False"
+      SAML_IDP_METADATA_URL: http://keycloak.${RIT_ENV}.dh.unimaas.nl:8080/auth/realms/drupal/protocol/saml/descriptor
+      SAML_DJANGO_BASE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl
+      SAML_DJANGO_WANT_ASSERTIONS_SIGNED: "True"                               # SURFconext: True, SRAM: False
+      SAML_DJANGO_WANT_RESPONSE_SIGNED: "False"                                # SURFconext: True, SRAM: True
+      # Must use friendly names here (not the urn:oid values, as those are being translated by pysaml2 already)
+      SAML_DJANGO_USERNAME_ATTR: uid
+      SAML_DJANGO_FIRSTNAME_ATTR: givenName
+      SAML_DJANGO_LASTNAME_ATTR: sn
+      SAML_DJANGO_MAIL_ATTR: mail
       IRODS_HOST: irods.dh.local
       IRODS_USER: rods
       IRODS_PASS: irods
@@ -32,6 +36,9 @@ services:
       DH_MAILER_USERNAME: user
       DH_MAILER_PASSWORD: password
       DISQOVER_URL: https://disqover.datahubmaastricht.nl/
+      CROSSREF_LOOKUP_HOST: crossref-lookup.dh.local
+      OLS_URL: https://ols.acc.rit.unimaas.nl
+      WEBDAV_URL: webdav.${RIT_ENV}.rit.unimaas.nl
     networks:
       default:
         aliases:
@@ -137,12 +144,16 @@ services:
       - ./keycloak/import.sh:/tmp/import.sh
       - ./keycloak/startup.sh:/opt/jboss/startup-scripts/startup.sh
       - ./keycloak/datahub-keycloak-theme:/opt/jboss/keycloak/themes/datahub
+    ports:
+      # TODO: Find a better way to support both mdr->keycloak container traffic and browser->keycloak client traffic
+      - "8080:8080"   # In order to bypass nginx-virtual-proxy while being redirected during Saml logins
     depends_on:
       - ldap
     networks:
       default:
         aliases:
           - keycloak.dh.local
+          - keycloak.${RIT_ENV}.dh.unimaas.nl   # having this alias lets the mdr-container connect to the keycloak metadata URL
       common_default:
         aliases:
           - keycloak.dh.local
