@@ -81,6 +81,8 @@ echo $usersJSON | jq  -r -c '.[]'  | while read userJSON; do
   userID=$(echo $userJSON | jq -r -c '.userName' )
   displayName=$(echo $userJSON | jq -r -c '.displayName' )
   userEmail=$(echo $userJSON | jq -r -c '.email' )
+  lastName=$(echo $userJSON | jq -r -c '.lastName' )
+  firstName=$(echo $userJSON | jq -r -c '.firstName' )
   eduPersonUniqueId=$(echo $userJSON | jq -r -c '.eduPersonUniqueId' )
   voPersonExternalID=$(echo $userJSON | jq -r -c '.voPersonExternalID' )
   voPersonExternalAffiliation=$(echo $userJSON | jq -r -c '.voPersonExternalAffiliation' )
@@ -92,7 +94,7 @@ echo $usersJSON | jq  -r -c '.[]'  | while read userJSON; do
   then
     echo "user ${userID} already found in keycloak..."
   else
-    keycloakUserID=$( /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username="${userID}" -s enabled=true -s email="${userEmail}" -s "attributes.displayName=${displayName}" -s "attributes.eduPersonUniqueId=${eduPersonUniqueId}"  -s "attributes.voPersonExternalID=${voPersonExternalID}"  -s "attributes.voPersonExternalAffiliation=${voPersonExternalAffiliation}"  -i )
+    keycloakUserID=$( /opt/jboss/keycloak/bin/kcadm.sh create users -r drupal -s username="${userID}" -s enabled=true -s email="${userEmail}" -s lastName="${lastName}" -s firstName="${firstName}" -s "attributes.displayName=${displayName}" -s "attributes.eduPersonUniqueId=${eduPersonUniqueId}"  -s "attributes.voPersonExternalID=${voPersonExternalID}"  -s "attributes.voPersonExternalAffiliation=${voPersonExternalAffiliation}"  -i )
     echo "created new user ${userID} with keycloakId: ${keycloakUserID}"
     #echo "setting now password... (for: ${userID})"
     /opt/jboss/keycloak/bin/kcadm.sh set-password -r drupal --username ${userID} --new-password 'foobar'
