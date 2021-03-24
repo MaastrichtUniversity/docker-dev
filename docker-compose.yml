@@ -1,5 +1,19 @@
 version: '2'
 services:
+  mdr-web:
+    image: nginx:latest
+    volumes:
+      - static_content:/static
+      - ./externals/dh-mdr/nginx.conf:/etc/nginx/conf.d/default.conf
+    environment:
+      VIRTUAL_HOST: mdr.${RIT_ENV}.dh.unimaas.nl
+    networks:
+      default:
+        aliases:
+          - mdr-web.dh.local
+      common_default:
+        aliases:
+          - mdr-web.dh.local
   mdr:
     build:
       context: externals/dh-mdr
@@ -14,9 +28,8 @@ services:
     image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/mdr:${ENV_TAG}
     depends_on:
       - keycloak
+      - mdr-web
     environment:
-      VIRTUAL_HOST: mdr.${RIT_ENV}.dh.unimaas.nl
-      VIRTUAL_PORT: 8000
       LOGSPOUT: ignore
       DJANGO_ENABLE_DEBUG: "True"   # dev/acc: "True", prod: "False"
       SAML_IDP_METADATA_URL: http://keycloak.${RIT_ENV}.dh.unimaas.nl:8080/auth/realms/drupal/protocol/saml/descriptor
@@ -39,6 +52,8 @@ services:
       CROSSREF_LOOKUP_HOST: crossref-lookup.dh.local
       OLS_URL: https://ols.acc.rit.unimaas.nl
       WEBDAV_URL: webdav.${RIT_ENV}.rit.unimaas.nl
+    volumes:
+      - static_content:/opt/staticfiles
     networks:
       default:
         aliases:
@@ -665,3 +680,6 @@ services:
 networks:
   common_default:
     external: true
+
+volumes:
+  static_content:
