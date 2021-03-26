@@ -1,9 +1,8 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 # Load build arguments from environment
 ARG ENV_POSTGRES_VERSION
 ARG ENV_IRODS_VERSION
-ARG ENV_IRODS_MSI_CURL_VERSION
 ARG ENV_IRODS_EXT_CLANG_VERSION
 ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
 ARG ENV_FILEBEAT_VERSION
@@ -58,7 +57,6 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | apt-key add - 
     irods-dev=${IRODS_VERSION} \
     irods-runtime=${IRODS_VERSION} \
     irods-icommands=${IRODS_VERSION} \
-    irods-microservice-plugins-curl=${ENV_IRODS_MSI_CURL_VERSION} \
     # packages required for building microservices
     irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
     irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION} \
@@ -90,6 +88,9 @@ ADD ./add_env_var.py /opt/irods/add_env_var.py
 # https://github.com/irods/irods_rule_engine_plugin_python/commit/9f957078569c75a4f539c297138a0bb0d3e1824c 
 ADD ./genquery.py /etc/irods/genquery.py
 
+# Temporary fix needed with iRODS 4.2.6, after upgrading this shouldnt be necessary anymore
+# https://github.com/agracio/electron-edge-js/issues/16
+RUN ln -s /usr/include/locale.h /usr/include/xlocale.h
 
 RUN chmod a+x /opt/irods/*
 

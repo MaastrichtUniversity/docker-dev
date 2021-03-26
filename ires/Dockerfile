@@ -1,8 +1,7 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 # Load build arguments from environment
 ARG ENV_IRODS_VERSION
-ARG ENV_IRODS_MSI_CURL_VERSION
 ARG ENV_IRODS_EXT_CLANG_VERSION
 ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
 ARG ENV_DOCKERIZE_VERSION
@@ -50,7 +49,6 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key a
     irods-dev=${IRODS_VERSION} \
     irods-runtime=${IRODS_VERSION} \
     irods-icommands=${IRODS_VERSION} \
-    irods-microservice-plugins-curl=${ENV_IRODS_MSI_CURL_VERSION} \
     # packages required for building microservices
     irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
     irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION} \
@@ -65,7 +63,7 @@ RUN mkdir /opt/irods
 
 # Bug in cifs-utils package causes setcifsacl not to work without setting this symlink
 # https://bugs.launchpad.net/ubuntu/+source/cifs-utils/+bug/1372120
-RUN mkdir /etc/cifs-utils && ln -s /usr/lib/x86_64-linux-gnu/cifs-utils/idmapwb.so /etc/cifs-utils/idmap-plugin
+#RUN mkdir /etc/cifs-utils && ln -s /usr/lib/x86_64-linux-gnu/cifs-utils/idmapwb.so /etc/cifs-utils/idmap-plugin
 
 # Overwrite the default setcifsacl with our own recompiled version
 ADD ./setcifsacl /usr/bin/setcifsacl
@@ -92,6 +90,11 @@ ADD ./add_env_var.py /opt/irods/add_env_var.py
 # Add DMFS fakers (SURFsara tape)
 ADD ./DMFS/* /var/lib/irods/msiExecCmd_bin/
 RUN chmod 755 /var/lib/irods/msiExecCmd_bin/dm*
+
+# Temporary fix needed with iRODS 4.2.6, after upgrading this shouldnt be necessary anymore
+# https://github.com/agracio/electron-edge-js/issues/16
+RUN ln -s /usr/include/locale.h /usr/include/xlocale.h
+
 
 RUN chmod a+x /opt/irods/*
 
