@@ -6,7 +6,7 @@ source /etc/secrets
 
 # Python requirements
 # Need to upgrade pip from 8.1.2 to 20.3.4
-# But pip2 cannot be upgrade to a version abover 21 because of EOL
+# But pip2 cannot be upgrade to a version above 21 because of EOL
 pip install --upgrade "pip < 21.0"
 # Add --ignore-installed because of ERROR: Cannot uninstall 'requests'
 pip install --ignore-installed -r /rules/python/python_requirements.txt
