@@ -35,7 +35,8 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     g++ \
     make \
     cmake \
-    python-pip
+    python-pip \
+    python-virtualenv
     # }} end
 
 ENV IRODS_VERSION ${ENV_IRODS_VERSION}

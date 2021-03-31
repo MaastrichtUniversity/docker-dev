@@ -38,7 +38,8 @@ RUN yum install -y \
     make \
     rpm-build \
     cmake3 \
-    python-pip
+    python-pip \
+    python-virtualenv
     # }} end
 
 

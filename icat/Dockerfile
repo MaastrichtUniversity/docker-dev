@@ -35,7 +35,8 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     g++ \
     make \
     cmake \
-    python-pip
+    python-pip \
+    python-virtualenv
     # }} end
 
 # Make sure to use the same postgres version for client and irods-db server

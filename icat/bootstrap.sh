@@ -8,13 +8,16 @@ until psql -h irods-db.dh.local -U postgres -c '\l'; do
 done
 
 # Python requirements
-# Need to upgrade pip from 8.1.2 to 20.3.4
-# But pip2 cannot be upgrade to a version above 21 because of EOL
-pip install --upgrade "pip < 21.0"
-pip install -r /rules/python/python_requirements.txt
+VENV_PATH=/opt/py2irods
+VENV_SITE_PACKAGES=${VENV_PATH}/lib/python2.7/site-packages
+virtualenv ${VENV_PATH}
+${VENV_PATH}/bin/pip install -r /rules/python/python_requirements.txt
 
 # Update RIT rules
 cd /rules && make
+
+# Make the virtualenv available to the Python ruleset
+echo "import sys; sys.path.append('${VENV_SITE_PACKAGES}');$(cat /etc/irods/core.py)" > /etc/irods/core.py
 
 # Build RIT microservices
 mkdir -p /tmp/microservices-build && \
@@ -51,6 +54,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/add_env_var.py /etc/irods/server_config.json MIRTH_METADATA_CHANNEL ${MIRTH_METADATA_CHANNEL}
     /opt/irods/add_env_var.py /etc/irods/server_config.json MIRTH_VALIDATION_CHANNEL ${MIRTH_VALIDATION_CHANNEL}
     /opt/irods/add_env_var.py /etc/irods/server_config.json IRODS_INGEST_REMOVE_DELAY ${IRODS_INGEST_REMOVE_DELAY}
+    /opt/irods/add_env_var.py /etc/irods/server_config.json PYTHONPATH ${VENV_SITE_PACKAGES}
 
     # Dirty temp.password workaround
     sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 86400\,/' /etc/irods/server_config.json
