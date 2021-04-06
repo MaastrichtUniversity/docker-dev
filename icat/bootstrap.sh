@@ -14,7 +14,7 @@ virtualenv ${VENV_PATH}
 ${VENV_PATH}/bin/pip install -r /rules/python/python_requirements.txt
 
 # Make the virtualenv available to the Python ruleset
-echo "import sys; sys.path.append('${VENV_SITE_PACKAGES}');" > /rules/python/dependency.py
+echo "import sys; sys.path.append('${VENV_SITE_PACKAGES}');" > /etc/irods/venv_dependency.py
 
 # Update RIT rules
 cd /rules && make
