@@ -39,6 +39,7 @@ services:
       CROSSREF_LOOKUP_HOST: crossref-lookup.dh.local
       OLS_URL: https://ols.acc.rit.unimaas.nl
       WEBDAV_URL: webdav.${RIT_ENV}.rit.unimaas.nl
+      TERMS_OF_SERVICE_TIMESTAMP: 1618476699 #  date '+%s' on	Thu Apr 15 2021 08:51:39 GMT+0000
     volumes:
       - static_content:/opt/staticfiles
     networks:
