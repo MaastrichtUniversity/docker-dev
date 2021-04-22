@@ -8,6 +8,9 @@ until psql -h irods-db.dh.local -U postgres -c '\l'; do
 done
 
 # Python requirements
+# Need to upgrade pip from 8.1.2 to 20.3.4
+# But pip2 cannot be upgrade to a version above 21 because of EOL
+pip install --upgrade "pip < 21.0"
 pip install -r /rules/python/python_requirements.txt
 
 # Update RIT rules
