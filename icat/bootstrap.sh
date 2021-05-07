@@ -55,6 +55,10 @@ if [[ ! -e /var/run/irods_installed ]]; then
     # Dirty temp.password workaround
     sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 86400\,/' /etc/irods/server_config.json
 
+    # SURFsara Archive vault
+    mkdir -p /mnt/SURF-Archive
+    chown irods:irods /mnt/SURF-Archive
+
     su irods -c "/opt/irods/bootstrap_irods.sh"
 
     # Change default resource to rootResc for irods-user
