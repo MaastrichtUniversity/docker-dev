@@ -87,10 +87,6 @@ ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
 ADD ./add_rule_engine.py /opt/irods/add_rule_engine.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
 
-# Add DMFS fakers (SURFsara tape)
-ADD ./DMFS/* /var/lib/irods/msiExecCmd_bin/
-RUN chmod 755 /var/lib/irods/msiExecCmd_bin/dm*
-
 # Temporary fix needed with iRODS 4.2.6, after upgrading this shouldnt be necessary anymore
 # https://github.com/agracio/electron-edge-js/issues/16
 RUN ln -s /usr/include/locale.h /usr/include/xlocale.h
