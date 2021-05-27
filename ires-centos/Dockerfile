@@ -59,8 +59,8 @@ RUN rpm --import https://packages.irods.org/irods-signing-key.asc \
 # install Metalnx RMD
 # Installation of rpm tries to start the rmd service, which causes D-Bus errors to appear. These can be safely ignored
 # since we will start the rmd-service manually in bootstrap.sh
-RUN wget https://bintray.com/metalnx/rpm/download_file?file_path=emc-metalnx-rmd-1.0-22.noarch.rpm -O /tmp/emc-metalnx-rmd.rpm \
-    && rpm -Uvh /tmp/emc-metalnx-rmd.rpm
+ADD ./emc-metalnx-rmd-1.0-22.noarch.rpm /tmp/emc-metalnx-rmd-1.0-22.noarch.rpm
+RUN rpm -Uvh /tmp/emc-metalnx-rmd-1.0-22.noarch.rpm
 
 # Overwrite the default setcifsacl with our own recompiled version
 ADD ./setcifsacl /usr/bin/setcifsacl
