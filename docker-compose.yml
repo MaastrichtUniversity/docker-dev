@@ -47,6 +47,7 @@ services:
       RABBITMQ_USER: user
       RABBITMQ_PASS: password
       RABBITMQ_PORT: 5672
+      CACHE_TTL_VALUE: 86400 # in seconds => 24 hours
     volumes:
       - static_content:/opt/staticfiles
     networks:
