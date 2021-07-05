@@ -16,7 +16,7 @@ iadmin modresc replRescUM01 comment Replicated-resource-for-UM
 
 # Add storage pricing to resources
 imeta add -R ${HOSTNAME}Resource NCIT:C88193 999
-imeta add -R replRescUM01 NCIT:C88193 0.189
+imeta add -R replRescUM01 NCIT:C88193 0.130
 
 ###########
 ## Projects and project permissions
