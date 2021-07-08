@@ -110,6 +110,17 @@
     "memberOf": [ "mumc.datahub.@all" ]
   },
   {
+    "userName": "rravelli",
+    "displayName": "Raimond Ravelli",
+    "email": "rravelli@example.org",
+    "lastName": "",
+    "firstName": "",
+    "eduPersonUniqueId": "rravelli@sram.surf.nl",
+    "voPersonExternalID": "rbg.ravelli@unimaas.nl",
+    "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
+    "memberOf": [ "mumc.m4i-nanoscopy.@all" ]
+  },
+  {
     "userName": "pahles",
     "displayName": "Patrick Ahles",
     "email": "pahles@example.org",
