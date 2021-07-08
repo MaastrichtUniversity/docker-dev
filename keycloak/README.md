@@ -1,6 +1,6 @@
 ## Keycloak
 
-Keycloak provides SAML authentication for Pacman. It also feeds the LDAP for iRODS authentication.
+Keycloak provides SAML authentication for MDR. It also feeds the LDAP for iRODS authentication.
 
 ## Web interface
 The webinterface is reachable (if your docker proxy is running) on: keycloak.${RIT_ENV}.dh.unimaas.nl
