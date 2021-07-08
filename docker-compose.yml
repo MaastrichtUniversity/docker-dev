@@ -322,7 +322,6 @@ services:
     hostname: irods-frontend
     environment:
       VIRTUAL_HOST: frontend.${RIT_ENV}.rit.unimaas.nl
-      PACMAN_HOST: http://pacman.${RIT_ENV}.rit.unimaas.nl
       # logs are sent via filebeat, so logspout should be ignored
       LOGSPOUT: ignore
     networks:
