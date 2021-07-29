@@ -68,6 +68,14 @@ services:
       RABBITMQ_USER: user
       RABBITMQ_PASS: password
       RABBITMQ_PORT: 5672
+      LOG_LEVEL: INFO
+    networks:
+      default:
+        aliases:
+          - faker.dh.local
+      common_default:
+        aliases:
+          - faker.dh.local
   keycloak:
     image: jboss/keycloak:6.0.1
     hostname: keycloak
