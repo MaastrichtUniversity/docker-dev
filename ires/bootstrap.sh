@@ -48,7 +48,11 @@ if [[ ! -e /var/run/irods_installed ]]; then
     fi
 
     # set up iRODS
+    echo "Running setup script"
     python /var/lib/irods/scripts/setup_irods.py < /etc/irods/setup_responses
+    echo "Starting iRODS"
+    service irods start
+    sleep 30
 
     # Add the ruleset-rit to server config
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-misc
