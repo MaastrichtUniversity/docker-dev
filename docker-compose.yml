@@ -32,6 +32,7 @@ services:
       DH_MAILER_USERNAME: user
       DH_MAILER_PASSWORD: password
       DISQOVER_URL: https://disqover.datahubmaastricht.nl/
+      MDR_ANSIBLE_VERSION_TAG: DEV
       CROSSREF_LOOKUP_HOST: crossref-lookup.dh.local
       OLS_URL: https://ols.acc.rit.unimaas.nl
       WEBDAV_URL: webdav.${RIT_ENV}.rit.unimaas.nl
