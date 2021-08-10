@@ -53,6 +53,29 @@ services:
       common_default:
         aliases:
           - mdr.dh.local
+  dh-faker:
+    build:
+      context: externals/dh-faker/docker
+      dockerfile: Dockerfile
+    volumes:
+      - ./externals/dh-faker:/opt/
+      - ./staging-data:/mnt/ingest
+    environment:
+      IRODS_HOST: irods.dh.local
+      IRODS_USER: rods
+      IRODS_PASS: irods
+      RABBITMQ_HOST: rabbitmq.dh.local
+      RABBITMQ_USER: user
+      RABBITMQ_PASS: password
+      RABBITMQ_PORT: 5672
+      LOG_LEVEL: INFO
+    networks:
+      default:
+        aliases:
+          - faker.dh.local
+      common_default:
+        aliases:
+          - faker.dh.local
   keycloak:
     image: jboss/keycloak:6.0.1
     hostname: keycloak
