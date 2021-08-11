@@ -61,6 +61,7 @@ services:
     volumes:
       - ./externals/dh-faker:/opt/
       - ./staging-data:/mnt/ingest
+    command: "python -c pass"
     environment:
       IRODS_HOST: irods.dh.local
       IRODS_USER: rods
