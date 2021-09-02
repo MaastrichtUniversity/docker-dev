@@ -47,6 +47,11 @@ services:
       CACHE_TTL_VALUE: 86400 # in seconds => 24 hours
     volumes:
       - static_content:/opt/staticfiles
+      # This volume bind gets the code that is in your rule-wrapper local repository and adds it to MDR. This allows 
+      # for PyCharm to auto-reload when you edit the irods-rule-wrapper code locally.
+      # If you want to use the irods-rule-wrapper code provided by the "ENV_RULE_WRAPPER_VERSION" variable in the .env file of this repository,
+      # comment the following line.
+      - ./externals/irods-rule-wrapper:/opt/src/irods-rule-wrapper
     networks:
       default:
         aliases:
