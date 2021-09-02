@@ -532,7 +532,9 @@ services:
         aliases:
           - minio2.dh.local
   open-access-worker:
-    build: externals/irods-open-access-repo/docker
+    build:
+      context: ./externals/irods-open-access-repo
+      dockerfile: ./docker/Dockerfile
     image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/open-access-worker:${ENV_TAG}
 #    depends_on:
 #      - irods
@@ -552,7 +554,6 @@ services:
       LOG_LEVEL: INFO
       LOGSTASH_TAGS: OPEN_ACCESS_WORKER
     volumes:
-      - ./externals/irods-open-access-repo/etl:/opt/app
       - /etc/localtime:/etc/localtime:ro
     networks:
       default:
