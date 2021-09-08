@@ -56,11 +56,14 @@ if [[ $1 == "exec" ]]; then
     exit 0
 fi
 
-
 #
-# code block for create functionality
+# faker actions
 #
-domain="maastrichtuniversity.nl"
+if [[ $1 == "faker" ]]; then
+    shift 1
+    docker-compose run --rm dh-faker python -u create_fake_data.py "$@"
+    exit 0
+fi
 
 if [[ $1 == "login" ]]; then
     source './.env'
