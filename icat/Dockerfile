@@ -82,6 +82,10 @@ ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
 ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
 ADD ./add_rule_engine.py /opt/irods/add_rule_engine.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
+ADD ./add_SSL_settings.py /opt/irods/add_SSL_settings.py
+
+# SSL
+ADD ./SSL /etc/irods/SSL
 
 # Add DMFS fakers (SURFsara tape)
 ADD ./DMFS/* /var/lib/irods/msiExecCmd_bin/
