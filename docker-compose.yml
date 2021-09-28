@@ -597,6 +597,24 @@ services:
     networks:
       default:
       common_default:
+  mdr-db:
+    image: postgres:${ENV_MDR_POSTGRES_VERSION}
+    hostname: mdr-db
+    environment:
+      POSTGRES_DB: mdr
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: foobar
+      LOGSPOUT: ignore
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      default:
+        aliases:
+          - mdr-db.dh.local
+      common_default:
+        aliases:
+          - mdr-db.dh.local
+
 
 networks:
   common_default:
