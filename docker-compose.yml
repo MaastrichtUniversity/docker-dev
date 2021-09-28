@@ -45,6 +45,10 @@ services:
       RABBITMQ_PASS: password
       RABBITMQ_PORT: 5672
       CACHE_TTL_VALUE: 86400 # in seconds => 24 hours
+      MDR_POSTGRES_HOST: mdr-db.dh.local
+      MDR_POSTGRES_DB: mdr
+      MDR_POSTGRES_USER: postgres
+      MDR_POSTGRES_PASSWORD: foobar
     volumes:
       - static_content:/opt/staticfiles
       # This volume bind gets the code that is in your rule-wrapper local repository and adds it to MDR. This allows 
