@@ -146,7 +146,7 @@ services:
     depends_on:
       - irods-db
       - mirthconnect
-    hostname: irods
+    hostname: irods.dh.local
     ports:
       - "1247:1247"
       - "1248:1248"
@@ -183,7 +183,7 @@ services:
     image:  ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires:${ENV_TAG}
     depends_on:
       - irods
-    hostname: ires
+    hostname: ires.dh.local
     environment:
       RODS_PASSWORD: irods
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
@@ -417,7 +417,7 @@ services:
     depends_on:
       - mirth-db
       - epicpid
-      - irods-frontend
+#      - irods-frontend
     hostname: mirthconnect
     ports:
       - "8443:8443"
