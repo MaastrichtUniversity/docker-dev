@@ -344,6 +344,7 @@ services:
       args:
         - ENV_IRODS_REST_VERSION
         - ENV_FILEBEAT_VERSION
+        - SSL_ENV=${RIT_ENV}            # Whether to add our own CA-certificate to the CA-rootstore
     image:  ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/irods-frontend:${ENV_TAG}
     hostname: irods-frontend
     environment:
