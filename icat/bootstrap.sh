@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-set -x
+# set -x    # Uncomment to print all executed statements
 
 until psql -h irods-db.dh.local -U postgres -c '\l'; do
     >&2 echo "Postgres is unavailable - sleeping"
@@ -53,7 +53,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projectCollection
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-tapeArchive
 
-    # We already do this in ruleset / misc / policies
+    # Not required here. Covered by irods-ruleset/misc/policies.r:acPreConnect
     #sed -i 's/CS_NEG_DONT_CARE/CS_NEG_REQUIRE/g' /etc/irods/core.re
 
     # Add python rule engine to iRODS
