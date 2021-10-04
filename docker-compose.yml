@@ -7,6 +7,7 @@ services:
       args:
         - ENV_FILEBEAT_VERSION
         - ENV_RULE_WRAPPER_VERSION
+        - SSL_ENV=${RIT_ENV}            # Whether to add our own CA-certificate to the CA-rootstore
     image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/mdr:${ENV_TAG}
     depends_on:
       - keycloak
@@ -27,6 +28,7 @@ services:
       IRODS_HOST: irods.dh.local
       IRODS_USER: rods
       IRODS_PASS: irods
+      IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
       DH_MAILER_HOST: mailer.dh.local
       DH_MAILER_TO_ADDRESS: m.coonen@maastrichtuniversity.nl
       DH_MAILER_USERNAME: user
