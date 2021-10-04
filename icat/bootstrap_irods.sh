@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
-set -x
+# set -x    # Uncomment to print all executed statements
 
 ############
 ## Resources
