@@ -386,22 +386,24 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
   metalnx:
-    build: externals/rit-metalnx-web/
-    image:  ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/metalnx:${ENV_TAG}
+    image: irods/metalnx:latest
+    hostname: metalnx
     depends_on:
       - irods
-    hostname: metalnx
+      - metalnx-db
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./externals/rit-metalnx-web/metalnx-configuration:/etc/irods-ext
+      - ./icat/SSL/test_only_dev_irods_dh_ca_cert.pem:/tmp/cert/server.crt
     environment:
-      IRODS_HOST: irods.dh.local
-      IRODS_PORT: 1247
-      IRODS_ZONE: nlmumc
-      IRODS_USER: rods
-      IRODS_PASS: irods
+#      IRODS_HOST: irods.dh.local
+#      IRODS_PORT: 1247
+#      IRODS_ZONE: nlmumc
+#      IRODS_USER: rods
+#      IRODS_PASS: irods
       VIRTUAL_HOST: metalnx.${RIT_ENV}.rit.unimaas.nl
       VIRTUAL_PORT: 8080
       LOGSTASH_TAGS: METALNX
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
     networks:
       default:
         aliases:
@@ -409,6 +411,20 @@ services:
       common_default:
         aliases:
           - metalnx.dh.local
+  metalnx-db:
+    image: postgres:11
+    hostname: metalnx-db
+    environment:
+      POSTGRES_PASSWORD: foobar
+      POSTGRES_USER: metalnxuser
+      POSTGRES_DB: metalnxdb
+    networks:
+      default:
+        aliases:
+          - metalnx-db.dh.local
+      common_default:
+        aliases:
+          - metalnx-db.dh.local
   mirthconnect:
     build:
       context: externals/mirthconnect-docker
