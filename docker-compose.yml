@@ -394,6 +394,8 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/rit-metalnx-web/metalnx-configuration:/etc/irods-ext
+      - ./externals/rit-metalnx-web/log4j.properties:/tmp/log4j.properties
+      - ./externals/rit-metalnx-web/runit.sh:/runit.sh
       - ./icat/SSL/test_only_dev_irods_dh_ca_cert.pem:/tmp/cert/server.crt
     environment:
 #      IRODS_HOST: irods.dh.local
