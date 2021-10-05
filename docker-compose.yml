@@ -393,16 +393,20 @@ services:
       - metalnx-db
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./externals/rit-metalnx-web/metalnx-configuration:/etc/irods-ext
+      - ./externals/rit-metalnx-web/metalnx-configuration/metalnxConfig.xml:/etc/irods-ext/metalnxConfig.xml
+      - ./externals/rit-metalnx-web/metalnx-configuration/metalnx.properties:/tmp/metalnx.properties
       - ./externals/rit-metalnx-web/log4j.properties:/tmp/log4j.properties
       - ./externals/rit-metalnx-web/runit.sh:/runit.sh
       - ./icat/SSL/test_only_dev_irods_dh_ca_cert.pem:/tmp/cert/server.crt
     environment:
-#      IRODS_HOST: irods.dh.local
-#      IRODS_PORT: 1247
-#      IRODS_ZONE: nlmumc
-#      IRODS_USER: rods
-#      IRODS_PASS: irods
+      IRODS_HOST: irods.dh.local
+      IRODS_PORT: 1247
+      IRODS_ZONE: nlmumc
+      IRODS_USER: rods
+      IRODS_PASS: irods
+      METALNX_DB_URL: "jdbc:postgresql://metalnx-db.dh.local:5432/metalnxdb"
+      METALNX_DB_USER: metalnxuser
+      METALNX_DB_PASS: foobar
       VIRTUAL_HOST: metalnx.${RIT_ENV}.rit.unimaas.nl
       VIRTUAL_PORT: 8080
       LOGSTASH_TAGS: METALNX
