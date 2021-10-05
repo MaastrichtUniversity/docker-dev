@@ -12,7 +12,7 @@ set -e
 iadmin mkresc rootResc passthru
 iadmin addchildtoresc rootResc demoResc
 
-# Add comment to resource for better identification in pacman's createProject dropdown
+# Add comment to resource for better identification in MDR's createProject dropdown
 iadmin modresc rootResc comment DO-NOT-USE
 iadmin modresc demoResc comment DO-NOT-USE
 

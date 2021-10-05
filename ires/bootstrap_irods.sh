@@ -10,7 +10,7 @@ iadmin mkresc replRescUM01 replication
 iadmin addchildtoresc replRescUM01 UM-hnas-4k
 iadmin addchildtoresc replRescUM01 UM-hnas-4k-repl
 
-# Add comment to resource for better identification in pacman's createProject dropdown
+# Add comment to resource for better identification in MDR's createProject dropdown
 iadmin modresc ${HOSTNAME}Resource comment UM-UBUNTU-INGEST-RESOURCE
 iadmin modresc replRescUM01 comment Replicated-resource-for-UM
 
