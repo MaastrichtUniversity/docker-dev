@@ -386,7 +386,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
   metalnx:
-    image: irods/metalnx:latest
+    image: irods/metalnx:${ENV_METALNX_VERSION}
     hostname: metalnx
     depends_on:
       - irods
@@ -414,7 +414,7 @@ services:
         aliases:
           - metalnx.dh.local
   metalnx-db:
-    image: postgres:11
+    image: postgres:${ENV_METALNX_POSTGRES_VERSION}
     hostname: metalnx-db
     environment:
       POSTGRES_PASSWORD: foobar
