@@ -300,7 +300,7 @@ services:
       - irods
       - ires  # Because of ingest resource
       - minio2
-    hostname: ires-s3-1.dh.local
+    hostname: ires-s3-2.dh.local
     environment:
       RODS_PASSWORD: irods
       VIRTUAL_HOST: ires-s3-2.${RIT_ENV}.rit.unimaas.nl
