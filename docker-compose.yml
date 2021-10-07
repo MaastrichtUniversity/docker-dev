@@ -404,6 +404,7 @@ services:
       IRODS_ZONE: nlmumc
       IRODS_USER: rods
       IRODS_PASS: irods
+      IRODS_DEFAULT_RESC: rootResc
       METALNX_DB_URL: "jdbc:postgresql://metalnx-db.dh.local:5432/metalnxdb"
       METALNX_DB_USER: metalnxuser
       METALNX_DB_PASS: foobar
