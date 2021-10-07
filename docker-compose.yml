@@ -566,6 +566,8 @@ services:
     build:
       context: ./externals/irods-open-access-repo
       dockerfile: ./docker/Dockerfile
+      args:
+        - SSL_ENV=${RIT_ENV}
     image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/open-access-worker:${ENV_TAG}
 #    depends_on:
 #      - irods
@@ -578,6 +580,7 @@ services:
       IRODS_HOST: irods.dh.local
       IRODS_USER: rods
       IRODS_PASS: irods
+      IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
       DATAVERSE_HOST: https://demo.dataverse.nl
       DH_MAILER_HOST: mailer.dh.local
       DH_MAILER_USERNAME: user
@@ -594,7 +597,11 @@ services:
         aliases:
           - open-access-worker.dh.local
   sram-sync:
-    build: externals/sram-sync/
+    build:
+      context: externals/sram-sync/
+      dockerfile: Dockerfile
+      args:
+        - SSL_ENV=${RIT_ENV}          # Whether to add our own CA-certificate to the CA-rootstore
     image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/sram-sync:${ENV_TAG}
     depends_on:
       - irods
@@ -607,6 +614,7 @@ services:
       IRODS_HOST: irods.dh.local
       IRODS_USER: rods
       IRODS_PASS: irods
+      IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
       LDAP_USER: cn=admin,dc=datahubmaastricht,dc=nl
       LDAP_PASS: admin
       LDAP_HOST: ldap://ldap.dh.local
