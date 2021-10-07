@@ -26,5 +26,5 @@ CS_NEG_REQUIRE
 /etc/irods/SSL/irods.dh.local.key
 /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
 /etc/irods/SSL/dhparams.pem
-hostname
+cert
 /var/lib/irods/vault
