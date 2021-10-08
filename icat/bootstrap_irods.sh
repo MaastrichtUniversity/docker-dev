@@ -67,7 +67,7 @@ echo $usersJSON | jq  -r -c '.[]'  | while read userJSON; do
     iadmin atg DH-ingest "${uid}"
 done
 
-serviceUsers="service-dropzones service-mdl service-pid service-disqover"
+serviceUsers="service-dropzones service-mdl service-pid service-disqover service-public"
 
 for user in $serviceUsers; do
     iadmin mkuser "${user}" rodsuser
