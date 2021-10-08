@@ -22,7 +22,7 @@ fi
 # Add child resource to repl resource
 iadmin addchildtoresc replRescUMCeph01 ${ENV_S3_RESC_NAME}
 
-# Add comment to resource for better identification in pacman's createProject dropdown
+# Add comment to resource for better identification in MDR's createProject dropdown
 iadmin modresc ${HOSTNAME}Resource comment DO-NOT-USE
 
 # Add storage pricing to resources

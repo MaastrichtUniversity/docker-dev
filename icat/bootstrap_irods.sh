@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
+# set -x    # Uncomment to print all executed statements
 
 ############
 ## Resources
@@ -11,7 +12,7 @@ set -e
 iadmin mkresc rootResc passthru
 iadmin addchildtoresc rootResc demoResc
 
-# Add comment to resource for better identification in pacman's createProject dropdown
+# Add comment to resource for better identification in MDR's createProject dropdown
 iadmin modresc rootResc comment DO-NOT-USE
 iadmin modresc demoResc comment DO-NOT-USE
 
@@ -136,7 +137,7 @@ ichmod write DH-project-admins /nlmumc/projects
 imkdir -p /nlmumc/projects/P000000010
 imeta add -C /nlmumc/projects/P000000010 authorizationPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000010 dataRetentionPeriodEndDate 1-1-2018
-imeta add -C /nlmumc/projects/P000000010 ingestResource ${HOSTNAME}Resource
+imeta add -C /nlmumc/projects/P000000010 ingestResource ${HOSTNAME%%.dh.local}Resource
 imeta add -C /nlmumc/projects/P000000010 OBI:0000103 psuppers
 imeta add -C /nlmumc/projects/P000000010 dataSteward opalmen
 imeta add -C /nlmumc/projects/P000000010 resource replRescAZM01
@@ -158,7 +159,7 @@ imeta add -C /nlmumc/projects/P000000010/C000000001 numFiles 0
 imkdir -p /nlmumc/projects/P000000011
 imeta add -C /nlmumc/projects/P000000011 authorizationPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000011 dataRetentionPeriodEndDate 1-1-2018
-imeta add -C /nlmumc/projects/P000000011 ingestResource ${HOSTNAME}Resource
+imeta add -C /nlmumc/projects/P000000011 ingestResource ${HOSTNAME%%.dh.local}Resource
 imeta add -C /nlmumc/projects/P000000011 OBI:0000103 psuppers
 imeta add -C /nlmumc/projects/P000000011 dataSteward opalmen
 imeta add -C /nlmumc/projects/P000000011 resource replRescAZM01
