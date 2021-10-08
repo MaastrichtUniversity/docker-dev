@@ -16,6 +16,7 @@ services:
       VIRTUAL_PORT: 8000
       LOGSPOUT: ignore
       DJANGO_DEV_MODE: "True"   # dev: "True", acc/prod: "False"
+      DJANGO_SECRET_KEY: foobar
       SAML_IDP_METADATA_URL: http://keycloak.${RIT_ENV}.dh.unimaas.nl:8080/auth/realms/django/protocol/saml/descriptor
       SAML_DJANGO_BASE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl
       SAML_DJANGO_WANT_ASSERTIONS_SIGNED: "True"                               # SURFconext: True, SRAM: False
