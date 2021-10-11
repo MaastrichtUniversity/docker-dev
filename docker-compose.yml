@@ -69,8 +69,10 @@ services:
           - mdr.dh.local
   dh-faker:
     build:
-      context: externals/dh-faker/docker
-      dockerfile: Dockerfile
+      context: externals/dh-faker
+      dockerfile: docker/Dockerfile
+      args:
+        - SSL_ENV=${RIT_ENV}
     volumes:
       - ./externals/dh-faker:/opt/
       - ./staging-data:/mnt/ingest
@@ -79,6 +81,7 @@ services:
       IRODS_HOST: irods.dh.local
       IRODS_USER: rods
       IRODS_PASS: irods
+      IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
       RABBITMQ_HOST: rabbitmq.dh.local
       RABBITMQ_USER: user
       RABBITMQ_PASS: password
