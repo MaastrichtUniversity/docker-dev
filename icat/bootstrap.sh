@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+# set -x    # Uncomment to print all executed statements
 
 until psql -h irods-db.dh.local -U postgres -c '\l'; do
     >&2 echo "Postgres is unavailable - sleeping"
@@ -34,6 +35,14 @@ if [[ ! -e /var/run/irods_installed ]]; then
     # set up the iCAT database
     /opt/irods/setupdb.sh /etc/irods/setup_responses
 
+    # PoC: patch setup_irods.py to accept SSL settings
+    patch --dry-run -f /var/lib/irods/scripts/setup_irods.py /opt/irods/add_ssl_setting_at_setup.patch
+    if [[ $? -ne 0 ]]; then
+        echo "Patching scripts/setup_irods.py is not possible with our patch"
+    else
+        patch -f /var/lib/irods/scripts/setup_irods.py /opt/irods/add_ssl_setting_at_setup.patch
+    fi
+
     # set up iRODS
     python /var/lib/irods/scripts/setup_irods.py < /etc/irods/setup_responses
 
@@ -43,6 +52,9 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projects
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projectCollection
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-tapeArchive
+
+    # Not required here. Covered by irods-ruleset/misc/policies.r:acPreConnect
+    #sed -i 's/CS_NEG_DONT_CARE/CS_NEG_REQUIRE/g' /etc/irods/core.re
 
     # Add python rule engine to iRODS
     /opt/irods/add_rule_engine.py /etc/irods/server_config.json python 1

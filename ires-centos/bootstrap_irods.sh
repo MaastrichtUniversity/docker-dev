@@ -10,7 +10,7 @@ iadmin mkresc replRescAZM01 replication
 iadmin addchildtoresc replRescAZM01 AZM-storage
 iadmin addchildtoresc replRescAZM01 AZM-storage-repl
 
-# Add comment to resource for better identification in pacman's createProject dropdown
+# Add comment to resource for better identification in MDR's createProject dropdown
 iadmin modresc ${HOSTNAME}Resource comment AZM-CENTOS-INGEST-RESOURCE
 iadmin modresc replRescAZM01 comment Replicated-resource-for-AZM
 
