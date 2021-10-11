@@ -9,7 +9,8 @@ ARG ENV_FILEBEAT_VERSION
 
 RUN yum install -y \
     # extra repository to download extra packages
-    epel-release
+    epel-release \
+    ca-certificates
 
 RUN yum install -y \
     # backwards compatibility for 'service'-command that is used by the iRODS-install script
