@@ -38,8 +38,8 @@ services:
       DISQOVER_URL: https://disqover.datahubmaastricht.nl/
       MDR_ANSIBLE_VERSION_TAG: DEV
       CROSSREF_LOOKUP_HOST: http://crossref-lookup.dh.local
-      OLS_URL: https://ols.acc.rit.unimaas.nl
-      WEBDAV_URL: webdav.${RIT_ENV}.rit.unimaas.nl
+      OLS_URL: https://ols.acc.dh.unimaas.nl
+      WEBDAV_URL: webdav.${RIT_ENV}.dh.unimaas.nl
       TERMS_OF_SERVICE_TIMESTAMP: 1618476699 #  date '+%s' on	Thu Apr 15 2021 08:51:39 GMT+0000
       DATAVERSE_ENDPOINT: https://demo.dataverse.nl/
       DATAVERSE_TREE_ROOT_ID: maastricht
@@ -383,7 +383,7 @@ services:
     depends_on:
       - irods
     environment:
-      VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
+      VIRTUAL_HOST: webdav.${RIT_ENV}.dh.unimaas.nl
       LOGSPOUT: ignore
     networks:
       default:
