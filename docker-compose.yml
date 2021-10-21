@@ -7,14 +7,17 @@ services:
       args:
         - ENV_FILEBEAT_VERSION
         - ENV_RULE_WRAPPER_VERSION
+        - SSL_ENV=${RIT_ENV}            # Whether to add our own CA-certificate to the CA-rootstore
     image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/mdr:${ENV_TAG}
     depends_on:
       - keycloak
+      - mdr-db
     environment:
       VIRTUAL_HOST: mdr.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 8000
       LOGSPOUT: ignore
       DJANGO_DEV_MODE: "True"   # dev: "True", acc/prod: "False"
+      DJANGO_SECRET_KEY: foobar
       SAML_IDP_METADATA_URL: http://keycloak.${RIT_ENV}.dh.unimaas.nl:8080/auth/realms/django/protocol/saml/descriptor
       SAML_DJANGO_BASE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl
       SAML_DJANGO_WANT_ASSERTIONS_SIGNED: "True"                               # SURFconext: True, SRAM: False
@@ -27,13 +30,14 @@ services:
       IRODS_HOST: irods.dh.local
       IRODS_USER: rods
       IRODS_PASS: irods
+      IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
       DH_MAILER_HOST: mailer.dh.local
       DH_MAILER_TO_ADDRESS: m.coonen@maastrichtuniversity.nl
       DH_MAILER_USERNAME: user
       DH_MAILER_PASSWORD: password
       DISQOVER_URL: https://disqover.datahubmaastricht.nl/
       MDR_ANSIBLE_VERSION_TAG: DEV
-      CROSSREF_LOOKUP_HOST: crossref-lookup.dh.local
+      CROSSREF_LOOKUP_HOST: http://crossref-lookup.dh.local
       OLS_URL: https://ols.acc.dh.unimaas.nl
       WEBDAV_URL: webdav.${RIT_ENV}.dh.unimaas.nl
       TERMS_OF_SERVICE_TIMESTAMP: 1618476699 #  date '+%s' on	Thu Apr 15 2021 08:51:39 GMT+0000
@@ -45,6 +49,10 @@ services:
       RABBITMQ_PASS: password
       RABBITMQ_PORT: 5672
       CACHE_TTL_VALUE: 86400 # in seconds => 24 hours
+      MDR_POSTGRES_HOST: mdr-db.dh.local
+      MDR_POSTGRES_DB: mdr
+      MDR_POSTGRES_USER: postgres
+      MDR_POSTGRES_PASSWORD: foobar
     volumes:
       - static_content:/opt/staticfiles
       # This volume bind gets the code that is in your rule-wrapper local repository and adds it to MDR. This allows 
@@ -61,8 +69,10 @@ services:
           - mdr.dh.local
   dh-faker:
     build:
-      context: externals/dh-faker/docker
-      dockerfile: Dockerfile
+      context: externals/dh-faker
+      dockerfile: docker/Dockerfile
+      args:
+        - SSL_ENV=${RIT_ENV}
     volumes:
       - ./externals/dh-faker:/opt/
       - ./staging-data:/mnt/ingest
@@ -71,6 +81,7 @@ services:
       IRODS_HOST: irods.dh.local
       IRODS_USER: rods
       IRODS_PASS: irods
+      IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
       RABBITMQ_HOST: rabbitmq.dh.local
       RABBITMQ_USER: user
       RABBITMQ_PASS: password
@@ -145,7 +156,7 @@ services:
     image:  ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/irods:${ENV_TAG}
     depends_on:
       - irods-db
-    hostname: irods
+    hostname: irods.dh.local
     ports:
       - "1247:1247"
       - "1248:1248"
@@ -182,7 +193,7 @@ services:
     image:  ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires:${ENV_TAG}
     depends_on:
       - irods
-    hostname: ires
+    hostname: ires.dh.local
     environment:
       RODS_PASSWORD: irods
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
@@ -218,7 +229,7 @@ services:
     image:  ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires-centos:${ENV_TAG}
     depends_on:
       - irods
-    hostname: ires-centos
+    hostname: ires-centos.dh.local
     environment:
       RODS_PASSWORD: irods
       VIRTUAL_HOST: ires-centos.${RIT_ENV}.rit.unimaas.nl
@@ -258,7 +269,7 @@ services:
       - irods
       - ires  # Because of ingest resource
       - minio1
-    hostname: ires-s3-1
+    hostname: ires-s3-1.dh.local
     environment:
       RODS_PASSWORD: irods
       VIRTUAL_HOST: ires-s3-1.${RIT_ENV}.rit.unimaas.nl
@@ -298,7 +309,7 @@ services:
       - irods
       - ires  # Because of ingest resource
       - minio2
-    hostname: ires-s3-2
+    hostname: ires-s3-2.dh.local
     environment:
       RODS_PASSWORD: irods
       VIRTUAL_HOST: ires-s3-2.${RIT_ENV}.rit.unimaas.nl
@@ -344,6 +355,7 @@ services:
       args:
         - ENV_IRODS_REST_VERSION
         - ENV_FILEBEAT_VERSION
+        - SSL_ENV=${RIT_ENV}            # Whether to add our own CA-certificate to the CA-rootstore
     image:  ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/irods-frontend:${ENV_TAG}
     hostname: irods-frontend
     environment:
@@ -366,6 +378,7 @@ services:
         - ENV_DAVRODS_IRODS_VERSION
         - ENV_DAVRODS_VERSION
         - ENV_FILEBEAT_VERSION
+        - SSL_ENV=${RIT_ENV}            # Whether to add our own CA-certificate to the CA-rootstore
     image:  ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/davrods:${ENV_TAG}
     depends_on:
       - irods
@@ -382,22 +395,31 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
   metalnx:
-    build: externals/rit-metalnx-web/
-    image:  ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/metalnx:${ENV_TAG}
+    image: irods/metalnx:${ENV_METALNX_VERSION}
+    hostname: metalnx
     depends_on:
       - irods
-    hostname: metalnx
+      - metalnx-db
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./externals/rit-metalnx-web/metalnx-configuration/metalnxConfig.xml:/etc/irods-ext/metalnxConfig.xml
+      - ./externals/rit-metalnx-web/metalnx-configuration/metalnx.properties:/tmp/metalnx.properties
+      - ./externals/rit-metalnx-web/log4j.properties:/tmp/log4j.properties
+      - ./externals/rit-metalnx-web/runit.sh:/runit.sh
+      - ./icat/SSL/test_only_dev_irods_dh_ca_cert.pem:/tmp/cert/server.crt
     environment:
       IRODS_HOST: irods.dh.local
       IRODS_PORT: 1247
       IRODS_ZONE: nlmumc
       IRODS_USER: rods
       IRODS_PASS: irods
+      IRODS_DEFAULT_RESC: rootResc
+      METALNX_DB_URL: "jdbc:postgresql://metalnx-db.dh.local:5432/metalnxdb"
+      METALNX_DB_USER: metalnxuser
+      METALNX_DB_PASS: foobar
       VIRTUAL_HOST: metalnx.${RIT_ENV}.rit.unimaas.nl
       VIRTUAL_PORT: 8080
       LOGSTASH_TAGS: METALNX
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
     networks:
       default:
         aliases:
@@ -405,6 +427,20 @@ services:
       common_default:
         aliases:
           - metalnx.dh.local
+  metalnx-db:
+    image: postgres:${ENV_METALNX_POSTGRES_VERSION}
+    hostname: metalnx-db
+    environment:
+      POSTGRES_PASSWORD: foobar
+      POSTGRES_USER: metalnxuser
+      POSTGRES_DB: metalnxdb
+    networks:
+      default:
+        aliases:
+          - metalnx-db.dh.local
+      common_default:
+        aliases:
+          - metalnx-db.dh.local
   mirthconnect:
     build:
       context: externals/mirthconnect-docker
@@ -468,7 +504,7 @@ services:
     build: externals/crossref-lookup
     image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/crossref-lookup:${ENV_TAG}
     environment:
-      VIRTUAL_HOST: crossref-lookup.${RIT_ENV}.rit.unimaas.nl
+      VIRTUAL_HOST: crossref-lookup.${RIT_ENV}.dh.unimaas.nl
       LOGSTASH_TAGS: CROSSREF_LOOKUP
     networks:
       default:
@@ -539,6 +575,8 @@ services:
     build:
       context: ./externals/irods-open-access-repo
       dockerfile: ./docker/Dockerfile
+      args:
+        - SSL_ENV=${RIT_ENV}
     image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/open-access-worker:${ENV_TAG}
 #    depends_on:
 #      - irods
@@ -551,6 +589,7 @@ services:
       IRODS_HOST: irods.dh.local
       IRODS_USER: rods
       IRODS_PASS: irods
+      IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
       DATAVERSE_HOST: https://demo.dataverse.nl
       DH_MAILER_HOST: mailer.dh.local
       DH_MAILER_USERNAME: user
@@ -567,7 +606,11 @@ services:
         aliases:
           - open-access-worker.dh.local
   sram-sync:
-    build: externals/sram-sync/
+    build:
+      context: externals/sram-sync/
+      dockerfile: Dockerfile
+      args:
+        - SSL_ENV=${RIT_ENV}          # Whether to add our own CA-certificate to the CA-rootstore
     image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/sram-sync:${ENV_TAG}
     depends_on:
       - irods
@@ -580,6 +623,7 @@ services:
       IRODS_HOST: irods.dh.local
       IRODS_USER: rods
       IRODS_PASS: irods
+      IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
       LDAP_USER: cn=admin,dc=datahubmaastricht,dc=nl
       LDAP_PASS: admin
       LDAP_HOST: ldap://ldap.dh.local
@@ -596,6 +640,24 @@ services:
     networks:
       default:
       common_default:
+  mdr-db:
+    image: postgres:${ENV_MDR_POSTGRES_VERSION}
+    hostname: mdr-db
+    environment:
+      POSTGRES_DB: mdr
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: foobar
+      LOGSPOUT: ignore
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      default:
+        aliases:
+          - mdr-db.dh.local
+      common_default:
+        aliases:
+          - mdr-db.dh.local
+
 
 networks:
   common_default:
