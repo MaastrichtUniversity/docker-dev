@@ -186,3 +186,6 @@ nonSyncGroups="rodsadmin DH-ingest public DH-project-admins"
 for group in $nonSyncGroups; do
     imeta add -u "${group}" ldapSync false
 done
+
+# Set the default value vor max_project_number
+imeta add -C /nlmumc/projects max_project_number 11
