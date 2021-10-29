@@ -98,7 +98,9 @@ services:
         aliases:
           - faker.dh.local
   keycloak:
-    image: jboss/keycloak:6.0.1
+    build:
+      context: keycloak
+      dockerfile: Dockerfile
     hostname: keycloak
     environment:
       VIRTUAL_HOST: keycloak.${RIT_ENV}.dh.unimaas.nl
