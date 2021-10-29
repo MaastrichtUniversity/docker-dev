@@ -12,6 +12,8 @@ services:
     depends_on:
       - keycloak
       - mdr-db
+    env_file:
+      - irods.secrets.cfg # Using ONLY BIOPORTAL_API_KEY
     environment:
       VIRTUAL_HOST: mdr.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 8000
@@ -38,8 +40,9 @@ services:
       DISQOVER_URL: https://disqover.datahubmaastricht.nl/
       MDR_ANSIBLE_VERSION_TAG: DEV
       CROSSREF_LOOKUP_HOST: http://crossref-lookup.dh.local
-      OLS_URL: https://ols.acc.rit.unimaas.nl
-      WEBDAV_URL: webdav.${RIT_ENV}.rit.unimaas.nl
+      BIOPORTAL_URL: https://data.bioontology.org
+      OLS_URL: https://ols.acc.dh.unimaas.nl
+      WEBDAV_URL: webdav.${RIT_ENV}.dh.unimaas.nl
       TERMS_OF_SERVICE_TIMESTAMP: 1618476699 #  date '+%s' on	Thu Apr 15 2021 08:51:39 GMT+0000
       DATAVERSE_ENDPOINT: https://demo.dataverse.nl/
       DATAVERSE_TREE_ROOT_ID: maastricht
@@ -69,8 +72,10 @@ services:
           - mdr.dh.local
   dh-faker:
     build:
-      context: externals/dh-faker/docker
-      dockerfile: Dockerfile
+      context: externals/dh-faker
+      dockerfile: docker/Dockerfile
+      args:
+        - SSL_ENV=${RIT_ENV}
     volumes:
       - ./externals/dh-faker:/opt/
       - ./staging-data:/mnt/ingest
@@ -79,6 +84,7 @@ services:
       IRODS_HOST: irods.dh.local
       IRODS_USER: rods
       IRODS_PASS: irods
+      IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
       RABBITMQ_HOST: rabbitmq.dh.local
       RABBITMQ_USER: user
       RABBITMQ_PASS: password
@@ -380,7 +386,7 @@ services:
     depends_on:
       - irods
     environment:
-      VIRTUAL_HOST: webdav.${RIT_ENV}.rit.unimaas.nl
+      VIRTUAL_HOST: webdav.${RIT_ENV}.dh.unimaas.nl
       LOGSPOUT: ignore
     networks:
       default:

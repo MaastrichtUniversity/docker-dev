@@ -7,6 +7,7 @@ INGEST_MOUNT=
 LDAP_PASSWORD=
 USE_SAMBA=false
 DATAVERSE_TOKEN=
+BIOPORTAL_API_KEY=
 ```
 
 * Specify the default values and versions for environment vars in the _.env_ file
