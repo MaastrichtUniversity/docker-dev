@@ -12,6 +12,8 @@ services:
     depends_on:
       - keycloak
       - mdr-db
+    env_file:
+      - irods.secrets.cfg # Using ONLY BIOPORTAL_API_KEY
     environment:
       VIRTUAL_HOST: mdr.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 8000
@@ -38,6 +40,7 @@ services:
       DISQOVER_URL: https://disqover.datahubmaastricht.nl/
       MDR_ANSIBLE_VERSION_TAG: DEV
       CROSSREF_LOOKUP_HOST: http://crossref-lookup.dh.local
+      BIOPORTAL_URL: https://data.bioontology.org
       OLS_URL: https://ols.acc.dh.unimaas.nl
       WEBDAV_URL: webdav.${RIT_ENV}.dh.unimaas.nl
       TERMS_OF_SERVICE_TIMESTAMP: 1618476699 #  date '+%s' on	Thu Apr 15 2021 08:51:39 GMT+0000
