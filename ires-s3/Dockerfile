@@ -91,6 +91,10 @@ ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
 ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
 ADD ./add_rule_engine.py /opt/irods/add_rule_engine.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
+ADD ./add_ssl_setting_at_setup.patch /opt/irods/add_ssl_setting_at_setup.patch
+
+# SSL
+ADD ./SSL /etc/irods/SSL
 
 # Temporary fix needed with iRODS 4.2.6, after upgrading this shouldnt be necessary anymore
 # https://github.com/agracio/electron-edge-js/issues/16
