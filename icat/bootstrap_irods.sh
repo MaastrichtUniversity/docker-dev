@@ -187,5 +187,5 @@ for group in $nonSyncGroups; do
     imeta add -u "${group}" ldapSync false
 done
 
-# Set the default value vor max_project_number
-imeta add -C /nlmumc/projects max_project_number 11
+# Set the default value for latest_project_number
+imeta add -C /nlmumc/projects latest_project_number 11
