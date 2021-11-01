@@ -39,6 +39,9 @@ if [[ ! -e /var/run/irods_installed ]]; then
         patch -f /var/lib/irods/scripts/setup_irods.py /opt/irods/add_ssl_setting_at_setup.patch
     fi
 
+    # File names for keys and certificates differ from host to host
+    sed -i "s/ires-s3.dh.local/$HOSTNAME/g" /etc/irods/setup_responses
+
     # set up iRODS
     python /var/lib/irods/scripts/setup_irods.py < /etc/irods/setup_responses
 

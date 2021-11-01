@@ -7,7 +7,8 @@
 iadmin mkresc ${ENV_S3_RESC_NAME} s3 ${HOSTNAME%%.dh.local}:/dh-irods-bucket-dev "S3_DEFAULT_HOSTNAME=${ENV_S3_HOST};S3_AUTH_FILE=/var/lib/irods/minio.keypair;S3_REGIONNAME=irods-dev;S3_RETRY_COUNT=1;S3_WAIT_TIME_SEC=3;S3_PROTO=HTTP;ARCHIVE_NAMING_POLICY=consistent;HOST_MODE=cacheless_attached;S3_CACHE_DIR=/cache"
 
 # Sleep for a varying amount (3 * last digit of hostname) of seconds to prevent simultaneous checking for existence of replResc
-sleep `expr ${HOSTNAME%%.dh.local: -1} \* 3`
+SIMPLE_HOSTNAME=${HOSTNAME%%.dh.local}
+sleep `expr ${SIMPLE_HOSTNAME: -1} \* 3`
 
 # Check if repl resource exists, if not, create it
 if [ "$(iadmin lr replRescUMCeph01)" == "No rows found" ];
