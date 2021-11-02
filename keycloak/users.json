@@ -12,7 +12,7 @@
   },
   {
     "userName": "mcoonen2",
-    "displayName": "Dr. Maarten Coonen (MUMC+)",
+    "displayName": "Maarten Coonen (MUMC+)",
     "email": "mcoonen2",
     "lastName": "Coonen",
     "firstName": "Maarten",
@@ -23,10 +23,10 @@
   },
   {
     "userName": "dtheuniss",
-    "displayName": "Daniel Theunissen",
+    "displayName": "Daniël Theunissen",
     "email": "d.theunissen@maastrichtuniversity.nl",
     "lastName": "Theunissen",
-    "firstName": "Daniel",
+    "firstName": "Daniël",
     "eduPersonUniqueId": "dtheuniss@sram.surf.nl",
     "voPersonExternalID": "d.theunissen@unimaas.nl",
     "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
@@ -34,7 +34,7 @@
   },
   {
     "userName": "jmelius",
-    "displayName": "Jonathan Melius",
+    "displayName": "Jonathan Mélius",
     "email": "jonathan.melius@maastrichtuniversity.nl",
     "lastName": "Mélius",
     "firstName": "Jonathan",
