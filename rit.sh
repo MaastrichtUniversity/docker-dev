@@ -26,8 +26,8 @@ set -e
 
 
 # specify externals for this project
-externals="externals/channels ssh://git@bitbucket.rit.unimaas.nl:7999/mirthc/channels.git
-externals/alerts ssh://git@bitbucket.rit.unimaas.nl:7999/mirthc/alerts.git
+externals="externals/channels ssh://git@bitbucket.datahubmaastricht.nl:7999/mirthc/channels.git
+externals/alerts ssh://git@bitbucket.datahubmaastricht.nl:7999/mirthc/alerts.git
 externals/irods-helper-cmd https://github.com/MaastrichtUniversity/irods-helper-cmd.git
 externals/irods-microservices https://github.com/MaastrichtUniversity/irods-microservices.git
 externals/irods-ruleset https://github.com/MaastrichtUniversity/irods-ruleset.git
