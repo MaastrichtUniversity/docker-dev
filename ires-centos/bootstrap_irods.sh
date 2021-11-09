@@ -4,8 +4,8 @@
 ## Resources
 
 # Create coordination- and child-resources for project data
-iadmin mkresc AZM-storage unixfilesystem ${HOSTNAME%%.dh.local}:/mnt/AZM-storage
-iadmin mkresc AZM-storage-repl unixfilesystem ${HOSTNAME%%.dh.local}:/mnt/AZM-storage-repl
+iadmin mkresc AZM-storage unixfilesystem ${HOSTNAME}:/mnt/AZM-storage
+iadmin mkresc AZM-storage-repl unixfilesystem ${HOSTNAME}:/mnt/AZM-storage-repl
 iadmin mkresc replRescAZM01 replication
 iadmin addchildtoresc replRescAZM01 AZM-storage
 iadmin addchildtoresc replRescAZM01 AZM-storage-repl
