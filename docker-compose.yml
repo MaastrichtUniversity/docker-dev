@@ -263,7 +263,6 @@ services:
       context: ires-s3/
       args:
         - ENV_IRODS_VERSION
-
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_IRODS_RESC_PLUGIN_S3_VERSION
