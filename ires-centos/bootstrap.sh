@@ -70,6 +70,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/add_rule_engine.py /etc/irods/server_config.json python 1
 
     # Add config variable to iRODS
+    # NOTE: These lines are added to the server_config.json, but only go into effect when restarting the irods service!
     /opt/irods/add_env_var.py /etc/irods/server_config.json IRODS_INGEST_REMOVE_DELAY ${IRODS_INGEST_REMOVE_DELAY}
     /opt/irods/add_env_var.py /etc/irods/server_config.json EPICPID_URL ${EPICPID_URL}
     /opt/irods/add_env_var.py /etc/irods/server_config.json EPICPID_USER ${EPICPID_USER}

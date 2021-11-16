@@ -173,7 +173,7 @@ services:
       EPICPID_URL: ${ENV_EPICPID_URL}
       EPICPID_USER: ${ENV_EPICPID_USER}
       EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
-      MDR_HANDLE_URL: ${ENV_MDR_HANDLE_URL}
+      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       default:
@@ -208,7 +208,7 @@ services:
       EPICPID_URL: ${ENV_EPICPID_URL}
       EPICPID_USER: ${ENV_EPICPID_USER}
       EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
-      MDR_HANDLE_URL: ${ENV_MDR_HANDLE_URL}
+      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       default:
@@ -246,7 +246,7 @@ services:
       EPICPID_URL: ${ENV_EPICPID_URL}
       EPICPID_USER: ${ENV_EPICPID_USER}
       EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
-      MDR_HANDLE_URL: ${ENV_MDR_HANDLE_URL}
+      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       default:
@@ -287,7 +287,7 @@ services:
       EPICPID_URL: ${ENV_EPICPID_URL}
       EPICPID_USER: ${ENV_EPICPID_USER}
       EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
-      MDR_HANDLE_URL: ${ENV_MDR_HANDLE_URL}
+      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
       ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY1}
       ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY1}
@@ -329,7 +329,7 @@ services:
       EPICPID_URL: ${ENV_EPICPID_URL}
       EPICPID_USER: ${ENV_EPICPID_USER}
       EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
-      MDR_HANDLE_URL: ${ENV_MDR_HANDLE_URL}
+      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
       ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY2}
       ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
