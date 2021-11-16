@@ -14,4 +14,10 @@ ZWSS4EmHWKh8Kdxq
 O4Nqpou1oNOuSGV6SQK5vZmlYwk_oZSl
 HDFRSa6iCK32YmLhch_8zEhtB6yF7qXA
 irods
+CS_NEG_REQUIRE
+/etc/irods/SSL/ires-s3.dh.local.crt
+/etc/irods/SSL/ires-s3.dh.local.key
+/etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
+/etc/irods/SSL/dhparams.pem
+cert
 /var/lib/irods/vault
