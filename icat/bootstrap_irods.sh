@@ -144,7 +144,7 @@ imeta add -C /nlmumc/projects/P000000010 resource replRescAZM01
 imeta add -C /nlmumc/projects/P000000010 responsibleCostCenter AZM-123456
 imeta add -C /nlmumc/projects/P000000010 storageQuotaGb 10
 imeta add -C /nlmumc/projects/P000000010 title "(MDL) Placeholder project"
-imeta add -C /nlmumc/projects/P000000010 collectionMetadataSchemas "DataHub_general_template"
+imeta add -C /nlmumc/projects/P000000010 collectionMetadataSchemas "DataHub_general_schema"
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000010'" "*title='(MDL) Placeholder collection'"
 ichmod -r own "psuppers" /nlmumc/projects/P000000010
 # Data Steward gets manager rights
@@ -167,7 +167,7 @@ imeta add -C /nlmumc/projects/P000000011 resource replRescAZM01
 imeta add -C /nlmumc/projects/P000000011 responsibleCostCenter AZM-123456
 imeta add -C /nlmumc/projects/P000000011 storageQuotaGb 10
 imeta add -C /nlmumc/projects/P000000011 title "(HVC) Placeholder project"
-imeta add -C /nlmumc/projects/P000000011 collectionMetadataSchemas "DataHub_general_template"
+imeta add -C /nlmumc/projects/P000000011 collectionMetadataSchemas "DataHub_general_schema"
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000011'" "*title='(HVC) Placeholder collection'"
 ichmod -r own "psuppers" /nlmumc/projects/P000000011
 # Data Steward gets manager rights
