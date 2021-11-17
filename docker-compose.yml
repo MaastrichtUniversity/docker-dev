@@ -170,8 +170,10 @@ services:
       PGPASSWORD: foobar
       VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
       IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
-      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
-      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
+      EPICPID_URL: ${ENV_EPICPID_URL}
+      EPICPID_USER: ${ENV_EPICPID_USER}
+      EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
+      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       default:
@@ -203,8 +205,10 @@ services:
       RODS_PASSWORD: irods
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
       IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
-      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
-      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
+      EPICPID_URL: ${ENV_EPICPID_URL}
+      EPICPID_USER: ${ENV_EPICPID_USER}
+      EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
+      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       default:
@@ -239,8 +243,10 @@ services:
       RODS_PASSWORD: irods
       VIRTUAL_HOST: ires-centos.${RIT_ENV}.rit.unimaas.nl
       IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
-      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
-      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
+      EPICPID_URL: ${ENV_EPICPID_URL}
+      EPICPID_USER: ${ENV_EPICPID_USER}
+      EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
+      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       default:
@@ -278,8 +284,10 @@ services:
       RODS_PASSWORD: irods
       VIRTUAL_HOST: ires-s3-1.${RIT_ENV}.rit.unimaas.nl
       IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
-      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
-      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
+      EPICPID_URL: ${ENV_EPICPID_URL}
+      EPICPID_USER: ${ENV_EPICPID_USER}
+      EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
+      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
       ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY1}
       ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY1}
@@ -318,8 +326,10 @@ services:
       RODS_PASSWORD: irods
       VIRTUAL_HOST: ires-s3-2.${RIT_ENV}.rit.unimaas.nl
       IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
-      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
-      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
+      EPICPID_URL: ${ENV_EPICPID_URL}
+      EPICPID_USER: ${ENV_EPICPID_USER}
+      EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
+      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
       ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY2}
       ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
@@ -445,65 +455,6 @@ services:
       common_default:
         aliases:
           - metalnx-db.dh.local
-  mirthconnect:
-    build:
-      context: externals/mirthconnect-docker
-      args:
-        - ENV_MIRTH_CONNECT_VERSION
-        - ENV_FILEBEAT_VERSION
-    image:  ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/mirthconnect:${ENV_TAG}
-    depends_on:
-      - mirth-db
-      - epicpid
-      - irods-frontend
-    hostname: mirthconnect
-    ports:
-      - "8443:8443"
-      - "6661-6671:6661-6671"
-    environment:
-      MIRTH_POSTGRES_DB_HOST: ${ENV_MIRTH_POSTGRES_DB_HOST}
-      MIRTH_POSTGRES_DB: ${ENV_MIRTH_POSTGRES_DB}
-      MIRTH_POSTGRES_USER: ${ENV_MIRTH_POSTGRES_USER}
-      PGPASSWORD: ${ENV_MIRTH_POSTGRES_PASSWORD}
-      DROP_DB_ON_START: "true"
-      MIRTH_KEYSTORE_STOREPASS: foobar
-      MIRTH_KEYSTORE_KEYPASS: barfoo
-      # The server id is a constant to load corresponding message history from an existing database
-      MIRTH_SERVER_ID: 08cd0e8c-da07-45ae-a820-4fba073a20f8
-      MIRTH_ADMIN_PASSWORD: admin
-      RIT_ENV: ${RIT_ENV}
-      VIRTUAL_HOST: mirthconnect.${RIT_ENV}.rit.unimaas.nl
-      LOGSTASH_TAGS: MIRTH-UM
-      LOGSPOUT: ignore
-    networks:
-      default:
-        aliases:
-          - mirthconnect.dh.local
-      common_default:
-        aliases:
-          - mirthconnect.dh.local
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./externals/channels:/opt/channels
-      - ./externals/alerts:/opt/alerts
-      - ./channels-backup:/opt/channels-backup
-  mirth-db:
-    image: postgres:${ENV_MIRTH_POSTGRES_VERSION}
-    hostname: mirth-db
-    environment:
-      POSTGRES_DB: ${ENV_MIRTH_POSTGRES_DB}
-      POSTGRES_USER: ${ENV_MIRTH_POSTGRES_USER}
-      POSTGRES_PASSWORD: ${ENV_MIRTH_POSTGRES_PASSWORD}
-      LOGSPOUT: ignore
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-    networks:
-      default:
-        aliases:
-          - mirth-db.dh.local
-      common_default:
-        aliases:
-          - mirth-db.dh.local
   crossref-lookup:
     build: externals/crossref-lookup
     image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/crossref-lookup:${ENV_TAG}
