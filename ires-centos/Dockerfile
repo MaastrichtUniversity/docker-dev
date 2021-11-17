@@ -32,6 +32,7 @@ RUN yum install -y \
     cifs-utils  \
     openssl \
     curl \
+    jq \
     # packages required for building ruleset and microservices {{
     openssl-devel \
     libcurl-devel \

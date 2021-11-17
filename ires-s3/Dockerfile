@@ -39,6 +39,7 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     libcurl4-gnutls-dev \
     libs3-2 \
     libc++-dev \
+    jq \
     # packages required for building ruleset and microservices {{
     libssl-dev \
     g++ \
