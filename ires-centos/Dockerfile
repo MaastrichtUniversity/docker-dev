@@ -26,6 +26,7 @@ RUN yum install -y \
     python-requests \
     python-jsonschema \
     python-ldap \
+    python-tz \
     lsof \
     fortune-mod \
     nano \
