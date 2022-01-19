@@ -1,12 +1,5 @@
 FROM ubuntu:18.04
 
-# Load build arguments from environment
-ARG ENV_POSTGRES_VERSION
-ARG ENV_IRODS_VERSION
-ARG ENV_IRODS_EXT_CLANG_VERSION
-ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
-ARG ENV_FILEBEAT_VERSION
-
 # Use apt-get NL mirrors and install packages
 RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/apt/sources.list && \
     apt-get update && \
@@ -39,6 +32,9 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     python-pip
     # }} end
 
+# Load build arguments from environment
+ARG ENV_POSTGRES_VERSION
+
 # Make sure to use the same postgres version for client and irods-db server
 RUN wget -qO - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
     && echo 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main' | sudo tee /etc/apt/sources.list.d/pgdg.list \
@@ -47,8 +43,16 @@ RUN wget -qO - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add 
     postgresql-client-${ENV_POSTGRES_VERSION} \
     odbc-postgresql
 
+# Load build arguments from environment
+ARG ENV_IRODS_VERSION
+ARG ENV_IRODS_PYTHON_PLUGIN_VERSION
+ARG ENV_IRODS_EXT_CLANG_VERSION
+ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+ARG ENV_FILEBEAT_VERSION
+
 # install iRODS
 ENV IRODS_VERSION ${ENV_IRODS_VERSION}
+ENV IRODS_PYTHON_PLUGIN_VERSION ${ENV_IRODS_PYTHON_PLUGIN_VERSION}
 RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | apt-key add - \
     && echo "deb [arch=amd64] https://packages.irods.org/apt/ bionic main" | sudo tee /etc/apt/sources.list.d/renci-irods.list \
     && apt-get update \
@@ -64,7 +68,7 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | apt-key add - 
     irods-externals-jansson2.7-0 \
     irods-externals-json3.7.3-0 \
     # packages required for python rule engine
-    irods-rule-engine-plugin-python=${IRODS_VERSION}.0
+    irods-rule-engine-plugin-python${IRODS_PYTHON_PLUGIN_VERSION}
 
 # install Metalnx RMD
 ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
