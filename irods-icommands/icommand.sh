@@ -1,11 +1,7 @@
 #!/usr/bin/env bash
 
-# The rods user does not have a domain
-if [[ $1 == "rods" ]] || [[ $1 == *"service-"* ]]; then
-    user=$1
-else
-    user="${1}@maastrichtuniversity.nl"
-fi
+# Store the first input argument as variable
+user=$1
 
 # Set the specific user in irods_environment
 cat << EOF > ~/.irods/irods_environment.json

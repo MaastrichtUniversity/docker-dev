@@ -419,6 +419,7 @@ services:
       - ./externals/rit-metalnx-web/metalnx-configuration/metalnxConfig.xml:/etc/irods-ext/metalnxConfig.xml
       - ./externals/rit-metalnx-web/metalnx-configuration/metalnx.properties:/tmp/metalnx.properties
       - ./externals/rit-metalnx-web/log4j.properties:/tmp/log4j.properties
+      - ./externals/rit-metalnx-web/ServerInfo.properties:/usr/local/tomcat/lib/org/apache/catalina/util/ServerInfo.properties
       - ./externals/rit-metalnx-web/runit.sh:/runit.sh
       - ./icat/SSL/test_only_dev_irods_dh_ca_cert.pem:/tmp/cert/server.crt
     environment:
@@ -475,7 +476,7 @@ services:
     build: externals/epicpid-microservice/docker
     image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/epicpid:${ENV_TAG}
     environment:
-      VIRTUAL_HOST: epicpid.${RIT_ENV}.rit.unimaas.nl
+      VIRTUAL_HOST: epicpid.${RIT_ENV}.dh.unimaas.nl
       LOGSTASH_TAGS: EPIC_PID
       LOG_LEVEL: DEBUG
       USERNAME: user

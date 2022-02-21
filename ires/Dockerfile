@@ -7,8 +7,8 @@ ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
 ARG ENV_DOCKERIZE_VERSION
 ARG ENV_FILEBEAT_VERSION
 
-# Use apt-get NL mirrors and install packages
-RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/apt/sources.list && \
+# Use apt-get NL mirrors and install packages (2022-02-03 Switched to German mirror, because NL is not working)
+RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1de.\2/" /etc/apt/sources.list && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
     apt-transport-https \
