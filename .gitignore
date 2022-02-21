@@ -2,7 +2,6 @@
 .idea
 channels-backup
 externals/*
-mirthconnect/305_mirth.pfx
 bower_components
 node_modules/
 npm-debug.log
