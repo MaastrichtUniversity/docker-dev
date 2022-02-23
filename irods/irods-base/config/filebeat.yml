@@ -1,0 +1,20 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /var/lib/irods/log/*Log*
+
+    #Multiline
+    multiline.pattern: '^[A-Z][a-z]{2}\s+\d'
+    multiline.negate: true
+    multiline.match: after
+    multiline.max_linex: 10000
+
+    #Tags
+    tags: ["ICAT"]
+
+# Disable filebeat monitoring
+logging.metrics.enabled: false
+
+output.logstash:
+   hosts: ["elk.dh.local:5044"]

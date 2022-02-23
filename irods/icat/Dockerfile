@@ -1,0 +1,37 @@
+# syntax=docker/dockerfile:1
+FROM irods-base:ubuntu
+
+ARG ENV_POSTGRES_VERSION
+ARG ENV_IRODS_VERSION
+
+# Make sure to use the same postgres version for client and irods-db server
+RUN wget -qO - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
+    && echo 'deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main' | sudo tee /etc/apt/sources.list.d/pgdg.list \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    postgresql-client-${ENV_POSTGRES_VERSION} \
+    odbc-postgresql \
+    irods-database-plugin-postgres=${ENV_IRODS_VERSION}
+
+# Temporary fix for the CAT_STATEMENT_TABLE_FULL error in iRODS 4.2.6
+# https://github.com/irods/irods/issues/4438
+# https://github.com/irods/irods_rule_engine_plugin_python/commit/9f957078569c75a4f539c297138a0bb0d3e1824c
+ADD ./patch/genquery.py /etc/irods/genquery.py
+
+# Add DMFS fakers (SURFsara tape)
+ADD ./DMFS/* /var/lib/irods/msiExecCmd_bin/
+RUN chmod 755 /var/lib/irods/msiExecCmd_bin/dm*
+
+# files containing configuration to be parsed during install
+ADD ./config/* /etc/irods/
+
+# bootstrap scripts to build our development iCAT
+ADD ./scripts/* /opt/irods/
+
+# Add icat certs
+ADD ./test-dev-ssl-certs/* /etc/irods/SSL/
+
+EXPOSE 1248 1247 8000
+VOLUME [ "/rules", "/helpers", "/microservices" ]
+# will install iRODS on start of container
+ENTRYPOINT [ "/opt/irods/bootstrap.sh" ]

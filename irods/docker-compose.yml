@@ -1,0 +1,79 @@
+version: '2'
+#####################
+# For *BUILD* only. #
+#####################
+# This docker-compose.yml specifies the *build* process for iRODS developement
+# images.
+
+services:
+  irods-base-ubuntu:
+    build:
+      context: irods-base/
+      dockerfile: Dockerfile.ubuntu
+      # These are read from the .env
+      args:
+        - ENV_IRODS_VERSION
+        - ENV_IRODS_EXT_CLANG_VERSION
+        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+        - ENV_FILEBEAT_VERSION
+    image: irods-base:ubuntu
+
+  # Ditto, but Centos flavor
+  irods-base-centos:
+    build:
+      context: irods-base/
+      dockerfile: Dockerfile.ubuntu
+      # These are read from the .env
+      args:
+        - ENV_IRODS_VERSION
+        - ENV_IRODS_EXT_CLANG_VERSION
+        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+        - ENV_FILEBEAT_VERSION
+    image: irods-base:centos
+
+  # iCAT
+  irods-icat:
+    build:
+      context: icat/
+      dockerfile: Dockerfile
+      args:
+        - ENV_IRODS_VERSION
+        - ENV_POSTGRES_VERSION
+    image: irods-icat
+    depends_on:
+      - irods-base-ubuntu
+
+  # iRES
+  irods-ires:
+    build:
+      context: ires/
+      dockerfile: Dockerfile
+      args:
+        - ENV_DOCKERIZE_VERSION
+    image: irods-ires
+    depends_on:
+      - irods-base-ubuntu
+
+  # iRES-S3
+  irods-ires-s3:
+    build:
+      context: ires-s3/
+      dockerfile: Dockerfile
+      args:
+        - ENV_DOCKERIZE_VERSION
+        - ENV_IRODS_RESC_PLUGIN_S3_VERSION
+    image: irods-ires-s3
+    depends_on:
+      - irods-base-ubuntu
+
+  # iRES-S3
+  irods-ires-centos:
+    build:
+      context: ires-centos/
+      dockerfile: Dockerfile
+      args:
+        - ENV_DOCKERIZE_VERSION
+    image: irods-ires-centos
+    depends_on:
+      - irods-base-centos
+
