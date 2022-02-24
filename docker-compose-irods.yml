@@ -59,3 +59,66 @@ services:
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
     privileged: true
 
+  ires-s3-1-based:
+    image: irods-ires-s3:latest
+    depends_on:
+      - icat-based
+      - ires-based  # Because of ingest resource
+      - minio1
+    hostname: ires-s3-1.dh.local
+    environment:
+      RODS_PASSWORD: irods
+      VIRTUAL_HOST: ires-s3-1.${RIT_ENV}.rit.unimaas.nl
+      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
+      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
+      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
+      LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
+      ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY1}
+      ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY1}
+      ENV_S3_RESC_NAME: "UM-Ceph-S3-AC"
+      ENV_S3_HOST: "minio1.dh.local:9000"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./irods.secrets.cfg:/etc/secrets:ro
+      - ./externals/irods-ruleset:/rules
+      - ./externals/irods-microservices:/microservices
+      - ./externals/irods-helper-cmd:/helpers
+    networks:
+      default:
+        aliases:
+          - ires-s3-1.dh.local
+      common_default:
+        aliases:
+          - ires-s3-1.dh.local
+
+  ires-s3-2-based:
+    image: irods-ires-s3:latest
+    depends_on:
+      - icat-based
+      - ires-based  # Because of ingest resource
+      - minio2
+    hostname: ires-s3-2.dh.local
+    environment:
+      RODS_PASSWORD: irods
+      VIRTUAL_HOST: ires-s3-2.${RIT_ENV}.rit.unimaas.nl
+      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
+      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
+      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
+      LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
+      ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY2}
+      ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
+      ENV_S3_RESC_NAME: "UM-Ceph-S3-GL"
+      ENV_S3_HOST: "minio2.dh.local:9000"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./irods.secrets.cfg:/etc/secrets:ro
+      - ./externals/irods-ruleset:/rules
+      - ./externals/irods-microservices:/microservices
+      - ./externals/irods-helper-cmd:/helpers
+    networks:
+      default:
+        aliases:
+          - ires-s3-2.dh.local
+      common_default:
+        aliases:
+          - ires-s3-2.dh.local
