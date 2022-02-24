@@ -70,11 +70,9 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key a
 # https://github.com/agracio/electron-edge-js/issues/16
 RUN ln -s /usr/include/locale.h /usr/include/xlocale.h
 
-# Filebeat
+# Filebeat install
 RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-amd64.deb -O /tmp/filebeat.deb \
  && dpkg -i /tmp/filebeat.deb
-ADD ./config/filebeat.yml /etc/filebeat/filebeat.yml
-RUN chmod go-w /etc/filebeat/filebeat.yml
 
 # Add scripts, files and extra packages needed to finalize install (not in this image)
 RUN mkdir -p /opt/irods

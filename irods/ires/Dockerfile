@@ -18,14 +18,16 @@ RUN chmod a+x /usr/bin/setcifsacl
 RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKERIZE_VERSION}/dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz -o dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz
 
-# Add bootstrap scripts
-ADD ./scripts/* /opt/irods/
-
 # Add config
-ADD ./config/* /etc/irods/
+ADD ./config/irods/* /etc/irods/
+ADD ./config/filebeat.yml /etc/filebeat/filebeat.yml
+#RUN chmod go-w /etc/filebeat/filebeat.yml  # TODO: Is this needed?
 
 # Add ires certs
 ADD ./test-dev-ssl-certs/* /etc/irods/SSL/
+
+# Add bootstrap scripts
+ADD ./scripts/* /opt/irods/
 
 EXPOSE 1248 1247 8000
 CMD dockerize -wait tcp://irods.dh.local:1247 -timeout 200s /opt/irods/bootstrap.sh

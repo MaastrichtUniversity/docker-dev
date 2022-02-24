@@ -23,7 +23,9 @@ ADD ./DMFS/* /var/lib/irods/msiExecCmd_bin/
 RUN chmod 755 /var/lib/irods/msiExecCmd_bin/dm*
 
 # files containing configuration to be parsed during install
-ADD ./config/* /etc/irods/
+ADD ./config/irods/* /etc/irods/
+ADD ./config/filebeat.yml /etc/filebeat/filebeat.yml
+#RUN chmod go-w /etc/filebeat/filebeat.yml  # TODO: Is this needed?
 
 # bootstrap scripts to build our development iCAT
 ADD ./scripts/* /opt/irods/
