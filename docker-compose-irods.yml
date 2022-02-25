@@ -122,3 +122,32 @@ services:
       common_default:
         aliases:
           - ires-s3-2.dh.local
+
+  ires-centos-based:
+    image: irods-ires-centos:latest
+    depends_on:
+      - icat-based
+    hostname: ires-centos.dh.local
+    environment:
+      RODS_PASSWORD: irods
+      VIRTUAL_HOST: ires-centos.${RIT_ENV}.rit.unimaas.nl
+      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
+      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
+      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
+      LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
+    networks:
+      default:
+        aliases:
+          - ires-centos.dh.local
+      common_default:
+        aliases:
+          - ires-centos.dh.local
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./irods.secrets.cfg:/etc/secrets:ro
+      - ./externals/irods-ruleset:/rules
+      - ./externals/irods-microservices:/microservices
+      - ./externals/irods-helper-cmd:/helpers
+      - ./staging-data:/mnt/ingest            # binding a non-existing dir results in creation of that dir on host system
+    # Required for CIFS mounting. cap-add not enough in Windows for some reason.
+    privileged: true
