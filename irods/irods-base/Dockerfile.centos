@@ -23,6 +23,8 @@ ARG ENV_FILEBEAT_VERSION
 RUN yum install -y \
     epel-release \
     ca-certificates \
+    # epel-release must be installed before trying to pull packages such as python-pip, cmake3, and a few others
+    && yum install -y \
     # backwards compatibility for 'service'-command that is used by the iRODS-install script
     initscripts \
     sudo \
