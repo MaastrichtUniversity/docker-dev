@@ -1,5 +1,8 @@
 # syntax=docker/dockerfile:1
 
+# Warning: Not actively maintained.
+
+#
 # Dockerfile to serve as base for iRODS *development* containers.
 # Containers build out of this image are meant to be run in your development
 # environment, not in a production setting.
@@ -94,7 +97,7 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key a
     irods-rule-engine-plugin-python=${IRODS_VERSION}
 
 # install Metalnx RMD (https://github.com/irods-contrib/metalnx-rmd/blob/master/docs/INSTALL.md#metalnx-rmd-overview)
-ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
+ADD ./metalnx/emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
 RUN dpkg -i /tmp/emc-metalnx-rmd-1.0-1.deb
 
 # Filebeat
