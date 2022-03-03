@@ -18,7 +18,7 @@ shouldn't be used on its own to create a live container.
 
 `irods-base` comes in two flavors: `ubuntu` and `centos`.
 
-From `irods-base` we build `icat-based`, `ires-based`, and `ires-s3-based`.
+From `irods-base` we build `icat-based`, `ires-based`, `ires-centos-based` and `ires-s3-based`.
 
 
 ## Build
@@ -28,7 +28,7 @@ From `irods-base` we build `icat-based`, `ires-based`, and `ires-s3-based`.
 ```
 $ ./build.sh
 ```
-This will build `irods-base`, then `icat-based` and `ires-based`.
+This will build `irods-base`, then `icat-based` and `ires-based`... etc. Edit that script at will.
 
 ## Run
 
