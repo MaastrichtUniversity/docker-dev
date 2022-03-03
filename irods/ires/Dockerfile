@@ -11,7 +11,7 @@ RUN apt-get update && \
     curl
 
 # Overwrite the default setcifsacl with our own recompiled version
-ADD ./setcifsacl /usr/bin/setcifsacl
+ADD ./patch/setcifsacl /usr/bin/setcifsacl
 RUN chmod a+x /usr/bin/setcifsacl
 
 # Dockerize install
