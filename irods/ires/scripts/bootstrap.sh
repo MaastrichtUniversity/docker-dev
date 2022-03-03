@@ -35,7 +35,7 @@ if [ "${USE_SAMBA}" = "true" ] ; then
          # mount CIFS on top of the created /mnt/ingest/zones folder
          mount -t cifs ${INGEST_MOUNT} /mnt/ingest/zones -o user=${INGEST_USER},password=${INGEST_PASSWORD},uid=999,gid=999,vers=2.0
     fi
-else 
+else
     echo "Using docker volume bind for dropzones instead of CIFS mount"
 fi
 
@@ -48,11 +48,11 @@ if [[ ! -e /var/run/irods_installed ]]; then
     fi
 
     # PoC: patch setup_irods.py to accept SSL settings
-    patch --dry-run -f /var/lib/irods/scripts/setup_irods.py /opt/irods/add_ssl_setting_at_setup.patch
+    patch --dry-run -f /var/lib/irods/scripts/setup_irods.py /opt/irods/patch/add_ssl_setting_at_setup.patch
     if [[ $? -ne 0 ]]; then
         echo "Patching scripts/setup_irods.py is not possible with our patch"
     else
-        patch -f /var/lib/irods/scripts/setup_irods.py /opt/irods/add_ssl_setting_at_setup.patch
+        patch -f /var/lib/irods/scripts/setup_irods.py /opt/irods/patch/add_ssl_setting_at_setup.patch
     fi
 
     # set up iRODS
