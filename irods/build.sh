@@ -1,4 +1,5 @@
 #!/bin/bash
+# Temporary script to build (and only build) iRODS images
 
 export RIT_ENV=dev
 
@@ -6,14 +7,19 @@ export RIT_ENV=dev
 # docker-compose.yml is found.
 cd "$(dirname "$BASH_SOURCE")"
 
-# We first build the irods-base image
-#docker-compose build $@ irods-base-ubuntu irods-icat
-#docker-compose build $@
+images=(
+    # pick and choose (by commenting lines in and out)
+    irods-base-ubuntu
+    irods-base-centos
+    irods-icat
+    irods-ires
+    irods-ires-s3
+    irods-ires-centos
+)
 
-for image in irods-base-ubuntu irods-icat irods-ires irods-ires-s3; do
+
+for image in ${images[@]}; do
     echo
     echo "Building: $image"
     docker-compose build $@ $image
 done
-
-# Then icat, ires, ires-s3, ires-centos
