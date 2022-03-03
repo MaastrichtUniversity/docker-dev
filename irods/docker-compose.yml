@@ -22,7 +22,7 @@ services:
   irods-base-centos:
     build:
       context: irods-base/
-      dockerfile: Dockerfile.ubuntu
+      dockerfile: Dockerfile.centos
       # These are read from the .env
       args:
         - ENV_IRODS_VERSION
@@ -66,7 +66,7 @@ services:
     depends_on:
       - irods-base-ubuntu
 
-  # iRES-S3
+  # iRES-centos
   irods-ires-centos:
     build:
       context: ires-centos/
