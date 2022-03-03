@@ -28,11 +28,12 @@ services:
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./keycloak/users.json:/opt/irods/users.json
+      - microservices-build-ubuntu:/tmp/microservices-build
 
   ires-based:
     image: irods-ires:latest
     depends_on:
-      - irods-db
+      - icat-based
     hostname: ires.dh.local
     environment:
       RODS_PASSWORD: irods
@@ -56,6 +57,7 @@ services:
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
       - ./staging-data:/mnt/ingest            # binding a non-existing dir results in creation of that dir on host system
+      - microservices-build-ubuntu:/tmp/microservices-build
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
     privileged: true
 
@@ -83,6 +85,7 @@ services:
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
+      - microservices-build-ubuntu:/tmp/microservices-build
     networks:
       default:
         aliases:
@@ -115,6 +118,7 @@ services:
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
+      - microservices-build-ubuntu:/tmp/microservices-build
     networks:
       default:
         aliases:
@@ -149,5 +153,14 @@ services:
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
       - ./staging-data:/mnt/ingest            # binding a non-existing dir results in creation of that dir on host system
+      - microservices-build-centos:/tmp/microservices-build
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
     privileged: true
+
+volumes:
+  # these volumes exists so already-compiled microservices shared across
+  # icat/ires's don't have to be recompiled. If icat already compiled them, no
+  # need for ires's to recompilie.
+  microservices-build-ubuntu:
+  microservices-build-centos:
+
