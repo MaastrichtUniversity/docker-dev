@@ -23,4 +23,13 @@ ADD ./test-dev-ssl-certs/* /etc/irods/SSL/
 ADD ./scripts/* /opt/irods/
 
 EXPOSE 1248 1247 8000
-CMD dockerize -wait tcp://irods.dh.local:1247 -timeout 200s /opt/irods/bootstrap.sh
+# Note: centos image uses 'bash' for /bin/sh. Ubuntu uses 'dash'.
+# When the CMD instruction is in shell form (without [" ",...]), docker will do
+# '/bin/sh -c "dockerize -wait ..."'. The behaviour in bash is different from
+# dash. My guess is, in bash if running as PID 1 (parent PID 0), it will behave
+# as an exec and just let that process take control (PID 1). In dash, this is
+# not the case and it will run as a child of shell (dash). This is incovenient
+# because signals sent to PID 1 (dash), are not forwarded to dockerize. Which
+# would make things like `docker-compose down` slow.
+# Nevertheless, we leave this CMD in exec form for consistency.
+CMD ["dockerize", "-wait", "tcp://irods.dh.local:1247", "-timeout", "200s", "/opt/irods/bootstrap.sh"]

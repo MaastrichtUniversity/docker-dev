@@ -37,4 +37,4 @@ ADD ./config/filebeat.yml /etc/filebeat/filebeat.yml
 ADD ./test-dev-ssl-certs/* /etc/irods/SSL/
 
 EXPOSE 1248 1247 8000
-CMD dockerize -wait tcp://irods.dh.local:1247 -timeout 200s /opt/irods/bootstrap.sh
+CMD ["dockerize", "-wait", "tcp://irods.dh.local:1247", "-timeout", "200s", "/opt/irods/bootstrap.sh"]
