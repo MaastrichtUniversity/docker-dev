@@ -38,3 +38,11 @@ $ cd ..   # root of docker-dev
 $ docker-compose -f docker-compose.yml -f docker-compose-irods.yml up -d icat-based ires-based
 ```
 
+## Images directory structure
+
+Most images follow the following scheme:
+* `config/`: Configuration files, settings, non-executables ...etc.
+* `scripts/`: Scripts mostly used during boot up.
+* `patch/`: Executable files that overwrite default ones in the image, or `.patch` files that we apply ourselves.
+* `test-dev-ssl-certs/`: TLS certificates
+

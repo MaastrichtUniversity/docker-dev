@@ -74,13 +74,17 @@ RUN ln -s /usr/include/locale.h /usr/include/xlocale.h
 RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-amd64.deb -O /tmp/filebeat.deb \
  && dpkg -i /tmp/filebeat.deb
 
-# Add scripts, files and extra packages needed to finalize install (not in this image)
+# Install Metalnx RMD (https://github.com/irods-contrib/metalnx-rmd/blob/master/docs/INSTALL.md#metalnx-rmd-overview)
+ADD ./metalnx/emc-metalnx-rmd-1.0-1.deb /opt/irods/emc-metalnx-rmd-1.0-1.deb
+RUN dpkg -i /opt/irods/emc-metalnx-rmd-1.0-1.deb
+
+# Add patched files / patches that derived images will probably all make use of
+ADD ./patch/* /opt/irods/patch/
+
+# Add scripts/utils needed to finalize install (not in this image)
 RUN mkdir -p /opt/irods
-ADD extra_utils/* /opt/irods/
+ADD ./scripts/* /opt/irods/
 
 # Add test/dev ONLY CA
 RUN mkdir -p /etc/irods/SSL/
 ADD ./test-dev-ssl-certs/* /etc/irods/SSL/
-
-# Install Metalnx RMD (https://github.com/irods-contrib/metalnx-rmd/blob/master/docs/INSTALL.md#metalnx-rmd-overview)
-RUN dpkg -i /opt/irods/emc-metalnx-rmd-1.0-1.deb
