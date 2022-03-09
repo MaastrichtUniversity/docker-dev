@@ -7,8 +7,7 @@ ARG ENV_DOCKERIZE_VERSION
 # install packages for this iRES
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    cifs-utils \
-    curl
+    cifs-utils
 
 # Overwrite the default setcifsacl with our own recompiled version
 ADD ./patch/setcifsacl /usr/bin/setcifsacl
