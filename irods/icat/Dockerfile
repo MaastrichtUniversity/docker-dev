@@ -27,11 +27,11 @@ ADD ./config/irods/* /etc/irods/
 ADD ./config/filebeat.yml /etc/filebeat/filebeat.yml
 #RUN chmod go-w /etc/filebeat/filebeat.yml  # TODO: Is this needed?
 
-# bootstrap scripts to build our development iCAT
-ADD ./scripts/* /opt/irods/
-
 # Add icat certs
 ADD ./test-dev-ssl-certs/* /etc/irods/SSL/
+
+# bootstrap scripts to build our development iCAT
+ADD ./scripts/* /opt/irods/
 
 EXPOSE 1248 1247 8000
 VOLUME [ "/rules", "/helpers", "/microservices" ]
