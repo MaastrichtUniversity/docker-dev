@@ -24,14 +24,19 @@ imeta add -R arcRescSURF01 service-account service-surfarchive
 # Set arcRescSURF01 as the archive destination resource, this AVU is required the createProject.r workflow
 imeta add -R arcRescSURF01 archiveDestResc true
 
+#Create a resource for the web-based ingest
+iadmin mkresc stagingResc01 unixfilesystem ${HOSTNAME}:/mnt/web-upload
+
 # Add storage pricing to resources
 imeta add -R rootResc NCIT:C88193 999
 imeta add -R demoResc NCIT:C88193 999
+imeta add -R stagingResc01 NCIT:C88193 999
 imeta add -R arcRescSURF01 NCIT:C88193 0.02
 
 ##############
 ## Collections
 imkdir -p /nlmumc/ingest/zones
+imkdir -p /nlmumc/ingest/direct
 imkdir -p /nlmumc/projects
 
 
@@ -117,10 +122,11 @@ done
 ichmod read public /nlmumc
 ichmod read public /nlmumc/projects
 
-# Give the DH-ingest group write-access to the ingest-zones parent-collection
+# Give the DH-ingest group write-access to the ingest-zones parent-collection and ingest-direct parent-collection
 # This is needed because users need sufficient permissions to delete dropzone-collections by the msiRmColl operation in 'ingestNestedDelay2.r'
 # See RITDEV-219 and RITDEV-422
 ichmod write DH-ingest /nlmumc/ingest/zones
+ichmod write DH-ingest /nlmumc/ingest/direct
 
 # Give the DH-project-admins write access on the projects folder for project creation trough the webform
 ichmod write DH-project-admins /nlmumc/projects

@@ -74,6 +74,10 @@ if [[ ! -e /var/run/irods_installed ]]; then
     mkdir -p /mnt/SURF-Archive
     chown irods:irods /mnt/SURF-Archive
 
+     # web-based ingest vault
+    mkdir -p /mnt/web-upload
+    chown irods:irods /mnt/web-upload
+
     su irods -c "/opt/irods/bootstrap_irods.sh"
 
     # Change default resource to rootResc for irods-user
