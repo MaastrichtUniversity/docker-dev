@@ -86,6 +86,10 @@ if [[ ! -e /var/run/irods_installed ]]; then
     mkdir -p /mnt/UM-hnas-4k-repl
     chown irods:irods /mnt/UM-hnas-4k-repl
 
+    # web-based ingest vault
+    mkdir -p /mnt/stagingResc01
+    chown irods:irods /mnt/stagingResc01
+
     su - irods -c "/opt/irods/bootstrap_irods.sh"
 
     touch /var/run/irods_installed

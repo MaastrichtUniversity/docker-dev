@@ -10,6 +10,11 @@ iadmin mkresc replRescUM01 replication
 iadmin addchildtoresc replRescUM01 UM-hnas-4k
 iadmin addchildtoresc replRescUM01 UM-hnas-4k-repl
 
+# Create direct ingest resource and add DH-ingest access
+imkdir -p /nlmumc/ingest/direct
+iadmin mkresc stagingResc01 unixfilesystem ${HOSTNAME}:/mnt/stagingResc01
+ichmod write DH-ingest /nlmumc/ingest/direct
+
 # Add comment to resource for better identification in MDR's createProject dropdown
 iadmin modresc ${HOSTNAME%%.dh.local}Resource comment UM-UBUNTU-INGEST-RESOURCE
 iadmin modresc replRescUM01 comment Replicated-resource-for-UM
