@@ -393,6 +393,7 @@ services:
         - ENV_DAVRODS_VERSION
         - ENV_FILEBEAT_VERSION
         - SSL_ENV=${RIT_ENV}            # Whether to add our own CA-certificate to the CA-rootstore
+        - VHOST_FILE=davrods-vhost.conf
     image:  ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/davrods:${ENV_TAG}
     depends_on:
       - irods
@@ -406,6 +407,30 @@ services:
       common_default:
         aliases:
           - davrods.dh.local
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+  davrods-upload:
+    build:
+      context: externals/rit-davrods/
+      args:
+        - ENV_DAVRODS_IRODS_VERSION
+        - ENV_DAVRODS_VERSION
+        - ENV_FILEBEAT_VERSION
+        - SSL_ENV=${RIT_ENV}            # Whether to add our own CA-certificate to the CA-rootstore
+        - VHOST_FILE=upload-davrods-vhost.conf
+    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/davrods-upload:${ENV_TAG}
+    depends_on:
+      - irods
+    environment:
+      VIRTUAL_HOST: upload.${RIT_ENV}.dh.unimaas.nl
+      LOGSPOUT: ignore
+    networks:
+      default:
+        aliases:
+          - davrods-upload.dh.local
+      common_default:
+        aliases:
+          - davrods-upload.dh.local
     volumes:
       - /etc/localtime:/etc/localtime:ro
   metalnx:

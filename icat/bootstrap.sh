@@ -47,6 +47,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     python /var/lib/irods/scripts/setup_irods.py < /etc/irods/setup_responses
 
     # Add the ruleset-rit to server config
+    /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-policies
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-misc
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-ingest
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projects
@@ -74,7 +75,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     mkdir -p /mnt/SURF-Archive
     chown irods:irods /mnt/SURF-Archive
 
-    su irods -c "/opt/irods/bootstrap_irods.sh"
+     su irods -c "/opt/irods/bootstrap_irods.sh"
 
     # Change default resource to rootResc for irods-user
     sed -i 's/\"irods_default_resource\"\:\ \"demoResc\"\,/\"irods_default_resource\"\:\ \"rootResc\"\,/' /var/lib/irods/.irods/irods_environment.json
