@@ -43,6 +43,7 @@ services:
       BIOPORTAL_URL: https://data.bioontology.org
       OLS_URL: https://ols.acc.dh.unimaas.nl
       WEBDAV_URL: webdav.${RIT_ENV}.dh.unimaas.nl
+      WEBDAV_UPLOAD_URL: upload.${RIT_ENV}.dh.unimaas.nl
       TERMS_OF_SERVICE_TIMESTAMP: 1618476699 #  date '+%s' on	Thu Apr 15 2021 08:51:39 GMT+0000
       DATAVERSE_ENDPOINT: https://demo.dataverse.nl/
       DATAVERSE_TREE_ROOT_ID: maastricht
