@@ -68,6 +68,7 @@ services:
       # If you want to use the irods-rule-wrapper code provided by the "ENV_RULE_WRAPPER_VERSION" variable in the .env file of this repository,
       # comment the following line.
       - ./externals/irods-rule-wrapper:/opt/src/irods-rule-wrapper
+      - ./externals/dh-python-irods-utils/dhpythonirodsutils:/usr/local/lib/python3.10/site-packages/dhpythonirodsutils
     networks:
       default:
         aliases:
