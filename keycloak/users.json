@@ -99,26 +99,15 @@
     "memberOf": [ "mumc.datahub.@all" ]
   },
   {
-    "userName": "kheinen",
-    "displayName": "Koert Heinen",
-    "email": "kheinen@example.org",
-    "lastName": "Heinen",
-    "firstName": "Koert",
-    "eduPersonUniqueId": "kheinen@sram.surf.nl",
-    "voPersonExternalID": "k.heinen@unimaas.nl",
+    "userName": "tlustberg",
+    "displayName": "Tim Lustberg",
+    "email": "tlustberg@example.org",
+    "lastName": "Lustberg",
+    "firstName": "Tim",
+    "eduPersonUniqueId": "tlustberg@sram.surf.nl",
+    "voPersonExternalID": "t.lustberg@unimaas.nl",
     "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
     "memberOf": [ "mumc.datahub.@all" ]
-  },
-  {
-    "userName": "rravelli",
-    "displayName": "Raimond Ravelli",
-    "email": "rravelli@example.org",
-    "lastName": "",
-    "firstName": "",
-    "eduPersonUniqueId": "rravelli@sram.surf.nl",
-    "voPersonExternalID": "rbg.ravelli@unimaas.nl",
-    "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
-    "memberOf": [ "mumc.m4i-nanoscopy.@all" ]
   },
   {
     "userName": "pahles",

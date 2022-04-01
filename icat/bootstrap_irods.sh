@@ -86,14 +86,14 @@ done
 
 #########
 ## Groups
-nanoscopy="pvanschay2 rravelli"
+nanoscopy="pvanschay2"
 
 iadmin mkgroup m4i-nanoscopy
 for user in $nanoscopy; do
     iadmin atg m4i-nanoscopy "${user}"
 done
 
-rit="pvanschay2 mcoonen mcoonen2 dtheuniss psuppers delnoy rbrecheis jmelius kheinen dlinssen"
+rit="pvanschay2 mcoonen mcoonen2 dtheuniss psuppers rbrecheis jmelius tlustberg dlinssen"
 
 iadmin mkgroup datahub
 iadmin mkgroup DH-project-admins
