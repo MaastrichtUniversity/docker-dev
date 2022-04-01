@@ -43,6 +43,11 @@ services:
       BIOPORTAL_URL: https://data.bioontology.org
       OLS_URL: https://ols.acc.dh.unimaas.nl
       WEBDAV_URL: webdav.${RIT_ENV}.dh.unimaas.nl
+      WEBDAV_UPLOAD_URL: upload.${RIT_ENV}.dh.unimaas.nl
+      SMB_UM_WINDOWS_PATH: \\foobar.unimaas.nl\iRODS-ingestzones\dev
+      SMB_UM_UNIX_PATH: foobar.unimaas.nl/iRODS-ingestzones/dev
+      SMB_MUMC_WINDOWS_PATH: \\foobar.prd.corp\dev
+      SMB_MUMC_UNIX_PATH: foobar.prd.corp/dev
       TERMS_OF_SERVICE_TIMESTAMP: 1618476699 #  date '+%s' on	Thu Apr 15 2021 08:51:39 GMT+0000
       DATAVERSE_ENDPOINT: https://demo.dataverse.nl/
       DATAVERSE_TREE_ROOT_ID: maastricht
@@ -63,6 +68,7 @@ services:
       # If you want to use the irods-rule-wrapper code provided by the "ENV_RULE_WRAPPER_VERSION" variable in the .env file of this repository,
       # comment the following line.
       - ./externals/irods-rule-wrapper:/opt/src/irods-rule-wrapper
+      - ./externals/dh-python-irods-utils/dhpythonirodsutils:/usr/local/lib/python3.10/site-packages/dhpythonirodsutils
     networks:
       default:
         aliases:
@@ -394,6 +400,7 @@ services:
         - ENV_FILEBEAT_VERSION
         - SSL_ENV=${RIT_ENV}            # Whether to add our own CA-certificate to the CA-rootstore
         - VHOST_FILE=davrods-vhost.conf
+        - FILEBEAT_CONFIG_FILE=filebeat.yml
     image:  ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/davrods:${ENV_TAG}
     depends_on:
       - irods
@@ -418,6 +425,7 @@ services:
         - ENV_FILEBEAT_VERSION
         - SSL_ENV=${RIT_ENV}            # Whether to add our own CA-certificate to the CA-rootstore
         - VHOST_FILE=upload-davrods-vhost.conf
+        - FILEBEAT_CONFIG_FILE=filebeat-upload.yml
     image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/davrods-upload:${ENV_TAG}
     depends_on:
       - irods
