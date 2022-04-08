@@ -650,7 +650,6 @@ services:
           - mdr-db.dh.local
   fail2ban:
     image: crazymax/fail2ban:${ENV_FAIL2BAN_VERSION}
-    container_name: fail2ban
     network_mode: "host"
     cap_add:
       - NET_ADMIN
