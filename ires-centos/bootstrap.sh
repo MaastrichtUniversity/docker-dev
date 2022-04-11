@@ -60,6 +60,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     python /var/lib/irods/scripts/setup_irods.py < /etc/irods/setup_responses
 
     # Add the ruleset-rit to server config
+    /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-policies
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-misc
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-ingest
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projects

@@ -59,6 +59,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     python /var/lib/irods/scripts/setup_irods.py < /etc/irods/setup_responses
 
     # Add the ruleset-rit to server config
+    /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-policies
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-misc
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-ingest
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projects
@@ -85,6 +86,10 @@ if [[ ! -e /var/run/irods_installed ]]; then
     chown irods:irods /mnt/UM-hnas-4k
     mkdir -p /mnt/UM-hnas-4k-repl
     chown irods:irods /mnt/UM-hnas-4k-repl
+
+    # web-based ingest vault
+    mkdir -p /mnt/stagingResc01
+    chown irods:irods /mnt/stagingResc01
 
     su - irods -c "/opt/irods/bootstrap_irods.sh"
 

@@ -41,7 +41,8 @@ RUN yum install -y \
     make \
     rpm-build \
     cmake3 \
-    python-pip
+    python-pip \
+    git
     # }} end
 
 
