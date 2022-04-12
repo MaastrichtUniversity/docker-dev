@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
+# set -x    # Uncomment to print all executed statements
 
 ############
 ## Resources
@@ -11,7 +12,7 @@ set -e
 iadmin mkresc rootResc passthru
 iadmin addchildtoresc rootResc demoResc
 
-# Add comment to resource for better identification in pacman's createProject dropdown
+# Add comment to resource for better identification in MDR's createProject dropdown
 iadmin modresc rootResc comment DO-NOT-USE
 iadmin modresc demoResc comment DO-NOT-USE
 
@@ -67,7 +68,7 @@ echo $usersJSON | jq  -r -c '.[]'  | while read userJSON; do
     iadmin atg DH-ingest "${uid}"
 done
 
-serviceUsers="service-dropzones service-mdl service-pid service-disqover"
+serviceUsers="service-mdl service-pid service-disqover service-public"
 
 for user in $serviceUsers; do
     iadmin mkuser "${user}" rodsuser
@@ -85,14 +86,14 @@ done
 
 #########
 ## Groups
-nanoscopy="pvanschay2 rravelli"
+nanoscopy="pvanschay2"
 
 iadmin mkgroup m4i-nanoscopy
 for user in $nanoscopy; do
     iadmin atg m4i-nanoscopy "${user}"
 done
 
-rit="pvanschay2 mcoonen mcoonen2 dtheuniss psuppers delnoy rbrecheis jmelius kheinen dlinssen"
+rit="pvanschay2 mcoonen mcoonen2 dtheuniss psuppers rbrecheis jmelius tlustberg dlinssen"
 
 iadmin mkgroup datahub
 iadmin mkgroup DH-project-admins
@@ -136,13 +137,15 @@ ichmod write DH-project-admins /nlmumc/projects
 imkdir -p /nlmumc/projects/P000000010
 imeta add -C /nlmumc/projects/P000000010 authorizationPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000010 dataRetentionPeriodEndDate 1-1-2018
-imeta add -C /nlmumc/projects/P000000010 ingestResource ${HOSTNAME}Resource
+imeta add -C /nlmumc/projects/P000000010 ingestResource ${HOSTNAME%%.dh.local}Resource
 imeta add -C /nlmumc/projects/P000000010 OBI:0000103 psuppers
 imeta add -C /nlmumc/projects/P000000010 dataSteward opalmen
 imeta add -C /nlmumc/projects/P000000010 resource replRescAZM01
 imeta add -C /nlmumc/projects/P000000010 responsibleCostCenter AZM-123456
 imeta add -C /nlmumc/projects/P000000010 storageQuotaGb 10
 imeta add -C /nlmumc/projects/P000000010 title "(MDL) Placeholder project"
+imeta add -C /nlmumc/projects/P000000010 collectionMetadataSchemas "DataHub_general_schema"
+imeta add -C /nlmumc/projects/P000000010 enableContributorEditMetadata "false"
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000010'" "*title='(MDL) Placeholder collection'"
 ichmod -r own "psuppers" /nlmumc/projects/P000000010
 # Data Steward gets manager rights
@@ -158,13 +161,16 @@ imeta add -C /nlmumc/projects/P000000010/C000000001 numFiles 0
 imkdir -p /nlmumc/projects/P000000011
 imeta add -C /nlmumc/projects/P000000011 authorizationPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000011 dataRetentionPeriodEndDate 1-1-2018
-imeta add -C /nlmumc/projects/P000000011 ingestResource ${HOSTNAME}Resource
+imeta add -C /nlmumc/projects/P000000011 ingestResource ${HOSTNAME%%.dh.local}Resource
 imeta add -C /nlmumc/projects/P000000011 OBI:0000103 psuppers
 imeta add -C /nlmumc/projects/P000000011 dataSteward opalmen
 imeta add -C /nlmumc/projects/P000000011 resource replRescAZM01
 imeta add -C /nlmumc/projects/P000000011 responsibleCostCenter AZM-123456
 imeta add -C /nlmumc/projects/P000000011 storageQuotaGb 10
 imeta add -C /nlmumc/projects/P000000011 title "(HVC) Placeholder project"
+imeta add -C /nlmumc/projects/P000000011 collectionMetadataSchemas "DataHub_general_schema"
+imeta add -C /nlmumc/projects/P000000011 enableContributorEditMetadata "false"
+
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000011'" "*title='(HVC) Placeholder collection'"
 ichmod -r own "psuppers" /nlmumc/projects/P000000011
 # Data Steward gets manager rights
@@ -185,3 +191,4 @@ nonSyncGroups="rodsadmin DH-ingest public DH-project-admins"
 for group in $nonSyncGroups; do
     imeta add -u "${group}" ldapSync false
 done
+

@@ -2,13 +2,14 @@ FROM ubuntu:18.04
 
 # Load build arguments from environment
 ARG ENV_IRODS_VERSION
+ARG ENV_IRODS_PYTHON_PLUGIN_VERSION
 ARG ENV_IRODS_EXT_CLANG_VERSION
 ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
 ARG ENV_DOCKERIZE_VERSION
 ARG ENV_FILEBEAT_VERSION
 
-# Use apt-get NL mirrors and install packages
-RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/apt/sources.list && \
+# Use apt-get NL mirrors and install packages (2022-02-03 Switched to German mirror, because NL is not working)
+RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1de.\2/" /etc/apt/sources.list && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
     apt-transport-https \
@@ -23,12 +24,14 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     python-requests \
     python-jsonschema \
     python-ldap \
+    python-tz \
     sudo \
     lsof \
     fortune-mod \
     cifs-utils  \
     curl \
     nano \
+    jq \
     # packages required for building ruleset and microservices {{
     libssl-dev \
     libcurl4-openssl-dev \
@@ -36,11 +39,12 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     g++ \
     make \
     cmake \
-    python-pip
+    python-pip \
+    git
     # }} end
 
 ENV IRODS_VERSION ${ENV_IRODS_VERSION}
-
+ENV IRODS_PYTHON_PLUGIN_VERSION ${ENV_IRODS_PYTHON_PLUGIN_VERSION}
 # install iRODS
 RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key add - \
     && echo "deb [arch=amd64] https://packages.irods.org/apt/ bionic main" | sudo tee /etc/apt/sources.list.d/renci-irods.list \
@@ -56,7 +60,7 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key a
     irods-externals-jansson2.7-0 \
     irods-externals-json3.7.3-0 \
     # packages required for python rule engine
-    irods-rule-engine-plugin-python=${IRODS_VERSION}.0
+    irods-rule-engine-plugin-python=${IRODS_PYTHON_PLUGIN_VERSION}
 
 # install Metalnx RMD
 ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
@@ -89,6 +93,10 @@ ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
 ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
 ADD ./add_rule_engine.py /opt/irods/add_rule_engine.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
+ADD ./add_ssl_setting_at_setup.patch /opt/irods/add_ssl_setting_at_setup.patch
+
+# SSL
+ADD ./SSL /etc/irods/SSL
 
 # Temporary fix needed with iRODS 4.2.6, after upgrading this shouldnt be necessary anymore
 # https://github.com/agracio/electron-edge-js/issues/16

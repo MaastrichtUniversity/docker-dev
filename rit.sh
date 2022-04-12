@@ -26,9 +26,7 @@ set -e
 
 
 # specify externals for this project
-externals="externals/channels ssh://git@bitbucket.rit.unimaas.nl:7999/mirthc/channels.git
-externals/alerts ssh://git@bitbucket.rit.unimaas.nl:7999/mirthc/alerts.git
-externals/irods-helper-cmd https://github.com/MaastrichtUniversity/irods-helper-cmd.git
+externals="externals/irods-helper-cmd https://github.com/MaastrichtUniversity/irods-helper-cmd.git
 externals/irods-microservices https://github.com/MaastrichtUniversity/irods-microservices.git
 externals/irods-ruleset https://github.com/MaastrichtUniversity/irods-ruleset.git
 externals/irods-frontend https://github.com/MaastrichtUniversity/irods-frontend.git
@@ -38,9 +36,11 @@ externals/crossref-lookup https://github.com/MaastrichtUniversity/crossref-looku
 externals/epicpid-microservice https://github.com/MaastrichtUniversity/epicpid-microservice.git
 externals/dh-mdr https://github.com/MaastrichtUniversity/dh-mdr.git
 externals/irods-rule-wrapper https://github.com/MaastrichtUniversity/irods-rule-wrapper.git
-externals/mirthconnect-docker https://github.com/MaastrichtUniversity/mirthconnect-docker.git
 externals/irods-open-access-repo https://github.com/MaastrichtUniversity/irods-open-access-repo.git
-externals/sram-sync https://github.com/MaastrichtUniversity/sram-sync.git"
+externals/sram-sync https://github.com/MaastrichtUniversity/sram-sync.git
+externals/dh-faker https://github.com/MaastrichtUniversity/dh-faker.git
+externals/dh-python-irods-utils https://github.com/MaastrichtUniversity/dh-python-irods-utils.git
+externals/cedar-parsing-utils https://github.com/MaastrichtUniversity/cedar-parsing-utils.git"
 
 
 # do the required action in case of externals or exec

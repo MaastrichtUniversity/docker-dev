@@ -9,7 +9,8 @@ ARG ENV_FILEBEAT_VERSION
 
 RUN yum install -y \
     # extra repository to download extra packages
-    epel-release
+    epel-release \
+    ca-certificates
 
 RUN yum install -y \
     # backwards compatibility for 'service'-command that is used by the iRODS-install script
@@ -25,12 +26,14 @@ RUN yum install -y \
     python-requests \
     python-jsonschema \
     python-ldap \
+    python-tz \
     lsof \
     fortune-mod \
     nano \
     cifs-utils  \
     openssl \
     curl \
+    jq \
     # packages required for building ruleset and microservices {{
     openssl-devel \
     libcurl-devel \
@@ -38,7 +41,8 @@ RUN yum install -y \
     make \
     rpm-build \
     cmake3 \
-    python-pip
+    python-pip \
+    git
     # }} end
 
 
@@ -71,7 +75,6 @@ RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FI
  && rpm -Uvh /tmp/filebeat.rpm
 ADD filebeat.yml /etc/filebeat/filebeat.yml
 RUN chmod go-w /etc/filebeat/filebeat.yml
-
 # Dockerize
 RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKERIZE_VERSION}/dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz -o dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz
@@ -84,7 +87,11 @@ ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
 ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
 ADD ./add_rule_engine.py /opt/irods/add_rule_engine.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
+ADD ./add_ssl_setting_at_setup.patch /opt/irods/add_ssl_setting_at_setup.patch
 RUN chmod a+x /opt/irods/*
+
+# SSL
+ADD ./SSL /etc/irods/SSL
 
 CMD dockerize -wait tcp://irods.dh.local:1247 -timeout 200s /opt/irods/bootstrap.sh
 EXPOSE 1248 1247 8000

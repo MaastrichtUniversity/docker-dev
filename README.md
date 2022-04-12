@@ -7,6 +7,7 @@ INGEST_MOUNT=
 LDAP_PASSWORD=
 USE_SAMBA=false
 DATAVERSE_TOKEN=
+BIOPORTAL_API_KEY=
 ```
 
 * Specify the default values and versions for environment vars in the _.env_ file
@@ -52,8 +53,7 @@ To execute a command:
 ```
 ./i [user] ils
 ```
-Where `[user]` is a valid iRODS user as defined in irods/bootstrap_irods.sh. 
-You can omit the domain, this is added automatically. 
+Where `[user]` is a valid iRODS user as defined in `irods/bootstrap_irods.sh` or `keycloak/users.json`. 
 
 You can also execute commands from the irods-ruleset repository like this:
 ```
