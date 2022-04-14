@@ -20,7 +20,7 @@ RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKE
 # Add config
 ADD ./config/irods/* /etc/irods/
 ADD ./config/filebeat.yml /etc/filebeat/filebeat.yml
-#RUN chmod go-w /etc/filebeat/filebeat.yml  # TODO: Is this needed?
+RUN chmod go-w /etc/filebeat/filebeat.yml
 
 # Add ires certs
 ADD ./test-dev-ssl-certs/* /etc/irods/SSL/

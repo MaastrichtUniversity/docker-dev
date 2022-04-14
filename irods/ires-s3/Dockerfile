@@ -9,7 +9,6 @@ ARG ENV_IRODS_RESC_PLUGIN_S3_VERSION
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
     build-essential \
-    git \
     joe \
     less \
     libc++-dev \
@@ -28,7 +27,7 @@ RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKE
 # Add config
 ADD ./config/irods/* /etc/irods/
 ADD ./config/filebeat.yml /etc/filebeat/filebeat.yml
-#RUN chmod go-w /etc/filebeat/filebeat.yml  # TODO: Is this needed?
+RUN chmod go-w /etc/filebeat/filebeat.yml
 
 # Add ires-s3 certs
 ADD ./test-dev-ssl-certs/* /etc/irods/SSL/

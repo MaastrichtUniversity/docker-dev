@@ -51,8 +51,9 @@ RUN yum install -y \
     make \
     rpm-build \
     cmake3 \
-    python-pip
-    # }} end
+    python-pip \
+    git
+    # }} end 
 
 ENV IRODS_VERSION ${ENV_IRODS_VERSION}
 RUN rpm --import https://packages.irods.org/irods-signing-key.asc \

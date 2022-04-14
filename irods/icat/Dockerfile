@@ -25,7 +25,7 @@ RUN chmod 755 /var/lib/irods/msiExecCmd_bin/dm*
 # files containing configuration to be parsed during install
 ADD ./config/irods/* /etc/irods/
 ADD ./config/filebeat.yml /etc/filebeat/filebeat.yml
-#RUN chmod go-w /etc/filebeat/filebeat.yml  # TODO: Is this needed?
+RUN chmod go-w /etc/filebeat/filebeat.yml
 
 # Add icat certs
 ADD ./test-dev-ssl-certs/* /etc/irods/SSL/
