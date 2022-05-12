@@ -26,12 +26,14 @@ RUN yum install -y \
     python-requests \
     python-jsonschema \
     python-ldap \
+    python-tz \
     lsof \
     fortune-mod \
     nano \
     cifs-utils  \
     openssl \
     curl \
+    jq \
     # packages required for building ruleset and microservices {{
     openssl-devel \
     libcurl-devel \
@@ -39,7 +41,8 @@ RUN yum install -y \
     make \
     rpm-build \
     cmake3 \
-    python-pip
+    python-pip \
+    git
     # }} end
 
 

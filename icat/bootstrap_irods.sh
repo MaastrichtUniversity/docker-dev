@@ -68,7 +68,7 @@ echo $usersJSON | jq  -r -c '.[]'  | while read userJSON; do
     iadmin atg DH-ingest "${uid}"
 done
 
-serviceUsers="service-dropzones service-mdl service-pid service-disqover service-public"
+serviceUsers="service-mdl service-pid service-disqover service-public"
 
 for user in $serviceUsers; do
     iadmin mkuser "${user}" rodsuser
@@ -86,14 +86,14 @@ done
 
 #########
 ## Groups
-nanoscopy="pvanschay2 rravelli"
+nanoscopy="pvanschay2"
 
 iadmin mkgroup m4i-nanoscopy
 for user in $nanoscopy; do
     iadmin atg m4i-nanoscopy "${user}"
 done
 
-rit="pvanschay2 mcoonen mcoonen2 dtheuniss psuppers delnoy rbrecheis jmelius kheinen dlinssen"
+rit="pvanschay2 mcoonen mcoonen2 dtheuniss psuppers rbrecheis jmelius tlustberg dlinssen"
 
 iadmin mkgroup datahub
 iadmin mkgroup DH-project-admins
@@ -144,6 +144,8 @@ imeta add -C /nlmumc/projects/P000000010 resource replRescAZM01
 imeta add -C /nlmumc/projects/P000000010 responsibleCostCenter AZM-123456
 imeta add -C /nlmumc/projects/P000000010 storageQuotaGb 10
 imeta add -C /nlmumc/projects/P000000010 title "(MDL) Placeholder project"
+imeta add -C /nlmumc/projects/P000000010 collectionMetadataSchemas "DataHub_general_schema"
+imeta add -C /nlmumc/projects/P000000010 enableContributorEditMetadata "false"
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000010'" "*title='(MDL) Placeholder collection'"
 ichmod -r own "psuppers" /nlmumc/projects/P000000010
 # Data Steward gets manager rights
@@ -166,6 +168,9 @@ imeta add -C /nlmumc/projects/P000000011 resource replRescAZM01
 imeta add -C /nlmumc/projects/P000000011 responsibleCostCenter AZM-123456
 imeta add -C /nlmumc/projects/P000000011 storageQuotaGb 10
 imeta add -C /nlmumc/projects/P000000011 title "(HVC) Placeholder project"
+imeta add -C /nlmumc/projects/P000000011 collectionMetadataSchemas "DataHub_general_schema"
+imeta add -C /nlmumc/projects/P000000011 enableContributorEditMetadata "false"
+
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000011'" "*title='(HVC) Placeholder collection'"
 ichmod -r own "psuppers" /nlmumc/projects/P000000011
 # Data Steward gets manager rights
