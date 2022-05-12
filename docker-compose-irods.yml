@@ -13,8 +13,10 @@ services:
       PGPASSWORD: foobar
       VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
       IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
-      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
-      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
+      EPICPID_URL: ${ENV_EPICPID_URL}
+      EPICPID_USER: ${ENV_EPICPID_USER}
+      EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
+      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       default:
@@ -40,8 +42,10 @@ services:
       PGPASSWORD: foobar
       VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
       IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
-      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
-      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
+      EPICPID_URL: ${ENV_EPICPID_URL}
+      EPICPID_USER: ${ENV_EPICPID_USER}
+      EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
+      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       default:
@@ -72,8 +76,10 @@ services:
       RODS_PASSWORD: irods
       VIRTUAL_HOST: ires-s3-1.${RIT_ENV}.rit.unimaas.nl
       IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
-      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
-      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
+      EPICPID_URL: ${ENV_EPICPID_URL}
+      EPICPID_USER: ${ENV_EPICPID_USER}
+      EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
+      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
       ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY1}
       ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY1}
@@ -105,8 +111,10 @@ services:
       RODS_PASSWORD: irods
       VIRTUAL_HOST: ires-s3-2.${RIT_ENV}.rit.unimaas.nl
       IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
-      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
-      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
+      EPICPID_URL: ${ENV_EPICPID_URL}
+      EPICPID_USER: ${ENV_EPICPID_USER}
+      EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
+      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
       ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY2}
       ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
@@ -136,8 +144,10 @@ services:
       RODS_PASSWORD: irods
       VIRTUAL_HOST: ires-centos.${RIT_ENV}.rit.unimaas.nl
       IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
-      MIRTH_VALIDATION_CHANNEL: ${ENV_MIRTH_VALIDATION_CHANNEL}
-      MIRTH_METADATA_CHANNEL: ${ENV_MIRTH_METADATA_CHANNEL}
+      EPICPID_URL: ${ENV_EPICPID_URL}
+      EPICPID_USER: ${ENV_EPICPID_USER}
+      EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
+      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
     networks:
       default:
