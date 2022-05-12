@@ -38,12 +38,14 @@ RUN yum install -y \
     python-requests \
     python-jsonschema \
     python-ldap \
+    python-tz \
     lsof \
     fortune-mod \
     nano \
     cifs-utils  \
     openssl \
     curl \
+    jq \
     # packages required for building ruleset and microservices {{
     openssl-devel \
     libcurl-devel \
@@ -53,7 +55,7 @@ RUN yum install -y \
     cmake3 \
     python-pip \
     git
-    # }} end 
+    # }} end
 
 ENV IRODS_VERSION ${ENV_IRODS_VERSION}
 RUN rpm --import https://packages.irods.org/irods-signing-key.asc \

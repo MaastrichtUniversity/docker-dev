@@ -43,6 +43,7 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     python-pip \
     python-psutil \
     python-requests \
+    python-tz \
     sudo \
     super \
     unixodbc \
@@ -50,7 +51,7 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/a
     wget \
     curl \
     git
-    
+
 # Install iRODS packages (APT)
 ENV IRODS_VERSION ${ENV_IRODS_VERSION}
 RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key add - \

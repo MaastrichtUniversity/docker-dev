@@ -59,6 +59,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     python /var/lib/irods/scripts/setup_irods.py < /etc/irods/setup_responses
 
     # Add the ruleset-rit to server config
+    /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-policies
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-misc
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-ingest
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projects
@@ -69,9 +70,12 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/add_rule_engine.py /etc/irods/server_config.json python 1
 
     # Add config variable to iRODS
-    /opt/irods/add_env_var.py /etc/irods/server_config.json MIRTH_METADATA_CHANNEL ${MIRTH_METADATA_CHANNEL}
-    /opt/irods/add_env_var.py /etc/irods/server_config.json MIRTH_VALIDATION_CHANNEL ${MIRTH_VALIDATION_CHANNEL}
+    # NOTE: These lines are added to the server_config.json, but only go into effect when restarting the irods service!
     /opt/irods/add_env_var.py /etc/irods/server_config.json IRODS_INGEST_REMOVE_DELAY ${IRODS_INGEST_REMOVE_DELAY}
+    /opt/irods/add_env_var.py /etc/irods/server_config.json EPICPID_URL ${EPICPID_URL}
+    /opt/irods/add_env_var.py /etc/irods/server_config.json EPICPID_USER ${EPICPID_USER}
+    /opt/irods/add_env_var.py /etc/irods/server_config.json EPICPID_PASSWORD ${EPICPID_PASSWORD}
+    /opt/irods/add_env_var.py /etc/irods/server_config.json MDR_HANDLE_URL ${MDR_HANDLE_URL}
 
     # Dirty temp.password workaround
     sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 86400\,/' /etc/irods/server_config.json
@@ -82,6 +86,10 @@ if [[ ! -e /var/run/irods_installed ]]; then
     chown irods:irods /mnt/UM-hnas-4k
     mkdir -p /mnt/UM-hnas-4k-repl
     chown irods:irods /mnt/UM-hnas-4k-repl
+
+    # web-based ingest vault
+    mkdir -p /mnt/stagingResc01
+    chown irods:irods /mnt/stagingResc01
 
     su - irods -c "/opt/irods/bootstrap_irods.sh"
 
