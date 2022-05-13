@@ -8,8 +8,6 @@ source /etc/secrets
 # Need to upgrade pip from 8.1.2 to 20.3.4
 # But pip2 cannot be upgrade to a version above 21 because of EOL
 pip install --upgrade "pip < 21.0"
-# Add --ignore-installed because of ERROR: Cannot uninstall 'requests'
-pip install --ignore-installed -r /rules/python/python_requirements.txt
 
 # Update RIT rules
 cd /rules && make
@@ -88,7 +86,9 @@ if [[ ! -e /var/run/irods_installed ]]; then
     mkdir /mnt/AZM-storage-repl
     chown irods:irods /mnt/AZM-storage-repl
 
-
+    # Install pip packages from python requirements for the irods user
+    su irods -c "pip install --user -r /rules/python/python_requirements.txt"
+    # Go into the iRODS specific bootstrap
     su - irods -c "/opt/irods/bootstrap_irods.sh"
 
     touch /var/run/irods_installed
