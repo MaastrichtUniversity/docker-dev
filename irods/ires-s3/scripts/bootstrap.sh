@@ -4,12 +4,6 @@ set -e
 
 source /etc/secrets
 
-# Python requirements
-# Need to upgrade pip from 8.1.2 to 20.3.4
-# But pip2 cannot be upgrade to a version above 21 because of EOL
-pip install --upgrade "pip < 21.0"
-pip install -r /rules/python/python_requirements.txt
-
 # Update RIT rules
 cd /rules && make
 
@@ -106,6 +100,12 @@ echo ${ENV_S3_SECRET_KEY} >> /var/lib/irods/minio.keypair
 
 # Create cache dir for S3 plugin
 mkdir /cache && chown irods /cache
+
+# Python requirements
+# Need to upgrade pip from 8.1.2 to 20.3.4
+# But pip2 cannot be upgrade to a version above 21 because of EOL
+su irods -c "pip install --user --upgrade \"pip < 21.0\""
+su irods -c "pip install --user -r /rules/python/python_requirements.txt"
 
 # iRODS bootstrap script must be executed after installing the S3 plugin
 su irods -c "/opt/irods/bootstrap_irods.sh"     # su without "-" to preserve env vars in child script

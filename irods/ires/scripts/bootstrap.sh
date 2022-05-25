@@ -4,12 +4,6 @@ set -e
 
 source /etc/secrets
 
-# Python requirements
-# Need to upgrade pip from 8.1.2 to 20.3.4
-# But pip2 cannot be upgrade to a version above 21 because of EOL
-pip install --upgrade "pip < 21.0"
-pip install -r /rules/python/python_requirements.txt
-
 # Update RIT rules
 cd /rules && make
 
@@ -90,6 +84,12 @@ if [[ ! -e /var/run/irods_installed ]]; then
     # web-based ingest vault
     mkdir -p /mnt/stagingResc01
     chown irods:irods /mnt/stagingResc01
+
+    # Python requirements
+    # Need to upgrade pip from 8.1.2 to 20.3.4
+    # But pip2 cannot be upgrade to a version above 21 because of EOL
+    su irods -c "pip install --user --upgrade \"pip < 21.0\""
+    su irods -c "pip install --user -r /rules/python/python_requirements.txt"
 
     su - irods -c "/opt/irods/bootstrap_irods.sh"
 
