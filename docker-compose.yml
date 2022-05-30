@@ -648,18 +648,6 @@ services:
       common_default:
         aliases:
           - mdr-db.dh.local
-  fail2ban:
-    image: crazymax/fail2ban:${ENV_FAIL2BAN_VERSION}
-    network_mode: "host"
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
-    volumes:
-      - webdav_logs:/var/log/webdav:ro
-      - upload_logs:/var/log/upload:ro
-      - "./externals/dh-fail2ban/data:/data"
-    env_file:
-      - "./externals/dh-fail2ban/fail2ban.env"
 
 networks:
   common_default:

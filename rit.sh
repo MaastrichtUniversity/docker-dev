@@ -40,8 +40,7 @@ externals/irods-open-access-repo https://github.com/MaastrichtUniversity/irods-o
 externals/sram-sync https://github.com/MaastrichtUniversity/sram-sync.git
 externals/dh-faker https://github.com/MaastrichtUniversity/dh-faker.git
 externals/dh-python-irods-utils https://github.com/MaastrichtUniversity/dh-python-irods-utils.git
-externals/cedar-parsing-utils https://github.com/MaastrichtUniversity/cedar-parsing-utils.git
-externals/dh-fail2ban https://github.com/MaastrichtUniversity/dh-fail2ban.git"
+externals/cedar-parsing-utils https://github.com/MaastrichtUniversity/cedar-parsing-utils.git"
 
 
 # do the required action in case of externals or exec
