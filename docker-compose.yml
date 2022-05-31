@@ -159,7 +159,7 @@ services:
     build:
       context: icat/
       args:
-        - ENV_POSTGRES_VERSION
+        - ENV_POSTGRES_CLIENT_VERSION
         - ENV_IRODS_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
