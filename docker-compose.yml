@@ -41,7 +41,6 @@ services:
       MDR_ANSIBLE_VERSION_TAG: DEV
       CROSSREF_LOOKUP_HOST: http://crossref-lookup.dh.local
       BIOPORTAL_URL: https://data.bioontology.org
-      OLS_URL: https://ols.acc.dh.unimaas.nl
       WEBDAV_URL: webdav.${RIT_ENV}.dh.unimaas.nl
       WEBDAV_UPLOAD_URL: upload.${RIT_ENV}.dh.unimaas.nl
       SMB_UM_WINDOWS_PATH: \\foobar.unimaas.nl\iRODS-ingestzones\dev
