@@ -1,7 +1,7 @@
 FROM ubuntu:18.04
 
 # Load build arguments from environment
-ARG ENV_POSTGRES_VERSION
+ARG ENV_POSTGRES_CLIENT_VERSION
 ARG ENV_IRODS_VERSION
 ARG ENV_IRODS_EXT_CLANG_VERSION
 ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
@@ -45,7 +45,7 @@ RUN wget -qO - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add 
     && echo 'deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main' | sudo tee /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    postgresql-client-${ENV_POSTGRES_VERSION} \
+    postgresql-client-${ENV_POSTGRES_CLIENT_VERSION} \
     odbc-postgresql
 
 # install iRODS
