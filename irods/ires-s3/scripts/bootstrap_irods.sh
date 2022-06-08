@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+debug_on_pattern='^(true|yes|1)$'
+PS4='$0:$LINENO: '
+if [[ "${DEBUG_DH_BOOTSTRAP,,}" =~ $debug_on_pattern ]]; then
+    set -x
+fi
+
 ############
 ## Resources
 
