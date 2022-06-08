@@ -23,7 +23,7 @@ imeta add -R replRescAZM01 NCIT:C88193 0
 
 for i in {01..2}; do
     PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -r irods_rule_engine_plugin-python-instance -F /rules/tests/test_create_new_project.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${HOSTNAME}Resource'" "*resource='replRescAZM01'" "*storageQuotaGb='10'" "*title='(azM) ${PROJECTNAME}'" "*principalInvestigator='mcoonen'" "*dataSteward='opalmen'" "*respCostCenter='AZM-123456'" "*openAccess='false'" "*tapeArchive='true'" "*tapeUnarchive='true'" "*collectionMetadataSchemas='DataHub_general_schema,DataHub_extended_schema'" | jq -r '.project_id')
+    project=$(irule -r irods_rule_engine_plugin-python-instance -F /rules/tests/test_create_new_project.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${HOSTNAME}Resource'" "*resource='replRescAZM01'" "*storageQuotaGb='10'" "*title='(azM) ${PROJECTNAME}'" "*principalInvestigator='mcoonen'" "*dataSteward='opalmen'" "*respCostCenter='AZM-123456'" "*openAccess='false'" "*tapeArchive='true'" "*tapeUnarchive='true'" "*sharedDropzones='true'" "*collectionMetadataSchemas='DataHub_general_schema,DataHub_extended_schema'" | jq -r '.project_id')
 
     # Manage access
     ichmod -r own "mcoonen" /nlmumc/projects/${project}
