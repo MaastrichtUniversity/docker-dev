@@ -32,6 +32,14 @@ imeta add -R replRescUM01 NCIT:C88193 0.130
 ###########
 ## Projects and project permissions
 
+# FIXME: We expect icat to have created hardcoded projects P000000010 and
+#        P000000011 at this point, but we can't be sure. So, just in case. We make
+#        sure that test_create_new_project.r (-> create_new_project.py) thinks that
+#        the latest project created is project 11.
+#        Keeping in mind this is *not nice* and error prone.
+#        Containers interdependencies is still a problem to solve for us.
+imeta add -C /nlmumc/projects latest_project_number 11
+
 for i in {01..2}; do
     PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
     project=$(irule -r irods_rule_engine_plugin-python-instance -F /rules/tests/test_create_new_project.r "*authorizationPeriodEndDate='1-1-2018'" "*dataRetentionPeriodEndDate='1-1-2018'" "*ingestResource='${HOSTNAME%%.dh.local}Resource'" "*resource='replRescUM01'" "*storageQuotaGb='10'" "*title='${PROJECTNAME}'" "*principalInvestigator='pvanschay2'" "*dataSteward='pvanschay2'" "*respCostCenter='UM-30001234X'" "*openAccess='false'" "*tapeArchive='true'" "*tapeUnarchive='true'" "*collectionMetadataSchemas='DataHub_general_schema,DataHub_extended_schema'" | jq -r '.project_id')
