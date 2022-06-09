@@ -416,6 +416,7 @@ services:
           - davrods.dh.local
     volumes:
       - /etc/localtime:/etc/localtime:ro
+      - webdav_logs:/var/log
   davrods-upload:
     build:
       context: externals/rit-davrods/
@@ -441,6 +442,7 @@ services:
           - davrods-upload.dh.local
     volumes:
       - /etc/localtime:/etc/localtime:ro
+      - upload_logs:/var/log
   metalnx:
     image: irods/metalnx:${ENV_METALNX_VERSION}
     hostname: metalnx
@@ -647,10 +649,11 @@ services:
         aliases:
           - mdr-db.dh.local
 
-
 networks:
   common_default:
     external: true
 
 volumes:
   static_content:
+  webdav_logs:
+  upload_logs:
