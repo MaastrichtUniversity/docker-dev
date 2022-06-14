@@ -441,7 +441,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - upload_logs:/var/log
   epicpid:
-    build: externals/epicpid-microservice/docker
+    build: externals/epicpid-microservice
     image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/epicpid:${ENV_TAG}
     environment:
       VIRTUAL_HOST: epicpid.${RIT_ENV}.dh.unimaas.nl
@@ -463,7 +463,6 @@ services:
         aliases:
           - epicpid.dh.local
     volumes:
-      - ./externals/epicpid-microservice/:/opt/app
       - /etc/localtime:/etc/localtime:ro
   minio1:
     image: minio/minio:RELEASE.2019-05-23T00-29-34Z
