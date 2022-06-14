@@ -540,7 +540,6 @@ services:
       - ldap
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./externals/sram-sync/:/opt/app
     environment:
       LOG_LEVEL: INFO
       IRODS_HOST: irods.dh.local
