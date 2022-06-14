@@ -28,7 +28,7 @@ imeta add -R replRescUM01 NCIT:C88193 0.130
 
 for i in {01..2}; do
     PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -r irods_rule_engine_plugin-python-instance -F /rules/tests/test_create_new_project.r "*ingestResource='${HOSTNAME%%.dh.local}Resource'" "*resource='replRescUM01'" "*title='${PROJECTNAME}'" "*principalInvestigator='pvanschay2'" "*dataSteward='pvanschay2'" "*responsibleCostCenter='UM-30001234X'"  "*extraParameters='{\"authorization_period_end_date\":\"1-1-2018\", \"data_retention_period_end_date\":\"1-1-2018\", \"storage_quota_gb\":\"10\", \"enable_open_access\":\"false\", \"enable_archive\":\"true\", \"enable_unarchive\":\"true\",  \"enable_dropzone_sharing\":\"true\", \"collection_metadata_schemas\":\"DataHub_general_schema,DataHub_extended_schema\"}'"  | jq -r '.project_id')
+    project=$(irule -r irods_rule_engine_plugin-python-instance -F /rules/tests/test_create_new_project.r "*ingestResource='${HOSTNAME%%.dh.local}Resource'" "*resource='replRescUM01'" "*title='${PROJECTNAME}'" "*principalInvestigator='pvanschay2'" "*dataSteward='pvanschay2'" "*responsibleCostCenter='UM-30001234X'"  "*extraParameters='{\"authorizationPeriodEndDate\":\"1-1-2018\", \"dataRetentionPeriodEndDate\":\"1-1-2018\", \"storageQuotaGb\":\"10\", \"enableOpenAccessExport\":\"false\", \"enableArchive\":\"true\", \"enableUnarchive\":\"true\",  \"enableDropzoneSharing\":\"true\", \"collectionMetadataSchemas\":\"DataHub_general_schema,DataHub_extended_schema\"}'"  | jq -r '.project_id')
 
     # Manage access
     ichmod -r own "pvanschay2" /nlmumc/projects/${project}
@@ -44,7 +44,7 @@ done
 
 for i in {01..2}; do
     PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -r irods_rule_engine_plugin-python-instance -F /rules/tests/test_create_new_project.r "*ingestResource='${HOSTNAME%%.dh.local}Resource'" "*resource='replRescUM01'" "*title='${PROJECTNAME}'" "*principalInvestigator='psuppers'" "*dataSteward='opalmen'" "*responsibleCostCenter='UM-30009998X'" "*extraParameters='{\"authorization_period_end_date\":\"1-1-2018\", \"data_retention_period_end_date\":\"1-1-2018\", \"storage_quota_gb\":\"10\", \"enable_open_access\":\"false\", \"enable_archive\":\"true\", \"enable_unarchive\":\"true\",  \"enable_dropzone_sharing\":\"true\", \"collection_metadata_schemas\":\"DataHub_general_schema,DataHub_extended_schema\"}'"   | jq -r '.project_id')
+    project=$(irule -r irods_rule_engine_plugin-python-instance -F /rules/tests/test_create_new_project.r "*ingestResource='${HOSTNAME%%.dh.local}Resource'" "*resource='replRescUM01'" "*title='${PROJECTNAME}'" "*principalInvestigator='psuppers'" "*dataSteward='opalmen'" "*responsibleCostCenter='UM-30009998X'" "*extraParameters='{\"authorizationPeriodEndDate\":\"1-1-2018\", \"dataRetentionPeriodEndDate\":\"1-1-2018\", \"storageQuotaGb\":\"10\", \"enableOpenAccessExport\":\"false\", \"enableArchive\":\"true\", \"enableUnarchive\":\"true\",  \"enableDropzoneSharing\":\"true\", \"collectionMetadataSchemas\":\"DataHub_general_schema,DataHub_extended_schema\"}'"   | jq -r '.project_id')
 
     # Manage access
     ichmod -r own "psuppers" /nlmumc/projects/${project}
@@ -67,7 +67,7 @@ done
 
 for i in {01..1}; do
     PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -r irods_rule_engine_plugin-python-instance -F /rules/tests/test_create_new_project.r  "*ingestResource='${HOSTNAME%%.dh.local}Resource'" "*resource='replRescUM01'" "*title='(ScaNxs) ${PROJECTNAME}'" "*principalInvestigator='mcoonen'" "*dataSteward='opalmen'" "*responsibleCostCenter='UM-30009999X'" "*extraParameters='{\"authorization_period_end_date\":\"1-1-2018\", \"data_retention_period_end_date\":\"1-1-2018\", \"storage_quota_gb\":\"10\", \"enable_open_access\":\"false\", \"enable_archive\":\"true\", \"enable_unarchive\":\"true\",  \"enable_dropzone_sharing\":\"true\", \"collection_metadata_schemas\":\"DataHub_general_schema\"}'"    | jq -r '.project_id')
+    project=$(irule -r irods_rule_engine_plugin-python-instance -F /rules/tests/test_create_new_project.r  "*ingestResource='${HOSTNAME%%.dh.local}Resource'" "*resource='replRescUM01'" "*title='(ScaNxs) ${PROJECTNAME}'" "*principalInvestigator='mcoonen'" "*dataSteward='opalmen'" "*responsibleCostCenter='UM-30009999X'" "*extraParameters='{\"authorizationPeriodEndDate\":\"1-1-2018\", \"dataRetentionPeriodEndDate\":\"1-1-2018\", \"storageQuotaGb\":\"10\", \"enableOpenAccessExport\":\"false\", \"enableArchive\":\"true\", \"enableUnarchive\":\"true\",  \"enableDropzoneSharing\":\"true\", \"collectionMetadataSchemas\":\"DataHub_general_schema\"}'"    | jq -r '.project_id')
 
     # Manage access
     ichmod -r own "mcoonen" /nlmumc/projects/${project}

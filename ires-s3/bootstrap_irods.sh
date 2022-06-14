@@ -34,7 +34,7 @@ imeta add -R ${HOSTNAME%%.dh.local}Resource NCIT:C88193 999
 
 for i in {01..2}; do
     PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -r irods_rule_engine_plugin-python-instance -F /rules/tests/test_create_new_project.r  "*ingestResource='iresResource'" "*resource='replRescUMCeph01'" "*title='(s3) ${PROJECTNAME}'" "*principalInvestigator='psuppers'" "*dataSteward='pvanschay2'" "*responsibleCostCenter='UM-30001234X'" "*extraParameters='{\"authorization_period_end_date\":\"1-1-2018\", \"data_retention_period_end_date\":\"1-1-2018\", \"storage_quota_gb\":\"10\", \"enable_open_access\":\"false\", \"enable_archive\":\"true\", \"enable_unarchive\":\"true\",  \"enable_dropzone_sharing\":\"true\", \"collection_metadata_schemas\":\"DataHub_general_schema\"}'"| jq -r '.project_id')
+    project=$(irule -r irods_rule_engine_plugin-python-instance -F /rules/tests/test_create_new_project.r  "*ingestResource='iresResource'" "*resource='replRescUMCeph01'" "*title='(s3) ${PROJECTNAME}'" "*principalInvestigator='psuppers'" "*dataSteward='pvanschay2'" "*responsibleCostCenter='UM-30001234X'" "*extraParameters='{\"authorizationPeriodEndDate\":\"1-1-2018\", \"dataRetentionPeriodEndDate\":\"1-1-2018\", \"storageQuotaGb\":\"10\", \"enableOpenAccessExport\":\"false\", \"enableArchive\":\"true\", \"enableUnarchive\":\"true\",  \"enableDropzoneSharing\":\"true\", \"collectionMetadataSchemas\":\"DataHub_general_schema\"}'"| jq -r '.project_id')
 
     # Manage access
     ichmod -r own "psuppers" /nlmumc/projects/${project}
