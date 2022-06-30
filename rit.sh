@@ -30,9 +30,7 @@ externals="externals/irods-helper-cmd https://github.com/MaastrichtUniversity/ir
 externals/irods-microservices https://github.com/MaastrichtUniversity/irods-microservices.git
 externals/irods-ruleset https://github.com/MaastrichtUniversity/irods-ruleset.git
 externals/irods-frontend https://github.com/MaastrichtUniversity/irods-frontend.git
-externals/rit-metalnx-web https://github.com/MaastrichtUniversity/rit-metalnx-web.git
 externals/rit-davrods https://github.com/MaastrichtUniversity/rit-davrods.git
-externals/crossref-lookup https://github.com/MaastrichtUniversity/crossref-lookup.git
 externals/epicpid-microservice https://github.com/MaastrichtUniversity/epicpid-microservice.git
 externals/dh-mdr https://github.com/MaastrichtUniversity/dh-mdr.git
 externals/irods-rule-wrapper https://github.com/MaastrichtUniversity/irods-rule-wrapper.git
