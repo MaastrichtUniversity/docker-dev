@@ -42,12 +42,12 @@ if [[ ! -e /var/run/irods_installed ]]; then
     service irods start
 
     # Add the ruleset-rit to server config
-    /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-policies
-    /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-misc
-    /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-ingest
-    /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projects
-    /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projectCollection
-    /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-tapeArchive
+#    /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-policies
+#    /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-misc
+#    /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-ingest
+#    /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projects
+#    /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-projectCollection
+#    /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-tapeArchive
 
     # Not required here. Covered by irods-ruleset/misc/policies.r:acPreConnect
     #sed -i 's/CS_NEG_DONT_CARE/CS_NEG_REQUIRE/g' /etc/irods/core.re
@@ -57,14 +57,14 @@ if [[ ! -e /var/run/irods_installed ]]; then
 
     # Add config variable to iRODS
     # NOTE: These lines are added to the server_config.json, but only go into effect when restarting the irods service!
-    /opt/irods/add_env_var.py /etc/irods/server_config.json IRODS_INGEST_REMOVE_DELAY ${IRODS_INGEST_REMOVE_DELAY}
-    /opt/irods/add_env_var.py /etc/irods/server_config.json EPICPID_URL ${EPICPID_URL}
-    /opt/irods/add_env_var.py /etc/irods/server_config.json EPICPID_USER ${EPICPID_USER}
-    /opt/irods/add_env_var.py /etc/irods/server_config.json EPICPID_PASSWORD ${EPICPID_PASSWORD}
-    /opt/irods/add_env_var.py /etc/irods/server_config.json MDR_HANDLE_URL ${MDR_HANDLE_URL}
+#    /opt/irods/add_env_var.py /etc/irods/server_config.json IRODS_INGEST_REMOVE_DELAY ${IRODS_INGEST_REMOVE_DELAY}
+#    /opt/irods/add_env_var.py /etc/irods/server_config.json EPICPID_URL ${EPICPID_URL}
+#    /opt/irods/add_env_var.py /etc/irods/server_config.json EPICPID_USER ${EPICPID_USER}
+#    /opt/irods/add_env_var.py /etc/irods/server_config.json EPICPID_PASSWORD ${EPICPID_PASSWORD}
+#    /opt/irods/add_env_var.py /etc/irods/server_config.json MDR_HANDLE_URL ${MDR_HANDLE_URL}
 
     # Dirty temp.password workaround
-    sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 86400\,/' /etc/irods/server_config.json
+#    sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 86400\,/' /etc/irods/server_config.json
 
     # SURFsara Archive vault
     mkdir -p /mnt/SURF-Archive

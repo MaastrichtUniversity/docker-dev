@@ -37,7 +37,7 @@
         "advanced_settings": {
             "default_log_rotation_in_days": 5,
             "default_number_of_transfer_threads": 4,
-            "default_temporary_password_lifetime_in_seconds": 120,
+            "default_temporary_password_lifetime_in_seconds": 86400,
             "delay_rule_executors": [
                 "irods-provider"
             ],
@@ -72,7 +72,12 @@
         "default_hash_scheme": "SHA256",
         "default_resource_name": "demoResc",
         "environment_variables": {
-            "IRODS_DATABASE_USER_PASSWORD_SALT": "tempsalt"
+            "EPICPID_PASSWORD": "foobar",
+            "EPICPID_URL": "http://epicpid.dh.local/epic/21.T12996/",
+            "EPICPID_USER": "user",
+            "IRODS_DATABASE_USER_PASSWORD_SALT": "tempsalt",
+            "IRODS_INGEST_REMOVE_DELAY": "300s",
+            "MDR_HANDLE_URL": "http://mdr.local.dh.unimaas.nl/hdl/"
         },
         "federation": [],
         "host_access_control": {
@@ -123,12 +128,18 @@
                         "core"
                     ],
                     "re_rulebase_set": [
+                        "rit-tapeArchive",
+                        "rit-projectCollection",
+                        "rit-projects",
+                        "rit-ingest",
+                        "rit-misc",
+                        "rit-policies",
                         "core"
                     ],
                     "regexes_for_supported_peps": [
                         "ac[^ ]*",
-                    "msi[^ ]*",
-                    "[^ ]*pep_[^ ]*_(pre|post|except|finally)"
+                        "msi[^ ]*",
+                        "[^ ]*pep_[^ ]*_(pre|post|except|finally)"
                     ]
                 },
                 "shared_memory_instance": "irods_rule_language_rule_engine"
@@ -138,7 +149,7 @@
                 "plugin_name": "irods_rule_engine_plugin-cpp_default_policy",
                 "plugin_specific_configuration": {}
             }
-            ]
+        ]
         },
         "rule_engine_namespaces": [
             ""
