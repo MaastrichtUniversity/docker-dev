@@ -147,6 +147,7 @@ imeta add -C /nlmumc/projects/P000000010 title "(MDL) Placeholder project"
 imeta add -C /nlmumc/projects/P000000010 collectionMetadataSchemas "DataHub_general_schema"
 imeta add -C /nlmumc/projects/P000000010 enableContributorEditMetadata "false"
 imeta add -C /nlmumc/projects/P000000010 enableDropzoneSharing "false"
+
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000010'" "*title='(MDL) Placeholder collection'"
 ichmod -r own "psuppers" /nlmumc/projects/P000000010
 # Data Steward gets manager rights
@@ -189,6 +190,7 @@ imeta add -u "pvanschay2" "specialty" "data-steward"
 imeta add -u "opalmen" "specialty" "data-steward"
 
 # Add AVU on groups that should not be synced from LDAP
+iadmin mkgroup rodsadmin
 nonSyncGroups="rodsadmin DH-ingest public DH-project-admins"
 for group in $nonSyncGroups; do
     imeta add -u "${group}" ldapSync false

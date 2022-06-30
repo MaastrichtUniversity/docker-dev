@@ -19,11 +19,11 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1de.\2/" /etc/a
     libjson-perl \
     librabbitmq-dev \
     python \
-    python-psutil \
-    python-requests \
-    python-jsonschema \
-    python-ldap \
-    python-tz \
+    python3-psutil \
+    python3-requests \
+    python3-jsonschema \
+    python3-ldap \
+    python3-tz \
     sudo \
     lsof \
     fortune-mod \
@@ -37,7 +37,7 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1de.\2/" /etc/a
     g++ \
     make \
     cmake \
-    python-pip \
+    python3-pip \
     git
     # }} end
 
@@ -75,9 +75,14 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | apt-key add - 
     irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
     irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION} \
     irods-externals-jansson2.7-0 \
-    irods-externals-json3.7.3-0 \
+    irods-externals-json3.10.4-0 \
     # packages required for python rule engine
     irods-rule-engine-plugin-python${IRODS_PYTHON_PLUGIN_VERSION}
+
+
+RUN apt-get install -y software-properties-common
+RUN add-apt-repository ppa:team-xbmc/ppa
+RUN apt-get update  && apt-get install -y nlohmann-json3-dev
 
 # install Metalnx RMD
 ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
@@ -87,11 +92,14 @@ RUN dpkg -i /tmp/emc-metalnx-rmd-1.0-1.deb
 RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-amd64.deb -O /tmp/filebeat.deb \
  && dpkg -i /tmp/filebeat.deb
 ADD filebeat.yml /etc/filebeat/filebeat.yml
-RUN chmod go-w /etc/filebeat/filebeat.yml 
+RUN chmod go-w /etc/filebeat/filebeat.yml
+
+RUN sed -i '/imklog/s/^/#/' /etc/rsyslog.conf
 
 # Finalize
 RUN mkdir /opt/irods
 ADD ./setup_responses /etc/irods/setup_responses
+ADD ./setup_responses.json /etc/irods/setup_responses.json
 ADD ./setupdb.sh /opt/irods/setupdb.sh
 ADD ./bootstrap.sh /opt/irods/bootstrap.sh
 ADD ./bootstrap_irods.sh /opt/irods/bootstrap_irods.sh
