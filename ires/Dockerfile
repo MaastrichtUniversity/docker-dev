@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 # Load build arguments from environment
 ARG ENV_IRODS_VERSION
@@ -19,12 +19,12 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1de.\2/" /etc/a
     libfuse2 \
     libjson-perl \
     librabbitmq-dev \
-    python \
-    python-psutil \
-    python-requests \
-    python-jsonschema \
-    python-ldap \
-    python-tz \
+    python3 \
+    python3-psutil \
+    python3-requests \
+    python3-jsonschema \
+    python3-ldap \
+    python3-tz \
     sudo \
     lsof \
     fortune-mod \
@@ -39,7 +39,7 @@ RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1de.\2/" /etc/a
     g++ \
     make \
     cmake \
-    python-pip \
+    python3-pip \
     git
     # }} end
 
@@ -47,7 +47,7 @@ ENV IRODS_VERSION ${ENV_IRODS_VERSION}
 ENV IRODS_PYTHON_PLUGIN_VERSION ${ENV_IRODS_PYTHON_PLUGIN_VERSION}
 # install iRODS
 RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key add - \
-    && echo "deb [arch=amd64] https://packages.irods.org/apt/ bionic main" | sudo tee /etc/apt/sources.list.d/renci-irods.list \
+    && echo "deb [arch=amd64] https://packages.irods.org/apt/ focal main" | sudo tee /etc/apt/sources.list.d/renci-irods.list \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     irods-server=${IRODS_VERSION} \
@@ -57,10 +57,11 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key a
     # packages required for building microservices
     irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
     irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION} \
-    irods-externals-jansson2.7-0 \
-    irods-externals-json3.7.3-0 \
+    irods-externals-json3.10.4-0 \
     # packages required for python rule engine
-    irods-rule-engine-plugin-python=${IRODS_PYTHON_PLUGIN_VERSION}
+    irods-rule-engine-plugin-python=${IRODS_PYTHON_PLUGIN_VERSION} \
+    irods-externals-boost1.78.0-0 \
+    nlohmann-json3-dev
 
 # install Metalnx RMD
 ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
@@ -94,6 +95,7 @@ ADD ./prepend_ruleset.py /opt/irods/prepend_ruleset.py
 ADD ./add_rule_engine.py /opt/irods/add_rule_engine.py
 ADD ./add_env_var.py /opt/irods/add_env_var.py
 ADD ./add_ssl_setting_at_setup.patch /opt/irods/add_ssl_setting_at_setup.patch
+ADD ./ires_config.json /opt/irods/ires_config.json
 
 # SSL
 ADD ./SSL /etc/irods/SSL

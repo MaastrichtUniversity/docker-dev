@@ -42,16 +42,16 @@ if [[ ! -e /var/run/irods_installed ]]; then
     fi
 
     # PoC: patch setup_irods.py to accept SSL settings
-    patch --dry-run -f /var/lib/irods/scripts/setup_irods.py /opt/irods/add_ssl_setting_at_setup.patch
-    if [[ $? -ne 0 ]]; then
-        echo "Patching scripts/setup_irods.py is not possible with our patch"
-    else
-        patch -f /var/lib/irods/scripts/setup_irods.py /opt/irods/add_ssl_setting_at_setup.patch
-    fi
+#    patch --dry-run -f /var/lib/irods/scripts/setup_irods.py /opt/irods/add_ssl_setting_at_setup.patch
+#    if [[ $? -ne 0 ]]; then
+#        echo "Patching scripts/setup_irods.py is not possible with our patch"
+#    else
+#        patch -f /var/lib/irods/scripts/setup_irods.py /opt/irods/add_ssl_setting_at_setup.patch
+#    fi
 
     # set up iRODS
     echo "Running setup script"
-    python /var/lib/irods/scripts/setup_irods.py < /etc/irods/setup_responses
+    python3 /var/lib/irods/scripts/setup_irods.py --json_configuration_file /opt/irods/ires_config.json
     echo "Starting iRODS"
     service irods start
     sleep 30
@@ -76,7 +76,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/add_env_var.py /etc/irods/server_config.json MDR_HANDLE_URL ${MDR_HANDLE_URL}
 
     # Dirty temp.password workaround
-    sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 86400\,/' /etc/irods/server_config.json
+ #   sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 86400\,/' /etc/irods/server_config.json
 
     # iRODS settings
     ## Add resource vaults (i.e. dummy-mounts in development)
@@ -92,8 +92,8 @@ if [[ ! -e /var/run/irods_installed ]]; then
     # Python requirements
     # Need to upgrade pip from 8.1.2 to 20.3.4
     # But pip2 cannot be upgrade to a version above 21 because of EOL
-    su irods -c "pip install --user --upgrade \"pip < 21.0\""
-    su irods -c "pip install --user -r /rules/python/python_requirements.txt"
+    su irods -c "pip3 install --user --upgrade \"pip < 21.0\""
+    su irods -c "pip3 install --user -r /rules/python/python_requirements.txt"
 
     su - irods -c "/opt/irods/bootstrap_irods.sh"
 
