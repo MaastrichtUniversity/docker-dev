@@ -189,6 +189,7 @@ imeta add -u "pvanschay2" "specialty" "data-steward"
 imeta add -u "opalmen" "specialty" "data-steward"
 
 # Add AVU on groups that should not be synced from LDAP
+iadmin mkgroup rodsadmin
 nonSyncGroups="rodsadmin DH-ingest public DH-project-admins"
 for group in $nonSyncGroups; do
     imeta add -u "${group}" ldapSync false

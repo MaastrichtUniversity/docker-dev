@@ -30,15 +30,15 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/setupdb.sh /etc/irods/setup_responses
 
     # PoC: patch setup_irods.py to accept SSL settings
-    patch --dry-run -f /var/lib/irods/scripts/setup_irods.py /opt/irods/add_ssl_setting_at_setup.patch
-    if [[ $? -ne 0 ]]; then
-        echo "Patching scripts/setup_irods.py is not possible with our patch"
-    else
-        patch -f /var/lib/irods/scripts/setup_irods.py /opt/irods/add_ssl_setting_at_setup.patch
-    fi
+#    patch --dry-run -f /var/lib/irods/scripts/setup_irods.py /opt/irods/add_ssl_setting_at_setup.patch
+#    if [[ $? -ne 0 ]]; then
+#        echo "Patching scripts/setup_irods.py is not possible with our patch"
+#    else
+#        patch -f /var/lib/irods/scripts/setup_irods.py /opt/irods/add_ssl_setting_at_setup.patch
+#    fi
 
     # set up iRODS
-    python /var/lib/irods/scripts/setup_irods.py < /etc/irods/setup_responses
+    python3 /var/lib/irods/scripts/setup_irods.py --json_configuration_file /opt/irods/icat_config.json
     service irods start
 
     # Add the ruleset-rit to server config
@@ -73,13 +73,13 @@ if [[ ! -e /var/run/irods_installed ]]; then
     # Python requirements
     # Need to upgrade pip from 8.1.2 to 20.3.4
     # But pip2 cannot be upgrade to a version above 21 because of EOL
-    su irods -c "pip install --user --upgrade \"pip < 21.0\""
-    su irods -c "pip install --user -r /rules/python/python_requirements.txt"
+    su irods -c "pip3 install --user --upgrade \"pip < 21.0\""
+    su irods -c "pip3 install --user -r /rules/python/python_requirements.txt"
 
      su irods -c "/opt/irods/bootstrap_irods.sh"
 
     # Change default resource to rootResc for irods-user
-    sed -i 's/\"irods_default_resource\"\:\ \"demoResc\"\,/\"irods_default_resource\"\:\ \"rootResc\"\,/' /var/lib/irods/.irods/irods_environment.json
+ #   sed -i 's/\"irods_default_resource\"\:\ \"demoResc\"\,/\"irods_default_resource\"\:\ \"rootResc\"\,/' /var/lib/irods/.irods/irods_environment.json
 
     touch /var/run/irods_installed
 
@@ -94,4 +94,4 @@ service rmd restart
 /etc/init.d/filebeat start
 
 # this script must end with a persistent foreground process 
-tail -F /var/lib/irods/log/rodsLog.* /var/lib/irods/log/reLog.*
+tail -F /var/log/irods/irods.log
