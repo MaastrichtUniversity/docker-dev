@@ -1,5 +1,7 @@
 # syntax=docker/dockerfile:1
-FROM irods-base:ubuntu
+ARG ENV_REGISTRY_HOST
+ARG ENV_BRANCH
+FROM ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/irods-base:ubuntu
 
 ARG ENV_POSTGRES_VERSION
 ARG ENV_IRODS_VERSION

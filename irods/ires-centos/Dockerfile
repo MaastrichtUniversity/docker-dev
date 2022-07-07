@@ -1,4 +1,7 @@
-FROM irods-base:centos
+# syntax=docker/dockerfile:1
+ARG ENV_REGISTRY_HOST
+ARG ENV_BRANCH
+FROM ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/irods-base:centos
 
 # Load build arguments from environment
 ARG ENV_DOCKERIZE_VERSION

@@ -1,8 +1,61 @@
-version: "3.8"
 services:
-  icat-based:
-    image: irods-icat:latest
+  # This service definition is meant for *build* purposes only!
+  irods-base-ubuntu:
+    build:
+      context: irods/irods-base/
+      dockerfile: Dockerfile.ubuntu
+      # These are read from the .env
+      args:
+        - ENV_IRODS_VERSION
+        - ENV_IRODS_EXT_CLANG_VERSION
+        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+        - ENV_FILEBEAT_VERSION
+    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/irods-base:ubuntu
+
+  # Ditto, but Centos flavor
+  # This service definition is meant for *build* purposes only!
+  irods-base-centos:
+    build:
+      context: irods/irods-base/
+      dockerfile: Dockerfile.centos
+      # These are read from the .env
+      args:
+        - ENV_IRODS_VERSION
+        - ENV_IRODS_EXT_CLANG_VERSION
+        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+        - ENV_FILEBEAT_VERSION
+    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/irods-base:centos
+
+  # iCAT requires a database
+  irods-db:
+    image: postgres:${ENV_POSTGRES_VERSION}
+    hostname: irods-db
+    environment:
+      POSTGRES_PASSWORD: foobar
+      LOGSPOUT: ignore
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      default:
+        aliases:
+          - irods-db.dh.local
+      common_default:
+        aliases:
+          - irods-db.dh.local
+
+  # iCAT
+  irods:
+    build:
+      context: irods/icat/
+      dockerfile: Dockerfile
+      args:
+        - ENV_REGISTRY_HOST        # Used to find base image
+        - ENV_BRANCH               # Used to find base image
+        - ENV_IRODS_VERSION
+        - ENV_POSTGRES_VERSION
+    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/icat:${ENV_TAG}
     depends_on:
+      - irods-base-ubuntu          # Build-only dependency, but doesn't work with `docker build`
       - irods-db
     hostname: irods.dh.local
     ports:
@@ -33,10 +86,20 @@ services:
       - ./keycloak/users.json:/opt/irods/users.json
       - microservices-build-ubuntu:/tmp/microservices-build
 
-  ires-based:
-    image: irods-ires:latest
+  ires:
+    build:
+      context: irods/ires/
+      dockerfile: Dockerfile
+      args:
+        - ENV_REGISTRY_HOST        # Used to find base image
+        - ENV_BRANCH               # Used to find base image
+        - ENV_REGISTRY_HOST=${ENV_REGISTRY_HOST}
+        - ENV_BRANCH=${ENV_BRANCH}
+        - ENV_DOCKERIZE_VERSION
+    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires:${ENV_TAG}
     depends_on:
-      - icat-based
+      - irods-base-ubuntu          # Build-only dependency, but doesn't work with `docker build`
+      - irods
     hostname: ires.dh.local
     environment:
       RODS_PASSWORD: irods
@@ -67,11 +130,20 @@ services:
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
     privileged: true
 
-  ires-s3-1-based:
-    image: irods-ires-s3:latest
+  ires-s3-1:
+    build:
+      context: ires-s3/
+      dockerfile: Dockerfile
+      args:
+        - ENV_REGISTRY_HOST        # Used to find base image
+        - ENV_BRANCH               # Used to find base image
+        - ENV_DOCKERIZE_VERSION
+        - ENV_IRODS_RESC_PLUGIN_S3_VERSION
+    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires-s3:${ENV_TAG}
     depends_on:
-      - icat-based
-      - ires-based  # Because of ingest resource
+      - irods-base-ubuntu          # Build-only dependency, but doesn't work with `docker build`
+      - irods
+      - ires                       # Because of ingest resource
       - minio1
     hostname: ires-s3-1.dh.local
     environment:
@@ -103,11 +175,22 @@ services:
         aliases:
           - ires-s3-1.dh.local
 
-  ires-s3-2-based:
-    image: irods-ires-s3:latest
+  ires-s3-2:
+    # This is not nice.. there should only be once place where building
+    # procedure is defined for the same image
+    build:
+      context: ires-s3/
+      dockerfile: Dockerfile
+      args:
+        - ENV_REGISTRY_HOST        # Used to find base image
+        - ENV_BRANCH               # Used to find base image
+        - ENV_DOCKERIZE_VERSION
+        - ENV_IRODS_RESC_PLUGIN_S3_VERSION
+    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires-s3:${ENV_TAG}
     depends_on:
-      - icat-based
-      - ires-based  # Because of ingest resource
+      - irods-base-ubuntu          # Build-only dependency, but doesn't work with `docker build`
+      - irods
+      - ires                       # Because of ingest resource
       - minio2
     hostname: ires-s3-2.dh.local
     environment:
@@ -139,10 +222,18 @@ services:
         aliases:
           - ires-s3-2.dh.local
 
-  ires-centos-based:
-    image: irods-ires-centos:latest
+  ires-centos:
+    build:
+      context: ires-centos/
+      dockerfile: Dockerfile
+      args:
+        - ENV_REGISTRY_HOST        # Used to find base image
+        - ENV_BRANCH               # Used to find base image
+        - ENV_DOCKERIZE_VERSION
+    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires-centos:${ENV_TAG}
     depends_on:
-      - icat-based
+      - irods-base-centos          # Build-only dependency, but doesn't work with `docker build`
+      - irods
     hostname: ires-centos.dh.local
     environment:
       RODS_PASSWORD: irods
