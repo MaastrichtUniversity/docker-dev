@@ -38,7 +38,10 @@ This will build `irods-base`s, then `irods` image, and `ires` image... etc.
 The name of the images are:
 * `${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/irods-base:ubuntu`
 * `${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/irods-base:centos`
-
+* `${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/icat:${ENV_TAG}` (deviates from previous name: s/irods/icat/)
+* `${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires:${ENV_TAG}`
+* `${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires-s3:${ENV_TAG}`
+* `${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires-centos:${ENV_TAG}`
 
 (following previous names)
 
