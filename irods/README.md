@@ -18,24 +18,39 @@ shouldn't be used on its own to create a live container.
 
 `irods-base` comes in two flavors: `ubuntu` and `centos`.
 
-From `irods-base` we build `icat-based`, `ires-based`, `ires-centos-based` and `ires-s3-based`.
+From `irods-base` we build `irods` (icat) , `ires`, `ires-centos` and `ires-s3`.
 
 
 ## Build
 
 :construction: **This way of building and running is temporary, final process will be different.** :construction:
 
+Unfortunately, you have to build the base images first, as `depends_on` is only
+mean for running, not for building.
+
 ```
-$ ./build.sh
+$ cd ..    # root of docker-dev
+docker-dev$ ./rit.sh build irods-base-ubuntu irods-base-centos
+docker-dev$ ./rit.sh build irods ires ires-s3-1 ires-centos
 ```
-This will build `irods-base`, then `icat-based` and `ires-based`... etc. Edit that script at will.
+This will build `irods-base`s, then `irods` image, and `ires` image... etc.
+
+The name of the images are:
+* `${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/irods-base:ubuntu`
+* `${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/irods-base:centos`
+
+
+(following previous names)
 
 ## Run
 
 :construction: **This way of running is temporary, final process will be different.** :construction:
+
 ```
 $ cd ..   # root of docker-dev
-$ docker-compose -f docker-compose.yml -f docker-compose-irods.yml up -d icat-based ires-based
+docker-dev$ docker-compose -f docker-compose.yml -f docker-compose-irods.yml up -d irods ires
+OR
+docker-dev$ ./rit.sh up -d irods ires
 ```
 
 ## Images directory structure
