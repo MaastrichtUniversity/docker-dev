@@ -77,7 +77,7 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | apt-key add - 
     irods-externals-jansson2.7-0 \
     irods-externals-json3.7.3-0 \
     # packages required for python rule engine
-    irods-rule-engine-plugin-python${IRODS_PYTHON_PLUGIN_VERSION}
+    irods-rule-engine-plugin-python=${IRODS_PYTHON_PLUGIN_VERSION}
 
 # install Metalnx RMD
 ADD ./emc-metalnx-rmd-1.0-1.deb /tmp/emc-metalnx-rmd-1.0-1.deb
