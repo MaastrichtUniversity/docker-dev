@@ -71,7 +71,7 @@ services:
       EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
       MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
-      DEBUG_DH_BOOTSTRAP:  "yes"
+      DEBUG_DH_BOOTSTRAP:  "no"
     networks:
       default:
         aliases:
@@ -111,7 +111,7 @@ services:
       EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
       MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
-      DEBUG_DH_BOOTSTRAP:  "yes"
+      DEBUG_DH_BOOTSTRAP:  "no"
     networks:
       default:
         aliases:
@@ -159,7 +159,7 @@ services:
       ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY1}
       ENV_S3_RESC_NAME: "UM-Ceph-S3-AC"
       ENV_S3_HOST: "minio1.dh.local:9000"
-      DEBUG_DH_BOOTSTRAP:  "yes"
+      DEBUG_DH_BOOTSTRAP:  "no"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
@@ -206,7 +206,7 @@ services:
       ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
       ENV_S3_RESC_NAME: "UM-Ceph-S3-GL"
       ENV_S3_HOST: "minio2.dh.local:9000"
-      DEBUG_DH_BOOTSTRAP:  "yes"
+      DEBUG_DH_BOOTSTRAP:  "no"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
@@ -244,7 +244,7 @@ services:
       EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
       MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
-      DEBUG_DH_BOOTSTRAP:  "yes"
+      DEBUG_DH_BOOTSTRAP:  "no"
     networks:
       default:
         aliases:
