@@ -76,9 +76,6 @@ else
     service irods start
 fi
 
-# Force start of Metalnx RMD
-service rmd restart
-
 # Logstash
 /etc/init.d/filebeat start
 
