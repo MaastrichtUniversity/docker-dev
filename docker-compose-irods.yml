@@ -1,0 +1,272 @@
+services:
+  # This service definition is meant for *build* purposes only!
+  irods-base-ubuntu:
+    build:
+      context: irods/irods-base/
+      dockerfile: Dockerfile.ubuntu
+      # These are read from the .env
+      args:
+        - ENV_IRODS_VERSION
+        - ENV_IRODS_EXT_CLANG_VERSION
+        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+        - ENV_FILEBEAT_VERSION
+    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/irods-base:ubuntu
+
+  # Ditto, but Centos flavor
+  # This service definition is meant for *build* purposes only!
+  irods-base-centos:
+    build:
+      context: irods/irods-base/
+      dockerfile: Dockerfile.centos
+      # These are read from the .env
+      args:
+        - ENV_IRODS_VERSION
+        - ENV_IRODS_EXT_CLANG_VERSION
+        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+        - ENV_FILEBEAT_VERSION
+    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/irods-base:centos
+
+  # iCAT requires a database
+  irods-db:
+    image: postgres:${ENV_POSTGRES_VERSION}
+    hostname: irods-db
+    environment:
+      POSTGRES_PASSWORD: foobar
+      LOGSPOUT: ignore
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      default:
+        aliases:
+          - irods-db.dh.local
+      common_default:
+        aliases:
+          - irods-db.dh.local
+
+  # iCAT
+  irods:
+    build:
+      context: irods/icat/
+      dockerfile: Dockerfile
+      args:
+        - ENV_REGISTRY_HOST        # Used to find base image
+        - ENV_BRANCH               # Used to find base image
+        - ENV_IRODS_VERSION
+        - ENV_POSTGRES_CLIENT_VERSION
+    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/icat:${ENV_TAG}
+    depends_on:
+      - irods-base-ubuntu          # Build-only dependency, but doesn't work with `docker build`
+      - irods-db
+    hostname: irods.dh.local
+    ports:
+      - "1247:1247"
+      - "1248:1248"
+    environment:
+      RODS_PASSWORD: irods
+      PGPASSWORD: foobar
+      VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
+      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
+      EPICPID_URL: ${ENV_EPICPID_URL}
+      EPICPID_USER: ${ENV_EPICPID_USER}
+      EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
+      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
+      LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
+      DEBUG_DH_BOOTSTRAP:  "no"
+    networks:
+      default:
+        aliases:
+          - irods.dh.local
+      common_default:
+        aliases:
+          - irods.dh.local
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./externals/irods-ruleset:/rules
+      - ./externals/irods-microservices:/microservices
+      - ./keycloak/users.json:/opt/irods/users.json
+      - microservices-build-ubuntu:/tmp/microservices-build
+
+  ires:
+    build:
+      context: irods/ires/
+      dockerfile: Dockerfile
+      args:
+        - ENV_REGISTRY_HOST        # Used to find base image
+        - ENV_BRANCH               # Used to find base image
+        - ENV_REGISTRY_HOST=${ENV_REGISTRY_HOST}
+        - ENV_BRANCH=${ENV_BRANCH}
+        - ENV_DOCKERIZE_VERSION
+    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires:${ENV_TAG}
+    depends_on:
+      - irods-base-ubuntu          # Build-only dependency, but doesn't work with `docker build`
+      - irods
+    hostname: ires.dh.local
+    environment:
+      RODS_PASSWORD: irods
+      PGPASSWORD: foobar
+      VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
+      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
+      EPICPID_URL: ${ENV_EPICPID_URL}
+      EPICPID_USER: ${ENV_EPICPID_USER}
+      EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
+      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
+      LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
+      DEBUG_DH_BOOTSTRAP:  "no"
+    networks:
+      default:
+        aliases:
+          - ires.dh.local
+      common_default:
+        aliases:
+          - ires.dh.local
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./irods.secrets.cfg:/etc/secrets:ro
+      - ./externals/irods-ruleset:/rules
+      - ./externals/irods-microservices:/microservices
+      - ./externals/irods-helper-cmd:/helpers
+      - ./staging-data:/mnt/ingest            # binding a non-existing dir results in creation of that dir on host system
+      - microservices-build-ubuntu:/tmp/microservices-build
+    # Required for CIFS mounting. cap-add not enough in Windows for some reason.
+    privileged: true
+
+  ires-s3-1:
+    build:
+      context: irods/ires-s3/
+      dockerfile: Dockerfile
+      args:
+        - ENV_REGISTRY_HOST        # Used to find base image
+        - ENV_BRANCH               # Used to find base image
+        - ENV_DOCKERIZE_VERSION
+        - ENV_IRODS_RESC_PLUGIN_S3_VERSION
+    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires-s3:${ENV_TAG}
+    depends_on:
+      - irods-base-ubuntu          # Build-only dependency, but doesn't work with `docker build`
+      - irods
+      - ires                       # Because of ingest resource
+      - minio1
+    hostname: ires-s3-1.dh.local
+    environment:
+      RODS_PASSWORD: irods
+      VIRTUAL_HOST: ires-s3-1.${RIT_ENV}.rit.unimaas.nl
+      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
+      EPICPID_URL: ${ENV_EPICPID_URL}
+      EPICPID_USER: ${ENV_EPICPID_USER}
+      EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
+      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
+      LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
+      ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY1}
+      ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY1}
+      ENV_S3_RESC_NAME: "UM-Ceph-S3-AC"
+      ENV_S3_HOST: "minio1.dh.local:9000"
+      DEBUG_DH_BOOTSTRAP:  "no"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./irods.secrets.cfg:/etc/secrets:ro
+      - ./externals/irods-ruleset:/rules
+      - ./externals/irods-microservices:/microservices
+      - ./externals/irods-helper-cmd:/helpers
+      - microservices-build-ubuntu:/tmp/microservices-build
+    networks:
+      default:
+        aliases:
+          - ires-s3-1.dh.local
+      common_default:
+        aliases:
+          - ires-s3-1.dh.local
+
+  ires-s3-2:
+    # This is not nice.. there should only be once place where building
+    # procedure is defined for the same image
+    build:
+      context: irods/ires-s3/
+      dockerfile: Dockerfile
+      args:
+        - ENV_REGISTRY_HOST        # Used to find base image
+        - ENV_BRANCH               # Used to find base image
+        - ENV_DOCKERIZE_VERSION
+        - ENV_IRODS_RESC_PLUGIN_S3_VERSION
+    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires-s3:${ENV_TAG}
+    depends_on:
+      - irods-base-ubuntu          # Build-only dependency, but doesn't work with `docker build`
+      - irods
+      - ires                       # Because of ingest resource
+      - minio2
+    hostname: ires-s3-2.dh.local
+    environment:
+      RODS_PASSWORD: irods
+      VIRTUAL_HOST: ires-s3-2.${RIT_ENV}.rit.unimaas.nl
+      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
+      EPICPID_URL: ${ENV_EPICPID_URL}
+      EPICPID_USER: ${ENV_EPICPID_USER}
+      EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
+      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
+      LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
+      ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY2}
+      ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
+      ENV_S3_RESC_NAME: "UM-Ceph-S3-GL"
+      ENV_S3_HOST: "minio2.dh.local:9000"
+      DEBUG_DH_BOOTSTRAP:  "no"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./irods.secrets.cfg:/etc/secrets:ro
+      - ./externals/irods-ruleset:/rules
+      - ./externals/irods-microservices:/microservices
+      - ./externals/irods-helper-cmd:/helpers
+      - microservices-build-ubuntu:/tmp/microservices-build
+    networks:
+      default:
+        aliases:
+          - ires-s3-2.dh.local
+      common_default:
+        aliases:
+          - ires-s3-2.dh.local
+
+  ires-centos:
+    build:
+      context:  irods/ires-centos/
+      dockerfile: Dockerfile
+      args:
+        - ENV_REGISTRY_HOST        # Used to find base image
+        - ENV_BRANCH               # Used to find base image
+        - ENV_DOCKERIZE_VERSION
+    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires-centos:${ENV_TAG}
+    depends_on:
+      - irods-base-centos          # Build-only dependency, but doesn't work with `docker build`
+      - irods
+    hostname: ires-centos.dh.local
+    environment:
+      RODS_PASSWORD: irods
+      VIRTUAL_HOST: ires-centos.${RIT_ENV}.rit.unimaas.nl
+      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
+      EPICPID_URL: ${ENV_EPICPID_URL}
+      EPICPID_USER: ${ENV_EPICPID_USER}
+      EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
+      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
+      LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
+      DEBUG_DH_BOOTSTRAP:  "no"
+    networks:
+      default:
+        aliases:
+          - ires-centos.dh.local
+      common_default:
+        aliases:
+          - ires-centos.dh.local
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./irods.secrets.cfg:/etc/secrets:ro
+      - ./externals/irods-ruleset:/rules
+      - ./externals/irods-microservices:/microservices
+      - ./externals/irods-helper-cmd:/helpers
+      - ./staging-data:/mnt/ingest            # binding a non-existing dir results in creation of that dir on host system
+      - microservices-build-centos:/tmp/microservices-build
+    # Required for CIFS mounting. cap-add not enough in Windows for some reason.
+    privileged: true
+
+volumes:
+  # these volumes exists so already-compiled microservices shared across
+  # icat/ires's don't have to be recompiled. If icat already compiled them, no
+  # need for ires's to recompilie.
+  microservices-build-ubuntu:
+  microservices-build-centos:
+
