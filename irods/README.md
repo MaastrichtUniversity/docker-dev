@@ -1,7 +1,5 @@
 # iRODS development images
 
-:construction: **Work in progress** :construction:
-
 With these `Dockerfile`s, you should be able to build iRODS containers for use
 in your development environment.
 
@@ -23,17 +21,16 @@ From `irods-base` we build `irods` (icat) , `ires`, `ires-centos` and `ires-s3`.
 
 ## Build
 
-:construction: **This way of building and running is temporary, final process will be different.** :construction:
-
 Unfortunately, you have to build the base images first, as `depends_on` is only
-mean for running, not for building.
+mean for running, not for building. However, we have included a check in
+`./rit.sh` to automatically build the base image when trying to `up` or `build`
+one of the non-base ones (icat, ires.. etc)
 
 ```
 $ cd ..    # root of docker-dev
-docker-dev$ ./rit.sh build irods-base-ubuntu irods-base-centos
 docker-dev$ ./rit.sh build irods ires ires-s3-1 ires-centos
 ```
-This will build `irods-base`s, then `irods` image, and `ires` image... etc.
+This will build `irods-base`s (via `./rit.sh`), then `irods` image, and `ires` image... etc.
 
 The name of the images are:
 * `${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/irods-base:ubuntu`
@@ -42,12 +39,9 @@ The name of the images are:
 * `${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires:${ENV_TAG}`
 * `${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires-s3:${ENV_TAG}`
 * `${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires-centos:${ENV_TAG}`
-
 (following previous names)
 
 ## Run
-
-:construction: **This way of running is temporary, final process will be different.** :construction:
 
 ```
 $ cd ..   # root of docker-dev
