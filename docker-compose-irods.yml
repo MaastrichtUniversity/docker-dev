@@ -1,3 +1,4 @@
+version: '2'
 services:
   # This service definition is meant for *build* purposes only!
   irods-base-ubuntu:
