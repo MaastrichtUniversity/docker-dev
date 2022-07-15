@@ -68,6 +68,13 @@ fi
 # set RIT_ENV if not set already
 env_selector
 
+# Create docker network common_default if it does not exists
+if [ ! $(docker network ls --filter name=common_default --format="true") ] ;
+      then
+       echo "Creating network common_default"
+       docker network create common_default
+fi
+
 # Check if base image are needed for a command
 ubuntu_irods=(irods ires ires-s3-1 ires-s3-2)
 
