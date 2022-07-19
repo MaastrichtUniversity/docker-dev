@@ -68,9 +68,42 @@ fi
 # set RIT_ENV if not set already
 env_selector
 
+# Create docker network common_default if it does not exists
+if [ ! $(docker network ls --filter name=common_default --format="true") ] ;
+      then
+       echo "Creating network common_default"
+       docker network create common_default
+fi
+
+# Check if base image are needed for a command
+ubuntu_irods=(irods ires ires-s3-1 ires-s3-2)
+
+if [[ $1 == "build" || $1 == "up" ]]; then
+  for  item1 in "$@"; do
+    for item2 in "${ubuntu_irods[@]}"; do
+
+      if [[ $item1 == $item2 ]]; then
+            if [ ! $(docker image ls registry.dh.unimaas.nl/docker-dev/master/irods-base:ubuntu --format="true") ] ;
+              then
+                echo "iRODS Ubuntu base does not exist, building"
+                docker-compose -f docker-compose.yml -f docker-compose-irods.yml build irods-base-ubuntu
+                break
+            fi
+      fi
+    done
+     if [[ $item1 == "ires-centos" ]]; then
+            if [ ! $(docker image ls registry.dh.unimaas.nl/docker-dev/master/irods-base:centos --format="true") ] ;
+              then
+                echo "iRODS Centos base does not exist, building"
+                docker-compose -f docker-compose.yml -f docker-compose-irods.yml build irods-base-centos
+                break
+            fi
+      fi
+  done
+fi
 
 # Assuming docker-compose is available in the PATH
 log $DBG "$0 [docker-compose \"$ARGS\"]"
-docker-compose $ARGS
+docker-compose -f docker-compose.yml -f docker-compose-irods.yml $ARGS
 
 

@@ -1,0 +1,88 @@
+# syntax=docker/dockerfile:1
+
+# Dockerfile to serve as base for iRODS *development* containers.
+# Containers build out of this image are meant to be run in your development
+# environment, not in a production setting.
+#
+# This image only includes files that any iRODS instance (iCAT or iRES) will
+# probably need. Also, included are utilities that might come in handy during
+# development or debugging. Stuff you wound't need in production!
+#
+# Rules is: include here only things that all iRODS instances would need. If
+# something is only needed for an iCAT, or a specific iRES, we don't include it
+# here.
+
+FROM ubuntu:18.04
+
+# Load build arguments from environment
+ARG ENV_IRODS_VERSION
+ARG ENV_IRODS_EXT_CLANG_VERSION
+ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+ARG ENV_FILEBEAT_VERSION
+
+# Use apt-get NL mirrors and install packages
+RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/apt/sources.list && \
+    apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    apt-transport-https \
+    cmake \
+    fortune-mod \
+    g++ \
+    libcurl4-openssl-dev \
+    libfuse2 \
+    libjson-perl \
+    librabbitmq-dev \
+    libssl-dev \
+    lsof \
+    make \
+    nano \
+    vim \
+    python \
+    python-jsonschema \
+    python-ldap \
+    python-pip \
+    python-psutil \
+    python-requests \
+    python-tz \
+    sudo \
+    super \
+    unixodbc \
+    jq \
+    wget \
+    curl \
+    git
+
+# Install iRODS packages (APT)
+ENV IRODS_VERSION ${ENV_IRODS_VERSION}
+RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key add - \
+    && echo "deb [arch=amd64] https://packages.irods.org/apt/ xenial main" | sudo tee /etc/apt/sources.list.d/renci-irods.list \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    irods-server=${IRODS_VERSION} \
+    irods-dev=${IRODS_VERSION} \
+    irods-runtime=${IRODS_VERSION} \
+    irods-icommands=${IRODS_VERSION} \
+    # packages required for building microservices
+    irods-externals-clang-runtime${ENV_IRODS_EXT_CLANG_RUNTIME_VERSION} \
+    irods-externals-clang${ENV_IRODS_EXT_CLANG_VERSION} \
+    # packages required for python rule engine
+    irods-rule-engine-plugin-python=${IRODS_VERSION}
+
+# Temporary fix needed with iRODS 4.2.6, after upgrading this shouldnt be necessary anymore
+# https://github.com/agracio/electron-edge-js/issues/16
+RUN ln -s /usr/include/locale.h /usr/include/xlocale.h
+
+# Filebeat install
+RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-amd64.deb -O /tmp/filebeat.deb \
+ && dpkg -i /tmp/filebeat.deb
+
+# Add patched files / patches that derived images will probably all make use of
+ADD ./patch/* /opt/irods/patch/
+
+# Add scripts/utils needed to finalize install (not in this image)
+RUN mkdir -p /opt/irods
+ADD ./scripts/* /opt/irods/
+
+# Add test/dev ONLY CA
+RUN mkdir -p /etc/irods/SSL/
+ADD ./test-dev-ssl-certs/* /etc/irods/SSL/
