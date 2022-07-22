@@ -83,7 +83,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/add_env_var.py /etc/irods/server_config.json MDR_HANDLE_URL ${MDR_HANDLE_URL}
 
     # Dirty temp.password workaround
-    sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 86400\,/' /etc/irods/server_config.json
+    sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ 7776000\,/' /etc/irods/server_config.json
 
     # SURFsara Archive vault
     mkdir -p /mnt/SURF-Archive
