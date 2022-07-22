@@ -199,3 +199,7 @@ for group in $nonSyncGroups; do
     imeta add -u "${group}" ldapSync false
 done
 
+# Add special pre-defined sql queries to manage user temporary passwords
+iadmin asq "DELETE FROM r_user_password WHERE user_id = ? AND pass_expiry_ts = '7776000';" delete_password
+iadmin asq "SELECT COUNT(*) FROM r_user_password WHERE user_id = ? AND pass_expiry_ts = '7776000';" count_password
+iadmin asq "SELECT create_ts FROM r_user_password WHERE user_id = ? AND pass_expiry_ts = '7776000';" get_create_ts_password
