@@ -98,6 +98,10 @@ if [[ ! -e /var/run/irods_installed ]]; then
     su irods -c "pip install --user --upgrade \"pip < 21.0\""
     su irods -c "pip install --user -r /rules/python/python_requirements.txt"
 
+    # start redis server
+    redis-server &
+    su - irods -c "/opt/irods/bootstrap_automated_ingest.sh"
+
     su - irods -c "/opt/irods/bootstrap_irods.sh"
 
     touch /var/run/irods_installed
