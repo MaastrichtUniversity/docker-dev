@@ -9,7 +9,14 @@ ARG ENV_DOCKERIZE_VERSION
 # install packages for this iRES
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    cifs-utils
+    cifs-utils \
+    redis-server \
+    python-pip \
+    python3-distutils \
+    software-properties-common
+
+RUN add-apt-repository -y ppa:deadsnakes/ppa
+RUN apt-get install -y python3.10 python3.10-distutils
 
 # Overwrite the default setcifsacl with our own recompiled version
 ADD ./patch/setcifsacl /usr/bin/setcifsacl
@@ -26,6 +33,15 @@ RUN chmod go-w /etc/filebeat/filebeat.yml
 
 # Add ires certs
 ADD ./test-dev-ssl-certs/* /etc/irods/SSL/
+
+# Conditionally trust the custom DataHub *Dev/Test-only* Certificate Authority (CA) for iRODS-SSL-connections
+# Note: Python docker image is Debian-based. So, 'dash' as /bin/sh.
+#       Strict POSIX-compliant.
+RUN echo "Adding custom DataHub iRODS-CA-certificate to the CA-rootstore (FOR DEV & TEST ONLY!)..."
+RUN cp /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem /usr/local/share/ca-certificates/test_only_dev_irods_dh_ca_cert.crt ; \
+update-ca-certificates ;
+
+
 
 # Add bootstrap scripts
 ADD ./scripts/* /opt/irods/
