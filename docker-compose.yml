@@ -1,5 +1,32 @@
 version: '2'
 services:
+  irods-ingest:
+    build:
+      context: irods/ingest_framework
+      dockerfile: Dockerfile
+    env_file:
+      - irods/ingest_framework/config/icommands.env
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+    volumes:
+      - ./staging-data:/mnt/ingest:ro
+  irods-ingest-worker:
+      build:
+        context: irods/ingest_framework
+        dockerfile: Dockerfile.ingest_worker
+      env_file:
+        - irods/ingest_framework/config/icommands.env
+      environment:
+        CELERY_BROKER_URL: redis://redis:6379/0
+      volumes:
+        - ./staging-data:/mnt/ingest:ro
+  redis:
+      image: redis:4.0.8
+      hostname: ingest-redis
+      networks:
+        default:
+          aliases:
+            - ingest-redis.dh.local
   mdr:
     build:
       context: externals/dh-mdr

@@ -1,0 +1,16 @@
+Index: irods_capability_automated_ingest/sync_irods.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/irods_capability_automated_ingest/sync_irods.py b/irods_capability_automated_ingest/sync_irods.py
+--- a/irods_capability_automated_ingest/sync_irods.py	(revision c60e2cc94f3ccb182c88db2c5bf7dff7b344ed9a)
++++ b/irods_capability_automated_ingest/sync_irods.py	(date 1659014947778)
+@@ -319,6 +319,7 @@
+                 kwargs['ssl_context'] = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH,
+                                                                    cafile=ca_file,
+                                                                    capath=None, cadata=None)
++                kwargs.update(**irods_env_as_json)
+ 
+     if not key in irods_session_map:
+         # TODO: #42 - pull out 10 into configuration

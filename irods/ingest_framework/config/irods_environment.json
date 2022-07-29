@@ -1,0 +1,10 @@
+{
+    "irods_client_server_negotiation": "request_server_negotiation",
+    "irods_client_server_policy": "CS_NEG_REQUIRE",
+    "irods_ssl_verify_server": "cert",
+    "irods_ssl_ca_certificate_file": "/usr/local/share/ca-certificates/test_only_dev_irods_dh_ca_cert.crt",
+    "irods_encryption_algorithm": "AES-256-CBC",
+    "irods_encryption_key_size": 32,
+    "irods_encryption_num_hash_rounds": 16,
+    "irods_encryption_salt_size": 8
+}
