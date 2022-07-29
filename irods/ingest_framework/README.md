@@ -24,4 +24,8 @@
 
 # Run an ingest job 
 ./rit.sh run --rm irods-ingest start /mnt/ingest/zones/{token from mounted dropzone} /nlmumc/home/rods/TEST_OF_THE_DAY --synchronous --progress
+
+# Run ingest job with the event handler 
+./rit.sh run --rm irods-ingest start /mnt/ingest/zones/{token from mounted dropzone} /nlmumc/home/rods/TEST_OF_THE_DAY --event_handler /var/lib/irods/event_handler.py --synchronous --progress --ignore_cache --log_filename /tmp/tuto_reg.log
+
 ```
