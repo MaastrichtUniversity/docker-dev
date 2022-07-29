@@ -29,3 +29,12 @@
 ./rit.sh run --rm irods-ingest start /mnt/ingest/zones/{token from mounted dropzone} /nlmumc/home/rods/TEST_OF_THE_DAY --event_handler /var/lib/irods/event_handler.py --synchronous --progress --ignore_cache --log_filename /tmp/tuto_reg.log
 
 ```
+
+## Run flask 
+
+docker exec in the irods-ingest-worker container 
+```
+export FLASK_APP=var/lib/irods/flask_app.py
+flask run
+curl localhost:5000/job -d '{"source": "/mnt/ingest/zones/{token from mounted dropzone}", "target": "/nlmumc/home/rods/TEST_OF_THE_DAY' -H 'Content-Type: application/json'
+```

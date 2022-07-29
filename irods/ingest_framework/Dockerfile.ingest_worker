@@ -1,4 +1,6 @@
 FROM corpus_irods-ingest:latest
 
+COPY ./scripts/flask_app.py /var/lib/irods/flask_app.py
+
 ENTRYPOINT ["celery", "-A", "irods_capability_automated_ingest.sync_task", "worker", "-Q", "restart,path,file"]
 CMD ["-h"]

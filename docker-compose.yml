@@ -23,6 +23,8 @@ services:
   redis:
       image: redis:4.0.8
       hostname: ingest-redis
+      ports:
+         - "6379:6379"
       networks:
         default:
           aliases:
