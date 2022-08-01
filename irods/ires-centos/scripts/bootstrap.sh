@@ -95,6 +95,11 @@ if [[ ! -e /var/run/irods_installed ]]; then
 
     # Install pip packages from python requirements for the irods user
     su irods -c "pip install --user -r /rules/python/python_requirements.txt"
+
+    # start redis server
+    redis-server &
+    su - irods -c "/opt/irods/bootstrap_automated_ingest.sh"
+
     # Go into the iRODS specific bootstrap
     su - irods -c "/opt/irods/bootstrap_irods.sh"
 

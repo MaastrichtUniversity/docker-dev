@@ -6,6 +6,18 @@ FROM ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/irods-base:centos
 # Load build arguments from environment
 ARG ENV_DOCKERIZE_VERSION
 
+# Install redis-server
+RUN yum install -y redis
+
+# Install python dev dependencies
+RUN yum install gcc openssl-devel bzip2-devel libffi-devel -y
+
+# Install python 3.9
+RUN cd /tmp/ && wget https://www.python.org/ftp/python/3.9.13/Python-3.9.13.tgz
+RUN cd /tmp/ && tar -xzf Python-3.9.13.tgz
+RUN cd /tmp/Python-3.9.13/ && ./configure --enable-optimizations
+RUN cd /tmp/Python-3.9.13/ && make altinstall
+
 # Overwrite the default setcifsacl with our own recompiled version
 ADD ./patch/setcifsacl /usr/bin/setcifsacl
 RUN chmod a+x /usr/bin/setcifsacl
