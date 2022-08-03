@@ -4,9 +4,9 @@
 
 ```
 # Start redis
-./rit.sh up redis
+./rit.sh up -d redis
 
-# Build ingest image
+# Build ingest image 
 ./rit.sh build irods-ingest
 
 # Build ingest worker
@@ -15,7 +15,6 @@
 ```
 
 * Next create a mounted dropzone in MDR
-
 
 
 ```
@@ -38,3 +37,20 @@ export FLASK_APP=/var/lib/irods/flask_app.py
 flask run --host=0.0.0.0
 curl localhost:5000/job -d '{"source": "/mnt/ingest/zones/{token from mounted dropzone}", "target": "/nlmumc/home/rods/TEST_OF_THE_DAY"}' -H 'Content-Type: application/json'
 ```
+
+
+## To make mounted ingest work 
+```
+# Start redis
+./rit.sh up -d redis
+
+# Build ingest image and irods-ingest-worker
+./rit.sh build irods-ingest irods-ingest-worker
+
+# Start the ingest worker 
+./rit.sh run --rm irods-ingest-worker -c 4
+
+# run flask 
+# docker exec in the irods-ingest-worker container 
+export FLASK_APP=/var/lib/irods/flask_app.py
+flask run --host=0.0.0.0
