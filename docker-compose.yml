@@ -40,7 +40,7 @@ services:
       DISQOVER_URL: https://disqover.datahubmaastricht.nl/
       MDR_ANSIBLE_VERSION_TAG: DEV
       BIOPORTAL_URL: https://data.bioontology.org
-      WEBDAV_URL: webdav.${RIT_ENV}.dh.unimaas.nl
+      WEBDAV_DOWNLOAD_URL: download.${RIT_ENV}.dh.unimaas.nl
       WEBDAV_UPLOAD_URL: upload.${RIT_ENV}.dh.unimaas.nl
       SMB_UM_WINDOWS_PATH: \\foobar.unimaas.nl\iRODS-ingestzones\dev
       SMB_UM_UNIX_PATH: foobar.unimaas.nl/iRODS-ingestzones/dev
@@ -153,7 +153,6 @@ services:
       default:
         aliases:
           - ldap.dh.local
-
   irods-frontend:
     build:
       context: externals/irods-frontend/
@@ -190,7 +189,7 @@ services:
     depends_on:
       - irods
     environment:
-      VIRTUAL_HOST: webdav.${RIT_ENV}.dh.unimaas.nl
+      VIRTUAL_HOST: download.${RIT_ENV}.dh.unimaas.nl
       LOGSPOUT: ignore
     networks:
       default:
