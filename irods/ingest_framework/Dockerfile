@@ -28,5 +28,7 @@ RUN echo "Adding custom DataHub iRODS-CA-certificate to the CA-rootstore (FOR DE
 RUN patch /usr/local/lib/python3.10/site-packages/irods_capability_automated_ingest/sync_irods.py /var/lib/irods/Update_ssl_settings.patch
 RUN patch /usr/local/lib/python3.10/site-packages/irods_capability_automated_ingest/sync_actions.py /var/lib/irods/Add_failure_check.patch
 
+EXPOSE 5000
+
 ENTRYPOINT ["irods_capability_automated_ingest"]
 CMD ["-h"]

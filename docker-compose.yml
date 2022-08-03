@@ -14,12 +14,17 @@ services:
       build:
         context: irods/ingest_framework
         dockerfile: Dockerfile.ingest_worker
+      hostname: irods-ingest-worker.dh.local
       env_file:
         - irods/ingest_framework/config/icommands.env
       environment:
         CELERY_BROKER_URL: redis://redis:6379/0
       volumes:
         - ./staging-data:/mnt/ingest:ro
+      networks:
+        default:
+          aliases:
+            -  irods-ingest-worker.dh.local
   redis:
       image: redis:4.0.8
       hostname: ingest-redis

@@ -35,6 +35,6 @@
 docker exec in the irods-ingest-worker container 
 ```
 export FLASK_APP=/var/lib/irods/flask_app.py
-flask run
+flask run --host=0.0.0.0
 curl localhost:5000/job -d '{"source": "/mnt/ingest/zones/{token from mounted dropzone}", "target": "/nlmumc/home/rods/TEST_OF_THE_DAY"}' -H 'Content-Type: application/json'
 ```
