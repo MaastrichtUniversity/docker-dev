@@ -368,7 +368,13 @@ services:
       common_default:
         aliases:
           - mdr-db.dh.local
-
+  redis:
+    image: redis:4.0.8
+    hostname: ingest-redis
+    networks:
+      default:
+        aliases:
+          - ingest-redis.dh.local
 networks:
   common_default:
     external: true

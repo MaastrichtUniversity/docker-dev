@@ -111,6 +111,7 @@ services:
       EPICPID_USER: ${ENV_EPICPID_USER}
       EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
       MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
+      CELERY_BROKER_URL: redis://ingest-redis.dh.local:6379/0
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
       DEBUG_DH_BOOTSTRAP:  "no"
     networks:
@@ -244,6 +245,7 @@ services:
       EPICPID_USER: ${ENV_EPICPID_USER}
       EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
       MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
+      CELERY_BROKER_URL: redis://ingest-redis.dh.local:6379/0
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
       DEBUG_DH_BOOTSTRAP:  "no"
     networks:

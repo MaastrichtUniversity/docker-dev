@@ -1,8 +1,11 @@
 #!/bin/bash
 
+set -e
 source /etc/irods/rodssync/bin/activate
 
-export CELERY_BROKER_URL=redis://127.0.0.1:6379/0
+#export CELERY_BROKER_URL=redis://127.0.0.1:6379/0
+#export CELERY_BROKER_URL=redis://ingest-redis.dh.local:6379/0
+echo $CELERY_BROKER_URL
 export PYTHONPATH=`pwd`
 
 echo $1

@@ -10,7 +10,6 @@ ARG ENV_DOCKERIZE_VERSION
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
     cifs-utils \
-    redis-server \
     python-pip \
     python3-distutils \
     software-properties-common
@@ -41,7 +40,7 @@ RUN echo "Adding custom DataHub iRODS-CA-certificate to the CA-rootstore (FOR DE
 RUN cp /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem /usr/local/share/ca-certificates/test_only_dev_irods_dh_ca_cert.crt ; \
 update-ca-certificates ;
 
-
+#ADD ./patch/Add_failure_check.patch /var/lib/irods/Add_failure_check.patch
 
 # Add bootstrap scripts
 ADD ./scripts/* /opt/irods/

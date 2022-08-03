@@ -6,9 +6,6 @@ FROM ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/irods-base:centos
 # Load build arguments from environment
 ARG ENV_DOCKERIZE_VERSION
 
-# Install redis-server
-RUN yum install -y redis
-
 # Install python dev dependencies
 RUN yum install gcc openssl-devel bzip2-devel libffi-devel -y
 
@@ -36,6 +33,8 @@ ADD ./test-dev-ssl-certs/* /etc/irods/SSL/
 
 # Add bootstrap scripts
 ADD ./scripts/* /opt/irods/
+
+#ADD ./patch/Add_failure_check.patch /var/lib/irods/Add_failure_check.patch
 
 EXPOSE 1248 1247 8000
 # Note: centos image uses 'bash' for /bin/sh. Ubuntu uses 'dash'.
