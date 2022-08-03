@@ -34,7 +34,7 @@ ADD ./test-dev-ssl-certs/* /etc/irods/SSL/
 # Add bootstrap scripts
 ADD ./scripts/* /opt/irods/
 
-#ADD ./patch/Add_failure_check.patch /var/lib/irods/Add_failure_check.patch
+ADD ./patch/Add_failure_check.patch /var/lib/irods/Add_failure_check.patch
 
 EXPOSE 1248 1247 8000
 # Note: centos image uses 'bash' for /bin/sh. Ubuntu uses 'dash'.
