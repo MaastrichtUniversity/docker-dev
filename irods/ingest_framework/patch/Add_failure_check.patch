@@ -1,0 +1,17 @@
+Index: irods_capability_automated_ingest/sync_actions.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/irods_capability_automated_ingest/sync_actions.py b/irods_capability_automated_ingest/sync_actions.py
+--- a/irods_capability_automated_ingest/sync_actions.py	(revision c60e2cc94f3ccb182c88db2c5bf7dff7b344ed9a)
++++ b/irods_capability_automated_ingest/sync_actions.py	(date 1659520256577)
+@@ -89,7 +89,7 @@
+             time.sleep(1)
+ 
+     failures = job.failures_handle().get_value()
+-    if failures != 0:
++    if failures is not None and failures != 0:
+         return -1
+     else:
+         return 0

@@ -20,40 +20,20 @@ api = Api(app)
 
 parser_start = reqparse.RequestParser()
 
-
-def put(data):
-    source = data["source"]
-    target = data["target"]
-
-    parse_args(["start", source, target, "--synchronous", "--ignore_cache", "--log_filename", "/tmp/daniel.log"])
-
-
 class Jobs(Resource):
-    def get(self):
-
-        jobs =list_jobs(get_config())
-        return list(jobs)
 
     def post(self):
         data = request.get_json()
-        return put(data)
-
-
-# class Job(Resource):
-    # def put(self, job_name):
-    #     return put(job_name, request.data)
-    #
-    # def delete(self, job_name):
-    #     try:
-    #         stop_job(job_name, get_config())
-    #         return "", 204
-    #     except Exception as e:
-    #         return str(e), 400
+        source = data["source"]
+        target = data["target"]
+        return_code = parse_args(["start", source, target, "--synchronous", "--ignore_cache", "--event_handler", "/var/lib/irods/event_handler.py", "--log_filename", "/tmp/daniel.log"])
+        if return_code == 0:
+            return {"success":True}, 200
+        else:
+            return {"success": False}, 500
 
 
 api.add_resource(Jobs, "/job")
-# api.add_resource(Job, "/job/<job_name>")
-
 
 def get_config():
     return {
@@ -165,4 +145,4 @@ def parse_args(args):
     parser_list.set_defaults(func=handle_list)
 
     args = parser.parse_args(args=args)
-    sys.exit(args.func(args))
+    return args.func(args)
