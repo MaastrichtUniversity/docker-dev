@@ -203,3 +203,10 @@ done
 iadmin asq "DELETE FROM r_user_password WHERE user_id = ? AND pass_expiry_ts = '$IRODS_TEMP_PASSWORD_LIFETIME';" delete_password
 iadmin asq "SELECT COUNT(*) FROM r_user_password WHERE user_id = ? AND pass_expiry_ts = '$IRODS_TEMP_PASSWORD_LIFETIME';" count_password
 iadmin asq "SELECT create_ts FROM r_user_password WHERE user_id = ? AND pass_expiry_ts = '$IRODS_TEMP_PASSWORD_LIFETIME';" get_create_ts_password
+
+# Note: LEAVE AT THE END
+# These two pieces of information are used for iCAT's docker healthcheck
+# Ability to retrive them signifies "healthy" for us.
+imeta add -C /nlmumc/home/rods healthcheck "Ability to retrive hopefully signifies good health."
+echo -n "Ability to retrive hopefully signifies good health." > /tmp/.for_healthcheck
+iput -R rootResc /tmp/.for_healthcheck /nlmumc/home/rods/.healthcheck
