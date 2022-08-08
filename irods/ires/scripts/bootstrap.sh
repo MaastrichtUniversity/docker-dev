@@ -6,7 +6,6 @@ if [[ "${DEBUG_DH_BOOTSTRAP,,}" =~ $debug_on_pattern ]]; then
     set -x
 fi
 
-sleep 10
 set -e
 
 source /etc/secrets
