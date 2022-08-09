@@ -155,7 +155,7 @@
   },
   {
     "userName": "auser",
-    "displayName": "Additional User newly created in LDAP",
+    "displayName": "Additional User newly created in LDAP. Also used for healthcheck",
     "email": "auser",
     "lastName": "User",
     "firstName": "Additional",

@@ -126,4 +126,3 @@ echo "Full Sync LDAP"
 /opt/jboss/keycloak/bin/kcadm.sh create user-storage/10d55377-d139-4865-bd3e-1375ea079925/sync?action=triggerFullSync -r django
 
 echo "Done syncing LDAP"
-
