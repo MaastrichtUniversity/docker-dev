@@ -98,3 +98,9 @@ done
 
 ##########
 ## Special
+
+
+# Healthcheck: LEAVE AT THE END
+# Ability to retrive this file-object signifies "healthy" for us.
+echo -n "Ability to retrive hopefully signifies good health." > /tmp/.for_healthcheck
+iput -R replRescUM01 /tmp/.for_healthcheck /nlmumc/home/rods/.healthcheck_replRescUM01
