@@ -368,6 +368,18 @@ services:
       common_default:
         aliases:
           - mdr-db.dh.local
+  elasticsearch:
+    image: elasticsearch:7.17.4
+    hostname: elasticsearch
+    environment:
+      discovery.type: single-node
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+    ports:
+        - "9200:9200"
+    networks:
+      default:
+        aliases:
+          - elasticsearch.dh.local
 
 networks:
   common_default:
