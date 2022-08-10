@@ -59,6 +59,7 @@ services:
       MDR_POSTGRES_DB: mdr
       MDR_POSTGRES_USER: postgres
       MDR_POSTGRES_PASSWORD: foobar
+      MOCK_RULE_WRAPPER: "True"
     volumes:
       - static_content:/opt/staticfiles
       # This volume bind gets the code that is in your rule-wrapper local repository and adds it to MDR. This allows 
