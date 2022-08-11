@@ -36,7 +36,7 @@ ADD ./test-dev-ssl-certs/* /etc/irods/SSL/
 # bootstrap scripts to build our development iCAT
 ADD ./scripts/* /opt/irods/
 
-HEALTHCHECK --interval=10s --timeout=10s --start-period=20s CMD su irods -c /opt/irods/check_health.sh
+HEALTHCHECK --interval=10s --timeout=10s --start-period=40s CMD su irods -c /opt/irods/check_health.sh
 
 EXPOSE 1248 1247 8000
 VOLUME [ "/rules", "/helpers", "/microservices" ]
