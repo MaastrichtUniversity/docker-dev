@@ -12,6 +12,7 @@ services:
     depends_on:
       - keycloak
       - mdr-db
+      - elasticsearch
     env_file:
       - irods.secrets.cfg # Using ONLY BIOPORTAL_API_KEY
     environment:
