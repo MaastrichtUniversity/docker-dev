@@ -59,6 +59,7 @@ services:
       MDR_POSTGRES_DB: mdr
       MDR_POSTGRES_USER: postgres
       MDR_POSTGRES_PASSWORD: foobar
+      ELASTIC_PASSWORD: ${ENV_ELASTIC_PASSWORD}
     volumes:
       - static_content:/opt/staticfiles
       # This volume bind gets the code that is in your rule-wrapper local repository and adds it to MDR. This allows 
@@ -374,7 +375,7 @@ services:
     environment:
       discovery.type: single-node
       ES_JAVA_OPTS: -Xms512m -Xmx512m
-      ELASTIC_PASSWORD: foobar
+      ELASTIC_PASSWORD: ${ENV_ELASTIC_PASSWORD}
       xpack.security.enabled: "true"
     ports:
         - "9200:9200"
