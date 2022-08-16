@@ -98,3 +98,6 @@ done
 
 ##########
 ## Special
+
+iput -R arcRescSURF01 /etc/filebeat/filebeat.yml /nlmumc/projects/P000000010/C000000001
+irule -F /rules/misc/setCollectionSize.r "*project='P000000010'" "*projectCollection='C000000001'" "*openPC='true'" "*closePC='true'"
