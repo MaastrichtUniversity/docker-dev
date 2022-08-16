@@ -145,7 +145,7 @@ imeta add -C /nlmumc/projects/P000000010 dataRetentionPeriodEndDate 1-1-2018
 imeta add -C /nlmumc/projects/P000000010 ingestResource ${HOSTNAME%%.dh.local}Resource
 imeta add -C /nlmumc/projects/P000000010 OBI:0000103 psuppers
 imeta add -C /nlmumc/projects/P000000010 dataSteward opalmen
-imeta add -C /nlmumc/projects/P000000010 resource replRescAZM01
+imeta add -C /nlmumc/projects/P000000010 resource replRescUM01
 imeta add -C /nlmumc/projects/P000000010 responsibleCostCenter AZM-123456
 imeta add -C /nlmumc/projects/P000000010 storageQuotaGb 10
 imeta add -C /nlmumc/projects/P000000010 title "(MDL) Placeholder project"
@@ -160,10 +160,8 @@ ichmod -r write "service-mdl" /nlmumc/projects/P000000010
 ichmod -r read "datahub" /nlmumc/projects/P000000010
 # Add additional AVUs
 imeta add -C /nlmumc/projects/P000000010/C000000001 creator irods_bootstrap@docker.dev
-imeta add -C /nlmumc/projects/P000000010/C000000001 numFiles 4
-imeta add -C /nlmumc/projects/P000000010/C000000001 numFiles_resc_10107 4
-imeta add -C /nlmumc/projects/P000000010/C000000001 dcat:byteSize 554400
-imeta add -C /nlmumc/projects/P000000010/C000000001 dcat:byteSize_resc_10107 554400
+imeta add -C /nlmumc/projects/P000000010/C000000001 numFiles 1
+imeta add -C /nlmumc/projects/P000000010/C000000001 dcat:byteSize 380
 imeta add -C /nlmumc/projects/P000000010/C000000001 depositor jmelius
 imeta add -C /nlmumc/projects/P000000010/C000000001 latest_version_number 1
 imeta add -C /nlmumc/projects/P000000010/C000000001 PID 21.T12996/P000000010C000000001
