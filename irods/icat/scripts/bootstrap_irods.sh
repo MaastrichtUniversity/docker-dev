@@ -195,11 +195,11 @@ ichmod -r read "datahub" /nlmumc/projects/P000000011
 imeta add -C /nlmumc/projects/P000000011/C000000001 creator irods_bootstrap@docker.dev
 imeta add -C /nlmumc/projects/P000000011/C000000001 dcat:byteSize 0
 imeta add -C /nlmumc/projects/P000000011/C000000001 numFiles 0
-imeta add -C /nlmumc/projects/P000000010/C000000001 depositor jmelius
-imeta add -C /nlmumc/projects/P000000010/C000000001 latest_version_number 1
-imeta add -C /nlmumc/projects/P000000010/C000000001 PID 21.T12996/P000000011C000000001
-imeta add -C /nlmumc/projects/P000000010/C000000001 schemaName DataHub_general_schema
-imeta add -C /nlmumc/projects/P000000010/C000000001 schemaVersion 1.0.0
+imeta add -C /nlmumc/projects/P000000011/C000000001 depositor jmelius
+imeta add -C /nlmumc/projects/P000000011/C000000001 latest_version_number 1
+imeta add -C /nlmumc/projects/P000000011/C000000001 PID 21.T12996/P000000011C000000001
+imeta add -C /nlmumc/projects/P000000011/C000000001 schemaName DataHub_general_schema
+imeta add -C /nlmumc/projects/P000000011/C000000001 schemaVersion 1.0.0
 
 # Add data-steward specialty to certain users
 imeta add -u "pvanschay2" "specialty" "data-steward"
