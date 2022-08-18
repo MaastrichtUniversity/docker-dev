@@ -110,6 +110,8 @@ fi
 #logstash
 /etc/init.d/filebeat start
 
+touch /tmp/isReady.log
+
 # this script must end with a persistent foreground process
 # 'wait' will avoid bash behavior of ignoring signal traps if a child process
 # is running. See: https://stackoverflow.com/a/49511035/13203944

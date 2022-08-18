@@ -1,4 +1,4 @@
-version: '2'
+version: '2.4'
 services:
   mdr:
     build:
@@ -10,8 +10,14 @@ services:
         - SSL_ENV=${RIT_ENV}            # Whether to add our own CA-certificate to the CA-rootstore
     image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/mdr:${ENV_TAG}
     depends_on:
-      - keycloak
-      - mdr-db
+      mdr-db:
+          condition: service_started
+      sram-sync:
+          condition: service_started
+      epicpid:
+          condition: service_started
+      irods:
+          condition: service_healthy
     env_file:
       - irods.secrets.cfg # Using ONLY BIOPORTAL_API_KEY
     environment:
@@ -119,6 +125,7 @@ services:
       - ./keycloak/users.json:/tmp/users.json
       - ./keycloak/groups.json:/tmp/groups.json
       - ./keycloak/import.sh:/tmp/import.sh
+      - ./keycloak/isReady.sh:/tmp/isReady.sh
       - ./keycloak/startup.sh:/opt/jboss/startup-scripts/startup.sh
       - ./keycloak/datahub-keycloak-theme:/opt/jboss/keycloak/themes/datahub
     ports:
@@ -126,6 +133,12 @@ services:
       - "8080:8080"   # In order to bypass nginx-virtual-proxy while being redirected during Saml logins
     depends_on:
       - ldap
+    healthcheck:
+      test: sh /tmp/isReady.sh  || exit 1
+      interval: 10s
+      timeout: 5m
+      retries: 30
+      start_period: 2m
     networks:
       default:
         aliases:
@@ -324,8 +337,10 @@ services:
         - SSL_ENV=${RIT_ENV}          # Whether to add our own CA-certificate to the CA-rootstore
     image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/sram-sync:${ENV_TAG}
     depends_on:
-      - irods
-      - ldap
+      irods:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/sram-sync/:/opt/app
