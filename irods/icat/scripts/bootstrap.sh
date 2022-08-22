@@ -28,8 +28,7 @@ until psql -h irods-db.dh.local -U postgres -c '\l'; do
     sleep 1
 done
 
-# Update RIT rules
-cd /rules && make
+
 
 # Build RIT microservices
 mkdir -p /tmp/microservices-build && \
@@ -59,6 +58,12 @@ if [[ ! -e /var/run/irods_installed ]]; then
 
     # set up iRODS
     python /var/lib/irods/scripts/setup_irods.py < /etc/irods/setup_responses
+
+    # Update RIT rules
+    su irods -c "pip install --user --upgrade \"pip < 21.0\""
+    echo "from datahubirodsruleset import *
+    " > /etc/irods/core.py
+    su irods -c "cd /rules && make"
 
     # Add the ruleset-rit to server config
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-policies
@@ -94,7 +99,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     # Need to upgrade pip from 8.1.2 to 20.3.4
     # But pip2 cannot be upgrade to a version above 21 because of EOL
     su irods -c "pip install --user --upgrade \"pip < 21.0\""
-    su irods -c "pip install --user -r /rules/python/python_requirements.txt"
+    #su irods -c "pip install --user -r /rules/python/python_requirements.txt"
 
     su irods -c "/opt/irods/bootstrap_irods.sh"
 
