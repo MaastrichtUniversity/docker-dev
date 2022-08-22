@@ -146,18 +146,18 @@ imeta add -C /nlmumc/projects/P000000010 ingestResource ${HOSTNAME%%.dh.local}Re
 imeta add -C /nlmumc/projects/P000000010 OBI:0000103 psuppers
 imeta add -C /nlmumc/projects/P000000010 dataSteward opalmen
 imeta add -C /nlmumc/projects/P000000010 resource replRescAZM01
-imeta add -C /nlmumc/projects/P000000010 responsibleCostCenter AZM-123456
+#imeta add -C /nlmumc/projects/P000000010 responsibleCostCenter AZM-123456  #TODO un-comment after relevant rule policy is inside datahub-irods-ruleset
 imeta add -C /nlmumc/projects/P000000010 storageQuotaGb 10
 imeta add -C /nlmumc/projects/P000000010 title "(MDL) Placeholder project"
-imeta add -C /nlmumc/projects/P000000010 collectionMetadataSchemas "DataHub_general_schema"
-imeta add -C /nlmumc/projects/P000000010 enableContributorEditMetadata "false"
-imeta add -C /nlmumc/projects/P000000010 enableDropzoneSharing "false"
+#imeta add -C /nlmumc/projects/P000000010 collectionMetadataSchemas "DataHub_general_schema" #TODO un-comment after relevant rule policy is inside datahub-irods-ruleset
+#imeta add -C /nlmumc/projects/P000000010 enableContributorEditMetadata "false" #TODO un-comment after relevant rule policy is inside datahub-irods-ruleset
+#imeta add -C /nlmumc/projects/P000000010 enableDropzoneSharing "false" #TODO un-comment after relevant rule policy is inside datahub-irods-ruleset
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000010'" "*title='(MDL) Placeholder collection'"
-ichmod -r own "psuppers" /nlmumc/projects/P000000010
-# Data Steward gets manager rights
-ichmod -r own "opalmen" /nlmumc/projects/P000000010
-ichmod -r write "service-mdl" /nlmumc/projects/P000000010
-ichmod -r read "datahub" /nlmumc/projects/P000000010
+#ichmod -r own "psuppers" /nlmumc/projects/P000000010  #TODO un-comment after relevant rule policy is inside datahub-irods-ruleset
+## Data Steward gets manager rights
+#ichmod -r own "opalmen" /nlmumc/projects/P000000010  #TODO un-comment after relevant rule policy is inside datahub-irods-ruleset
+#ichmod -r write "service-mdl" /nlmumc/projects/P000000010  #TODO un-comment after relevant rule policy is inside datahub-irods-ruleset
+#ichmod -r read "datahub" /nlmumc/projects/P000000010  #TODO un-comment after relevant rule policy is inside datahub-irods-ruleset
 # Add additional AVUs
 imeta add -C /nlmumc/projects/P000000010/C000000001 creator irods_bootstrap@docker.dev
 imeta add -C /nlmumc/projects/P000000010/C000000001 dcat:byteSize 0
@@ -171,19 +171,19 @@ imeta add -C /nlmumc/projects/P000000011 ingestResource ${HOSTNAME%%.dh.local}Re
 imeta add -C /nlmumc/projects/P000000011 OBI:0000103 psuppers
 imeta add -C /nlmumc/projects/P000000011 dataSteward opalmen
 imeta add -C /nlmumc/projects/P000000011 resource replRescAZM01
-imeta add -C /nlmumc/projects/P000000011 responsibleCostCenter AZM-123456
+#imeta add -C /nlmumc/projects/P000000011 responsibleCostCenter AZM-123456  #TODO un-comment after relevant rule policy is inside datahub-irods-ruleset
 imeta add -C /nlmumc/projects/P000000011 storageQuotaGb 10
 imeta add -C /nlmumc/projects/P000000011 title "(HVC) Placeholder project"
-imeta add -C /nlmumc/projects/P000000011 collectionMetadataSchemas "DataHub_general_schema"
-imeta add -C /nlmumc/projects/P000000011 enableContributorEditMetadata "false"
-imeta add -C /nlmumc/projects/P000000011 enableDropzoneSharing "false"
+#imeta add -C /nlmumc/projects/P000000011 collectionMetadataSchemas "DataHub_general_schema"  #TODO un-comment after relevant rule policy is inside datahub-irods-ruleset
+#imeta add -C /nlmumc/projects/P000000011 enableContributorEditMetadata "false"  #TODO un-comment after relevant rule policy is inside datahub-irods-ruleset
+#imeta add -C /nlmumc/projects/P000000011 enableDropzoneSharing "false"  #TODO un-comment after relevant rule policy is inside datahub-irods-ruleset
 
 irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000011'" "*title='(HVC) Placeholder collection'"
-ichmod -r own "psuppers" /nlmumc/projects/P000000011
-# Data Steward gets manager rights
-ichmod -r own "opalmen" /nlmumc/projects/P000000011
-ichmod -r write "service-mdl" /nlmumc/projects/P000000011
-ichmod -r read "datahub" /nlmumc/projects/P000000011
+#ichmod -r own "psuppers" /nlmumc/projects/P000000011  #TODO un-comment after relevant rule policy is inside datahub-irods-ruleset
+## Data Steward gets manager rights
+#ichmod -r own "opalmen" /nlmumc/projects/P000000011  #TODO un-comment after relevant rule policy is inside datahub-irods-ruleset
+#ichmod -r write "service-mdl" /nlmumc/projects/P000000011  #TODO un-comment after relevant rule policy is inside datahub-irods-ruleset
+#ichmod -r read "datahub" /nlmumc/projects/P000000011  #TODO un-comment after relevant rule policy is inside datahub-irods-ruleset
 # Add additional AVUs
 imeta add -C /nlmumc/projects/P000000011/C000000001 creator irods_bootstrap@docker.dev
 imeta add -C /nlmumc/projects/P000000011/C000000001 dcat:byteSize 0
