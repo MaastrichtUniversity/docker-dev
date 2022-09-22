@@ -84,6 +84,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
+      #- ./externals/dh-utils:/opt/dh-utils
       - ./keycloak/users.json:/opt/irods/users.json
       - microservices-build-ubuntu:/tmp/microservices-build
 

@@ -11,7 +11,7 @@ set -e
 # This script (bootsrap.sh) is specified to be run like so in the Dockerfile:
 #    ENTRYPOINT [ "/opt/irods/bootstrap.sh" ]
 # This means (square brakets) it will be exec'ed, so it will take PID 1 in the
-# pertinenent PID namespace for this container.
+# pertinent PID namespace for this container.
 # Linux treats PID 1 process differently. For example, for SIGTERM, it they
 # haven't defined their own signal handler, signal is just ignored. So:
 # Goal: make 'docker-compose down' fast (otherwise it waits 10s before SIGKILL)
@@ -95,6 +95,8 @@ if [[ ! -e /var/run/irods_installed ]]; then
     # But pip2 cannot be upgrade to a version above 21 because of EOL
     su irods -c "pip install --user --upgrade \"pip < 21.0\""
     su irods -c "pip install --user -r /rules/python/python_requirements.txt"
+    # We use python-irodsclient for some dh-utils/irods scripts (and others)
+    su irods -c "pip3 install --user python-irodsclient==1.0.0"
 
     su irods -c "/opt/irods/bootstrap_irods.sh"
 

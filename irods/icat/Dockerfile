@@ -14,7 +14,8 @@ RUN wget -qO - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add 
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     postgresql-client-${ENV_POSTGRES_CLIENT_VERSION} \
     odbc-postgresql \
-    irods-database-plugin-postgres=${ENV_IRODS_VERSION}
+    irods-database-plugin-postgres=${ENV_IRODS_VERSION} \
+    python3-pip   # we install python-irodsclient via pip for irods
 
 # Temporary fix for the CAT_STATEMENT_TABLE_FULL error in iRODS 4.2.6
 # https://github.com/irods/irods/issues/4438
