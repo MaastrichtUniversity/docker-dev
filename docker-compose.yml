@@ -16,8 +16,6 @@ services:
     env_file:
       - irods.secrets.cfg # Using ONLY BIOPORTAL_API_KEY
       - mdr.env
-    environment:
-      ELASTIC_PASSWORD: ${ENV_ELASTIC_PASSWORD}
     volumes:
       - static_content:/opt/staticfiles
       # This volume bind gets the code that is in your rule-wrapper local repository and adds it to MDR. This allows 
