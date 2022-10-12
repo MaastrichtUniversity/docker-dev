@@ -12,9 +12,12 @@ services:
     depends_on:
       - keycloak
       - mdr-db
+      - elastic
     env_file:
       - irods.secrets.cfg # Using ONLY BIOPORTAL_API_KEY
       - mdr.env
+    environment:
+      ELASTIC_PASSWORD: ${ENV_ELASTIC_PASSWORD}
     volumes:
       - static_content:/opt/staticfiles
       # This volume bind gets the code that is in your rule-wrapper local repository and adds it to MDR. This allows 
@@ -30,6 +33,25 @@ services:
       common_default:
         aliases:
           - mdr.dh.local
+  elastic:
+    build:
+      context: elastic/
+      dockerfile: Dockerfile
+    environment:
+      ingest.geoip.downloader.enabled: "false"
+      discovery.type: single-node
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      ELASTIC_PASSWORD: ${ENV_ELASTIC_PASSWORD}
+      xpack.security.enabled: "true"
+      VIRTUAL_HOST: elastic.${RIT_ENV}.dh.unimaas.nl
+      VIRTUAL_PORT: 9200
+    networks:
+        default:
+          aliases:
+            - elastic.dh.local
+        common_default:
+          aliases:
+            - elastic.dh.local
   dh-faker:
     build:
       context: externals/dh-faker
