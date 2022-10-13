@@ -15,11 +15,11 @@ if ! [ $? -eq 0  ];then
     exit 1
 fi
 
-# Does the irods index already exist
+# Does the collection_metadata index already exist
 curl -X GET -u elastic:$ELASTIC_PASSWORD localhost:9200/collection_metadata?pretty | grep -q 404
 
 if [ $? -eq 0 ];then
-  echo "Index irods does not exist, creating"
+  echo "Index collection_metadata does not exist, creating"
   curl -X PUT -u elastic:$ELASTIC_PASSWORD localhost:9200/collection_metadata?pretty
 fi
 
