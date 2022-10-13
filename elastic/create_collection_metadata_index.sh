@@ -16,11 +16,11 @@ if ! [ $? -eq 0  ];then
 fi
 
 # Does the irods index already exist
-curl -X GET -u elastic:$ELASTIC_PASSWORD localhost:9200/irods?pretty | grep -q 404
+curl -X GET -u elastic:$ELASTIC_PASSWORD localhost:9200/collection_metadata?pretty | grep -q 404
 
 if [ $? -eq 0 ];then
   echo "Index irods does not exist, creating"
-  curl -X PUT -u elastic:$ELASTIC_PASSWORD localhost:9200/irods?pretty
+  curl -X PUT -u elastic:$ELASTIC_PASSWORD localhost:9200/collection_metadata?pretty
 fi
 
 
