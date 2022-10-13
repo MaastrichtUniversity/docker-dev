@@ -65,6 +65,10 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/add_env_var.py /etc/irods/server_config.json EPICPID_USER ${EPICPID_USER}
     /opt/irods/add_env_var.py /etc/irods/server_config.json EPICPID_PASSWORD ${EPICPID_PASSWORD}
     /opt/irods/add_env_var.py /etc/irods/server_config.json MDR_HANDLE_URL ${MDR_HANDLE_URL}
+    /opt/irods/add_env_var.py /etc/irods/server_config.json ELASTIC_HOST ${ELASTIC_HOST}
+    /opt/irods/add_env_var.py /etc/irods/server_config.json ELASTIC_PORT ${ELASTIC_PORT}
+    /opt/irods/add_env_var.py /etc/irods/server_config.json ELASTIC_PASSWORD ${ELASTIC_PASSWORD}
+
 
      # Dirty temp.password workaround
     sed -i 's/\"default_temporary_password_lifetime_in_seconds\"\:\ 120\,/\"default_temporary_password_lifetime_in_seconds\"\:\ '$IRODS_TEMP_PASSWORD_LIFETIME'\,/' /etc/irods/server_config.json
