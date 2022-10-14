@@ -43,6 +43,8 @@ services:
       xpack.security.enabled: "true"
       VIRTUAL_HOST: elastic.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 9200
+    volumes:
+      - elastic_metadata:/usr/share/elasticsearch/data
     networks:
         default:
           aliases:
@@ -353,3 +355,4 @@ volumes:
   static_content:
   webdav_logs:
   upload_logs:
+  elastic_metadata:
