@@ -13,7 +13,7 @@ services:
       - keycloak
       - mdr-db
     env_file:
-      - irods.secrets.cfg # Using ONLY BIOPORTAL_API_KEY
+      - irods.secrets.cfg
       - mdr.env
     volumes:
       - static_content:/opt/staticfiles
