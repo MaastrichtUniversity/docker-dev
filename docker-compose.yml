@@ -33,7 +33,7 @@ services:
           - mdr.dh.local
   elastic:
     build:
-      context: elastic/
+      context: externals/dh-elasticsearch
       dockerfile: Dockerfile
     environment:
       ingest.geoip.downloader.enabled: "false"
