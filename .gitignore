@@ -8,3 +8,6 @@ npm-debug.log
 package.json
 yarn.lock
 staging-data/*
+*.key
+*.crt
+.DS_STORE

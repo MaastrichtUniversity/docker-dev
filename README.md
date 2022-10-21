@@ -8,6 +8,8 @@ LDAP_PASSWORD=
 USE_SAMBA=false
 DATAVERSE_TOKEN=
 BIOPORTAL_API_KEY=
+JIRA_API_KEY=(JIRA_API_KEY)
+JIRA_API_USERNAME=(JIRA_EMAIL)
 ```
 
 * Specify the default values and versions for environment vars in the _.env_ file
