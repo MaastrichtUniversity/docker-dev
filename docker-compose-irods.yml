@@ -8,6 +8,7 @@ services:
       # These are read from the .env
       args:
         - ENV_IRODS_VERSION
+        - ENV_IRODS_PYTHON_PLUGIN_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_FILEBEAT_VERSION

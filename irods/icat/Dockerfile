@@ -5,6 +5,7 @@ FROM ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/irods-base:ubuntu
 
 # Load build arguments from environment
 ARG ENV_POSTGRES_CLIENT_VERSION
+ARG ENV_POSTGRES_VERSION
 ARG ENV_IRODS_VERSION
 
 # Make sure to use the same postgres version for client and irods-db server

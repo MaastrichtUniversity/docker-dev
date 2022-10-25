@@ -49,16 +49,19 @@ if [[ ! -e /var/run/irods_installed ]]; then
     # set up the iCAT database
     /opt/irods/setupdb.sh /etc/irods/setup_responses
 
-    # PoC: patch setup_irods.py to accept SSL settings
-    patch --dry-run -f /var/lib/irods/scripts/setup_irods.py /opt/irods/patch/add_ssl_setting_at_setup.patch
-    if [[ $? -ne 0 ]]; then
-        echo "Patching scripts/setup_irods.py is not possible with our patch"
-    else
-        patch -f /var/lib/irods/scripts/setup_irods.py /opt/irods/patch/add_ssl_setting_at_setup.patch
-    fi
+#    # PoC: patch setup_irods.py to accept SSL settings
+#    patch --dry-run -f /var/lib/irods/scripts/setup_irods.py /opt/irods/patch/add_ssl_setting_at_setup.patch
+#    if [[ $? -ne 0 ]]; then
+#        echo "Patching scripts/setup_irods.py is not possible with our patch"
+#    else
+#        patch -f /var/lib/irods/scripts/setup_irods.py /opt/irods/patch/add_ssl_setting_at_setup.patch
+#    fi
 
     # set up iRODS
+    echo "Running setup script"
     python /var/lib/irods/scripts/setup_irods.py < /etc/irods/setup_responses
+    echo "Starting iRODS"
+    service irods start
 
     # Add the ruleset-rit to server config
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-policies
@@ -72,7 +75,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     #sed -i 's/CS_NEG_DONT_CARE/CS_NEG_REQUIRE/g' /etc/irods/core.re
 
     # Add python rule engine to iRODS
-    /opt/irods/add_rule_engine.py /etc/irods/server_config.json python 1
+#    /opt/irods/add_rule_engine.py /etc/irods/server_config.json python 1
 
     # Add config variable to iRODS
     # NOTE: These lines are added to the server_config.json, but only go into effect when restarting the irods service!
@@ -90,12 +93,16 @@ if [[ ! -e /var/run/irods_installed ]]; then
     mkdir -p /mnt/SURF-Archive
     chown irods:irods /mnt/SURF-Archive
 
+    echo "Starting iRODS"
+    service irods restart
+    echo "Python requirements"
     # Python requirements
     # Need to upgrade pip from 8.1.2 to 20.3.4
     # But pip2 cannot be upgrade to a version above 21 because of EOL
     su irods -c "pip install --user --upgrade \"pip < 21.0\""
     su irods -c "pip install --user -r /rules/python/python_requirements.txt"
 
+    echo "bootstrap_irods"
     su irods -c "/opt/irods/bootstrap_irods.sh"
 
     # Change default resource to rootResc for irods-user
