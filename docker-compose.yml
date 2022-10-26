@@ -44,7 +44,7 @@ services:
       IRODS_HOST: irods.dh.local
       IRODS_USER: rods
       IRODS_PASS: irods
-      IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
+      IRODS_CLIENT_SERVER_POLICY: CS_NEG_REFUSE
       RABBITMQ_HOST: rabbitmq.dh.local
       RABBITMQ_USER: user
       RABBITMQ_PASS: password
@@ -256,7 +256,7 @@ services:
       IRODS_HOST: irods.dh.local
       IRODS_USER: rods
       IRODS_PASS: irods
-      IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
+      IRODS_CLIENT_SERVER_POLICY: CS_NEG_REFUSE
       DATAVERSE_HOST: https://demo.dataverse.nl
       DH_MAILER_HOST: mailer.dh.local
       DH_MAILER_USERNAME: user
@@ -290,7 +290,7 @@ services:
       IRODS_HOST: irods.dh.local
       IRODS_USER: rods
       IRODS_PASS: irods
-      IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
+      IRODS_CLIENT_SERVER_POLICY: CS_NEG_REFUSE
       LDAP_USER: cn=admin,dc=datahubmaastricht,dc=nl
       LDAP_PASS: admin
       LDAP_HOST: ldap://ldap.dh.local
