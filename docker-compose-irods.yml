@@ -70,6 +70,9 @@ services:
       EPICPID_URL: ${ENV_EPICPID_URL}
       EPICPID_USER: ${ENV_EPICPID_USER}
       EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
+      ELASTIC_PASSWORD: ${ENV_ELASTIC_PASSWORD}
+      ELASTIC_HOST: ${ENV_ELASTIC_HOST}
+      ELASTIC_PORT: ${ENV_ELASTIC_PORT}
       MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
       DEBUG_DH_BOOTSTRAP:  "no"
@@ -110,6 +113,9 @@ services:
       EPICPID_URL: ${ENV_EPICPID_URL}
       EPICPID_USER: ${ENV_EPICPID_USER}
       EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
+      ELASTIC_PASSWORD: ${ENV_ELASTIC_PASSWORD}
+      ELASTIC_HOST: ${ENV_ELASTIC_HOST}
+      ELASTIC_PORT: ${ENV_ELASTIC_PORT}
       MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
       DEBUG_DH_BOOTSTRAP:  "no"
@@ -154,6 +160,9 @@ services:
       EPICPID_URL: ${ENV_EPICPID_URL}
       EPICPID_USER: ${ENV_EPICPID_USER}
       EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
+      ELASTIC_PASSWORD: ${ENV_ELASTIC_PASSWORD}
+      ELASTIC_HOST: ${ENV_ELASTIC_HOST}
+      ELASTIC_PORT: ${ENV_ELASTIC_PORT}
       MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
       ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY1}
@@ -201,6 +210,9 @@ services:
       EPICPID_URL: ${ENV_EPICPID_URL}
       EPICPID_USER: ${ENV_EPICPID_USER}
       EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
+      ELASTIC_PASSWORD: ${ENV_ELASTIC_PASSWORD}
+      ELASTIC_HOST: ${ENV_ELASTIC_HOST}
+      ELASTIC_PORT: ${ENV_ELASTIC_PORT}
       MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
       ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY2}
@@ -243,6 +255,9 @@ services:
       EPICPID_URL: ${ENV_EPICPID_URL}
       EPICPID_USER: ${ENV_EPICPID_USER}
       EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
+      ELASTIC_PASSWORD: ${ENV_ELASTIC_PASSWORD}
+      ELASTIC_HOST: ${ENV_ELASTIC_HOST}
+      ELASTIC_PORT: ${ENV_ELASTIC_PORT}
       MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
       LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
       DEBUG_DH_BOOTSTRAP:  "no"
