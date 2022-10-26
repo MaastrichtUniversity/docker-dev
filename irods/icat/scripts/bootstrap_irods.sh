@@ -8,6 +8,7 @@ fi
 
 set -e
 
+echo "BOOTSTRAP Resources"
 ############
 ## Resources
 
@@ -34,6 +35,7 @@ imeta add -R rootResc NCIT:C88193 999
 imeta add -R demoResc NCIT:C88193 999
 imeta add -R arcRescSURF01 NCIT:C88193 0.02
 
+echo "BOOTSTRAP Collections"
 ##############
 ## Collections
 imkdir -p /nlmumc/ingest/zones
@@ -46,6 +48,7 @@ imkdir -p /nlmumc/projects
 # Create the group DH-ingest before the users, so we can add the new created users to it in the same loop
 iadmin mkgroup DH-ingest
 
+echo "BOOTSTRAP Users"
 ########
 ## Users
 
@@ -89,6 +92,7 @@ for user in $serviceAdmins; do
     imeta add -u "${user}" ldapSync false
 done
 
+echo "BOOTSTRAP Groups"
 #########
 ## Groups
 nanoscopy="pvanschay2"
@@ -115,6 +119,7 @@ for user in $scannexus; do
     iadmin atg scannexus "${user}"
 done
 
+echo "BOOTSTRAP Permissions"
 ##############
 ## Permissions
 
@@ -135,6 +140,7 @@ ichmod write DH-project-admins /nlmumc/projects
 # Note: creation of projects will be handled by the respective resource servers
 
 
+echo "BOOTSTRAP Special"
 ##########
 ## Special
 
@@ -152,7 +158,8 @@ imeta add -C /nlmumc/projects/P000000010 title "(MDL) Placeholder project"
 imeta add -C /nlmumc/projects/P000000010 collectionMetadataSchemas "DataHub_general_schema"
 imeta add -C /nlmumc/projects/P000000010 enableContributorEditMetadata "false"
 imeta add -C /nlmumc/projects/P000000010 enableDropzoneSharing "false"
-irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000010'" "*title='(MDL) Placeholder collection'"
+
+irule -r irods_rule_engine_plugin-irods_rule_language-instance -F /rules/projectCollection/createProjectCollection.r "*project='P000000010'" "*title='(MDL) Placeholder collection'"
 ichmod -r own "psuppers" /nlmumc/projects/P000000010
 # Data Steward gets manager rights
 ichmod -r own "opalmen" /nlmumc/projects/P000000010
@@ -178,7 +185,7 @@ imeta add -C /nlmumc/projects/P000000011 collectionMetadataSchemas "DataHub_gene
 imeta add -C /nlmumc/projects/P000000011 enableContributorEditMetadata "false"
 imeta add -C /nlmumc/projects/P000000011 enableDropzoneSharing "false"
 
-irule -F /rules/projectCollection/createProjectCollection.r "*project='P000000011'" "*title='(HVC) Placeholder collection'"
+irule -r irods_rule_engine_plugin-irods_rule_language-instance -F /rules/projectCollection/createProjectCollection.r "*project='P000000011'" "*title='(HVC) Placeholder collection'"
 ichmod -r own "psuppers" /nlmumc/projects/P000000011
 # Data Steward gets manager rights
 ichmod -r own "opalmen" /nlmumc/projects/P000000011
