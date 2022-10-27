@@ -75,7 +75,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     #sed -i 's/CS_NEG_DONT_CARE/CS_NEG_REQUIRE/g' /etc/irods/core.re
 
     # Add python rule engine to iRODS
-    /opt/irods/add_rule_engine.py /etc/irods/server_config.json python 1
+    /opt/irods/add_rule_engine.py /etc/irods/server_config.json python 0
 
     # Add config variable to iRODS
     # NOTE: These lines are added to the server_config.json, but only go into effect when restarting the irods service!
@@ -93,9 +93,6 @@ if [[ ! -e /var/run/irods_installed ]]; then
     mkdir -p /mnt/SURF-Archive
     chown irods:irods /mnt/SURF-Archive
 
-    echo "Starting iRODS"
-    service irods restart
-    echo "Python requirements"
     # Python requirements
     # Need to upgrade pip from 8.1.2 to 20.3.4
     # But pip2 cannot be upgrade to a version above 21 because of EOL
@@ -114,6 +111,13 @@ else
     service irods start
 fi
 
+# Create secrets file
+touch /var/lib/irods/minio.keypair && chown irods /var/lib/irods/minio.keypair && chmod 400 /var/lib/irods/minio.keypair
+echo ${ENV_S3_ACCESS_KEY} >  /var/lib/irods/minio.keypair
+echo ${ENV_S3_SECRET_KEY} >> /var/lib/irods/minio.keypair
+
+echo "Restarting iRODS"
+service irods restart
 #logstash
 /etc/init.d/filebeat start
 

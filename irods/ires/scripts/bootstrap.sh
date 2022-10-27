@@ -61,7 +61,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     python /var/lib/irods/scripts/setup_irods.py < /etc/irods/setup_responses
     echo "Starting iRODS"
     service irods start
-    sleep 30
+    sleep 10
 
     # Add the ruleset-rit to server config
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-policies
@@ -72,7 +72,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-tapeArchive
 
     # Add python rule engine to iRODS
-    /opt/irods/add_rule_engine.py /etc/irods/server_config.json python 1
+    /opt/irods/add_rule_engine.py /etc/irods/server_config.json python 0
 
     # Add config variable to iRODS
     # NOTE: These lines are added to the server_config.json, but only go into effect when restarting the irods service!
@@ -110,6 +110,11 @@ if [[ ! -e /var/run/irods_installed ]]; then
 else
     service irods start
 fi
+
+# Create secrets file
+touch /var/lib/irods/minio.keypair && chown irods /var/lib/irods/minio.keypair && chmod 400 /var/lib/irods/minio.keypair
+echo ${ENV_S3_ACCESS_KEY} >  /var/lib/irods/minio.keypair
+echo ${ENV_S3_SECRET_KEY} >> /var/lib/irods/minio.keypair
 
 # logstash
 /etc/init.d/filebeat start

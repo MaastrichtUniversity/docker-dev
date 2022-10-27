@@ -20,6 +20,7 @@ ARG ENV_IRODS_PYTHON_PLUGIN_VERSION
 ARG ENV_IRODS_EXT_CLANG_VERSION
 ARG ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
 ARG ENV_FILEBEAT_VERSION
+ARG ENV_IRODS_RESC_PLUGIN_S3_VERSION
 
 # Use apt-get NL mirrors and install packages
 RUN sed --in-place --regexp-extended "s/(\/\/)(archive\.ubuntu)/\1nl.\2/" /etc/apt/sources.list && \
@@ -71,7 +72,8 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key a
     irods-externals-jansson2.7-0 \
     irods-externals-json3.7.3-0 \
     # packages required for python rule engine
-    irods-rule-engine-plugin-python=${IRODS_PYTHON_PLUGIN_VERSION}
+    irods-rule-engine-plugin-python=${IRODS_PYTHON_PLUGIN_VERSION} \
+    irods-resource-plugin-s3=${ENV_IRODS_RESC_PLUGIN_S3_VERSION}
 
 # Temporary fix needed with iRODS 4.2.6, after upgrading this shouldnt be necessary anymore
 # https://github.com/agracio/electron-edge-js/issues/16
