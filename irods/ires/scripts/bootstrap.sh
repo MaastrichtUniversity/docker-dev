@@ -72,7 +72,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-tapeArchive
 
     # Add python rule engine to iRODS
-    /opt/irods/add_rule_engine.py /etc/irods/server_config.json python 0
+    /opt/irods/add_rule_engine.py /etc/irods/server_config.json python 1
 
     # Add config variable to iRODS
     # NOTE: These lines are added to the server_config.json, but only go into effect when restarting the irods service!
