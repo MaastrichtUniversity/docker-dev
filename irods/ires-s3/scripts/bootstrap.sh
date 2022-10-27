@@ -33,18 +33,22 @@ if [[ ! -e /var/run/irods_installed ]]; then
     fi
 
     # PoC: patch setup_irods.py to accept SSL settings
-    patch --dry-run -f /var/lib/irods/scripts/setup_irods.py /opt/irods/patch/add_ssl_setting_at_setup.patch
-    if [[ $? -ne 0 ]]; then
-        echo "Patching scripts/setup_irods.py is not possible with our patch"
-    else
-        patch -f /var/lib/irods/scripts/setup_irods.py /opt/irods/patch/add_ssl_setting_at_setup.patch
-    fi
+#    patch --dry-run -f /var/lib/irods/scripts/setup_irods.py /opt/irods/patch/add_ssl_setting_at_setup.patch
+#    if [[ $? -ne 0 ]]; then
+#        echo "Patching scripts/setup_irods.py is not possible with our patch"
+#    else
+#        patch -f /var/lib/irods/scripts/setup_irods.py /opt/irods/patch/add_ssl_setting_at_setup.patch
+#    fi
 
     # File names for keys and certificates differ from host to host
     sed -i "s/ires-s3.dh.local/$HOSTNAME/g" /etc/irods/setup_responses
 
     # set up iRODS
+    echo "Running setup script"
     python /var/lib/irods/scripts/setup_irods.py < /etc/irods/setup_responses
+    echo "Starting iRODS"
+    service irods start
+    sleep 10
 
     # Add the ruleset-rit to server config
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-policies
@@ -55,7 +59,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/prepend_ruleset.py /etc/irods/server_config.json rit-tapeArchive
 
     # Add python rule engine to iRODS
-    /opt/irods/add_rule_engine.py /etc/irods/server_config.json python 1
+    /opt/irods/add_rule_engine.py /etc/irods/server_config.json python 0
 
     # Add config variable to iRODS
     # NOTE: These lines are added to the server_config.json, but only go into effect when restarting the irods service!
