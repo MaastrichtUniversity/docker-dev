@@ -30,5 +30,9 @@ ADD ./test-dev-ssl-certs/* /etc/irods/SSL/
 # Add bootstrap scripts
 ADD ./scripts/* /opt/irods/
 
+# Create iRODS pre-ingest logs folder & give ownership to the irods user account
+RUN mkdir -p /var/log/irods-pre-ingest
+RUN chmod 777 /var/log/irods-pre-ingest
+
 EXPOSE 1248 1247 8000
 CMD ["dockerize", "-wait", "tcp://irods.dh.local:1247", "-timeout", "200s", "/opt/irods/bootstrap.sh"]
