@@ -29,7 +29,6 @@ imeta add -R replRescAZM01 NCIT:C88193 0
 
 for i in {01..2}; do
     PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g'| sed 's/,/;/g')
-#    project=$(irule -r irods_rule_engine_plugin-python-instance -F /rules/tests/test_create_new_project.r  "*ingestResource='${HOSTNAME%%.dh.local}Resource'" "*resource='replRescAZM01'" "*title='(azM) ${PROJECTNAME}'" "*principalInvestigator='mcoonen'" "*dataSteward='opalmen'" "*responsibleCostCenter='AZM-123456'" "*extraParameters='{\"authorizationPeriodEndDate\":\"1-1-2018\", \"dataRetentionPeriodEndDate\":\"1-1-2018\", \"storageQuotaGb\":\"10\", \"enableOpenAccessExport\":\"false\", \"enableArchive\":\"true\", \"enableUnarchive\":\"true\",  \"enableDropzoneSharing\":\"true\", \"collectionMetadataSchemas\":\"DataHub_general_schema\"}'" | jq -r '.project_id')
     project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"${HOSTNAME%%.dh.local}Resource,replRescAZM01,(azM) ${PROJECTNAME},mcoonen,opalmen,AZM-123456,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
 
     imeta set -C ${project} authorizationPeriodEndDate '1-1-2018'
