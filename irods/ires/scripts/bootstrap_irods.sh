@@ -42,59 +42,84 @@ imeta add -R replRescUM01 NCIT:C88193 0.130
 imeta add -C /nlmumc/projects latest_project_number 11
 
 for i in {01..2}; do
-    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -r irods_rule_engine_plugin-python-instance -F /rules/tests/test_create_new_project.r "*ingestResource='${HOSTNAME%%.dh.local}Resource'" "*resource='replRescUM01'" "*title='${PROJECTNAME}'" "*principalInvestigator='pvanschay2'" "*dataSteward='pvanschay2'" "*responsibleCostCenter='UM-12345678901B'"  "*extraParameters='{\"authorizationPeriodEndDate\":\"1-1-2018\", \"dataRetentionPeriodEndDate\":\"1-1-2018\", \"storageQuotaGb\":\"10\", \"enableOpenAccessExport\":\"false\", \"enableArchive\":\"true\", \"enableUnarchive\":\"true\",  \"enableDropzoneSharing\":\"true\", \"collectionMetadataSchemas\":\"DataHub_general_schema,DataHub_extended_schema\"}'"  | jq -r '.project_id')
+    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g'| sed 's/,/;/g')
+    echo $PROJECTNAME
+    project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"${HOSTNAME%%.dh.local}Resource,replRescUM01,${PROJECTNAME},pvanschay2,pvanschay2,UM-12345678901B,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
+    echo "m4i-nanoscopy"
+    echo $project
+    imeta set -C ${project} authorizationPeriodEndDate '1-1-2018'
+    imeta set -C ${project} dataRetentionPeriodEndDate '1-1-2018'
+    imeta set -C ${project} storageQuotaGb '10'
+    imeta set -C ${project} enableOpenAccessExport 'false'
+    imeta set -C ${project} enableArchive 'true'
+    imeta set -C ${project} enableUnarchive 'true'
+    imeta set -C ${project} enableDropzoneSharing 'true'
+    imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema,DataHub_extended_schema'
 
     # Manage access
-    ichmod -r own "pvanschay2" /nlmumc/projects/${project}
+    ichmod -r own "pvanschay2" ${project}
 
     # Data Steward gets manager rights
-    ichmod -r own "pvanschay2" /nlmumc/projects/${project}
+    ichmod -r own "pvanschay2" ${project}
 
     # Contributor access
-    ichmod -r write m4i-nanoscopy /nlmumc/projects/${project}
+    ichmod -r write m4i-nanoscopy ${project}
 
     # Viewer access
 done
 
 for i in {01..2}; do
-    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -r irods_rule_engine_plugin-python-instance -F /rules/tests/test_create_new_project.r "*ingestResource='${HOSTNAME%%.dh.local}Resource'" "*resource='replRescUM01'" "*title='${PROJECTNAME}'" "*principalInvestigator='psuppers'" "*dataSteward='opalmen'" "*responsibleCostCenter='UM-01234567890X'" "*extraParameters='{\"authorizationPeriodEndDate\":\"1-1-2018\", \"dataRetentionPeriodEndDate\":\"1-1-2018\", \"storageQuotaGb\":\"10\", \"enableOpenAccessExport\":\"false\", \"enableArchive\":\"true\", \"enableUnarchive\":\"true\",  \"enableDropzoneSharing\":\"true\", \"collectionMetadataSchemas\":\"DataHub_general_schema,DataHub_extended_schema\"}'"   | jq -r '.project_id')
+    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g'| sed 's/,/;/g')
+    echo $PROJECTNAME
+    project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"${HOSTNAME%%.dh.local}Resource,replRescUM01,${PROJECTNAME},psuppers,opalmen,UM-01234567890X,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
+    echo "datahub"
+    echo $project
+    imeta set -C ${project} authorizationPeriodEndDate '1-1-2018'
+    imeta set -C ${project} dataRetentionPeriodEndDate '1-1-2018'
+    imeta set -C ${project} storageQuotaGb '10'
+    imeta set -C ${project} enableOpenAccessExport 'false'
+    imeta set -C ${project} enableArchive 'true'
+    imeta set -C ${project} enableUnarchive 'true'
+    imeta set -C ${project} enableDropzoneSharing 'true'
+    imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema,DataHub_extended_schema'
 
     # Manage access
-    ichmod -r own "psuppers" /nlmumc/projects/${project}
+    ichmod -r own "psuppers" ${project}
 
     # Data Steward gets manager rights
-    ichmod -r own "opalmen" /nlmumc/projects/${project}
+    ichmod -r own "opalmen" ${project}
 
     # Contributor access
-    ichmod -r write datahub /nlmumc/projects/${project}
-
-    # Enable archiving for this project
-    imeta set -C /nlmumc/projects/${project} enableArchive true
-    # Enable export to Open Access for this project
-    imeta set -C /nlmumc/projects/${project} enableOpenAccessExport true
-    # Set the destination archive resource
-    imeta set -C /nlmumc/projects/${project} archiveDestinationResource arcRescSURF01
+    ichmod -r write datahub ${project}
 
     # Viewer access
 done
 
 for i in {01..1}; do
-    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -r irods_rule_engine_plugin-python-instance -F /rules/tests/test_create_new_project.r  "*ingestResource='${HOSTNAME%%.dh.local}Resource'" "*resource='replRescUM01'" "*title='(ScaNxs) ${PROJECTNAME}'" "*principalInvestigator='mcoonen'" "*dataSteward='opalmen'" "*responsibleCostCenter='UM-01234567890X'" "*extraParameters='{\"authorizationPeriodEndDate\":\"1-1-2018\", \"dataRetentionPeriodEndDate\":\"1-1-2018\", \"storageQuotaGb\":\"10\", \"enableOpenAccessExport\":\"false\", \"enableArchive\":\"true\", \"enableUnarchive\":\"true\",  \"enableDropzoneSharing\":\"true\", \"collectionMetadataSchemas\":\"DataHub_general_schema\"}'"    | jq -r '.project_id')
+    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g'| sed 's/,/;/g')
+    echo $PROJECTNAME
+    project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"${HOSTNAME%%.dh.local}Resource,replRescUM01,(ScaNxs) ${PROJECTNAME},psuppers,opalmen,UM-01234567890X,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
+    echo "scannexus"
+    echo $project
+    imeta set -C ${project} authorizationPeriodEndDate '1-1-2018'
+    imeta set -C ${project} dataRetentionPeriodEndDate '1-1-2018'
+    imeta set -C ${project} storageQuotaGb '10'
+    imeta set -C ${project} enableOpenAccessExport 'false'
+    imeta set -C ${project} enableArchive 'true'
+    imeta set -C ${project} enableUnarchive 'true'
+    imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema'
 
     # Manage access
-    ichmod -r own "mcoonen" /nlmumc/projects/${project}
+    ichmod -r own "mcoonen" ${project}
 
     # Data Steward gets manager rights
-    ichmod -r own "opalmen" /nlmumc/projects/${project}
+    ichmod -r own "opalmen" ${project}
 
     # Contributor access
-    ichmod -r write scannexus /nlmumc/projects/${project}
+    ichmod -r write scannexus ${project}
 
     # Viewer access
-    ichmod -r read datahub /nlmumc/projects/${project}
+    ichmod -r read datahub ${project}
 done
 
 ##########
