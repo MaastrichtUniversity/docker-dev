@@ -39,17 +39,25 @@ imeta add -R ${HOSTNAME%%.dh.local}Resource NCIT:C88193 999
 ## Projects and project permissions
 
 for i in {01..2}; do
-    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g')
-    project=$(irule -r irods_rule_engine_plugin-python-instance -F /rules/tests/test_create_new_project.r  "*ingestResource='iresResource'" "*resource='replRescUMCeph01'" "*title='(s3) ${PROJECTNAME}'" "*principalInvestigator='psuppers'" "*dataSteward='pvanschay2'" "*responsibleCostCenter='UM-01234567890R'" "*extraParameters='{\"authorizationPeriodEndDate\":\"1-1-2018\", \"dataRetentionPeriodEndDate\":\"1-1-2018\", \"storageQuotaGb\":\"10\", \"enableOpenAccessExport\":\"false\", \"enableArchive\":\"true\", \"enableUnarchive\":\"true\",  \"enableDropzoneSharing\":\"true\", \"collectionMetadataSchemas\":\"DataHub_general_schema\"}'"| jq -r '.project_id')
+    PROJECTNAME=$(fortune | head -n 1 | sed 's/\x27/ /g'| sed 's/,/;/g')
+    project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"iresResource,replRescUMCeph01,(s3) ${PROJECTNAME},psuppers,pvanschay2,UM-01234567890R,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
+
+    imeta set -C ${project} authorizationPeriodEndDate '1-1-2018'
+    imeta set -C ${project} dataRetentionPeriodEndDate '1-1-2018'
+    imeta set -C ${project} storageQuotaGb '10'
+    imeta set -C ${project} enableOpenAccessExport 'false'
+    imeta set -C ${project} enableArchive 'true'
+    imeta set -C ${project} enableUnarchive 'true'
+    imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema'
 
     # Manage access
-    ichmod -r own "psuppers" /nlmumc/projects/${project}
+    ichmod -r own "psuppers" ${project}
 
     # Data Steward gets manager rights
-    ichmod -r own "pvanschay2" /nlmumc/projects/${project}
+    ichmod -r own "pvanschay2" ${project}
 
     # Contributor access
-    ichmod -r write datahub /nlmumc/projects/${project}
+    ichmod -r write datahub ${project}
 
     # Viewer access
 done
