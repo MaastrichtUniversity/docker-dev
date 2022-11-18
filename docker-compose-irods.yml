@@ -74,6 +74,7 @@ services:
       - ./externals/dh-irods/icat/patch/genquery.py:/etc/irods/genquery.py
       - ./externals/dh-irods/icat/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
       - ./externals/dh-irods/icat/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
+      - ./externals/dh-irods/icat/DMFS:/opt/irods/DMFS
       - ./keycloak/users.json:/opt/irods/users.json
       - microservices-build:/tmp/microservices-build
 
