@@ -1,7 +1,0 @@
-#!/bin/sh
-# echo "execCmdRule: "$execCmdRule
-
-echo "0"
-
-
-exit 0

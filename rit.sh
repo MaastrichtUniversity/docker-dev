@@ -37,6 +37,7 @@ externals/irods-rule-wrapper https://github.com/MaastrichtUniversity/irods-rule-
 externals/irods-open-access-repo https://github.com/MaastrichtUniversity/irods-open-access-repo.git
 externals/sram-sync https://github.com/MaastrichtUniversity/sram-sync.git
 externals/dh-faker https://github.com/MaastrichtUniversity/dh-faker.git
+externals/dh-irods https://github.com/MaastrichtUniversity/dh-irods.git
 externals/dh-python-irods-utils https://github.com/MaastrichtUniversity/dh-python-irods-utils.git
 externals/cedar-parsing-utils https://github.com/MaastrichtUniversity/cedar-parsing-utils.git"
 
