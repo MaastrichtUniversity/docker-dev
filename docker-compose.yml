@@ -143,7 +143,7 @@ services:
         - FILEBEAT_CONFIG_FILE=filebeat.yml
     image:  ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/davrods:${ENV_TAG}
     depends_on:
-      - irods
+      - icat
     environment:
       VIRTUAL_HOST: download.${RIT_ENV}.dh.unimaas.nl
       LOGSPOUT: ignore
@@ -169,7 +169,7 @@ services:
         - FILEBEAT_CONFIG_FILE=filebeat-upload.yml
     image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/davrods-upload:${ENV_TAG}
     depends_on:
-      - irods
+      - icat
     environment:
       VIRTUAL_HOST: upload.${RIT_ENV}.dh.unimaas.nl
       LOGSPOUT: ignore
@@ -208,36 +208,6 @@ services:
     volumes:
       - ./externals/epicpid-microservice/:/opt/app
       - /etc/localtime:/etc/localtime:ro
-  minio1:
-    image: minio/minio:RELEASE.2019-05-23T00-29-34Z
-    environment:
-      VIRTUAL_HOST: minio1.${RIT_ENV}.rit.unimaas.nl
-      MINIO_ACCESS_KEY: ${ENV_S3_ACCESS_KEY1}
-      MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY1}
-    entrypoint: sh
-    command: -c 'mkdir -p /data/dh-irods-bucket-dev && /usr/bin/minio server /data'
-    networks:
-      default:
-        aliases:
-          - minio1.dh.local
-      common_default:
-        aliases:
-          - minio1.dh.local
-  minio2:
-    image: minio/minio:RELEASE.2019-05-23T00-29-34Z
-    environment:
-      VIRTUAL_HOST: minio2.${RIT_ENV}.rit.unimaas.nl
-      MINIO_ACCESS_KEY: ${ENV_S3_ACCESS_KEY2}
-      MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
-    entrypoint: sh
-    command: -c 'mkdir -p /data/dh-irods-bucket-dev && /usr/bin/minio server /data'
-    networks:
-      default:
-        aliases:
-          - minio2.dh.local
-      common_default:
-        aliases:
-          - minio2.dh.local
   open-access-worker:
     build:
       context: ./externals/irods-open-access-repo
@@ -280,7 +250,7 @@ services:
         - SSL_ENV=${RIT_ENV}          # Whether to add our own CA-certificate to the CA-rootstore
     image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/sram-sync:${ENV_TAG}
     depends_on:
-      - irods
+      - icat
       - ldap
     volumes:
       - /etc/localtime:/etc/localtime:ro
