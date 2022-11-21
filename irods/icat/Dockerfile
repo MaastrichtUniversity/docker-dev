@@ -17,11 +17,6 @@ RUN wget -qO - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add 
     odbc-postgresql \
     irods-database-plugin-postgres=${ENV_IRODS_VERSION}
 
-# Temporary fix for the CAT_STATEMENT_TABLE_FULL error in iRODS 4.2.6
-# https://github.com/irods/irods/issues/4438
-# https://github.com/irods/irods_rule_engine_plugin_python/commit/9f957078569c75a4f539c297138a0bb0d3e1824c
-ADD ./patch/genquery.py /etc/irods/genquery.py
-
 # Add DMFS fakers (SURFsara tape)
 ADD ./DMFS/* /var/lib/irods/msiExecCmd_bin/
 RUN chmod 755 /var/lib/irods/msiExecCmd_bin/dm*

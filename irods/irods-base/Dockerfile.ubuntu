@@ -75,10 +75,6 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | sudo apt-key a
     irods-rule-engine-plugin-python=${IRODS_PYTHON_PLUGIN_VERSION} \
     irods-resource-plugin-s3=${ENV_IRODS_RESC_PLUGIN_S3_VERSION}
 
-# Temporary fix needed with iRODS 4.2.6, after upgrading this shouldnt be necessary anymore
-# https://github.com/agracio/electron-edge-js/issues/16
-RUN ln -s /usr/include/locale.h /usr/include/xlocale.h
-
 # Filebeat install
 RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${ENV_FILEBEAT_VERSION}-amd64.deb -O /tmp/filebeat.deb \
  && dpkg -i /tmp/filebeat.deb
