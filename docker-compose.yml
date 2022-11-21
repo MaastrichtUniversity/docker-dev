@@ -41,7 +41,7 @@ services:
       - ./staging-data:/mnt/ingest
     command: "python -c pass"
     environment:
-      IRODS_HOST: irods.dh.local
+      IRODS_HOST: icat.dh.local
       IRODS_USER: rods
       IRODS_PASS: irods
       IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
@@ -223,7 +223,7 @@ services:
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_USER: user
       RABBITMQ_PASS: password
-      IRODS_HOST: irods.dh.local
+      IRODS_HOST: icat.dh.local
       IRODS_USER: rods
       IRODS_PASS: irods
       IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
@@ -257,7 +257,7 @@ services:
       - ./externals/sram-sync/:/opt/app
     environment:
       LOG_LEVEL: INFO
-      IRODS_HOST: irods.dh.local
+      IRODS_HOST: icat.dh.local
       IRODS_USER: rods
       IRODS_PASS: irods
       IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE

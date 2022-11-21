@@ -37,7 +37,7 @@ services:
         - ENV_IRODS_UID
     depends_on:
        - irods-db
-    hostname: irods.dh.local
+    hostname: icat.dh.local
     ports:
       - "1247:1247"
       - "1248:1248"
@@ -53,8 +53,8 @@ services:
       ENV_IRODS_DB_IRODS_PASSWORD: pgB3rKhqLGFLora
       # password for postgres user 'irods'
       ENV_IRODS_DB_POSTGRES_PASSWORD: foobar
-      ENV_IRODS_SSL_CERT: /etc/irods/SSL/irods.dh.local.crt
-      ENV_IRODS_SSL_KEY: /etc/irods/SSL/irods.dh.local.key
+      ENV_IRODS_SSL_CERT: /etc/irods/SSL/icat.dh.local.crt
+      ENV_IRODS_SSL_KEY: /etc/irods/SSL/icat.dh.local.key
       ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
       ENV_IRODS_SSL_CA_CERFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
       ENV_FILEBEAT_PRIMARY_TAG: ICAT
@@ -62,10 +62,10 @@ services:
     networks:
       default:
         aliases:
-          - irods.dh.local
+          - icat.dh.local
       common_default:
         aliases:
-          - irods.dh.local
+          - icat.dh.local
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/irods-ruleset:/rules
@@ -91,14 +91,14 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
-    hostname: ires.dh.local
+    hostname: ires-hnas-um.dh.local
     env_file:
       - .env
       - irods.secrets.cfg
     environment:
       RIT_ENV: dev
-      ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires.dh.local.crt
-      ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires.dh.local.key
+      ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-hnas-um.dh.local.crt
+      ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-hnas-um.dh.local.key
       ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
       ENV_IRODS_SSL_CA_CERFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
       ENV_FILEBEAT_PRIMARY_TAG: IRES
@@ -119,10 +119,10 @@ services:
     networks:
       default:
         aliases:
-          - ires.dh.local
+          - ires-hnas-um.dh.local
       common_default:
         aliases:
-          - ires.dh.local
+          - ires-hnas-um.dh.local
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
@@ -150,15 +150,15 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
-    hostname: ires-centos.dh.local
+    hostname: ires-hnas-azm.dh.local
     env_file:
       - .env
       - irods.secrets.cfg
     environment:
       RIT_ENV: dev
       # TODO: Not centos any more... change name everywhere
-      ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-centos.dh.local.crt
-      ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-centos.dh.local.key
+      ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-hnas-azm.dh.local.crt
+      ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-hnas-azm.dh.local.key
       ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
       ENV_IRODS_SSL_CA_CERFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
       ENV_FILEBEAT_PRIMARY_TAG: IRES
@@ -179,14 +179,14 @@ services:
       # TODO: This right?
       ENV_IRODS_COOR_RESC_PRICING: "0"
       # TODO: same as before.. not centos anymore
-      VIRTUAL_HOST: ires-centos.${RIT_ENV}.rit.unimaas.nl
+      VIRTUAL_HOST: ires-hnas-azm.${RIT_ENV}.rit.unimaas.nl
     networks:
       default:
         aliases:
-          - ires-centos.dh.local
+          - ires-hnas-azm.dh.local
       common_default:
         aliases:
-          - ires-centos.dh.local
+          - ires-hnas-azm.dh.local
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
@@ -213,14 +213,14 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
-    hostname: ires-s3-1.dh.local
+    hostname: ires-ceph-ac.dh.local
     env_file: .env
     depends_on:
       - minio1
     environment:
       RIT_ENV: dev
-      ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-s3-1.dh.local.crt
-      ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-s3-1.dh.local.key
+      ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-ceph-ac.dh.local.crt
+      ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-ceph-ac.dh.local.key
       ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
       ENV_IRODS_SSL_CA_CERFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
       # Yet another work around :( READ corresponding entry comment in ires-ceph-gl
@@ -245,10 +245,10 @@ services:
     networks:
       default:
         aliases:
-          - ires-s3-1.dh.local
+          - ires-ceph-ac.dh.local
       common_default:
         aliases:
-          - ires-s3-1.dh.local
+          - ires-ceph-ac.dh.local
   ires-ceph-gl:
     build:
       context: externals/dh-irods/irods-base/
@@ -262,14 +262,14 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
-    hostname: ires-s3-2.dh.local
+    hostname: ires-ceph-gl.dh.local
     env_file: .env
     depends_on:
       - minio2
     environment:
       RIT_ENV: dev
-      ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-s3-2.dh.local.crt
-      ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-s3-2.dh.local.key
+      ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-ceph-gl.dh.local.crt
+      ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-ceph-gl.dh.local.key
       ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
       ENV_IRODS_SSL_CA_CERFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
       # Yet another work around :(
@@ -309,10 +309,10 @@ services:
     networks:
       default:
         aliases:
-          - ires-s3-2.dh.local
+          - ires-ceph-gl.dh.local
       common_default:
         aliases:
-          - ires-s3-2.dh.local
+          - ires-ceph-gl.dh.local
   minio1:
     image: minio/minio:RELEASE.2019-05-23T00-29-34Z
     environment:
