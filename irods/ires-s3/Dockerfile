@@ -19,8 +19,7 @@ RUN apt-get update && \
     libxml2-dev \
     lsb-release \
     python-tz \
-    uuid-dev \
-    irods-resource-plugin-s3=${ENV_IRODS_RESC_PLUGIN_S3_VERSION}
+    uuid-dev
 
 # Dockerize
 RUN curl -fSL https://github.com/jwilder/dockerize/releases/download/${ENV_DOCKERIZE_VERSION}/dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz -o dockerize-linux-amd64-${ENV_DOCKERIZE_VERSION}.tar.gz \
