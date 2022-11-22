@@ -129,7 +129,8 @@ services:
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
-      - ./externals/dh-irods/ires-hnas/patch/setcifsacl:/usr/bin/setcifsacl_patched
+      - ./staging-data/zones:/mnt/ingest/zones
+      - ./staging-data/direct-ingest:/mnt/stagingResc01
       - ./externals/dh-irods/ires-hnas/test-dev-ssl-certs/:/opt/certificates:ro
       - ./externals/dh-irods/ires-hnas/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
       - ./externals/dh-irods/ires-hnas/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
@@ -193,7 +194,7 @@ services:
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
-      - ./externals/dh-irods/ires-hnas/patch/setcifsacl:/usr/bin/setcifsacl_patched
+      - ./staging-data/zones:/mnt/ingest/zones
       - ./externals/dh-irods/ires-hnas/test-dev-ssl-certs/:/opt/certificates:ro
       - ./externals/dh-irods/ires-hnas/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
       - ./externals/dh-irods/ires-hnas/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
