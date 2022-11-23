@@ -172,8 +172,7 @@ services:
       # Base name for 'storage' resources
       ENV_IRODS_STOR_RESC_NAME: "AZM-storage"
       # Comment for ${HOSTNAME}Resource
-      # TODO: We no longer run this in CENTOS, not changing now just in case we use it somewhere?
-      ENV_IRODS_HOST_RESC_COMMENT: "AZM-CENTOS-INGEST-RESOURCE"
+      ENV_IRODS_HOST_RESC_COMMENT: "AZM-UBUNTU-INGEST-RESOURCE"
       # Comment for 'coordinating' resource
       ENV_IRODS_COOR_RESC_COMMENT: "Replicated-resource-for-AZM"
       # Pricing AVU for 'coordinating' resource
