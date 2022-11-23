@@ -39,8 +39,8 @@ externals/sram-sync https://github.com/MaastrichtUniversity/sram-sync.git
 externals/dh-faker https://github.com/MaastrichtUniversity/dh-faker.git
 externals/dh-irods https://github.com/MaastrichtUniversity/dh-irods.git
 externals/dh-python-irods-utils https://github.com/MaastrichtUniversity/dh-python-irods-utils.git
-externals/cedar-parsing-utils https://github.com/MaastrichtUniversity/cedar-parsing-utils.git"
-
+externals/cedar-parsing-utils https://github.com/MaastrichtUniversity/cedar-parsing-utils.git
+externals/dh-elasticsearch https://github.com/MaastrichtUniversity/dh-elasticsearch.git"
 
 # do the required action in case of externals or exec
 if [[ $1 == "externals" ]]; then

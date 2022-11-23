@@ -44,8 +44,6 @@ services:
       - "20000:20199"
     env_file: .env
     environment:
-      # bootstrap.sh will check RIT_ENV
-      RIT_ENV: dev
       ENV_IRODS_DB_HOSTNAME: irods-db.dh.local
       ENV_IRODS_DB_NAME: icat
       ENV_IRODS_DB_USERNAME: irods
@@ -58,6 +56,7 @@ services:
       ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
       ENV_IRODS_SSL_CA_CERFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
       ENV_FILEBEAT_PRIMARY_TAG: ICAT
+      # TODO: Do we want to change this to icat?
       VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
     networks:
       default:
@@ -96,7 +95,6 @@ services:
       - .env
       - irods.secrets.cfg
     environment:
-      RIT_ENV: dev
       ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-hnas-um.dh.local.crt
       ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-hnas-um.dh.local.key
       ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
@@ -156,7 +154,6 @@ services:
       - .env
       - irods.secrets.cfg
     environment:
-      RIT_ENV: dev
       # TODO: Not centos any more... change name everywhere
       ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-hnas-azm.dh.local.crt
       ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-hnas-azm.dh.local.key
@@ -267,7 +264,6 @@ services:
     depends_on:
       - minio2
     environment:
-      RIT_ENV: dev
       ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-ceph-gl.dh.local.crt
       ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-ceph-gl.dh.local.key
       ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
