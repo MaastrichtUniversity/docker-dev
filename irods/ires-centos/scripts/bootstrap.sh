@@ -86,6 +86,7 @@ if [[ ! -e /var/run/irods_installed ]]; then
     /opt/irods/add_env_var.py /etc/irods/server_config.json ELASTIC_HOST ${ELASTIC_HOST}
     /opt/irods/add_env_var.py /etc/irods/server_config.json ELASTIC_PORT ${ELASTIC_PORT}
     /opt/irods/add_env_var.py /etc/irods/server_config.json ELASTIC_PASSWORD ${ELASTIC_PASSWORD}
+    /opt/irods/add_env_var.py /etc/irods/server_config.json ENVIRONMENT ${ENVIRONMENT}
 
     
     # Dirty temp.password workaround
