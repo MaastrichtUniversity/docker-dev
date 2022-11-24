@@ -28,6 +28,7 @@ services:
       dockerfile: Dockerfile
       args:
         - ENV_IRODS_VERSION
+        - ENV_IRODS_PYTHON_PLUGIN_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_FILEBEAT_VERSION
@@ -70,7 +71,6 @@ services:
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./externals/dh-irods/icat/test-dev-ssl-certs/:/opt/certificates:ro
-      - ./externals/dh-irods/icat/patch/genquery.py:/etc/irods/genquery.py
       - ./externals/dh-irods/icat/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
       - ./externals/dh-irods/icat/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
       - ./externals/dh-irods/icat/DMFS:/opt/irods/DMFS
@@ -83,6 +83,7 @@ services:
       dockerfile: Dockerfile
       args:
         - ENV_IRODS_VERSION
+        - ENV_IRODS_PYTHON_PLUGIN_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_FILEBEAT_VERSION
@@ -142,6 +143,7 @@ services:
       dockerfile: Dockerfile
       args:
         - ENV_IRODS_VERSION
+        - ENV_IRODS_PYTHON_PLUGIN_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_FILEBEAT_VERSION
@@ -203,6 +205,7 @@ services:
       dockerfile: Dockerfile
       args:
         - ENV_IRODS_VERSION
+        - ENV_IRODS_PYTHON_PLUGIN_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_FILEBEAT_VERSION
@@ -252,6 +255,7 @@ services:
       dockerfile: Dockerfile
       args:
         - ENV_IRODS_VERSION
+        - ENV_IRODS_PYTHON_PLUGIN_VERSION
         - ENV_IRODS_EXT_CLANG_VERSION
         - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_FILEBEAT_VERSION
