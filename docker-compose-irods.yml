@@ -1,37 +1,16 @@
 version: '2'
 services:
-  # This service definition is meant for *build* purposes only!
-  irods-base-ubuntu:
-    build:
-      context: irods/irods-base/
-      dockerfile: Dockerfile.ubuntu
-      # These are read from the .env
-      args:
-        - ENV_IRODS_VERSION
-        - ENV_IRODS_EXT_CLANG_VERSION
-        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
-        - ENV_FILEBEAT_VERSION
-    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/irods-base:ubuntu
-
-  # Ditto, but Centos flavor
-  # This service definition is meant for *build* purposes only!
-  irods-base-centos:
-    build:
-      context: irods/irods-base/
-      dockerfile: Dockerfile.centos
-      # These are read from the .env
-      args:
-        - ENV_IRODS_VERSION
-        - ENV_IRODS_EXT_CLANG_VERSION
-        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
-        - ENV_FILEBEAT_VERSION
-    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/irods-base:centos
-
-  # iCAT requires a database
   irods-db:
     image: postgres:${ENV_POSTGRES_VERSION}
     hostname: irods-db
+#   # PoC: tried this instead of wait until from within bootstrap.sh
+#    healthcheck:
+#      test: /usr/bin/pg_isready -t 10
+#      interval: 30s
+#      timeout: 10s
+#      retries: 20
     environment:
+      # password for postgres-database user 'postgres' (i.e. ENV_IRODS_DB_POSTGRES_PASSWORD)
       POSTGRES_PASSWORD: foobar
       LOGSPOUT: ignore
     volumes:
@@ -43,251 +22,327 @@ services:
       common_default:
         aliases:
           - irods-db.dh.local
-
-  # iCAT
-  irods:
+  icat:
     build:
-      context: irods/icat/
+      context: externals/dh-irods/irods-base/
       dockerfile: Dockerfile
       args:
-        - ENV_REGISTRY_HOST        # Used to find base image
-        - ENV_BRANCH               # Used to find base image
         - ENV_IRODS_VERSION
-        - ENV_POSTGRES_CLIENT_VERSION
-    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/icat:${ENV_TAG}
+        - ENV_IRODS_EXT_CLANG_VERSION
+        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+        - ENV_FILEBEAT_VERSION
+        - ENV_IRODS_RESC_PLUGIN_S3_VERSION
+        - ENV_DOCKERIZE_VERSION
+        - ENV_IRODS_GID
+        - ENV_IRODS_UID
     depends_on:
-      - irods-db
-    hostname: irods.dh.local
+       - irods-db
+    hostname: icat.dh.local
     ports:
       - "1247:1247"
       - "1248:1248"
+      - "20000:20199"
+    env_file: .env
     environment:
-      RODS_PASSWORD: irods
-      PGPASSWORD: foobar
+      ENV_IRODS_DB_HOSTNAME: irods-db.dh.local
+      ENV_IRODS_DB_NAME: icat
+      ENV_IRODS_DB_USERNAME: irods
+      # password for postgres user 'postgres'
+      ENV_IRODS_DB_IRODS_PASSWORD: pgB3rKhqLGFLora
+      # password for postgres user 'irods'
+      ENV_IRODS_DB_POSTGRES_PASSWORD: foobar
+      ENV_IRODS_SSL_CERT: /etc/irods/SSL/icat.dh.local.crt
+      ENV_IRODS_SSL_KEY: /etc/irods/SSL/icat.dh.local.key
+      ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
+      ENV_IRODS_SSL_CA_CERFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
+      ENV_FILEBEAT_PRIMARY_TAG: ICAT
+      # TODO: Do we want to change this to icat?
       VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
-      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
-      IRODS_TEMP_PASSWORD_LIFETIME: ${ENV_IRODS_TEMP_PASSWORD_LIFETIME}
-      EPICPID_URL: ${ENV_EPICPID_URL}
-      EPICPID_USER: ${ENV_EPICPID_USER}
-      EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
-      ELASTIC_PASSWORD: ${ENV_ELASTIC_PASSWORD}
-      ELASTIC_HOST: ${ENV_ELASTIC_HOST}
-      ELASTIC_PORT: ${ENV_ELASTIC_PORT}
-      ENVIRONMENT: ${ENV_ENVIRONMENT}
-      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
-      LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
-      DEBUG_DH_BOOTSTRAP:  "no"
     networks:
       default:
         aliases:
-          - irods.dh.local
+          - icat.dh.local
       common_default:
         aliases:
-          - irods.dh.local
+          - icat.dh.local
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
+      - ./externals/dh-irods/icat/test-dev-ssl-certs/:/opt/certificates:ro
+      - ./externals/dh-irods/icat/patch/genquery.py:/etc/irods/genquery.py
+      - ./externals/dh-irods/icat/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
+      - ./externals/dh-irods/icat/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
+      - ./externals/dh-irods/icat/DMFS:/opt/irods/DMFS
       - ./keycloak/users.json:/opt/irods/users.json
-      - microservices-build-ubuntu:/tmp/microservices-build
+      - microservices-build:/tmp/microservices-build
 
-  ires:
+  ires-hnas-um:
     build:
-      context: irods/ires/
+      context: externals/dh-irods/irods-base/
       dockerfile: Dockerfile
       args:
-        - ENV_REGISTRY_HOST        # Used to find base image
-        - ENV_BRANCH               # Used to find base image
-        - ENV_REGISTRY_HOST=${ENV_REGISTRY_HOST}
-        - ENV_BRANCH=${ENV_BRANCH}
+        - ENV_IRODS_VERSION
+        - ENV_IRODS_EXT_CLANG_VERSION
+        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+        - ENV_FILEBEAT_VERSION
+        - ENV_IRODS_RESC_PLUGIN_S3_VERSION
         - ENV_DOCKERIZE_VERSION
-    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires:${ENV_TAG}
-    depends_on:
-      - irods
-    hostname: ires.dh.local
+        - ENV_IRODS_GID
+        - ENV_IRODS_UID
+    hostname: ires-hnas-um.dh.local
+    env_file:
+      - .env
+      - irods.secrets.cfg
     environment:
-      RODS_PASSWORD: irods
-      PGPASSWORD: foobar
-      VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
-      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
-      IRODS_TEMP_PASSWORD_LIFETIME: ${ENV_IRODS_TEMP_PASSWORD_LIFETIME}
-      EPICPID_URL: ${ENV_EPICPID_URL}
-      EPICPID_USER: ${ENV_EPICPID_USER}
-      EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
-      ELASTIC_PASSWORD: ${ENV_ELASTIC_PASSWORD}
-      ELASTIC_HOST: ${ENV_ELASTIC_HOST}
-      ELASTIC_PORT: ${ENV_ELASTIC_PORT}
-      ENVIRONMENT: ${ENV_ENVIRONMENT}
-      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
-      LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
-      DEBUG_DH_BOOTSTRAP:  "no"
+      ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-hnas-um.dh.local.crt
+      ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-hnas-um.dh.local.key
+      ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
+      ENV_IRODS_SSL_CA_CERFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
+      ENV_FILEBEAT_PRIMARY_TAG: IRES
+      ENV_FILEBEAT_SECONDARY_TAG: IRES_UM03
+      ENV_DIRECT_INGEST_RESOURCE: "true"
+      # Name for 'coordinating' resource of type replication.
+      # In bootstrap_irods.sh we expect find substring 'UM' or 'AZM'
+      ENV_IRODS_COOR_RESC_NAME: "replRescUM01"
+      # Base name for 'storage' resources
+      ENV_IRODS_STOR_RESC_NAME: "UM-hnas-4k"
+      # Comment for ${HOSTNAME}Resource
+      ENV_IRODS_HOST_RESC_COMMENT: "UM-UBUNTU-INGEST-RESOURCE"
+      # Comment for 'coordinating' resource
+      ENV_IRODS_COOR_RESC_COMMENT: "Replicated-resource-for-UM"
+      # Pricing AVU for 'coordinating' resource
+      ENV_IRODS_COOR_RESC_PRICING: "0.130"
+      VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
     networks:
       default:
         aliases:
-          - ires.dh.local
+          - ires-hnas-um.dh.local
       common_default:
         aliases:
-          - ires.dh.local
+          - ires-hnas-um.dh.local
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
-      - ./staging-data:/mnt/ingest            # binding a non-existing dir results in creation of that dir on host system
-      - microservices-build-ubuntu:/tmp/microservices-build
+      - ./staging-data/zones:/mnt/ingest/zones
+      - ./staging-data/direct-ingest:/mnt/stagingResc01
+      - ./externals/dh-irods/ires-hnas/test-dev-ssl-certs/:/opt/certificates:ro
+      - ./externals/dh-irods/ires-hnas/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
+      - ./externals/dh-irods/ires-hnas/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
+      - microservices-build:/tmp/microservices-build
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
     privileged: true
 
-  ires-s3-1:
+  ires-hnas-azm:
     build:
-      context: irods/ires-s3/
+      context:  externals/dh-irods/irods-base/
       dockerfile: Dockerfile
       args:
-        - ENV_REGISTRY_HOST        # Used to find base image
-        - ENV_BRANCH               # Used to find base image
-        - ENV_DOCKERIZE_VERSION
+        - ENV_IRODS_VERSION
+        - ENV_IRODS_EXT_CLANG_VERSION
+        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+        - ENV_FILEBEAT_VERSION
         - ENV_IRODS_RESC_PLUGIN_S3_VERSION
-    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires-s3:${ENV_TAG}
-    depends_on:
-      - irods
-      - ires                       # Because of ingest resource
-      - minio1
-    hostname: ires-s3-1.dh.local
+        - ENV_DOCKERIZE_VERSION
+        - ENV_IRODS_GID
+        - ENV_IRODS_UID
+    hostname: ires-hnas-azm.dh.local
+    env_file:
+      - .env
+      - irods.secrets.cfg
     environment:
-      RODS_PASSWORD: irods
-      VIRTUAL_HOST: ires-s3-1.${RIT_ENV}.rit.unimaas.nl
-      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
-      IRODS_TEMP_PASSWORD_LIFETIME: ${ENV_IRODS_TEMP_PASSWORD_LIFETIME}
-      EPICPID_URL: ${ENV_EPICPID_URL}
-      EPICPID_USER: ${ENV_EPICPID_USER}
-      EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
-      ELASTIC_PASSWORD: ${ENV_ELASTIC_PASSWORD}
-      ELASTIC_HOST: ${ENV_ELASTIC_HOST}
-      ELASTIC_PORT: ${ENV_ELASTIC_PORT}
-      ENVIRONMENT: ${ENV_ENVIRONMENT}
-      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
-      LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
+      # TODO: Not centos any more... change name everywhere
+      ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-hnas-azm.dh.local.crt
+      ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-hnas-azm.dh.local.key
+      ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
+      ENV_IRODS_SSL_CA_CERFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
+      ENV_FILEBEAT_PRIMARY_TAG: IRES
+      ENV_FILEBEAT_SECONDARY_TAG: IRES_AZM
+      # TODO: Do we want false here for azm?
+      ENV_DIRECT_INGEST_RESOURCE: "false"
+      # Name for 'coordinating' resource of type replication
+      # In bootstrap_irods.sh we expect find substring 'UM' or 'AZM'
+      ENV_IRODS_COOR_RESC_NAME: "replRescAZM01"
+      # Base name for 'storage' resources
+      ENV_IRODS_STOR_RESC_NAME: "AZM-storage"
+      # Comment for ${HOSTNAME}Resource
+      ENV_IRODS_HOST_RESC_COMMENT: "AZM-UBUNTU-INGEST-RESOURCE"
+      # Comment for 'coordinating' resource
+      ENV_IRODS_COOR_RESC_COMMENT: "Replicated-resource-for-AZM"
+      # Pricing AVU for 'coordinating' resource
+      # TODO: This right?
+      ENV_IRODS_COOR_RESC_PRICING: "0"
+      # TODO: same as before.. not centos anymore
+      VIRTUAL_HOST: ires-hnas-azm.${RIT_ENV}.rit.unimaas.nl
+    networks:
+      default:
+        aliases:
+          - ires-hnas-azm.dh.local
+      common_default:
+        aliases:
+          - ires-hnas-azm.dh.local
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./irods.secrets.cfg:/etc/secrets:ro
+      - ./externals/irods-ruleset:/rules
+      - ./externals/irods-microservices:/microservices
+      - ./externals/irods-helper-cmd:/helpers
+      - ./staging-data/zones:/mnt/ingest/zones
+      - ./externals/dh-irods/ires-hnas/test-dev-ssl-certs/:/opt/certificates:ro
+      - ./externals/dh-irods/ires-hnas/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
+      - ./externals/dh-irods/ires-hnas/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
+      - microservices-build:/tmp/microservices-build
+    # Required for CIFS mounting. cap-add not enough in Windows for some reason.
+    privileged: true
+  ires-ceph-ac:
+    build:
+      context: externals/dh-irods/irods-base/
+      dockerfile: Dockerfile
+      args:
+        - ENV_IRODS_VERSION
+        - ENV_IRODS_EXT_CLANG_VERSION
+        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+        - ENV_FILEBEAT_VERSION
+        - ENV_IRODS_RESC_PLUGIN_S3_VERSION
+        - ENV_DOCKERIZE_VERSION
+        - ENV_IRODS_GID
+        - ENV_IRODS_UID
+    hostname: ires-ceph-ac.dh.local
+    env_file: .env
+    depends_on:
+      - minio1
+    environment:
+      RIT_ENV: dev
+      ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-ceph-ac.dh.local.crt
+      ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-ceph-ac.dh.local.key
+      ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
+      ENV_IRODS_SSL_CA_CERFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
+      # Yet another work around :( READ corresponding entry comment in ires-ceph-gl
+      S3_AUTH_FILE: /var/lib/irods/minio.keypair
       ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY1}
       ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY1}
       ENV_S3_RESC_NAME: "UM-Ceph-S3-AC"
       ENV_S3_HOST: "minio1.dh.local:9000"
-      DEBUG_DH_BOOTSTRAP:  "no"
+      ENV_FILEBEAT_PRIMARY_TAG: IRES
+      ENV_FILEBEAT_SECONDARY_TAG: IRES_UM04
+      VIRTUAL_HOST: ires-ceph-ac.${RIT_ENV}.rit.unimaas.nl
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
-      - microservices-build-ubuntu:/tmp/microservices-build
+      - microservices-build:/tmp/microservices-build
+      - ./externals/dh-irods/ires-s3/test-dev-ssl-certs/:/opt/certificates:ro
+      - ./externals/dh-irods/ires-s3/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
+      - ./externals/dh-irods/ires-s3/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
     networks:
       default:
         aliases:
-          - ires-s3-1.dh.local
+          - ires-ceph-ac.dh.local
       common_default:
         aliases:
-          - ires-s3-1.dh.local
-
-  ires-s3-2:
-    # This is not nice.. there should only be once place where building
-    # procedure is defined for the same image
+          - ires-ceph-ac.dh.local
+  ires-ceph-gl:
     build:
-      context: irods/ires-s3/
+      context: externals/dh-irods/irods-base/
       dockerfile: Dockerfile
       args:
-        - ENV_REGISTRY_HOST        # Used to find base image
-        - ENV_BRANCH               # Used to find base image
-        - ENV_DOCKERIZE_VERSION
+        - ENV_IRODS_VERSION
+        - ENV_IRODS_EXT_CLANG_VERSION
+        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+        - ENV_FILEBEAT_VERSION
         - ENV_IRODS_RESC_PLUGIN_S3_VERSION
-    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires-s3:${ENV_TAG}
+        - ENV_DOCKERIZE_VERSION
+        - ENV_IRODS_GID
+        - ENV_IRODS_UID
+    hostname: ires-ceph-gl.dh.local
+    env_file: .env
     depends_on:
-      - irods
-      - ires                       # Because of ingest resource
       - minio2
-    hostname: ires-s3-2.dh.local
     environment:
-      RODS_PASSWORD: irods
-      VIRTUAL_HOST: ires-s3-2.${RIT_ENV}.rit.unimaas.nl
-      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
-      IRODS_TEMP_PASSWORD_LIFETIME: ${ENV_IRODS_TEMP_PASSWORD_LIFETIME}
-      EPICPID_URL: ${ENV_EPICPID_URL}
-      EPICPID_USER: ${ENV_EPICPID_USER}
-      EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
-      ELASTIC_PASSWORD: ${ENV_ELASTIC_PASSWORD}
-      ELASTIC_HOST: ${ENV_ELASTIC_HOST}
-      ELASTIC_PORT: ${ENV_ELASTIC_PORT}
-      ENVIRONMENT: ${ENV_ENVIRONMENT}
-      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
-      LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
+      ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-ceph-gl.dh.local.crt
+      ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-ceph-gl.dh.local.key
+      ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
+      ENV_IRODS_SSL_CA_CERFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
+      # Yet another work around :(
+      # In the ICAT DB (think production). The way the S3 resource was
+      # configured (mkresc), includes this:
+      #    iadmin mkresc .... "... S3_AUTH_FILE=/some/fixed/path/here.keypair ; .... "
+      # This probably means that iRES S3 needs to access /some/fixed/path/here.keypair
+      # to read the S3 credentials? Perhaps not? And it just read that file once during mkresc?
+      # So we should write the credentials (given right below to the container)
+      # in that path. We cannot arbitrarily choose the path, because in
+      # proc/acc it was already chosen!
+      # But wait there's more! https://github.com/irods/irods_resource_plugin_s3/issues/1837
+      # The env file must be named S3_AUTH_FILE?
+      # Is it because the value written on iCAT is actually ignored?
+      # Or... and what about what Terrell says at the end?
+      # https://github.com/irods/irods_resource_plugin_s3/issues/1837#issuecomment-965919232
+      # Do we have to create that file everywhere? What?
+      # TODO
+      S3_AUTH_FILE: /var/lib/irods/minio.keypair
       ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY2}
       ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
       ENV_S3_RESC_NAME: "UM-Ceph-S3-GL"
       ENV_S3_HOST: "minio2.dh.local:9000"
-      DEBUG_DH_BOOTSTRAP:  "no"
+      ENV_FILEBEAT_PRIMARY_TAG: IRES
+      ENV_FILEBEAT_SECONDARY_TAG: IRES_UM01
+      VIRTUAL_HOST: ires-ceph-gl.${RIT_ENV}.rit.unimaas.nl
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods.secrets.cfg:/etc/secrets:ro
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
-      - microservices-build-ubuntu:/tmp/microservices-build
+      - microservices-build:/tmp/microservices-build
+      - ./externals/dh-irods/ires-s3/test-dev-ssl-certs/:/opt/certificates:ro
+      - ./externals/dh-irods/ires-s3/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
+      - ./externals/dh-irods/ires-s3/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
     networks:
       default:
         aliases:
-          - ires-s3-2.dh.local
+          - ires-ceph-gl.dh.local
       common_default:
         aliases:
-          - ires-s3-2.dh.local
-
-  ires-centos:
-    build:
-      context:  irods/ires-centos/
-      dockerfile: Dockerfile
-      args:
-        - ENV_REGISTRY_HOST        # Used to find base image
-        - ENV_BRANCH               # Used to find base image
-        - ENV_DOCKERIZE_VERSION
-    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/ires-centos:${ENV_TAG}
-    depends_on:
-      - irods
-    hostname: ires-centos.dh.local
+          - ires-ceph-gl.dh.local
+  minio1:
+    image: minio/minio:RELEASE.2019-05-23T00-29-34Z
     environment:
-      RODS_PASSWORD: irods
-      VIRTUAL_HOST: ires-centos.${RIT_ENV}.rit.unimaas.nl
-      IRODS_INGEST_REMOVE_DELAY: ${ENV_IRODS_INGEST_REMOVE_DELAY}
-      IRODS_TEMP_PASSWORD_LIFETIME: ${ENV_IRODS_TEMP_PASSWORD_LIFETIME}
-      EPICPID_URL: ${ENV_EPICPID_URL}
-      EPICPID_USER: ${ENV_EPICPID_USER}
-      EPICPID_PASSWORD: ${ENV_EPICPID_PASSWORD}
-      ELASTIC_PASSWORD: ${ENV_ELASTIC_PASSWORD}
-      ELASTIC_HOST: ${ENV_ELASTIC_HOST}
-      ELASTIC_PORT: ${ENV_ELASTIC_PORT}
-      ENVIRONMENT: ${ENV_ENVIRONMENT}
-      MDR_HANDLE_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl/hdl/
-      LOGSPOUT: ignore  #ignore, because logs are forwarded by filebeat (in production it's not in a docker container)
-      DEBUG_DH_BOOTSTRAP:  "no"
+      VIRTUAL_HOST: minio1.${RIT_ENV}.rit.unimaas.nl
+      MINIO_ACCESS_KEY: ${ENV_S3_ACCESS_KEY1}
+      MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY1}
+    entrypoint: sh
+    command: -c 'mkdir -p /data/dh-irods-bucket-dev && /usr/bin/minio server /data'
     networks:
       default:
         aliases:
-          - ires-centos.dh.local
+          - minio1.dh.local
       common_default:
         aliases:
-          - ires-centos.dh.local
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./irods.secrets.cfg:/etc/secrets:ro
-      - ./externals/irods-ruleset:/rules
-      - ./externals/irods-microservices:/microservices
-      - ./externals/irods-helper-cmd:/helpers
-      - ./staging-data:/mnt/ingest            # binding a non-existing dir results in creation of that dir on host system
-      - microservices-build-centos:/tmp/microservices-build
-    # Required for CIFS mounting. cap-add not enough in Windows for some reason.
-    privileged: true
-
+          - minio1.dh.local
+  minio2:
+    image: minio/minio:RELEASE.2019-05-23T00-29-34Z
+    environment:
+      VIRTUAL_HOST: minio2.${RIT_ENV}.rit.unimaas.nl
+      MINIO_ACCESS_KEY: ${ENV_S3_ACCESS_KEY2}
+      MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
+    entrypoint: sh
+    command: -c 'mkdir -p /data/dh-irods-bucket-dev && /usr/bin/minio server /data'
+    networks:
+      default:
+        aliases:
+          - minio2.dh.local
+      common_default:
+        aliases:
+          - minio2.dh.local
 volumes:
   # these volumes exists so already-compiled microservices shared across
   # icat/ires's don't have to be recompiled. If icat already compiled them, no
-  # need for ires's to recompilie.
-  microservices-build-ubuntu:
-  microservices-build-centos:
-
+  # need for ires's to recompilie. For acc/prod, maybe useful if container is
+  # restarted, no need to recompile if already up to date? Although I don't
+  # know if make will know nothing changed.
+  microservices-build:
