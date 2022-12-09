@@ -29,7 +29,6 @@ set -e
 externals="externals/irods-helper-cmd https://github.com/MaastrichtUniversity/irods-helper-cmd.git
 externals/irods-microservices https://github.com/MaastrichtUniversity/irods-microservices.git
 externals/irods-ruleset https://github.com/MaastrichtUniversity/irods-ruleset.git
-externals/irods-frontend https://github.com/MaastrichtUniversity/irods-frontend.git
 externals/rit-davrods https://github.com/MaastrichtUniversity/rit-davrods.git
 externals/epicpid-microservice https://github.com/MaastrichtUniversity/epicpid-microservice.git
 externals/dh-mdr https://github.com/MaastrichtUniversity/dh-mdr.git
