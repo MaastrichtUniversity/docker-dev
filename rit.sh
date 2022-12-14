@@ -53,6 +53,30 @@ if [[ $1 == "exec" ]]; then
     exit 0
 fi
 
+if [[ $1 == "make" ]]; then
+   if [[ $2 == "rules" ]]; then
+      set +e
+      docker exec -it corpus-icat-1 su irods -c "cd /rules && make"
+      docker exec -it corpus-ires-hnas-um-1 su irods -c "cd /rules && make"
+      docker exec -it corpus-ires-hnas-azm-1 su irods -c "cd /rules && make"
+      docker exec -it corpus-ires-hnas-azm-1 su irods -c "cd /rules && make"
+      docker exec -it corpus-ires-ceph-gl-1 su irods -c "cd /rules && make"
+      docker exec -it corpus-ires-ceph-ac-1 su irods -c "cd /rules && make"
+      exit 0
+   fi
+   if [[ $2 == "microservices" ]]; then
+      set +e
+      docker exec -it corpus-icat-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
+      docker exec -it corpus-ires-hnas-um-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
+      docker exec -it corpus-ires-hnas-azm-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
+      docker exec -it corpus-ires-hnas-azm-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
+      docker exec -it corpus-ires-ceph-gl-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
+      docker exec -it corpus-ires-ceph-ac-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
+      exit 0
+   fi
+
+fi
+
 
 #
 # code block for create functionality
@@ -76,7 +100,7 @@ if [ ! $(docker network ls --filter name=common_default --format="true") ] ;
 fi
 
 # Assuming docker-compose is available in the PATH
-log $DBG "$0 [docker-compose \"$ARGS\"]"
-docker-compose -f docker-compose.yml -f docker-compose-irods.yml $ARGS
+log $DBG "$0 [docker compose \"$ARGS\"]"
+docker compose -f docker-compose.yml -f docker-compose-irods.yml $ARGS
 
 
