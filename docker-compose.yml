@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   mdr:
     build:
@@ -24,6 +24,7 @@ services:
       # comment the following line.
       - ./externals/irods-rule-wrapper:/opt/src/irods-rule-wrapper
       - ./externals/dh-python-irods-utils/dhpythonirodsutils:/usr/local/lib/python3.10/site-packages/dhpythonirodsutils
+    profiles: ["minimal","full"]
     networks:
       default:
         aliases:
@@ -45,6 +46,7 @@ services:
       VIRTUAL_PORT: 9200
     volumes:
       - elastic_metadata:/usr/share/elasticsearch/data
+    profiles: ["minimal","full"]
     networks:
         default:
           aliases:
@@ -72,6 +74,7 @@ services:
       RABBITMQ_PASS: password
       RABBITMQ_PORT: 5672
       LOG_LEVEL: INFO
+    profiles: ["faker"]
     networks:
       default:
         aliases:
@@ -104,6 +107,7 @@ services:
       - "8080:8080"   # In order to bypass nginx-virtual-proxy while being redirected during Saml logins
     depends_on:
       - ldap
+    profiles: ["minimal","full"]
     networks:
       default:
         aliases:
@@ -127,6 +131,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./ldap/ldif_custom:/container/service/slapd/assets/config/bootstrap/ldif/custom/
+    profiles: ["minimal","full"]
     networks:
       default:
         aliases:
@@ -147,6 +152,7 @@ services:
     environment:
       VIRTUAL_HOST: download.${RIT_ENV}.dh.unimaas.nl
       LOGSPOUT: ignore
+    profiles: ["full"]
     networks:
       default:
         aliases:
@@ -173,6 +179,7 @@ services:
     environment:
       VIRTUAL_HOST: upload.${RIT_ENV}.dh.unimaas.nl
       LOGSPOUT: ignore
+    profiles: ["full"]
     networks:
       default:
         aliases:
@@ -198,6 +205,7 @@ services:
       RABBITMQ_PORT: 5672
       EPIC_CREDENTIALS: my_credentials_test.json
       REQUESTS_CA_BUNDLE: /opt/epic5storagesurfsaranlCHAIN.crt
+    profiles: ["minimal","full"]
     networks:
       default:
         aliases:
@@ -235,6 +243,7 @@ services:
       LOGSTASH_TAGS: OPEN_ACCESS_WORKER
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    profiles: ["full"]
     networks:
       default:
         aliases:
@@ -274,6 +283,7 @@ services:
       SYNC_GROUPS: "True"
       DELETE_GROUPS: "True"
     command: sram-sync.py --commit --scheduled
+    profiles: ["minimal","full"]
     networks:
       default:
       common_default:
@@ -287,6 +297,7 @@ services:
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    profiles: ["minimal","full"]
     networks:
       default:
         aliases:
