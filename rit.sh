@@ -19,7 +19,7 @@ elif [[ ${ARGS} = *"--verbose "* ]] || [[ ${ARGS} = *"-v "* ]]; then
 fi
 
 # Set the prefix for the project
-COMPOSE_PROJECT_NAME="corpus"
+COMPOSE_PROJECT_NAME="dev"
 export COMPOSE_PROJECT_NAME
 
 set -e

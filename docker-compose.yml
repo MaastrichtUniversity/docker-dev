@@ -297,7 +297,7 @@ services:
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
-    profiles: ["minimal","full"]
+    profiles: ["full"]
     networks:
       default:
         aliases:
