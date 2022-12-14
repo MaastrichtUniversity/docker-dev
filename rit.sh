@@ -80,16 +80,22 @@ fi
 #
 # code block for create functionality
 #
-domain="maastrichtuniversity.nl"
+
+# set RIT_ENV if not set already
+env_selector
+
+# faker actions
+if [[ $1 == "faker" ]]; then
+    shift 1
+    docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal run --rm dh-faker python -u create_fake_data.py "$@"
+    exit 0
+fi
 
 if [[ $1 == "login" ]]; then
     source './.env'
     docker login $ENV_REGISTRY_HOST
     exit 0
 fi
-
-# set RIT_ENV if not set already
-env_selector
 
 # Create docker network common_default if it does not exists
 if [ ! $(docker network ls --filter name=common_default --format="true") ] ;
