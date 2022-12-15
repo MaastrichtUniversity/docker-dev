@@ -12,14 +12,16 @@ services:
     environment:
       # password for postgres-database user 'postgres' (i.e. ENV_IRODS_DB_POSTGRES_PASSWORD)
       POSTGRES_PASSWORD: foobar
+      ENV_IRODS_DB_NAME: icat
+      ENV_IRODS_DB_USERNAME: irods
+      # (test) password for postgres user 'irods'
+      ENV_IRODS_DB_IRODS_PASSWORD: pgB3rKhqLGFLora
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
+      - ./irods/irods-db/create_icat_db.sh:/docker-entrypoint-initdb.d/create_icat_db.sh
     networks:
       default:
-        aliases:
-          - irods-db.dh.local
-      common_default:
         aliases:
           - irods-db.dh.local
   icat:
@@ -47,14 +49,20 @@ services:
       ENV_IRODS_DB_HOSTNAME: irods-db.dh.local
       ENV_IRODS_DB_NAME: icat
       ENV_IRODS_DB_USERNAME: irods
-      # password for postgres user 'postgres'
+      # (test) password for postgres user 'irods'
       ENV_IRODS_DB_IRODS_PASSWORD: pgB3rKhqLGFLora
-      # password for postgres user 'irods'
+      # password for postgres user 'postgres'
+      # FIXME: we currently only user this to check if the icat DB exists before
+      # proceeding install in iCAT. But I think we should just check that the
+      # user irods exists, and then check that the DB exists using irods's
+      # credentials...
       ENV_IRODS_DB_POSTGRES_PASSWORD: foobar
-      ENV_IRODS_SSL_CERT: /etc/irods/SSL/icat.dh.local.crt
-      ENV_IRODS_SSL_KEY: /etc/irods/SSL/icat.dh.local.key
-      ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
-      ENV_IRODS_SSL_CA_CERFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
+      # Name of SSL-related files expected in /opt/irods_ssl_staging/ (volume mapped)
+      ENV_IRODS_SSL_CERT: icat.dh.local.crt
+      ENV_IRODS_SSL_KEY: icat.dh.local.key
+      ENV_IRODS_SSL_DH_PARAMS: dhparams.pem
+      # defaults to '/etc/ssl/certs/ca-certificates.crt' (in the container)
+      ENV_IRODS_SSL_CA_CERTIFICATE: test_only_dev_irods_dh_ca_cert.pem
       ENV_FILEBEAT_PRIMARY_TAG: ICAT
       # TODO: Do we want to change this to icat?
       VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
@@ -62,20 +70,19 @@ services:
       default:
         aliases:
           - icat.dh.local
-      common_default:
-        aliases:
-          - icat.dh.local
     volumes:
-      - /etc/localtime:/etc/localtime:ro
+      - ./irods/icat/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
+      - ./irods/icat/DMFS:/opt/irods/DMFS
+      - ./irods/icat/hooks/:/opt/irods/hooks/
+      - ./irods/icat/patch/setup_irods_already_installed_dev.patch:/opt/irods/patch/setup_irods_already_installed_dev.patch
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
-      - ./externals/dh-irods/icat/test-dev-ssl-certs/:/opt/certificates:ro
+      # goes away with 4.2.11 (genqury patch)
       - ./externals/dh-irods/icat/patch/genquery.py:/etc/irods/genquery.py
       - ./externals/dh-irods/icat/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
-      - ./externals/dh-irods/icat/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
-      - ./externals/dh-irods/icat/DMFS:/opt/irods/DMFS
       - ./keycloak/users.json:/opt/irods/users.json
-      - microservices-build:/tmp/microservices-build
+      #- microservices-build:/tmp/microservices-build
+      - /etc/localtime:/etc/localtime:ro
 
   ires-hnas-um:
     build:
@@ -98,7 +105,7 @@ services:
       ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-hnas-um.dh.local.crt
       ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-hnas-um.dh.local.key
       ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
-      ENV_IRODS_SSL_CA_CERFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
+      ENV_IRODS_SSL_CA_CERTIFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
       ENV_FILEBEAT_PRIMARY_TAG: IRES
       ENV_FILEBEAT_SECONDARY_TAG: IRES_UM03
       ENV_DIRECT_INGEST_RESOURCE: "true"
@@ -116,9 +123,6 @@ services:
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
     networks:
       default:
-        aliases:
-          - ires-hnas-um.dh.local
-      common_default:
         aliases:
           - ires-hnas-um.dh.local
     volumes:
@@ -155,10 +159,10 @@ services:
       - irods.secrets.cfg
     environment:
       # TODO: Not centos any more... change name everywhere
-      ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-hnas-azm.dh.local.crt
-      ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-hnas-azm.dh.local.key
-      ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
-      ENV_IRODS_SSL_CA_CERFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
+      ENV_IRODS_SSL_CERT: ires-hnas-azm.dh.local.crt
+      ENV_IRODS_SSL_KEY: ires-hnas-azm.dh.local.key
+      ENV_IRODS_SSL_DH_PARAMS: dhparams.pem
+      ENV_IRODS_SSL_CA_CERFICATE: test_only_dev_irods_dh_ca_cert.pem
       ENV_FILEBEAT_PRIMARY_TAG: IRES
       ENV_FILEBEAT_SECONDARY_TAG: IRES_AZM
       # TODO: Do we want false here for azm?
@@ -179,9 +183,6 @@ services:
       VIRTUAL_HOST: ires-hnas-azm.${RIT_ENV}.rit.unimaas.nl
     networks:
       default:
-        aliases:
-          - ires-hnas-azm.dh.local
-      common_default:
         aliases:
           - ires-hnas-azm.dh.local
     volumes:
@@ -241,9 +242,6 @@ services:
       - ./externals/dh-irods/ires-s3/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
     networks:
       default:
-        aliases:
-          - ires-ceph-ac.dh.local
-      common_default:
         aliases:
           - ires-ceph-ac.dh.local
   ires-ceph-gl:
@@ -306,9 +304,6 @@ services:
       default:
         aliases:
           - ires-ceph-gl.dh.local
-      common_default:
-        aliases:
-          - ires-ceph-gl.dh.local
   minio1:
     image: minio/minio:RELEASE.2019-05-23T00-29-34Z
     environment:
@@ -321,9 +316,6 @@ services:
       default:
         aliases:
           - minio1.dh.local
-      common_default:
-        aliases:
-          - minio1.dh.local
   minio2:
     image: minio/minio:RELEASE.2019-05-23T00-29-34Z
     environment:
@@ -334,9 +326,6 @@ services:
     command: -c 'mkdir -p /data/dh-irods-bucket-dev && /usr/bin/minio server /data'
     networks:
       default:
-        aliases:
-          - minio2.dh.local
-      common_default:
         aliases:
           - minio2.dh.local
 volumes:
