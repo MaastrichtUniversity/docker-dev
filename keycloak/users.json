@@ -1,167 +1,93 @@
 [
   {
     "userName": "mcoonen",
-    "displayName": "Maarten Coonen",
-    "email": "m.coonen@maastrichtuniversity.nl",
-    "lastName": "Coonen",
-    "firstName": "Maarten",
     "eduPersonUniqueId": "mcoonen@sram.surf.nl",
     "voPersonExternalID": "m.coonen@unimaas.nl",
-    "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
     "memberOf": [ "mumc.datahub.@all" ]
   },
   {
     "userName": "mcoonen2",
-    "displayName": "Maarten Coonen (MUMC+)",
-    "email": "mcoonen2",
-    "lastName": "Coonen",
-    "firstName": "Maarten",
     "eduPersonUniqueId": "mcoonen2@sram.surf.nl",
     "voPersonExternalID": "dr.coonen@mumc.nl",
-    "voPersonExternalAffiliation": "employee@mumc.nl",
     "memberOf": [ "mumc.datahub.@all" ]
   },
   {
     "userName": "dtheuniss",
-    "displayName": "Daniël Theunissen",
-    "email": "d.theunissen@maastrichtuniversity.nl",
-    "lastName": "Theunissen",
-    "firstName": "Daniël",
     "eduPersonUniqueId": "dtheuniss@sram.surf.nl",
     "voPersonExternalID": "d.theunissen@unimaas.nl",
-    "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
     "memberOf": [ "mumc.datahub.@all" ]
   },
   {
     "userName": "jmelius",
-    "displayName": "Jonathan Mélius",
-    "email": "jonathan.melius@maastrichtuniversity.nl",
-    "lastName": "Mélius",
-    "firstName": "Jonathan",
     "eduPersonUniqueId": "jmelius@sram.surf.nl",
     "voPersonExternalID": "jonathan.melius@unimaas.nl",
-    "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
     "memberOf": [ "mumc.datahub.@all" ]
   },
   {
     "userName": "dlinssen",
-    "displayName": "Dean Linssen",
-    "email": "d.linssen@maastrichtuniversity.nl",
-    "lastName": "Linssen",
-    "firstName": "Dean",
     "eduPersonUniqueId": "dlinssen@sram.surf.nl",
     "voPersonExternalID": "p70072425@unimaas.nl",
-    "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
     "memberOf": [ "mumc.datahub.@all" ]
   },
   {
     "userName": "pvanschay2",
-    "displayName": "Paul van Schayck",
-    "email": "p.vanschayck@maastrichtuniversity.nl",
-    "lastName": "van Schayck",
-    "firstName": "Paul",
     "eduPersonUniqueId": "pvanschay2@sram.surf.nl",
     "voPersonExternalID": "P.Vanschayck@unimaas.nl",
-    "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
     "memberOf": [ "mumc.datahub.@all", "mumc.m4i-nanoscopy.@all" ]
   },
   {
     "userName": "psuppers",
-    "displayName": "Pascal Suppers",
-    "email": "p.suppers@maastrichtuniversity.nl",
-    "lastName": "Suppers",
-    "firstName": "Pascal",
     "eduPersonUniqueId": "psuppers@sram.surf.nl",
     "voPersonExternalID": "p.suppers@unimaas.nl",
-    "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
     "memberOf": [ "mumc.datahub.@all" ]
   },
   {
     "userName": "delnoy",
-    "displayName": "",
-    "email": "delnoy@example.org",
-    "lastName": "Delnoy",
-    "firstName": "",
     "eduPersonUniqueId": "delnoy@sram.surf.nl",
     "voPersonExternalID": "delnoy@unimaas.nl",
-    "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
     "memberOf": [ "mumc.m4i-massspec.@all" ]
   },
   {
     "userName": "rbrecheis",
-    "displayName": "Ralph Brecheisen",
-    "email": "rbrecheis@example.org",
-    "lastName": "Brecheisen",
-    "firstName": "Ralph",
     "eduPersonUniqueId": "rbrecheis@sram.surf.nl",
     "voPersonExternalID": "r.brecheisen@unimaas.nl",
-    "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
     "memberOf": [ "mumc.datahub.@all" ]
   },
   {
     "userName": "tlustberg",
-    "displayName": "Tim Lustberg",
-    "email": "tlustberg@example.org",
-    "lastName": "Lustberg",
-    "firstName": "Tim",
     "eduPersonUniqueId": "tlustberg@sram.surf.nl",
     "voPersonExternalID": "t.lustberg@unimaas.nl",
-    "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
     "memberOf": [ "mumc.datahub.@all" ]
   },
   {
-    "userName": "pahles",
+    "userName": "kgusta",
     "displayName": "Patrick Ahles",
-    "email": "pahles@example.org",
-    "lastName": "",
-    "firstName": "",
-    "eduPersonUniqueId": "pahles@sram.surf.nl",
-    "voPersonExternalID": "p.ahles@unimaas.nl",
-    "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
+    "eduPersonUniqueId": "kgusta@sram.surf.nl",
+    "voPersonExternalID": "k.gusta@unimaas.nl",
     "memberOf": [ ]
   },
   {
     "userName": "opalmen",
-    "displayName": "Olav Palmen",
-    "email": "o.palmen@maastrichtuniversity.nl",
-    "lastName": "Palmen",
-    "firstName": "Olav",
     "eduPersonUniqueId": "opalmen@sram.surf.nl",
     "voPersonExternalID": "o.palmen@unimaas.nl",
-    "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
     "memberOf": [ "mumc.datahub.@all" ]
   },
   {
     "userName": "minimalist",
-    "displayName": "",
-    "email": "",
-    "lastName": "",
-    "firstName": "",
     "eduPersonUniqueId": "minimalist@sram.surf.nl",
     "voPersonExternalID": "minimalist@university.nl",
-    "voPersonExternalAffiliation": "employee@university.nl",
     "memberOf": [ ]
   },
   {
     "userName": "rvoncken",
-    "displayName": "Rickest Rick",
-    "email": "rvoncken@example.org",
-    "lastName": "Voncken",
-    "firstName": "Rick",
     "eduPersonUniqueId": "rvoncken@sram.surf.nl",
     "voPersonExternalID": "rick.voncken@unimaas.nl",
-    "voPersonExternalAffiliation": "employee@maastrichtuniversity.nl",
     "memberOf": [ "mumc.scannexus.@all" ]
   },
   {
     "userName": "auser",
-    "displayName": "Additional User newly created in LDAP",
-    "email": "auser",
-    "lastName": "User",
-    "firstName": "Additional",
     "eduPersonUniqueId": "auser@sram.surf.nl",
     "voPersonExternalID": "a.user@external.nl",
-    "voPersonExternalAffiliation": "employee@external.nl",
     "memberOf": [ "mumc.m4i-nanoscopy-phd0815.@all", "mumc.m4i-nanoscopy.@all" ]
   }
 ]

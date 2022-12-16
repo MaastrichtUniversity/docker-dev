@@ -27,8 +27,12 @@
 # c) the only additional information from the ordered section (displayName & description) can be used even if the user lists are empty!
 #
 # Howto add a new CO?
-# 1. Add it to this file. They will end up in the 'dc=ordered' structure in LDAP.
-# 2. Add the corresponding group to the ../keycloak/groups.json file. They will end up in the 'dc=flat,ou=Groups' structure in LDAP.
+# 1. Add it to this file, in both ordered and flat section
+# Howto add a new User?
+# 1. Add them to this file in user flat section
+# 2. Add to users.json in keycloak
+# 3. Add to ICAT bootstrap_irods.sh if required
+
 
 version: 1
 
@@ -55,7 +59,7 @@ objectclass: top
 ou: Groups
 
 #############################################################
-### Collaboration Organisations - COs ###
+### Collaboration Organisations - COs dn=ordered ###
 
 dn: dc=ordered,dc=datahubmaastricht,dc=nl
 objectclass: organizationalUnit
@@ -132,3 +136,279 @@ o: mumc.scannexus
 uniqueIdentifier: 563ebcd8-6552-4dc1-babd-a13bc6531a22
 description: UM-SCANNEXUS
 displayName: SCANNEXUS
+
+#############################################################
+### Users dn:flat ###
+
+dn: uid=auser,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+objectClass: eduPerson
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: voPerson
+cn:: IA==
+sn: User
+displayName: Additional User newly created in LDAP
+eduPersonUniqueId: auser@sram.surf.nl
+givenName: Additional
+mail: auser
+uid: auser
+voPersonExternalAffiliation: employee@external.nl
+voPersonExternalID: a.user@external.nl
+
+dn: uid=delnoy,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+objectClass: eduPerson
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: voPerson
+cn:: IA==
+sn: Delnoy
+displayName:: IA==
+eduPersonUniqueId: delnoy@sram.surf.nl
+givenName:: IA==
+mail: delnoy@example.org
+uid: delnoy
+voPersonExternalAffiliation: employee@maastrichtuniversity.nl
+voPersonExternalID: delnoy@unimaas.nl
+
+dn: uid=kgusta,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+objectClass: eduPerson
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: voPerson
+cn:: IA==
+sn: Gusta
+displayName: Kristine Gusta
+eduPersonUniqueId: kgusta@sram.surf.nl
+givenName: Kristine
+mail: kgusta@example.org
+uid: kgusta
+voPersonExternalAffiliation: employee@maastrichtuniversity.nl
+voPersonExternalID: k.gusta@unimaas.nl
+
+dn: uid=jmelius,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+objectClass: eduPerson
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: voPerson
+cn:: IA==
+sn:: TcOpbGl1cw==
+displayName:: Sm9uYXRoYW4gTcOpbGl1cw==
+eduPersonUniqueId: jmelius@sram.surf.nl
+givenName: Jonathan
+mail: jonathan.melius@maastrichtuniversity.nl
+uid: jmelius
+voPersonExternalAffiliation: employee@maastrichtuniversity.nl
+voPersonExternalID: jonathan.melius@unimaas.nl
+
+dn: uid=mcoonen,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+objectClass: eduPerson
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: voPerson
+cn:: IA==
+sn: Coonen
+displayName: Maarten Coonen
+eduPersonUniqueId: mcoonen@sram.surf.nl
+givenName: Maarten
+mail: m.coonen@maastrichtuniversity.nl
+uid: mcoonen
+voPersonExternalAffiliation: employee@maastrichtuniversity.nl
+voPersonExternalID: m.coonen@unimaas.nl
+
+dn: uid=opalmen,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+objectClass: eduPerson
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: voPerson
+cn:: IA==
+sn: Palmen
+displayName: Olav Palmen
+eduPersonUniqueId: opalmen@sram.surf.nl
+givenName: Olav
+mail: o.palmen@maastrichtuniversity.nl
+uid: opalmen
+voPersonExternalAffiliation: employee@maastrichtuniversity.nl
+voPersonExternalID: o.palmen@unimaas.nl
+
+dn: uid=dlinssen,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+objectClass: eduPerson
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: voPerson
+cn:: IA==
+sn: Linssen
+displayName: Dean Linssen
+eduPersonUniqueId: dlinssen@sram.surf.nl
+givenName: Dean
+mail: d.linssen@maastrichtuniversity.nl
+uid: dlinssen
+voPersonExternalAffiliation: employee@maastrichtuniversity.nl
+voPersonExternalID: p70072425@unimaas.nl
+
+dn: uid=mcoonen2,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+objectClass: eduPerson
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: voPerson
+cn:: IA==
+sn: Coonen
+displayName: Maarten Coonen (MUMC+)
+eduPersonUniqueId: mcoonen2@sram.surf.nl
+givenName: Maarten
+mail: mcoonen2
+uid: mcoonen2
+voPersonExternalAffiliation: employee@mumc.nl
+voPersonExternalID: dr.coonen@mumc.nl
+
+dn: uid=psuppers,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+objectClass: eduPerson
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: voPerson
+cn:: IA==
+sn: Suppers
+displayName: Pascal Suppers
+eduPersonUniqueId: psuppers@sram.surf.nl
+givenName: Pascal
+mail: p.suppers@maastrichtuniversity.nl
+uid: psuppers
+voPersonExternalAffiliation: employee@maastrichtuniversity.nl
+voPersonExternalID: p.suppers@unimaas.nl
+
+dn: uid=rvoncken,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+objectClass: eduPerson
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: voPerson
+cn:: IA==
+sn: Voncken
+displayName: Rickest Rick
+eduPersonUniqueId: rvoncken@sram.surf.nl
+givenName: Rick
+mail: rvoncken@example.org
+uid: rvoncken
+voPersonExternalAffiliation: employee@maastrichtuniversity.nl
+voPersonExternalID: rick.voncken@unimaas.nl
+
+dn: uid=dtheuniss,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+objectClass: eduPerson
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: voPerson
+cn:: IA==
+sn: Theunissen
+displayName:: RGFuacOrbCBUaGV1bmlzc2Vu
+eduPersonUniqueId: dtheuniss@sram.surf.nl
+givenName:: RGFuacOrbA==
+mail: d.theunissen@maastrichtuniversity.nl
+uid: dtheuniss
+voPersonExternalAffiliation: employee@maastrichtuniversity.nl
+voPersonExternalID: d.theunissen@unimaas.nl
+
+dn: uid=rbrecheis,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+objectClass: eduPerson
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: voPerson
+cn:: IA==
+sn: Brecheisen
+displayName: Ralph Brecheisen
+eduPersonUniqueId: rbrecheis@sram.surf.nl
+givenName: Ralph
+mail: rbrecheis@example.org
+uid: rbrecheis
+voPersonExternalAffiliation: employee@maastrichtuniversity.nl
+voPersonExternalID: r.brecheisen@unimaas.nl
+
+dn: uid=tlustberg,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+objectClass: eduPerson
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: voPerson
+cn:: IA==
+sn: Lustberg
+displayName: Tim Lustberg
+eduPersonUniqueId: tlustberg@sram.surf.nl
+givenName: Tim
+mail: tlustberg@example.org
+uid: tlustberg
+voPersonExternalAffiliation: employee@maastrichtuniversity.nl
+voPersonExternalID: t.lustberg@unimaas.nl
+
+dn: uid=minimalist,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+objectClass: eduPerson
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: voPerson
+cn:: IA==
+sn:: IA==
+displayName:: IA==
+eduPersonUniqueId: minimalist@sram.surf.nl
+givenName:: IA==
+mail:: IA==
+uid: minimalist
+voPersonExternalAffiliation: employee@university.nl
+voPersonExternalID: minimalist@university.nl
+
+dn: uid=pvanschay2,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+objectClass: eduPerson
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: voPerson
+cn:: IA==
+sn: van Schayck
+displayName: Paul van Schayck
+eduPersonUniqueId: pvanschay2@sram.surf.nl
+givenName: Paul
+mail: p.vanschayck@maastrichtuniversity.nl
+uid: pvanschay2
+voPersonExternalAffiliation: employee@university.nl
+voPersonExternalID: P.Vanschayck@unimaas.n
+
+#############################################################
+### Collaboration Organisations - COs dn=flat ###
+
+dn: cn=mumc.datahub.@all,ou=Groups,dc=flat,dc=datahubmaastricht,dc=nl
+objectClass: extensibleObject
+objectClass: groupOfMembers
+cn: mumc.datahub.@all
+member: uid=dlinssen,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+member: uid=dtheuniss,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+member: uid=jmelius,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+member: uid=mcoonen,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+member: uid=mcoonen2,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+member: uid=opalmen,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+member: uid=psuppers,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+member: uid=pvanschay2,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+member: uid=rbrecheis,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+member: uid=tlustberg,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+uniqueIdentifier: fb078411-d280-42e1-9d5f-a057f0734f5f
+
+dn: cn=mumc.scannexus.@all,ou=Groups,dc=flat,dc=datahubmaastricht,dc=nl
+objectClass: extensibleObject
+objectClass: groupOfMembers
+cn: mumc.scannexus.@all
+member: uid=rvoncken,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+uniqueIdentifier: 563ebcd8-6552-4dc1-babd-a13bc6531a22
+
+dn: cn=mumc.m4i-massspec.@all,ou=Groups,dc=flat,dc=datahubmaastricht,dc=nl
+objectClass: extensibleObject
+objectClass: groupOfMembers
+cn: mumc.m4i-massspec.@all
+member: uid=delnoy,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+uniqueIdentifier: d119f34c-e5c4-4e5c-8c15-46d93a37b035
+
+dn: cn=mumc.m4i-nanoscopy.@all,ou=Groups,dc=flat,dc=datahubmaastricht,dc=nl
+objectClass: extensibleObject
+objectClass: groupOfMembers
+cn: mumc.m4i-nanoscopy.@all
+member: uid=auser,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+member: uid=pvanschay2,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+uniqueIdentifier: d8bd5ad2-0249-400c-a9da-b75ca6eacb9a
+
+dn: cn=mumc.m4i-nanoscopy-phd0815.@all,ou=Groups,dc=flat,dc=datahubmaastricht,dc=nl
+objectClass: extensibleObject
+objectClass: groupOfMembers
+cn: mumc.m4i-nanoscopy-phd0815.@all
+member: uid=auser,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+uniqueIdentifier: eb33717b-4a7c-4939-9eb8-f9a0d52dd877
