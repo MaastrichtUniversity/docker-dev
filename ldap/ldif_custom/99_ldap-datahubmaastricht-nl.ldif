@@ -155,21 +155,6 @@ uid: auser
 voPersonExternalAffiliation: employee@external.nl
 voPersonExternalID: a.user@external.nl
 
-dn: uid=delnoy,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
-objectClass: eduPerson
-objectClass: inetOrgPerson
-objectClass: person
-objectClass: voPerson
-cn:: IA==
-sn: Delnoy
-displayName:: IA==
-eduPersonUniqueId: delnoy@sram.surf.nl
-givenName:: IA==
-mail: delnoy@example.org
-uid: delnoy
-voPersonExternalAffiliation: employee@maastrichtuniversity.nl
-voPersonExternalID: delnoy@unimaas.nl
-
 dn: uid=kgusta,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 objectClass: eduPerson
 objectClass: inetOrgPerson
@@ -305,36 +290,6 @@ uid: dtheuniss
 voPersonExternalAffiliation: employee@maastrichtuniversity.nl
 voPersonExternalID: d.theunissen@unimaas.nl
 
-dn: uid=rbrecheis,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
-objectClass: eduPerson
-objectClass: inetOrgPerson
-objectClass: person
-objectClass: voPerson
-cn:: IA==
-sn: Brecheisen
-displayName: Ralph Brecheisen
-eduPersonUniqueId: rbrecheis@sram.surf.nl
-givenName: Ralph
-mail: rbrecheis@example.org
-uid: rbrecheis
-voPersonExternalAffiliation: employee@maastrichtuniversity.nl
-voPersonExternalID: r.brecheisen@unimaas.nl
-
-dn: uid=tlustberg,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
-objectClass: eduPerson
-objectClass: inetOrgPerson
-objectClass: person
-objectClass: voPerson
-cn:: IA==
-sn: Lustberg
-displayName: Tim Lustberg
-eduPersonUniqueId: tlustberg@sram.surf.nl
-givenName: Tim
-mail: tlustberg@example.org
-uid: tlustberg
-voPersonExternalAffiliation: employee@maastrichtuniversity.nl
-voPersonExternalID: t.lustberg@unimaas.nl
-
 dn: uid=minimalist,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 objectClass: eduPerson
 objectClass: inetOrgPerson
@@ -380,8 +335,6 @@ member: uid=mcoonen2,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 member: uid=opalmen,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 member: uid=psuppers,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 member: uid=pvanschay2,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
-member: uid=rbrecheis,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
-member: uid=tlustberg,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 uniqueIdentifier: fb078411-d280-42e1-9d5f-a057f0734f5f
 
 dn: cn=mumc.scannexus.@all,ou=Groups,dc=flat,dc=datahubmaastricht,dc=nl
@@ -395,7 +348,7 @@ dn: cn=mumc.m4i-massspec.@all,ou=Groups,dc=flat,dc=datahubmaastricht,dc=nl
 objectClass: extensibleObject
 objectClass: groupOfMembers
 cn: mumc.m4i-massspec.@all
-member: uid=delnoy,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+member: uid=kgusta,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 uniqueIdentifier: d119f34c-e5c4-4e5c-8c15-46d93a37b035
 
 dn: cn=mumc.m4i-nanoscopy.@all,ou=Groups,dc=flat,dc=datahubmaastricht,dc=nl
