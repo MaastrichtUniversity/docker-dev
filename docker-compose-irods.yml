@@ -35,6 +35,7 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
+    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
     depends_on:
        - irods-db
     hostname: icat.dh.local
@@ -90,6 +91,7 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
+    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
     hostname: ires-hnas-um.dh.local
     env_file:
       - .env
@@ -149,6 +151,7 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
+    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
     hostname: ires-hnas-azm.dh.local
     env_file:
       - .env
@@ -210,6 +213,7 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
+    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
     hostname: ires-ceph-ac.dh.local
     env_file: .env
     depends_on:
@@ -259,6 +263,7 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
+    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
     hostname: ires-ceph-gl.dh.local
     env_file: .env
     depends_on:
