@@ -71,17 +71,25 @@ services:
         aliases:
           - icat.dh.local
     volumes:
+      # TODO: maybe make some of these :ro? More strict, we catch errors earlier?
+      # SSL files
       - ./irods/icat/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
-      - ./irods/icat/DMFS:/opt/irods/DMFS
+      # Patch so we setup_irods.py doesn't re-create tables
+      - ./irods/patch/setup_irods_already_installed_dev.patch:/opt/irods/patch/setup_irods_already_installed_dev.patch
+      # icat's hooks for development
       - ./irods/icat/hooks/:/opt/irods/hooks/
-      - ./irods/icat/patch/setup_irods_already_installed_dev.patch:/opt/irods/patch/setup_irods_already_installed_dev.patch
+      # To mock surfsara operations (?)
+      - ./irods/icat/DMFS:/opt/irods/DMFS
+      # To mock users
+      - ./keycloak/users.json:/opt/irods/users.json
+      # repos
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       # goes away with 4.2.11 (genqury patch)
       - ./externals/dh-irods/icat/patch/genquery.py:/etc/irods/genquery.py
       - ./externals/dh-irods/icat/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
-      - ./keycloak/users.json:/opt/irods/users.json
-      #- microservices-build:/tmp/microservices-build
+      # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
+      - microservices-build:/tmp/microservices-build
       - /etc/localtime:/etc/localtime:ro
 
   ires-hnas-um:
@@ -102,10 +110,12 @@ services:
       - .env
       - irods.secrets.cfg
     environment:
-      ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-hnas-um.dh.local.crt
-      ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-hnas-um.dh.local.key
-      ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
-      ENV_IRODS_SSL_CA_CERTIFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
+      # Name of SSL-related files expected in /opt/irods_ssl_staging/ (volume mapped)
+      ENV_IRODS_SSL_CERT: ires-hnas-um.dh.local.crt
+      ENV_IRODS_SSL_KEY: ires-hnas-um.dh.local.key
+      ENV_IRODS_SSL_DH_PARAMS: dhparams.pem
+      # defaults to '/etc/ssl/certs/ca-certificates.crt' (in the container)
+      ENV_IRODS_SSL_CA_CERTIFICATE: test_only_dev_irods_dh_ca_cert.pem
       ENV_FILEBEAT_PRIMARY_TAG: IRES
       ENV_FILEBEAT_SECONDARY_TAG: IRES_UM03
       ENV_DIRECT_INGEST_RESOURCE: "true"
@@ -126,17 +136,25 @@ services:
         aliases:
           - ires-hnas-um.dh.local
     volumes:
-      - /etc/localtime:/etc/localtime:ro
+      # SSL files
+      - ./irods/ires-hnas/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
+      # Patch so setup_irods.py in development doesn't re-create a resource if already exists
+      - ./irods/patch/setup_irods_already_installed_dev.patch:/opt/irods/patch/setup_irods_already_installed_dev.patch
       - ./irods.secrets.cfg:/etc/secrets:ro
+      # hnas's bootstrap.sh
+      - ./externals/dh-irods/ires-hnas/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
+      # hnas's hooks for development
+      - ./irods/ires-hnas/hooks/:/opt/irods/hooks/
+      # repos
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
+      # emulated physical resources
       - ./staging-data/zones:/mnt/ingest/zones
       - ./staging-data/direct-ingest:/mnt/stagingResc01
-      - ./externals/dh-irods/ires-hnas/test-dev-ssl-certs/:/opt/certificates:ro
-      - ./externals/dh-irods/ires-hnas/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
-      - ./externals/dh-irods/ires-hnas/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
+      # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
       - microservices-build:/tmp/microservices-build
+      - /etc/localtime:/etc/localtime:ro
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
     privileged: true
 
