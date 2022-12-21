@@ -97,7 +97,6 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ./keycloak/realm-export.json:/tmp/realm-export.json
       - ./keycloak/users.json:/tmp/users.json
-      - ./keycloak/groups.json:/tmp/groups.json
       - ./keycloak/import.sh:/tmp/import.sh
       - ./keycloak/startup.sh:/opt/jboss/startup-scripts/startup.sh
       - ./keycloak/datahub-keycloak-theme:/opt/jboss/keycloak/themes/datahub
