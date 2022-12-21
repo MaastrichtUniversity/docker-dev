@@ -8,11 +8,10 @@ services:
         - ENV_FILEBEAT_VERSION
         - ENV_RULE_WRAPPER_VERSION
         - SSL_ENV=${RIT_ENV}            # Whether to add our own CA-certificate to the CA-rootstore
-    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/mdr:${ENV_TAG}
+    image: ${ENV_REGISTRY_HOST}/docker-dev/mdr:${ENV_TAG}
     depends_on:
       - keycloak
       - mdr-db
-      - elastic
     env_file:
       - irods.secrets.cfg
       - mdr.env
@@ -35,6 +34,7 @@ services:
     build:
       context: externals/dh-elasticsearch
       dockerfile: Dockerfile
+    image: ${ENV_REGISTRY_HOST}/docker-dev/elastic:${ENV_TAG}
     environment:
       ingest.geoip.downloader.enabled: "false"
       discovery.type: single-node
@@ -58,6 +58,7 @@ services:
       dockerfile: docker/Dockerfile
       args:
         - SSL_ENV=${RIT_ENV}
+    image: ${ENV_REGISTRY_HOST}/docker-dev/faker:${ENV_TAG}
     volumes:
       - ./externals/dh-faker:/opt/
       - ./staging-data:/mnt/ingest
@@ -83,6 +84,7 @@ services:
     build:
       context: keycloak
       dockerfile: Dockerfile
+    image: ${ENV_REGISTRY_HOST}/docker-dev/keycloak:${ENV_TAG}
     hostname: keycloak
     environment:
       VIRTUAL_HOST: keycloak.${RIT_ENV}.dh.unimaas.nl
@@ -141,7 +143,7 @@ services:
         - SSL_ENV=${RIT_ENV}            # Whether to add our own CA-certificate to the CA-rootstore
         - VHOST_FILE=davrods-vhost.conf
         - FILEBEAT_CONFIG_FILE=filebeat.yml
-    image:  ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/davrods:${ENV_TAG}
+    image:  ${ENV_REGISTRY_HOST}/docker-dev/davrods:${ENV_TAG}
     depends_on:
       - icat
     environment:
@@ -167,7 +169,7 @@ services:
         - SSL_ENV=${RIT_ENV}            # Whether to add our own CA-certificate to the CA-rootstore
         - VHOST_FILE=upload-davrods-vhost.conf
         - FILEBEAT_CONFIG_FILE=filebeat-upload.yml
-    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/davrods-upload:${ENV_TAG}
+    image: ${ENV_REGISTRY_HOST}/docker-dev/davrods-upload:${ENV_TAG}
     depends_on:
       - icat
     environment:
@@ -185,7 +187,7 @@ services:
       - upload_logs:/var/log
   epicpid:
     build: externals/epicpid-microservice/docker
-    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/epicpid:${ENV_TAG}
+    image: ${ENV_REGISTRY_HOST}/docker-dev/epicpid:${ENV_TAG}
     environment:
       VIRTUAL_HOST: epicpid.${RIT_ENV}.dh.unimaas.nl
       LOGSTASH_TAGS: EPIC_PID
@@ -214,7 +216,7 @@ services:
       dockerfile: ./docker/Dockerfile
       args:
         - SSL_ENV=${RIT_ENV}
-    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/open-access-worker:${ENV_TAG}
+    image: ${ENV_REGISTRY_HOST}/docker-dev/open-access-worker:${ENV_TAG}
 #    depends_on:
 #      - irods
     env_file:
@@ -248,7 +250,7 @@ services:
       dockerfile: Dockerfile
       args:
         - SSL_ENV=${RIT_ENV}          # Whether to add our own CA-certificate to the CA-rootstore
-    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/sram-sync:${ENV_TAG}
+    image: ${ENV_REGISTRY_HOST}/docker-dev/sram-sync:${ENV_TAG}
     depends_on:
       - icat
       - ldap
