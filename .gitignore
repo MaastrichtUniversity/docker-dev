@@ -7,7 +7,8 @@ node_modules/
 npm-debug.log
 package.json
 yarn.lock
-staging-data/*
+staging-data/zones
+staging-data/direct-ingest
 *.key
 *.crt
 .DS_STORE
