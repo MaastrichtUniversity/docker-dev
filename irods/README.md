@@ -16,12 +16,12 @@ Each of these {`icat`, `ires-hnas`, `ires-s3`} has their own tuple of
 `ires-hnas`'s hooks can be found under `./ires-hnas/hooks/`.
 
 We use these hooks here in development like this:
-    * `bootstrap_pre_hook.sh`: Depends on which {`icat`, `ires-hnas`,
-      `ires-s3`}, but generally we use it to create physical resources
-      (`mkdir`) that in production already exists and are mounted, or.. what
-      have ya.
-    * `bootstrap_post_hook.sh`: Here we generally call our `bootstrap_irods.sh`
-      which takes care of creating fake projects, collections, etc..
+* `bootstrap_pre_hook.sh`: Depends on which {`icat`, `ires-hnas`,
+  `ires-s3`}, but generally we use it to create physical resources
+  (`mkdir`) that in production already exists and are mounted, or.. what
+  have ya.
+* `bootstrap_post_hook.sh`: Here we generally call our `bootstrap_irods.sh`
+  which takes care of creating fake projects, collections, etc..
 
 In development, we also want to have some "fake" SSL certificates that we sign
 with our own "fake" (for iRODS testing purposes only) CA. These files, for
