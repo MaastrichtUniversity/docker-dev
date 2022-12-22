@@ -183,7 +183,7 @@ services:
       ENV_IRODS_SSL_KEY: ires-hnas-azm.dh.local.key
       ENV_IRODS_SSL_DH_PARAMS: dhparams.pem
       # defaults to '/etc/ssl/certs/ca-certificates.crt' (in the container)
-      ENV_IRODS_SSL_CA_CERFICATE: test_only_dev_irods_dh_ca_cert.pem
+      ENV_IRODS_SSL_CA_CERTIFICATE: test_only_dev_irods_dh_ca_cert.pem
       ENV_FILEBEAT_PRIMARY_TAG: IRES
       ENV_FILEBEAT_SECONDARY_TAG: IRES_AZM
       ENV_DIRECT_INGEST_RESOURCE: "false"

@@ -20,13 +20,7 @@ if [[ "${ENV_DEBUG_DH_BOOTSTRAP,,}" =~ $debug_on_pattern ]]; then
     set -x
 fi
 
-source /opt/irods/lib_helpers.sh
-
-# safety guard (bootstrap.sh should've already decided to (not) run this script
-if [[ "$(print_is_dev_env)" != "yes" ]]; then
-    echo "ERROR: Safeguard! We don't seem to be in a dev environment. Will not run bootstrap_irods.sh"
-    exit 1
-fi
+source /opt/irods/lib/helpers.sh
 
 
 create_mock_projects_azm() {
