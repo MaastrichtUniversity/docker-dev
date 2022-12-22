@@ -178,14 +178,14 @@ services:
       - .env
       - irods.secrets.cfg
     environment:
-      # TODO: Not centos any more... change name everywhere
+      # Name of SSL-related files expected in /opt/irods_ssl_staging/ (volume mapped)
       ENV_IRODS_SSL_CERT: ires-hnas-azm.dh.local.crt
       ENV_IRODS_SSL_KEY: ires-hnas-azm.dh.local.key
       ENV_IRODS_SSL_DH_PARAMS: dhparams.pem
+      # defaults to '/etc/ssl/certs/ca-certificates.crt' (in the container)
       ENV_IRODS_SSL_CA_CERFICATE: test_only_dev_irods_dh_ca_cert.pem
       ENV_FILEBEAT_PRIMARY_TAG: IRES
       ENV_FILEBEAT_SECONDARY_TAG: IRES_AZM
-      # TODO: Do we want false here for azm?
       ENV_DIRECT_INGEST_RESOURCE: "false"
       # Name for 'coordinating' resource of type replication
       # In bootstrap_irods.sh we expect find substring 'UM' or 'AZM'
@@ -199,25 +199,34 @@ services:
       # Pricing AVU for 'coordinating' resource
       # TODO: This right?
       ENV_IRODS_COOR_RESC_PRICING: "0"
-      # TODO: same as before.. not centos anymore
       VIRTUAL_HOST: ires-hnas-azm.${RIT_ENV}.rit.unimaas.nl
     networks:
       default:
         aliases:
           - ires-hnas-azm.dh.local
     volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./irods.secrets.cfg:/etc/secrets:ro
+      # SSL files
+      - ./irods/ires-hnas/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
+      # patch so setup_irods.py in development doesn't re-create a resource if already exists
+      - ./irods/patch/setup_irods_already_installed_dev.patch:/opt/irods/patch/setup_irods_already_installed_dev.patch
+      # hnas's bootstrap.sh (to be called by init.sh)
+      - ./externals/dh-irods/ires-hnas/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
+      # hnas's hooks for development
+      - ./irods/ires-hnas/hooks/:/opt/irods/hooks/
+      # repos
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
+      # irods-helper-cmd uses /etc/secrets
+      - ./irods.secrets.cfg:/etc/secrets:ro
+      # emulated physical resources
       - ./staging-data/zones:/mnt/ingest/zones
-      - ./externals/dh-irods/ires-hnas/test-dev-ssl-certs/:/opt/certificates:ro
-      - ./externals/dh-irods/ires-hnas/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
-      - ./externals/dh-irods/ires-hnas/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
+      # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
       - microservices-build:/tmp/microservices-build
+      - /etc/localtime:/etc/localtime:ro
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
     privileged: true
+
   ires-ceph-ac:
     build:
       context: externals/dh-irods/irods-base/
@@ -291,10 +300,12 @@ services:
     depends_on:
       - minio2
     environment:
-      ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-ceph-gl.dh.local.crt
-      ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-ceph-gl.dh.local.key
-      ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
-      ENV_IRODS_SSL_CA_CERFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
+      # Name of SSL-related files expected in /opt/irods_ssl_staging/ (volume mapped)
+      ENV_IRODS_SSL_CERT: ires-ceph-gl.dh.local.crt
+      ENV_IRODS_SSL_KEY: ires-ceph-gl.dh.local.key
+      ENV_IRODS_SSL_DH_PARAMS: dhparams.pem
+      # defaults to '/etc/ssl/certs/ca-certificates.crt' (in the container)
+      ENV_IRODS_SSL_CA_CERFICATE: test_only_dev_irods_dh_ca_cert.pem
       # Yet another work around :(
       # In the ICAT DB (think production). The way the S3 resource was
       # configured (mkresc), includes this:
@@ -320,15 +331,23 @@ services:
       ENV_FILEBEAT_SECONDARY_TAG: IRES_UM01
       VIRTUAL_HOST: ires-ceph-gl.${RIT_ENV}.rit.unimaas.nl
     volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./irods.secrets.cfg:/etc/secrets:ro
+      # SSL files
+      - ./irods/ires-s3/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
+      # patch so we setup_irods.py doesn't re-create tables
+      - ./irods/patch/setup_irods_already_installed_dev.patch:/opt/irods/patch/setup_irods_already_installed_dev.patch
+      # ires-s3's bootstrap.sh (to be called by init.sh)
+      - ./externals/dh-irods/ires-s3/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
+      # ires-s3's hooks for development
+      - ./irods/ires-s3/hooks/:/opt/irods/hooks/
+      # repos
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
+      # irods-helper-cmd uses /etc/secrets
+      - ./irods.secrets.cfg:/etc/secrets:ro
+      # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
       - microservices-build:/tmp/microservices-build
-      - ./externals/dh-irods/ires-s3/test-dev-ssl-certs/:/opt/certificates:ro
-      - ./externals/dh-irods/ires-s3/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
-      - ./externals/dh-irods/ires-s3/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
+      - /etc/localtime:/etc/localtime:ro
     networks:
       default:
         aliases:
