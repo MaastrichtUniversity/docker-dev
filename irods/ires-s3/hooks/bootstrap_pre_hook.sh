@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /opt/irods/lib/helpers.sh
+source /opt/irods/lib/irods.sh
 
 echo "INFO: Applying setup_irods_already_installed_dev.patch to setup_irods.py"
 echo "INFO: This patch will mkresc if the resource is not already registered and comment out test_put()"
