@@ -56,12 +56,12 @@ fi
 if [[ $1 == "make" ]]; then
    if [[ $2 == "rules" ]]; then
       set +e
-      docker exec -it ${COMPOSE_PROJECT_NAME}-icat-1 su irods -c "cd /rules && make"
-      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-hnas-um-1 su irods -c "cd /rules && make"
-      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-hnas-azm-1 su irods -c "cd /rules && make"
-      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-hnas-azm-1 su irods -c "cd /rules && make"
-      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-ceph-gl-1 su irods -c "cd /rules && make"
-      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-ceph-ac-1 su irods -c "cd /rules && make"
+      docker exec -u irods ${COMPOSE_PROJECT_NAME}-icat-1 make -C /rules
+      docker exec -u irods ${COMPOSE_PROJECT_NAME}-ires-hnas-um-1 make -C /rules
+      docker exec -u irods ${COMPOSE_PROJECT_NAME}-ires-hnas-azm-1 make -C /rules
+      docker exec -u irods ${COMPOSE_PROJECT_NAME}-ires-hnas-azm-1 make -C /rules
+      docker exec -u irods ${COMPOSE_PROJECT_NAME}-ires-ceph-gl-1 make -C /rules
+      docker exec -u irods ${COMPOSE_PROJECT_NAME}-ires-ceph-ac-1 make -C /rules
       exit 0
    fi
    if [[ $2 == "microservices" ]]; then
