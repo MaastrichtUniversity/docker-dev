@@ -87,7 +87,7 @@ services:
       # repos
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
-      # goes away with 4.2.11 (genqury patch)
+      # goes away with 4.2.11 (GenQuery patch)
       - ./externals/dh-irods/icat/patch/genquery.py:/etc/irods/genquery.py
       # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
       - microservices-build:/tmp/microservices-build
@@ -377,9 +377,9 @@ services:
         aliases:
           - minio2.dh.local
 volumes:
-  # these volumes exists so already-compiled microservices shared across
+  # these volumes exist so already-compiled microservices shared across
   # icat/ires's don't have to be recompiled. If icat already compiled them, no
-  # need for ires's to recompilie. For acc/prod, maybe useful if container is
+  # need for ires's to recompile. For acc/prod, maybe useful if container is
   # restarted, no need to recompile if already up to date? Although I don't
   # know if make will know nothing changed.
   microservices-build:
