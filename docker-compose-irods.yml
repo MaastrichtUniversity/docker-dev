@@ -305,7 +305,7 @@ services:
       ENV_IRODS_SSL_KEY: ires-ceph-gl.dh.local.key
       ENV_IRODS_SSL_DH_PARAMS: dhparams.pem
       # defaults to '/etc/ssl/certs/ca-certificates.crt' (in the container)
-      ENV_IRODS_SSL_CA_CERFICATE: test_only_dev_irods_dh_ca_cert.pem
+      ENV_IRODS_SSL_CA_CERTIFICATE: test_only_dev_irods_dh_ca_cert.pem
       # Yet another work around :(
       # In the ICAT DB (think production). The way the S3 resource was
       # configured (mkresc), includes this:
