@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 
-# "Exit immediately if a command exits with a non-zero status." -- bash help set
-set -e
-
-# "Treat unset variables as an error when substituting."
-set -u
+set -euo pipefail
 
 # Set ENV_DEBUG_DH_BOOTSTRAP=yes for debug log lines
 debug_on_pattern='^(true|yes|1)$'
