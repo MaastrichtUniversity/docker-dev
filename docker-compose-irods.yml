@@ -43,7 +43,8 @@ services:
     ports:
       - "1247:1247"
       - "1248:1248"
-      - "20000:20199"
+      # TODO: Do we really need these ports in iCAT?
+      - "20000-20199:20000-20199"
     env_file: .env
     environment:
       ENV_IRODS_DB_HOSTNAME: irods-db.dh.local
