@@ -18,6 +18,9 @@ if [[ "$(print_is_dev_env)" != "yes" ]]; then
     exit 1
 fi
 
+# Check if irods seems to be working
+ils > /dev/null || { echo "ERROR: Failed to run ils, iRODS server not up?" ; exit 1; }
+
 # Find out if this is not the first time this bootstrap_irods.sh has run the same iCAT DB.
 # FIXME: We extrapolate from this AVU that all other operations in this
 #        bootstrap_irods.sh have also been run. Not great!
