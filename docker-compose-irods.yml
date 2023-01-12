@@ -98,6 +98,8 @@ services:
       - ./externals/dh-irods/icat/patch/genquery.py:/etc/irods/genquery.py
       # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
       - microservices-build:/tmp/microservices-build
+      # This is persistent because the delay queue depends on files in this directory
+      - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
 
   ires-hnas-um:
@@ -169,6 +171,8 @@ services:
       - ./staging-data/direct-ingest:/mnt/stagingResc01
       # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
       - microservices-build:/tmp/microservices-build
+      # This is persistent because the delay queue depends on files in this directory
+      - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
     privileged: true
@@ -242,6 +246,8 @@ services:
       - ./staging-data/zones:/mnt/ingest/zones
       # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
       - microservices-build:/tmp/microservices-build
+      # This is persistent because the delay queue depends on files in this directory
+      - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
     # Required for CIFS mounting. cap-add not enough in Windows for some reason.
     privileged: true
@@ -302,6 +308,8 @@ services:
       - ./irods.secrets.cfg:/etc/secrets:ro
       # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
       - microservices-build:/tmp/microservices-build
+      # This is persistent because the delay queue depends on files in this directory
+      - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
     networks:
       default:
@@ -378,6 +386,8 @@ services:
       - ./irods.secrets.cfg:/etc/secrets:ro
       # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
       - microservices-build:/tmp/microservices-build
+      # This is persistent because the delay queue depends on files in this directory
+      - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
     networks:
       default:
@@ -408,7 +418,8 @@ services:
         aliases:
           - minio2.dh.local
 volumes:
-  # these volumes exist so already-compiled microservices shared across
+  delay-queue:
+  # this volume exists so already-compiled microservices shared across
   # icat/ires's don't have to be recompiled. If icat already compiled them, no
   # need for ires's to recompile. For acc/prod, maybe useful if container is
   # restarted, no need to recompile if already up to date? Although I don't
