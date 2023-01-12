@@ -37,6 +37,12 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
+    # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
+    # https://github.com/irods/irods/issues/5218
+    sysctls:
+      - net.ipv4.tcp_keepalive_intvl=75
+      - net.ipv4.tcp_keepalive_probes=9
+      - net.ipv4.tcp_keepalive_time=600
     depends_on:
        - irods-db
     hostname: icat.dh.local
@@ -107,6 +113,12 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
+    # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
+    # https://github.com/irods/irods/issues/5218
+    sysctls:
+      - net.ipv4.tcp_keepalive_intvl=75
+      - net.ipv4.tcp_keepalive_probes=9
+      - net.ipv4.tcp_keepalive_time=600
     hostname: ires-hnas-um.dh.local
     env_file:
       - .env
@@ -174,6 +186,12 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
+    # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
+    # https://github.com/irods/irods/issues/5218
+    sysctls:
+      - net.ipv4.tcp_keepalive_intvl=75
+      - net.ipv4.tcp_keepalive_probes=9
+      - net.ipv4.tcp_keepalive_time=600
     hostname: ires-hnas-azm.dh.local
     env_file:
       - .env
@@ -241,6 +259,12 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
+    # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
+    # https://github.com/irods/irods/issues/5218
+    sysctls:
+      - net.ipv4.tcp_keepalive_intvl=75
+      - net.ipv4.tcp_keepalive_probes=9
+      - net.ipv4.tcp_keepalive_time=600
     hostname: ires-ceph-ac.dh.local
     env_file: .env
     depends_on:
@@ -296,6 +320,12 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
+    # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
+    # https://github.com/irods/irods/issues/5218
+    sysctls:
+      - net.ipv4.tcp_keepalive_intvl=75
+      - net.ipv4.tcp_keepalive_probes=9
+      - net.ipv4.tcp_keepalive_time=600
     hostname: ires-ceph-gl.dh.local
     env_file: .env
     depends_on:
