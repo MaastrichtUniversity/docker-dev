@@ -11,3 +11,4 @@ staging-data/*
 *.key
 *.crt
 .DS_STORE
+.env_with_secrets

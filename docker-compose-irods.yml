@@ -167,15 +167,16 @@ services:
       # irods-helper-cmd uses /etc/secrets
       - ./irods.secrets.cfg:/etc/secrets:ro
       # emulated physical resources
+      # If you want to make use of the samba mounts, comment the two lines below and uncomment the direct-dropzones & mounted-dropzones lines
       - ./staging-data/zones:/mnt/ingest/zones
       - ./staging-data/direct-ingest:/mnt/stagingResc01
+      #- direct-dropzones:/mnt/stagingResc01
+      #- mounted-dropzones:/mnt/ingest/zones
       # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
       - microservices-build:/tmp/microservices-build
       # This is persistent because the delay queue depends on files in this directory
       - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
-    # Required for CIFS mounting. cap-add not enough in Windows for some reason.
-    privileged: true
 
   ires-hnas-azm:
     build:
@@ -243,14 +244,14 @@ services:
       # irods-helper-cmd uses /etc/secrets
       - ./irods.secrets.cfg:/etc/secrets:ro
       # emulated physical resources
+      # If you want to make use of the samba mounts, comment the line below and uncomment the mounted-dropzones line
       - ./staging-data/zones:/mnt/ingest/zones
+      #- mounted-dropzones:/mnt/ingest/zones
       # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
       - microservices-build:/tmp/microservices-build
       # This is persistent because the delay queue depends on files in this directory
       - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
-    # Required for CIFS mounting. cap-add not enough in Windows for some reason.
-    privileged: true
 
   ires-ceph-ac:
     build:
@@ -425,3 +426,16 @@ volumes:
   # restarted, no need to recompile if already up to date? Although I don't
   # know if make will know nothing changed.
   microservices-build:
+  # If you want to use SAMBA, uncomment all lines below
+#  mounted-dropzones:
+#    driver: local
+#    driver_opts:
+#      type: cifs
+#      device: //um-nas201.unimaas.nl/RIT-iRODS-ingestzones/dev
+#      o: "addr=um-nas201.unimaas.nl,username=rit-dev,password=${INGEST_PASSWORD},vers=2.0,uid=${ENV_IRODS_UID},gid=${ENV_IRODS_GID}"
+#  direct-dropzones:
+#    driver: local
+#    driver_opts:
+#      type: cifs
+#      device: //um-nas201.unimaas.nl/RIT-iRODS-ingestzones/dev-direct
+#      o: "addr=um-nas201.unimaas.nl,username=rit-dev,password=${INGEST_PASSWORD},vers=2.0,uid=${ENV_IRODS_UID},gid=${ENV_IRODS_GID}"
