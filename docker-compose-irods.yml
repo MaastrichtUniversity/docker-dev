@@ -431,11 +431,11 @@ volumes:
 #    driver: local
 #    driver_opts:
 #      type: cifs
-#      device: //um-nas201.unimaas.nl/RIT-iRODS-ingestzones/dev
-#      o: "addr=um-nas201.unimaas.nl,username=rit-dev,password=${INGEST_PASSWORD},vers=2.0,uid=${ENV_IRODS_UID},gid=${ENV_IRODS_GID}"
+#      device: ${INGEST_MOUNT}
+#      o: "addr=um-nas201.unimaas.nl,username=${INGEST_USER},password=${INGEST_PASSWORD},vers=2.0,uid=${ENV_IRODS_UID},gid=${ENV_IRODS_GID}"
 #  direct-dropzones:
 #    driver: local
 #    driver_opts:
 #      type: cifs
-#      device: //um-nas201.unimaas.nl/RIT-iRODS-ingestzones/dev-direct
-#      o: "addr=um-nas201.unimaas.nl,username=rit-dev,password=${INGEST_PASSWORD},vers=2.0,uid=${ENV_IRODS_UID},gid=${ENV_IRODS_GID}"
+#      device: ${INGEST_MOUNT}-direct
+#      o: "addr=um-nas201.unimaas.nl,username=${INGEST_USER},password=${INGEST_PASSWORD},vers=2.0,uid=${ENV_IRODS_UID},gid=${ENV_IRODS_GID}"
