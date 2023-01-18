@@ -74,6 +74,28 @@ if [[ $1 == "make" ]]; then
    fi
 fi
 
+# Run test cases
+# e.g:
+# * irods
+# ./rit.sh test irods . # to execute all tests in the folder '/rules/test_cases'
+# ./rit.sh test irods test_policies.py # to execute the tests inside '/rules/test_cases/test_policies.py'
+# ./rit.sh test irods test_policies.py::TestPolicies::test_post_proc_for_coll_create # to only execute a single test
+# * mdr
+# ./rit.sh test mdr # to execute all tests
+# ./rit.sh test mdr app.tests.test_projects # to execute the tests inside '/app/tests/test_projects'
+if [[ $1 == "test" ]]; then
+   if [[ $2 == "irods" ]]; then
+      set +e
+      docker exec -it ${COMPOSE_PROJECT_NAME}-icat-1 su irods -c "cd /rules/test_cases && /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider ${3}"
+      exit 0
+   fi
+   if [[ $2 == "mdr" ]]; then
+      set +e
+      docker exec -it ${COMPOSE_PROJECT_NAME}-mdr-1 su -c "python manage.py test ${3}"
+      exit 0
+   fi
+fi
+
 
 #
 # code block for create functionality
