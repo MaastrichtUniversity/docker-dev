@@ -111,6 +111,39 @@ if [[ $1 == "faker" ]]; then
     exit 0
 fi
 
+# Start minimal docker-dev environment
+if [[ $1 == "minimal" ]]; then
+    docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal up -d
+    until docker logs --tail 30 dev-icat-1 2>&1 | grep -q "Config OK";
+    do
+      echo "Waiting for iCAT"
+      sleep 10
+    done
+
+    echo "iCAT is Done"
+
+    until docker logs --tail 1 dev-keycloak-1 2>&1 | grep -q "Done syncing LDAP";
+    do
+      echo "Waiting for keycloak"
+      sleep 20
+    done
+
+    echo "Keycloak is Done"
+
+    echo "Running single run of SRAM-SYNC"
+    ./rit.sh up -d sram-sync
+
+    until docker logs --tail 1 dev-sram-sync-1 2>&1 | grep -q "Sleeping for 300 seconds";
+    do
+      echo "Waiting for sram-sync"
+      sleep 5
+    done
+
+    docker kill dev-sram-sync-1
+
+    exit 0
+fi
+
 if [[ $1 == "login" ]]; then
     source './.env'
     docker login $ENV_REGISTRY_HOST
