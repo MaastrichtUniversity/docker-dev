@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   irods-db:
     image: postgres:${ENV_POSTGRES_VERSION}
@@ -20,6 +20,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./irods/irods-db/create_icat_db.sh:/docker-entrypoint-initdb.d/create_icat_db.sh
+    profiles: ["minimal","backend","full"]
     networks:
       default:
         aliases:
@@ -44,6 +45,7 @@ services:
       - net.ipv4.tcp_keepalive_intvl=75
       - net.ipv4.tcp_keepalive_probes=9
       - net.ipv4.tcp_keepalive_time=600
+    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
     depends_on:
        - irods-db
     hostname: icat.dh.local
@@ -74,6 +76,7 @@ services:
       ENV_FILEBEAT_PRIMARY_TAG: ICAT
       # TODO: Do we want to change this to icat?
       VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
+    profiles: ["minimal","backend","full"]
     networks:
       default:
         aliases:
@@ -121,6 +124,7 @@ services:
       - net.ipv4.tcp_keepalive_intvl=75
       - net.ipv4.tcp_keepalive_probes=9
       - net.ipv4.tcp_keepalive_time=600
+    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
     hostname: ires-hnas-um.dh.local
     env_file:
       - .env
@@ -147,6 +151,7 @@ services:
       # Pricing AVU for 'coordinating' resource
       ENV_IRODS_COOR_RESC_PRICING: "0.130"
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
+    profiles: ["minimal","backend","full"]
     networks:
       default:
         aliases:
@@ -198,6 +203,7 @@ services:
       - net.ipv4.tcp_keepalive_intvl=75
       - net.ipv4.tcp_keepalive_probes=9
       - net.ipv4.tcp_keepalive_time=600
+    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
     hostname: ires-hnas-azm.dh.local
     env_file:
       - .env
@@ -225,6 +231,7 @@ services:
       # TODO: This right?
       ENV_IRODS_COOR_RESC_PRICING: "0"
       VIRTUAL_HOST: ires-hnas-azm.${RIT_ENV}.rit.unimaas.nl
+    profiles: ["backend","full"]
     networks:
       default:
         aliases:
@@ -274,6 +281,7 @@ services:
       - net.ipv4.tcp_keepalive_intvl=75
       - net.ipv4.tcp_keepalive_probes=9
       - net.ipv4.tcp_keepalive_time=600
+    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
     hostname: ires-ceph-ac.dh.local
     env_file: .env
     depends_on:
@@ -314,6 +322,7 @@ services:
       # This is persistent because the delay queue depends on files in this directory
       - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
+    profiles: ["backend","full"]
     networks:
       default:
         aliases:
@@ -338,6 +347,7 @@ services:
       - net.ipv4.tcp_keepalive_intvl=75
       - net.ipv4.tcp_keepalive_probes=9
       - net.ipv4.tcp_keepalive_time=600
+    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
     hostname: ires-ceph-gl.dh.local
     env_file: .env
     depends_on:
@@ -393,6 +403,7 @@ services:
       # This is persistent because the delay queue depends on files in this directory
       - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
+    profiles: ["backend","full"]
     networks:
       default:
         aliases:
@@ -405,6 +416,7 @@ services:
       MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY1}
     entrypoint: sh
     command: -c 'mkdir -p /data/dh-irods-bucket-dev && /usr/bin/minio server /data'
+    profiles: ["backend","full"]
     networks:
       default:
         aliases:
@@ -417,6 +429,7 @@ services:
       MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
     entrypoint: sh
     command: -c 'mkdir -p /data/dh-irods-bucket-dev && /usr/bin/minio server /data'
+    profiles: ["backend","full"]
     networks:
       default:
         aliases:

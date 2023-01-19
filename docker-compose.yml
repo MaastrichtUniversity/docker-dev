@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   mdr:
     build:
@@ -8,11 +8,10 @@ services:
         - ENV_FILEBEAT_VERSION
         - ENV_RULE_WRAPPER_VERSION
         - SSL_ENV=${RIT_ENV}            # Whether to add our own CA-certificate to the CA-rootstore
-    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/mdr:${ENV_TAG}
+    image: ${ENV_REGISTRY_HOST}/docker-dev/mdr:${ENV_TAG}
     depends_on:
       - keycloak
       - mdr-db
-      - elastic
     env_file:
       - irods.secrets.cfg
       - mdr.env
@@ -24,6 +23,7 @@ services:
       # comment the following line.
       - ./externals/irods-rule-wrapper:/opt/src/irods-rule-wrapper
       - ./externals/dh-python-irods-utils/dhpythonirodsutils:/usr/local/lib/python3.10/site-packages/dhpythonirodsutils
+    profiles: ["minimal","full"]
     networks:
       default:
         aliases:
@@ -35,6 +35,7 @@ services:
     build:
       context: externals/dh-elasticsearch
       dockerfile: Dockerfile
+    image: ${ENV_REGISTRY_HOST}/docker-dev/elastic:${ENV_TAG}
     environment:
       ingest.geoip.downloader.enabled: "false"
       discovery.type: single-node
@@ -45,6 +46,7 @@ services:
       VIRTUAL_PORT: 9200
     volumes:
       - elastic_metadata:/usr/share/elasticsearch/data
+    profiles: ["minimal","full"]
     networks:
         default:
           aliases:
@@ -58,6 +60,7 @@ services:
       dockerfile: docker/Dockerfile
       args:
         - SSL_ENV=${RIT_ENV}
+    image: ${ENV_REGISTRY_HOST}/docker-dev/faker:${ENV_TAG}
     volumes:
       - ./externals/dh-faker:/opt/
       - ./staging-data:/mnt/ingest
@@ -72,6 +75,7 @@ services:
       RABBITMQ_PASS: password
       RABBITMQ_PORT: 5672
       LOG_LEVEL: INFO
+    profiles: ["faker"]
     networks:
       default:
         aliases:
@@ -83,6 +87,7 @@ services:
     build:
       context: keycloak
       dockerfile: Dockerfile
+    image: ${ENV_REGISTRY_HOST}/docker-dev/keycloak:${ENV_TAG}
     hostname: keycloak
     environment:
       VIRTUAL_HOST: keycloak.${RIT_ENV}.dh.unimaas.nl
@@ -95,7 +100,6 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ./keycloak/realm-export.json:/tmp/realm-export.json
       - ./keycloak/users.json:/tmp/users.json
-      - ./keycloak/groups.json:/tmp/groups.json
       - ./keycloak/import.sh:/tmp/import.sh
       - ./keycloak/startup.sh:/opt/jboss/startup-scripts/startup.sh
       - ./keycloak/datahub-keycloak-theme:/opt/jboss/keycloak/themes/datahub
@@ -104,6 +108,7 @@ services:
       - "8080:8080"   # In order to bypass nginx-virtual-proxy while being redirected during Saml logins
     depends_on:
       - ldap
+    profiles: ["minimal","full"]
     networks:
       default:
         aliases:
@@ -127,6 +132,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./ldap/ldif_custom:/container/service/slapd/assets/config/bootstrap/ldif/custom/
+    profiles: ["minimal","full"]
     networks:
       default:
         aliases:
@@ -141,12 +147,13 @@ services:
         - SSL_ENV=${RIT_ENV}            # Whether to add our own CA-certificate to the CA-rootstore
         - VHOST_FILE=davrods-vhost.conf
         - FILEBEAT_CONFIG_FILE=filebeat.yml
-    image:  ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/davrods:${ENV_TAG}
+    image:  ${ENV_REGISTRY_HOST}/docker-dev/davrods:${ENV_TAG}
     depends_on:
       - icat
     environment:
       VIRTUAL_HOST: download.${RIT_ENV}.dh.unimaas.nl
       LOGSPOUT: ignore
+    profiles: ["full"]
     networks:
       default:
         aliases:
@@ -167,12 +174,13 @@ services:
         - SSL_ENV=${RIT_ENV}            # Whether to add our own CA-certificate to the CA-rootstore
         - VHOST_FILE=upload-davrods-vhost.conf
         - FILEBEAT_CONFIG_FILE=filebeat-upload.yml
-    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/davrods-upload:${ENV_TAG}
+    image: ${ENV_REGISTRY_HOST}/docker-dev/davrods-upload:${ENV_TAG}
     depends_on:
       - icat
     environment:
       VIRTUAL_HOST: upload.${RIT_ENV}.dh.unimaas.nl
       LOGSPOUT: ignore
+    profiles: ["full"]
     networks:
       default:
         aliases:
@@ -185,7 +193,7 @@ services:
       - upload_logs:/var/log
   epicpid:
     build: externals/epicpid-microservice/docker
-    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/epicpid:${ENV_TAG}
+    image: ${ENV_REGISTRY_HOST}/docker-dev/epicpid:${ENV_TAG}
     environment:
       VIRTUAL_HOST: epicpid.${RIT_ENV}.dh.unimaas.nl
       LOGSTASH_TAGS: EPIC_PID
@@ -198,6 +206,7 @@ services:
       RABBITMQ_PORT: 5672
       EPIC_CREDENTIALS: my_credentials_test.json
       REQUESTS_CA_BUNDLE: /opt/epic5storagesurfsaranlCHAIN.crt
+    profiles: ["minimal","full"]
     networks:
       default:
         aliases:
@@ -214,7 +223,7 @@ services:
       dockerfile: ./docker/Dockerfile
       args:
         - SSL_ENV=${RIT_ENV}
-    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/open-access-worker:${ENV_TAG}
+    image: ${ENV_REGISTRY_HOST}/docker-dev/open-access-worker:${ENV_TAG}
 #    depends_on:
 #      - irods
     env_file:
@@ -235,6 +244,7 @@ services:
       LOGSTASH_TAGS: OPEN_ACCESS_WORKER
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    profiles: ["full"]
     networks:
       default:
         aliases:
@@ -248,7 +258,7 @@ services:
       dockerfile: Dockerfile
       args:
         - SSL_ENV=${RIT_ENV}          # Whether to add our own CA-certificate to the CA-rootstore
-    image: ${ENV_REGISTRY_HOST}/docker-dev/${ENV_BRANCH}/sram-sync:${ENV_TAG}
+    image: ${ENV_REGISTRY_HOST}/docker-dev/sram-sync:${ENV_TAG}
     depends_on:
       - icat
       - ldap
@@ -274,6 +284,7 @@ services:
       SYNC_GROUPS: "True"
       DELETE_GROUPS: "True"
     command: sram-sync.py --commit --scheduled
+    profiles: ["full"]
     networks:
       default:
       common_default:
@@ -287,6 +298,7 @@ services:
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    profiles: ["minimal","full"]
     networks:
       default:
         aliases:
