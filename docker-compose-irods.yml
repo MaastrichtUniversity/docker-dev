@@ -95,8 +95,6 @@ services:
       # repos
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
-      # goes away with 4.2.11 (GenQuery patch)
-      - ./externals/dh-irods/icat/patch/genquery.py:/etc/irods/genquery.py
       # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
       - microservices-build:/tmp/microservices-build
       # This is persistent because the delay queue depends on files in this directory
