@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   irods-db:
     image: postgres:${ENV_POSTGRES_VERSION}
@@ -15,6 +15,7 @@ services:
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    profiles: ["minimal","backend","full"]
     networks:
       default:
         aliases:
@@ -59,6 +60,7 @@ services:
       ENV_FILEBEAT_PRIMARY_TAG: ICAT
       # TODO: Do we want to change this to icat?
       VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
+    profiles: ["minimal","backend","full"]
     networks:
       default:
         aliases:
@@ -116,6 +118,7 @@ services:
       # Pricing AVU for 'coordinating' resource
       ENV_IRODS_COOR_RESC_PRICING: "0.130"
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
+    profiles: ["minimal","backend","full"]
     networks:
       default:
         aliases:
@@ -180,6 +183,7 @@ services:
       ENV_IRODS_COOR_RESC_PRICING: "0"
       # TODO: same as before.. not centos anymore
       VIRTUAL_HOST: ires-hnas-azm.${RIT_ENV}.rit.unimaas.nl
+    profiles: ["backend","full"]
     networks:
       default:
         aliases:
@@ -243,6 +247,7 @@ services:
       - ./externals/dh-irods/ires-s3/test-dev-ssl-certs/:/opt/certificates:ro
       - ./externals/dh-irods/ires-s3/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
       - ./externals/dh-irods/ires-s3/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
+    profiles: ["backend","full"]
     networks:
       default:
         aliases:
@@ -307,6 +312,7 @@ services:
       - ./externals/dh-irods/ires-s3/test-dev-ssl-certs/:/opt/certificates:ro
       - ./externals/dh-irods/ires-s3/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
       - ./externals/dh-irods/ires-s3/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
+    profiles: ["backend","full"]
     networks:
       default:
         aliases:
@@ -322,6 +328,7 @@ services:
       MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY1}
     entrypoint: sh
     command: -c 'mkdir -p /data/dh-irods-bucket-dev && /usr/bin/minio server /data'
+    profiles: ["backend","full"]
     networks:
       default:
         aliases:
@@ -337,6 +344,7 @@ services:
       MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
     entrypoint: sh
     command: -c 'mkdir -p /data/dh-irods-bucket-dev && /usr/bin/minio server /data'
+    profiles: ["backend","full"]
     networks:
       default:
         aliases:
