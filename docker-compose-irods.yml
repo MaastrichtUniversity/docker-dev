@@ -19,8 +19,8 @@ services:
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
-    profiles: ["minimal","backend","full"]
       - ./irods/irods-db/create_icat_db.sh:/docker-entrypoint-initdb.d/create_icat_db.sh
+    profiles: ["minimal","backend","full"]
     networks:
       default:
         aliases:
