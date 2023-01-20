@@ -12,15 +12,17 @@ services:
     environment:
       # password for postgres-database user 'postgres' (i.e. ENV_IRODS_DB_POSTGRES_PASSWORD)
       POSTGRES_PASSWORD: foobar
+      ENV_IRODS_DB_NAME: icat
+      ENV_IRODS_DB_USERNAME: irods
+      # (test) password for postgres user 'irods'
+      ENV_IRODS_DB_IRODS_PASSWORD: pgB3rKhqLGFLora
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
     profiles: ["minimal","backend","full"]
+      - ./irods/irods-db/create_icat_db.sh:/docker-entrypoint-initdb.d/create_icat_db.sh
     networks:
       default:
-        aliases:
-          - irods-db.dh.local
-      common_default:
         aliases:
           - irods-db.dh.local
   icat:
@@ -37,48 +39,71 @@ services:
         - ENV_IRODS_GID
         - ENV_IRODS_UID
     image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
+    # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
+    # https://github.com/irods/irods/issues/5218
+    sysctls:
+      - net.ipv4.tcp_keepalive_intvl=75
+      - net.ipv4.tcp_keepalive_probes=9
+      - net.ipv4.tcp_keepalive_time=600
     depends_on:
        - irods-db
     hostname: icat.dh.local
     ports:
       - "1247:1247"
       - "1248:1248"
-      - "20000:20199"
+      # TODO: Do we really need these ports in iCAT?
+      - "20000-20199:20000-20199"
     env_file: .env
     environment:
       ENV_IRODS_DB_HOSTNAME: irods-db.dh.local
       ENV_IRODS_DB_NAME: icat
       ENV_IRODS_DB_USERNAME: irods
-      # password for postgres user 'postgres'
+      # (test) password for postgres user 'irods'
       ENV_IRODS_DB_IRODS_PASSWORD: pgB3rKhqLGFLora
-      # password for postgres user 'irods'
+      # password for postgres user 'postgres'
+      # FIXME: we currently only user this to check if the icat DB exists before
+      # proceeding install in iCAT. But I think we should just check that the
+      # user irods exists, and then check that the DB exists using irods's
+      # credentials...
       ENV_IRODS_DB_POSTGRES_PASSWORD: foobar
-      ENV_IRODS_SSL_CERT: /etc/irods/SSL/icat.dh.local.crt
-      ENV_IRODS_SSL_KEY: /etc/irods/SSL/icat.dh.local.key
-      ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
-      ENV_IRODS_SSL_CA_CERFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
+      # Name of SSL-related files expected in /opt/irods_ssl_staging/ (volume mapped)
+      ENV_IRODS_SSL_CERT: icat.dh.local.crt
+      ENV_IRODS_SSL_KEY: icat.dh.local.key
+      ENV_IRODS_SSL_DH_PARAMS: dhparams.pem
+      # defaults to '/etc/ssl/certs/ca-certificates.crt' (in the container)
+      ENV_IRODS_SSL_CA_CERTIFICATE: test_only_dev_irods_dh_ca_cert.pem
       ENV_FILEBEAT_PRIMARY_TAG: ICAT
       # TODO: Do we want to change this to icat?
       VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
     profiles: ["minimal","backend","full"]
+    volumes:
+      # TODO: maybe make some of these :ro? More strict, we catch errors earlier?
+      # SSL files
+      - ./irods/icat/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
+      # patch so setup_irods.py doesn't re-create tables
+      - ./irods/patch/setup_irods_already_installed_dev.patch:/opt/irods/patch/setup_irods_already_installed_dev.patch
+      # icat's bootstrap.sh (to be called by init.sh)
+      - ./externals/dh-irods/icat/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
+      # icat's hooks for development
+      - ./irods/icat/hooks/:/opt/irods/hooks/
+      # mock surfsara operations (?)
+      - ./irods/icat/DMFS:/opt/irods/DMFS
+      # mock users
+      - ./keycloak/users.json:/opt/irods/users.json
+      # repos
+      - ./externals/irods-ruleset:/rules
+      - ./externals/irods-microservices:/microservices
+      # goes away with 4.2.11 (GenQuery patch)
+      - ./externals/dh-irods/icat/patch/genquery.py:/etc/irods/genquery.py
+      # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
+      - microservices-build:/tmp/microservices-build
+      # This is persistent because the delay queue depends on files in this directory
+      - delay-queue:/var/lib/irods/config/packedRei
+      - /etc/localtime:/etc/localtime:ro
     networks:
       default:
         aliases:
           - icat.dh.local
-      common_default:
-        aliases:
-          - icat.dh.local
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./externals/irods-ruleset:/rules
-      - ./externals/irods-microservices:/microservices
-      - ./externals/dh-irods/icat/test-dev-ssl-certs/:/opt/certificates:ro
-      - ./externals/dh-irods/icat/patch/genquery.py:/etc/irods/genquery.py
-      - ./externals/dh-irods/icat/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
-      - ./externals/dh-irods/icat/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
-      - ./externals/dh-irods/icat/DMFS:/opt/irods/DMFS
-      - ./keycloak/users.json:/opt/irods/users.json
-      - microservices-build:/tmp/microservices-build
 
   ires-hnas-um:
     build:
@@ -94,15 +119,23 @@ services:
         - ENV_IRODS_GID
         - ENV_IRODS_UID
     image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
+    # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
+    # https://github.com/irods/irods/issues/5218
+    sysctls:
+      - net.ipv4.tcp_keepalive_intvl=75
+      - net.ipv4.tcp_keepalive_probes=9
+      - net.ipv4.tcp_keepalive_time=600
     hostname: ires-hnas-um.dh.local
     env_file:
       - .env
       - irods.secrets.cfg
     environment:
-      ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-hnas-um.dh.local.crt
-      ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-hnas-um.dh.local.key
-      ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
-      ENV_IRODS_SSL_CA_CERFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
+      # Name of SSL-related files expected in /opt/irods_ssl_staging/ (volume mapped)
+      ENV_IRODS_SSL_CERT: ires-hnas-um.dh.local.crt
+      ENV_IRODS_SSL_KEY: ires-hnas-um.dh.local.key
+      ENV_IRODS_SSL_DH_PARAMS: dhparams.pem
+      # defaults to '/etc/ssl/certs/ca-certificates.crt' (in the container)
+      ENV_IRODS_SSL_CA_CERTIFICATE: test_only_dev_irods_dh_ca_cert.pem
       ENV_FILEBEAT_PRIMARY_TAG: IRES
       ENV_FILEBEAT_SECONDARY_TAG: IRES_UM03
       ENV_DIRECT_INGEST_RESOURCE: "true"
@@ -119,27 +152,36 @@ services:
       ENV_IRODS_COOR_RESC_PRICING: "0.130"
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
     profiles: ["minimal","backend","full"]
+    volumes:
+      # SSL files
+      - ./irods/ires-hnas/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
+      # patch so setup_irods.py in development doesn't re-create a resource if already exists
+      - ./irods/patch/setup_irods_already_installed_dev.patch:/opt/irods/patch/setup_irods_already_installed_dev.patch
+      # hnas's bootstrap.sh (to be called by init.sh)
+      - ./externals/dh-irods/ires-hnas/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
+      # hnas's hooks for development
+      - ./irods/ires-hnas/hooks/:/opt/irods/hooks/
+      # repos
+      - ./externals/irods-ruleset:/rules
+      - ./externals/irods-microservices:/microservices
+      - ./externals/irods-helper-cmd:/helpers
+      # irods-helper-cmd uses /etc/secrets
+      - ./irods.secrets.cfg:/etc/secrets:ro
+      # emulated physical resources
+      # If you want to make use of the samba mounts, comment the two lines below and uncomment the direct-dropzones & mounted-dropzones lines
+      - ./staging-data/zones:/mnt/ingest/zones
+      - ./staging-data/direct-ingest:/mnt/stagingResc01
+      #- direct-dropzones:/mnt/stagingResc01
+      #- mounted-dropzones:/mnt/ingest/zones
+      # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
+      - microservices-build:/tmp/microservices-build
+      # This is persistent because the delay queue depends on files in this directory
+      - delay-queue:/var/lib/irods/config/packedRei
+      - /etc/localtime:/etc/localtime:ro
     networks:
       default:
         aliases:
           - ires-hnas-um.dh.local
-      common_default:
-        aliases:
-          - ires-hnas-um.dh.local
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./irods.secrets.cfg:/etc/secrets:ro
-      - ./externals/irods-ruleset:/rules
-      - ./externals/irods-microservices:/microservices
-      - ./externals/irods-helper-cmd:/helpers
-      - ./staging-data/zones:/mnt/ingest/zones
-      - ./staging-data/direct-ingest:/mnt/stagingResc01
-      - ./externals/dh-irods/ires-hnas/test-dev-ssl-certs/:/opt/certificates:ro
-      - ./externals/dh-irods/ires-hnas/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
-      - ./externals/dh-irods/ires-hnas/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
-      - microservices-build:/tmp/microservices-build
-    # Required for CIFS mounting. cap-add not enough in Windows for some reason.
-    privileged: true
 
   ires-hnas-azm:
     build:
@@ -155,19 +197,25 @@ services:
         - ENV_IRODS_GID
         - ENV_IRODS_UID
     image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
+    # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
+    # https://github.com/irods/irods/issues/5218
+    sysctls:
+      - net.ipv4.tcp_keepalive_intvl=75
+      - net.ipv4.tcp_keepalive_probes=9
+      - net.ipv4.tcp_keepalive_time=600
     hostname: ires-hnas-azm.dh.local
     env_file:
       - .env
       - irods.secrets.cfg
     environment:
-      # TODO: Not centos any more... change name everywhere
-      ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-hnas-azm.dh.local.crt
-      ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-hnas-azm.dh.local.key
-      ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
-      ENV_IRODS_SSL_CA_CERFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
+      # Name of SSL-related files expected in /opt/irods_ssl_staging/ (volume mapped)
+      ENV_IRODS_SSL_CERT: ires-hnas-azm.dh.local.crt
+      ENV_IRODS_SSL_KEY: ires-hnas-azm.dh.local.key
+      ENV_IRODS_SSL_DH_PARAMS: dhparams.pem
+      # defaults to '/etc/ssl/certs/ca-certificates.crt' (in the container)
+      ENV_IRODS_SSL_CA_CERTIFICATE: test_only_dev_irods_dh_ca_cert.pem
       ENV_FILEBEAT_PRIMARY_TAG: IRES
       ENV_FILEBEAT_SECONDARY_TAG: IRES_AZM
-      # TODO: Do we want false here for azm?
       ENV_DIRECT_INGEST_RESOURCE: "false"
       # Name for 'coordinating' resource of type replication
       # In bootstrap_irods.sh we expect find substring 'UM' or 'AZM'
@@ -181,29 +229,37 @@ services:
       # Pricing AVU for 'coordinating' resource
       # TODO: This right?
       ENV_IRODS_COOR_RESC_PRICING: "0"
-      # TODO: same as before.. not centos anymore
       VIRTUAL_HOST: ires-hnas-azm.${RIT_ENV}.rit.unimaas.nl
     profiles: ["backend","full"]
+    volumes:
+      # SSL files
+      - ./irods/ires-hnas/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
+      # patch so setup_irods.py in development doesn't re-create a resource if already exists
+      - ./irods/patch/setup_irods_already_installed_dev.patch:/opt/irods/patch/setup_irods_already_installed_dev.patch
+      # hnas's bootstrap.sh (to be called by init.sh)
+      - ./externals/dh-irods/ires-hnas/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
+      # hnas's hooks for development
+      - ./irods/ires-hnas/hooks/:/opt/irods/hooks/
+      # repos
+      - ./externals/irods-ruleset:/rules
+      - ./externals/irods-microservices:/microservices
+      - ./externals/irods-helper-cmd:/helpers
+      # irods-helper-cmd uses /etc/secrets
+      - ./irods.secrets.cfg:/etc/secrets:ro
+      # emulated physical resources
+      # If you want to make use of the samba mounts, comment the line below and uncomment the mounted-dropzones line
+      - ./staging-data/zones:/mnt/ingest/zones
+      #- mounted-dropzones:/mnt/ingest/zones
+      # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
+      - microservices-build:/tmp/microservices-build
+      # This is persistent because the delay queue depends on files in this directory
+      - delay-queue:/var/lib/irods/config/packedRei
+      - /etc/localtime:/etc/localtime:ro
     networks:
       default:
         aliases:
           - ires-hnas-azm.dh.local
-      common_default:
-        aliases:
-          - ires-hnas-azm.dh.local
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./irods.secrets.cfg:/etc/secrets:ro
-      - ./externals/irods-ruleset:/rules
-      - ./externals/irods-microservices:/microservices
-      - ./externals/irods-helper-cmd:/helpers
-      - ./staging-data/zones:/mnt/ingest/zones
-      - ./externals/dh-irods/ires-hnas/test-dev-ssl-certs/:/opt/certificates:ro
-      - ./externals/dh-irods/ires-hnas/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
-      - ./externals/dh-irods/ires-hnas/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
-      - microservices-build:/tmp/microservices-build
-    # Required for CIFS mounting. cap-add not enough in Windows for some reason.
-    privileged: true
+
   ires-ceph-ac:
     build:
       context: externals/dh-irods/irods-base/
@@ -218,16 +274,23 @@ services:
         - ENV_IRODS_GID
         - ENV_IRODS_UID
     image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
+    # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
+    # https://github.com/irods/irods/issues/5218
+    sysctls:
+      - net.ipv4.tcp_keepalive_intvl=75
+      - net.ipv4.tcp_keepalive_probes=9
+      - net.ipv4.tcp_keepalive_time=600
     hostname: ires-ceph-ac.dh.local
     env_file: .env
     depends_on:
       - minio1
     environment:
-      RIT_ENV: dev
-      ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-ceph-ac.dh.local.crt
-      ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-ceph-ac.dh.local.key
-      ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
-      ENV_IRODS_SSL_CA_CERFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
+      # Name of SSL-related files expected in /opt/irods_ssl_staging/ (volume mapped)
+      ENV_IRODS_SSL_CERT: ires-ceph-ac.dh.local.crt
+      ENV_IRODS_SSL_KEY: ires-ceph-ac.dh.local.key
+      ENV_IRODS_SSL_DH_PARAMS: dhparams.pem
+      # defaults to '/etc/ssl/certs/ca-certificates.crt' (in the container)
+      ENV_IRODS_SSL_CA_CERTIFICATE: test_only_dev_irods_dh_ca_cert.pem
       # Yet another work around :( READ corresponding entry comment in ires-ceph-gl
       S3_AUTH_FILE: /var/lib/irods/minio.keypair
       ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY1}
@@ -238,23 +301,31 @@ services:
       ENV_FILEBEAT_SECONDARY_TAG: IRES_UM04
       VIRTUAL_HOST: ires-ceph-ac.${RIT_ENV}.rit.unimaas.nl
     volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./irods.secrets.cfg:/etc/secrets:ro
+      # SSL files
+      - ./irods/ires-s3/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
+      # patch so we setup_irods.py doesn't re-create tables
+      - ./irods/patch/setup_irods_already_installed_dev.patch:/opt/irods/patch/setup_irods_already_installed_dev.patch
+      # ires-s3's bootstrap.sh (to be called by init.sh)
+      - ./externals/dh-irods/ires-s3/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
+      # ires-s3's hooks for development
+      - ./irods/ires-s3/hooks/:/opt/irods/hooks/
+      # repos
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
+      # irods-helper-cmd uses /etc/secrets
+      - ./irods.secrets.cfg:/etc/secrets:ro
+      # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
       - microservices-build:/tmp/microservices-build
-      - ./externals/dh-irods/ires-s3/test-dev-ssl-certs/:/opt/certificates:ro
-      - ./externals/dh-irods/ires-s3/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
-      - ./externals/dh-irods/ires-s3/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
+      # This is persistent because the delay queue depends on files in this directory
+      - delay-queue:/var/lib/irods/config/packedRei
+      - /etc/localtime:/etc/localtime:ro
     profiles: ["backend","full"]
     networks:
       default:
         aliases:
           - ires-ceph-ac.dh.local
-      common_default:
-        aliases:
-          - ires-ceph-ac.dh.local
+
   ires-ceph-gl:
     build:
       context: externals/dh-irods/irods-base/
@@ -269,15 +340,23 @@ services:
         - ENV_IRODS_GID
         - ENV_IRODS_UID
     image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
+    # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
+    # https://github.com/irods/irods/issues/5218
+    sysctls:
+      - net.ipv4.tcp_keepalive_intvl=75
+      - net.ipv4.tcp_keepalive_probes=9
+      - net.ipv4.tcp_keepalive_time=600
     hostname: ires-ceph-gl.dh.local
     env_file: .env
     depends_on:
       - minio2
     environment:
-      ENV_IRODS_SSL_CERT: /etc/irods/SSL/ires-ceph-gl.dh.local.crt
-      ENV_IRODS_SSL_KEY: /etc/irods/SSL/ires-ceph-gl.dh.local.key
-      ENV_IRODS_SSL_DH_PARAMS: /etc/irods/SSL/dhparams.pem
-      ENV_IRODS_SSL_CA_CERFICATE: /etc/irods/SSL/test_only_dev_irods_dh_ca_cert.pem
+      # Name of SSL-related files expected in /opt/irods_ssl_staging/ (volume mapped)
+      ENV_IRODS_SSL_CERT: ires-ceph-gl.dh.local.crt
+      ENV_IRODS_SSL_KEY: ires-ceph-gl.dh.local.key
+      ENV_IRODS_SSL_DH_PARAMS: dhparams.pem
+      # defaults to '/etc/ssl/certs/ca-certificates.crt' (in the container)
+      ENV_IRODS_SSL_CA_CERTIFICATE: test_only_dev_irods_dh_ca_cert.pem
       # Yet another work around :(
       # In the ICAT DB (think production). The way the S3 resource was
       # configured (mkresc), includes this:
@@ -303,23 +382,31 @@ services:
       ENV_FILEBEAT_SECONDARY_TAG: IRES_UM01
       VIRTUAL_HOST: ires-ceph-gl.${RIT_ENV}.rit.unimaas.nl
     volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./irods.secrets.cfg:/etc/secrets:ro
+      # SSL files
+      - ./irods/ires-s3/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
+      # patch so we setup_irods.py doesn't re-create tables
+      - ./irods/patch/setup_irods_already_installed_dev.patch:/opt/irods/patch/setup_irods_already_installed_dev.patch
+      # ires-s3's bootstrap.sh (to be called by init.sh)
+      - ./externals/dh-irods/ires-s3/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
+      # ires-s3's hooks for development
+      - ./irods/ires-s3/hooks/:/opt/irods/hooks/
+      # repos
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
+      # irods-helper-cmd uses /etc/secrets
+      - ./irods.secrets.cfg:/etc/secrets:ro
+      # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
       - microservices-build:/tmp/microservices-build
-      - ./externals/dh-irods/ires-s3/test-dev-ssl-certs/:/opt/certificates:ro
-      - ./externals/dh-irods/ires-s3/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
-      - ./externals/dh-irods/ires-s3/scripts/bootstrap_irods.sh:/opt/irods/bootstrap_irods.sh
+      # This is persistent because the delay queue depends on files in this directory
+      - delay-queue:/var/lib/irods/config/packedRei
+      - /etc/localtime:/etc/localtime:ro
     profiles: ["backend","full"]
     networks:
       default:
         aliases:
           - ires-ceph-gl.dh.local
-      common_default:
-        aliases:
-          - ires-ceph-gl.dh.local
+
   minio1:
     image: minio/minio:RELEASE.2019-05-23T00-29-34Z
     environment:
@@ -333,9 +420,7 @@ services:
       default:
         aliases:
           - minio1.dh.local
-      common_default:
-        aliases:
-          - minio1.dh.local
+
   minio2:
     image: minio/minio:RELEASE.2019-05-23T00-29-34Z
     environment:
@@ -349,13 +434,25 @@ services:
       default:
         aliases:
           - minio2.dh.local
-      common_default:
-        aliases:
-          - minio2.dh.local
+
 volumes:
-  # these volumes exists so already-compiled microservices shared across
+  delay-queue:
+  # this volume exists so already-compiled microservices shared across
   # icat/ires's don't have to be recompiled. If icat already compiled them, no
-  # need for ires's to recompilie. For acc/prod, maybe useful if container is
+  # need for ires's to recompile. For acc/prod, maybe useful if container is
   # restarted, no need to recompile if already up to date? Although I don't
   # know if make will know nothing changed.
   microservices-build:
+  # If you want to use SAMBA, uncomment all lines below
+#  mounted-dropzones:
+#    driver: local
+#    driver_opts:
+#      type: cifs
+#      device: ${INGEST_MOUNT}
+#      o: "addr=um-nas201.unimaas.nl,username=${INGEST_USER},password=${INGEST_PASSWORD},vers=2.0,uid=${ENV_IRODS_UID},gid=${ENV_IRODS_GID}"
+#  direct-dropzones:
+#    driver: local
+#    driver_opts:
+#      type: cifs
+#      device: ${INGEST_MOUNT}-direct
+#      o: "addr=um-nas201.unimaas.nl,username=${INGEST_USER},password=${INGEST_PASSWORD},vers=2.0,uid=${ENV_IRODS_UID},gid=${ENV_IRODS_GID}"
