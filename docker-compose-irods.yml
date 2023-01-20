@@ -104,6 +104,9 @@ services:
       default:
         aliases:
           - icat.dh.local
+      common_default:
+        aliases:
+          - icat.dh.local
 
   ires-hnas-um:
     build:
@@ -180,6 +183,9 @@ services:
       - /etc/localtime:/etc/localtime:ro
     networks:
       default:
+        aliases:
+          - ires-hnas-um.dh.local
+      common_default:
         aliases:
           - ires-hnas-um.dh.local
 
@@ -259,6 +265,9 @@ services:
       default:
         aliases:
           - ires-hnas-azm.dh.local
+      common_default:
+        aliases:
+          - ires-hnas-azm.dh.local
 
   ires-ceph-ac:
     build:
@@ -323,6 +332,9 @@ services:
     profiles: ["backend","full"]
     networks:
       default:
+        aliases:
+          - ires-ceph-ac.dh.local
+      common_default:
         aliases:
           - ires-ceph-ac.dh.local
 
@@ -406,6 +418,9 @@ services:
       default:
         aliases:
           - ires-ceph-gl.dh.local
+      common_default:
+        aliases:
+          - ires-ceph-gl.dh.local
 
   minio1:
     image: minio/minio:RELEASE.2019-05-23T00-29-34Z
@@ -420,6 +435,9 @@ services:
       default:
         aliases:
           - minio1.dh.local
+      common_default:
+        aliases:
+          - minio1.dh.local
 
   minio2:
     image: minio/minio:RELEASE.2019-05-23T00-29-34Z
@@ -432,6 +450,9 @@ services:
     profiles: ["backend","full"]
     networks:
       default:
+        aliases:
+          - minio2.dh.local
+      common_default:
         aliases:
           - minio2.dh.local
 
