@@ -25,6 +25,10 @@ services:
       default:
         aliases:
           - irods-db.dh.local
+      common_default:
+        aliases:
+          - irods-db.dh.local
+
   icat:
     build:
       context: externals/dh-irods/irods-base/
