@@ -28,7 +28,7 @@ if [[ ! -d "/mnt/ingest/zones" ]]; then
     mkdir -p /mnt/ingest/zones
     chown irods:irods /mnt/ingest/zones
 else
-    echo "INFO: Found /mnt/ingest/zones, will not mock."
+    echo "INFO: Found /mnt/ingest/zones, will not mock by creating now."
 fi
 
 if [[ ! -d "/mnt/stagingResc01" ]]; then
@@ -41,5 +41,5 @@ if [[ ! -d "/mnt/stagingResc01" ]]; then
         echo "INFO: ires-hnas does not contain \"UM\" in resource name. Assuming we _don't_ want to mock direct ingest mount."
     fi
 else
-    echo "INFO: Found /mnt/stagingResc01, will not mock"
+    echo "INFO: Found /mnt/stagingResc01, will not mock by creating now."
 fi
