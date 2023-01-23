@@ -12,3 +12,4 @@ staging-data/direct-ingest
 *.key
 *.crt
 .DS_STORE
+.env_with_secrets
