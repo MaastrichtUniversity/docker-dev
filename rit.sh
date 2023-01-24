@@ -19,7 +19,7 @@ elif [[ ${ARGS} = *"--verbose "* ]] || [[ ${ARGS} = *"-v "* ]]; then
 fi
 
 # Set the prefix for the project
-COMPOSE_PROJECT_NAME="corpus"
+COMPOSE_PROJECT_NAME="dev"
 export COMPOSE_PROJECT_NAME
 
 set -e
@@ -53,20 +53,102 @@ if [[ $1 == "exec" ]]; then
     exit 0
 fi
 
+if [[ $1 == "make" ]]; then
+   if [[ $2 == "rules" ]]; then
+      set +e
+      docker exec -u irods ${COMPOSE_PROJECT_NAME}-icat-1 make -C /rules
+      docker exec -u irods ${COMPOSE_PROJECT_NAME}-ires-hnas-um-1 make -C /rules
+      docker exec -u irods ${COMPOSE_PROJECT_NAME}-ires-hnas-azm-1 make -C /rules
+      docker exec -u irods ${COMPOSE_PROJECT_NAME}-ires-ceph-gl-1 make -C /rules
+      docker exec -u irods ${COMPOSE_PROJECT_NAME}-ires-ceph-ac-1 make -C /rules
+      exit 0
+   fi
+   if [[ $2 == "microservices" ]]; then
+      set +e
+      docker exec -it ${COMPOSE_PROJECT_NAME}-icat-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
+      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-hnas-um-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
+      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-hnas-azm-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
+      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-ceph-gl-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
+      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-ceph-ac-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
+      exit 0
+   fi
+fi
+
+# Run test cases
+# e.g:
+# * irods
+# ./rit.sh test irods . # to execute all tests in the folder '/rules/test_cases'
+# ./rit.sh test irods test_policies.py # to execute the tests inside '/rules/test_cases/test_policies.py'
+# ./rit.sh test irods test_policies.py::TestPolicies::test_post_proc_for_coll_create # to only execute a single test
+# * mdr
+# ./rit.sh test mdr # to execute all tests
+# ./rit.sh test mdr app.tests.test_projects # to execute the tests inside '/app/tests/test_projects'
+if [[ $1 == "test" ]]; then
+   if [[ $2 == "irods" ]]; then
+      set +e
+      docker exec -it ${COMPOSE_PROJECT_NAME}-icat-1 su irods -c "cd /rules/test_cases && /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider ${3}"
+      exit 0
+   fi
+   if [[ $2 == "mdr" ]]; then
+      set +e
+      docker exec -it ${COMPOSE_PROJECT_NAME}-mdr-1 su -c "python manage.py test ${3}"
+      exit 0
+   fi
+fi
+
 
 #
 # code block for create functionality
 #
-domain="maastrichtuniversity.nl"
+
+# set RIT_ENV if not set already
+env_selector
+
+# faker actions
+if [[ $1 == "faker" ]]; then
+    shift 1
+    docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal run --rm dh-faker python -u create_fake_data.py "$@"
+    exit 0
+fi
+
+# Start minimal docker-dev environment
+if [[ $1 == "minimal" ]]; then
+    docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal up -d
+    until docker logs --tail 30 dev-icat-1 2>&1 | grep -q "Config OK";
+    do
+      echo "Waiting for iCAT"
+      sleep 10
+    done
+
+    echo "iCAT is Done"
+
+    until docker logs --tail 1 dev-keycloak-1 2>&1 | grep -q "Done syncing LDAP";
+    do
+      echo "Waiting for keycloak"
+      sleep 20
+    done
+
+    echo "Keycloak is Done"
+
+    echo "Running single run of SRAM-SYNC"
+    ./rit.sh up -d sram-sync
+
+    until docker logs --tail 1 dev-sram-sync-1 2>&1 | grep -q "Sleeping for 300 seconds";
+    do
+      echo "Waiting for sram-sync"
+      sleep 5
+    done
+
+    docker kill dev-sram-sync-1
+
+    exit 0
+fi
 
 if [[ $1 == "login" ]]; then
     source './.env'
     docker login $ENV_REGISTRY_HOST
     exit 0
 fi
-
-# set RIT_ENV if not set already
-env_selector
 
 # Create docker network common_default if it does not exists
 if [ ! $(docker network ls --filter name=common_default --format="true") ] ;
@@ -75,8 +157,12 @@ if [ ! $(docker network ls --filter name=common_default --format="true") ] ;
        docker network create common_default
 fi
 
-# Assuming docker-compose is available in the PATH
-log $DBG "$0 [docker-compose \"$ARGS\"]"
-docker-compose -f docker-compose.yml -f docker-compose-irods.yml $ARGS
+# Concatenate the .env file together with the irods.secrets.cfg
+cat .env > .env_with_secrets
+cat irods.secrets.cfg >> .env_with_secrets
 
+# Assuming docker-compose is available in the PATH
+log $DBG "$0 [docker compose \"$ARGS\"]"
+
+docker compose --env-file .env_with_secrets -f docker-compose.yml -f docker-compose-irods.yml --profile minimal $ARGS
 

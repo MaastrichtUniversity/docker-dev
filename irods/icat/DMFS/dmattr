@@ -1,0 +1,9 @@
+#!/bin/sh
+# echo "execCmdRule: "$execCmdRule
+
+# This is arbitrary, but does conform to a "format".
+# See: https://github.com/MaastrichtUniversity/irods-ruleset/blob/86e922a2339c151a4b019549bf31f536a6289bcf/tapeArchive/dmattr.r#L6
+echo "109834fjksjv09sdrf+DUL+0+2014"
+
+
+exit 0
