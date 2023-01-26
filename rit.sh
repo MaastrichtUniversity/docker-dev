@@ -114,7 +114,7 @@ fi
 # Start minimal docker-dev environment
 if [[ $1 == "minimal" ]]; then
     docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal up -d
-    until docker logs --tail 30 dev-icat-1 2>&1 | grep -q "Config OK";
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec icat /dh_is_ready;
     do
       echo "Waiting for iCAT"
       sleep 10
