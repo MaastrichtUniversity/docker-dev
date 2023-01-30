@@ -25,6 +25,10 @@ services:
       default:
         aliases:
           - irods-db.dh.local
+      common_default:
+        aliases:
+          - irods-db.dh.local
+
   icat:
     build:
       context: externals/dh-irods/irods-base/
@@ -39,13 +43,13 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
+    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
     # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
     # https://github.com/irods/irods/issues/5218
     sysctls:
       - net.ipv4.tcp_keepalive_intvl=75
       - net.ipv4.tcp_keepalive_probes=9
       - net.ipv4.tcp_keepalive_time=600
-    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
     depends_on:
        - irods-db
     hostname: icat.dh.local
@@ -85,10 +89,6 @@ services:
       # TODO: Do we want to change this to icat?
       VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
     profiles: ["minimal","backend","full"]
-    networks:
-      default:
-        aliases:
-          - icat.dh.local
     volumes:
       # TODO: maybe make some of these :ro? More strict, we catch errors earlier?
       # SSL files
@@ -111,6 +111,13 @@ services:
       # This is persistent because the delay queue depends on files in this directory
       - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      default:
+        aliases:
+          - icat.dh.local
+      common_default:
+        aliases:
+          - icat.dh.local
 
   ires-hnas-um:
     build:
@@ -126,13 +133,13 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
+    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
     # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
     # https://github.com/irods/irods/issues/5218
     sysctls:
       - net.ipv4.tcp_keepalive_intvl=75
       - net.ipv4.tcp_keepalive_probes=9
       - net.ipv4.tcp_keepalive_time=600
-    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
     hostname: ires-hnas-um.dh.local
     env_file:
       - .env
@@ -168,10 +175,6 @@ services:
       ENV_S3_AUTH_FILE2: ${ENV_S3_AUTH_FILE2}
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
     profiles: ["minimal","backend","full"]
-    networks:
-      default:
-        aliases:
-          - ires-hnas-um.dh.local
     volumes:
       # SSL files
       - ./irods/ires-hnas/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
@@ -198,6 +201,13 @@ services:
       # This is persistent because the delay queue depends on files in this directory
       - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      default:
+        aliases:
+          - ires-hnas-um.dh.local
+      common_default:
+        aliases:
+          - ires-hnas-um.dh.local
 
   ires-hnas-azm:
     build:
@@ -213,13 +223,13 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
+    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
     # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
     # https://github.com/irods/irods/issues/5218
     sysctls:
       - net.ipv4.tcp_keepalive_intvl=75
       - net.ipv4.tcp_keepalive_probes=9
       - net.ipv4.tcp_keepalive_time=600
-    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
     hostname: ires-hnas-azm.dh.local
     env_file:
       - .env
@@ -256,10 +266,6 @@ services:
       ENV_S3_AUTH_FILE2: ${ENV_S3_AUTH_FILE2}
       VIRTUAL_HOST: ires-hnas-azm.${RIT_ENV}.rit.unimaas.nl
     profiles: ["backend","full"]
-    networks:
-      default:
-        aliases:
-          - ires-hnas-azm.dh.local
     volumes:
       # SSL files
       - ./irods/ires-hnas/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
@@ -284,6 +290,13 @@ services:
       # This is persistent because the delay queue depends on files in this directory
       - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      default:
+        aliases:
+          - ires-hnas-azm.dh.local
+      common_default:
+        aliases:
+          - ires-hnas-azm.dh.local
 
   ires-ceph-ac:
     build:
@@ -299,13 +312,13 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
+    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
     # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
     # https://github.com/irods/irods/issues/5218
     sysctls:
       - net.ipv4.tcp_keepalive_intvl=75
       - net.ipv4.tcp_keepalive_probes=9
       - net.ipv4.tcp_keepalive_time=600
-    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
     hostname: ires-ceph-ac.dh.local
     env_file: .env
     depends_on:
@@ -360,6 +373,10 @@ services:
       default:
         aliases:
           - ires-ceph-ac.dh.local
+      common_default:
+        aliases:
+          - ires-ceph-ac.dh.local
+
   ires-ceph-gl:
     build:
       context: externals/dh-irods/irods-base/
@@ -374,13 +391,13 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
+    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
     # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
     # https://github.com/irods/irods/issues/5218
     sysctls:
       - net.ipv4.tcp_keepalive_intvl=75
       - net.ipv4.tcp_keepalive_probes=9
       - net.ipv4.tcp_keepalive_time=600
-    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
     hostname: ires-ceph-gl.dh.local
     env_file: .env
     depends_on:
@@ -450,6 +467,10 @@ services:
       default:
         aliases:
           - ires-ceph-gl.dh.local
+      common_default:
+        aliases:
+          - ires-ceph-gl.dh.local
+
   minio1:
     image: minio/minio:RELEASE.2023-01-12T02-06-16Z
     environment:
@@ -463,6 +484,10 @@ services:
       default:
         aliases:
           - minio1.dh.local
+      common_default:
+        aliases:
+          - minio1.dh.local
+
   minio2:
     image: minio/minio:RELEASE.2023-01-12T02-06-16Z
     environment:
@@ -476,6 +501,10 @@ services:
       default:
         aliases:
           - minio2.dh.local
+      common_default:
+        aliases:
+          - minio2.dh.local
+
 volumes:
   delay-queue:
   # this volume exists so already-compiled microservices shared across

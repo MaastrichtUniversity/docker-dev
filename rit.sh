@@ -157,13 +157,12 @@ if [ ! $(docker network ls --filter name=common_default --format="true") ] ;
        docker network create common_default
 fi
 
-# Assuming docker-compose is available in the PATH
-log $DBG "$0 [docker-compose \"$ARGS\"]"
-
 # Concatenate the .env file together with the irods.secrets.cfg
 cat .env > .env_with_secrets
 cat irods.secrets.cfg >> .env_with_secrets
 
-docker compose --env-file .env_with_secrets -f docker-compose.yml -f docker-compose-irods.yml --profile minimal $ARGS
+# Assuming docker-compose is available in the PATH
+log $DBG "$0 [docker compose \"$ARGS\"]"
 
+docker compose --env-file .env_with_secrets -f docker-compose.yml -f docker-compose-irods.yml --profile minimal $ARGS
 
