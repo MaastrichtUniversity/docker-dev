@@ -73,6 +73,14 @@ services:
       ENV_IRODS_SSL_DH_PARAMS: dhparams.pem
       # defaults to '/etc/ssl/certs/ca-certificates.crt' (in the container)
       ENV_IRODS_SSL_CA_CERTIFICATE: test_only_dev_irods_dh_ca_cert.pem
+      S3_AUTH_FILE: /var/lib/irods/minio.keypair
+      ENV_S3_AUTH_FILE: /var/lib/irods/minio.keypair
+      ENV_S3_ACCESS_KEY1: ${ENV_S3_ACCESS_KEY1}
+      ENV_S3_SECRET_KEY1: ${ENV_S3_SECRET_KEY1}
+      ENV_S3_AUTH_FILE1: ${ENV_S3_AUTH_FILE1}
+      ENV_S3_ACCESS_KEY2: ${ENV_S3_ACCESS_KEY2}
+      ENV_S3_SECRET_KEY2: ${ENV_S3_SECRET_KEY2}
+      ENV_S3_AUTH_FILE2: ${ENV_S3_AUTH_FILE2}
       ENV_FILEBEAT_PRIMARY_TAG: ICAT
       # TODO: Do we want to change this to icat?
       VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
@@ -150,6 +158,14 @@ services:
       ENV_IRODS_COOR_RESC_COMMENT: "Replicated-resource-for-UM"
       # Pricing AVU for 'coordinating' resource
       ENV_IRODS_COOR_RESC_PRICING: "0.130"
+      S3_AUTH_FILE: /var/lib/irods/minio.keypair
+      ENV_S3_AUTH_FILE: /var/lib/irods/minio.keypair
+      ENV_S3_ACCESS_KEY1: ${ENV_S3_ACCESS_KEY1}
+      ENV_S3_SECRET_KEY1: ${ENV_S3_SECRET_KEY1}
+      ENV_S3_AUTH_FILE1: ${ENV_S3_AUTH_FILE1}
+      ENV_S3_ACCESS_KEY2: ${ENV_S3_ACCESS_KEY2}
+      ENV_S3_SECRET_KEY2: ${ENV_S3_SECRET_KEY2}
+      ENV_S3_AUTH_FILE2: ${ENV_S3_AUTH_FILE2}
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
     profiles: ["minimal","backend","full"]
     networks:
@@ -230,6 +246,14 @@ services:
       # Pricing AVU for 'coordinating' resource
       # TODO: This right?
       ENV_IRODS_COOR_RESC_PRICING: "0"
+      S3_AUTH_FILE: /var/lib/irods/minio.keypair
+      ENV_S3_AUTH_FILE: /var/lib/irods/minio.keypair
+      ENV_S3_ACCESS_KEY1: ${ENV_S3_ACCESS_KEY1}
+      ENV_S3_SECRET_KEY1: ${ENV_S3_SECRET_KEY1}
+      ENV_S3_AUTH_FILE1: ${ENV_S3_AUTH_FILE1}
+      ENV_S3_ACCESS_KEY2: ${ENV_S3_ACCESS_KEY2}
+      ENV_S3_SECRET_KEY2: ${ENV_S3_SECRET_KEY2}
+      ENV_S3_AUTH_FILE2: ${ENV_S3_AUTH_FILE2}
       VIRTUAL_HOST: ires-hnas-azm.${RIT_ENV}.rit.unimaas.nl
     profiles: ["backend","full"]
     networks:
@@ -295,8 +319,17 @@ services:
       ENV_IRODS_SSL_CA_CERTIFICATE: test_only_dev_irods_dh_ca_cert.pem
       # Yet another work around :( READ corresponding entry comment in ires-ceph-gl
       S3_AUTH_FILE: /var/lib/irods/minio.keypair
+      ENV_S3_AUTH_FILE: /var/lib/irods/minio.keypair
       ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY1}
       ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY1}
+      ###########################################
+      ENV_S3_ACCESS_KEY1: ${ENV_S3_ACCESS_KEY1}
+      ENV_S3_SECRET_KEY1: ${ENV_S3_SECRET_KEY1}
+      ENV_S3_AUTH_FILE1: ${ENV_S3_AUTH_FILE1}
+      ENV_S3_ACCESS_KEY2: ${ENV_S3_ACCESS_KEY2}
+      ENV_S3_SECRET_KEY2: ${ENV_S3_SECRET_KEY2}
+      ENV_S3_AUTH_FILE2: ${ENV_S3_AUTH_FILE2}
+      ###########################################
       ENV_S3_RESC_NAME: "UM-Ceph-S3-AC"
       ENV_S3_HOST: "minio1.dh.local:9000"
       ENV_FILEBEAT_PRIMARY_TAG: IRES
@@ -376,8 +409,17 @@ services:
       # Do we have to create that file everywhere? What?
       # TODO
       S3_AUTH_FILE: /var/lib/irods/minio.keypair
+      ENV_S3_AUTH_FILE: /var/lib/irods/minio.keypair
       ENV_S3_ACCESS_KEY: ${ENV_S3_ACCESS_KEY2}
       ENV_S3_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
+      ###########################################
+      ENV_S3_ACCESS_KEY1: ${ENV_S3_ACCESS_KEY1}
+      ENV_S3_SECRET_KEY1: ${ENV_S3_SECRET_KEY1}
+      ENV_S3_AUTH_FILE1: ${ENV_S3_AUTH_FILE1}
+      ENV_S3_ACCESS_KEY2: ${ENV_S3_ACCESS_KEY2}
+      ENV_S3_SECRET_KEY2: ${ENV_S3_SECRET_KEY2}
+      ENV_S3_AUTH_FILE2: ${ENV_S3_AUTH_FILE2}
+      ###########################################
       ENV_S3_RESC_NAME: "UM-Ceph-S3-GL"
       ENV_S3_HOST: "minio2.dh.local:9000"
       ENV_FILEBEAT_PRIMARY_TAG: IRES
