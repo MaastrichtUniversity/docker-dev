@@ -122,7 +122,7 @@ if [[ $1 == "minimal" ]]; then
 
     echo "iCAT is Done"
 
-    until docker logs --tail 1 dev-keycloak-1 2>&1 | grep -q "Done syncing LDAP";
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec keycloak /dh_is_ready.sh;
     do
       echo "Waiting for keycloak"
       sleep 20
