@@ -150,6 +150,12 @@ if [[ $1 == "login" ]]; then
     exit 0
 fi
 
+# FIXME: Just for quick convenience for now
+if [[ "$1" == "is_ready" ]]; then
+    docker compose -f docker-compose.yml -f docker-compose-irods.yml exec "$2" /dh_is_ready.sh
+    exit $?
+fi
+
 # Create docker network common_default if it does not exists
 if [ ! $(docker network ls --filter name=common_default --format="true") ] ;
       then
