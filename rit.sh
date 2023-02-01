@@ -114,7 +114,9 @@ fi
 # Start minimal docker-dev environment
 if [[ $1 == "minimal" ]]; then
     docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal up -d
-    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec icat /dh_is_ready;
+    # TODO: we could have a function for: "docker compose -f docker-compose.yml -f docker-compose-irods.yml", perhaps with exec.
+    #       and another one for is_ready (not just the convinience thing
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec icat /dh_is_ready.sh;
     do
       echo "Waiting for iCAT"
       sleep 10

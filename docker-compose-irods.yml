@@ -91,7 +91,7 @@ services:
       # icat's hooks for development
       - ./irods/icat/hooks/:/opt/irods/hooks/
       # icat's development definition of being ready
-      - ./irods/icat/dh_is_ready:/dh_is_ready
+      - ./irods/icat/dh_is_ready.sh:/dh_is_ready.sh
       # mock surfsara operations (?)
       - ./irods/icat/DMFS:/opt/irods/DMFS
       # mock users
