@@ -175,5 +175,5 @@ cat irods.secrets.cfg >> .env_with_secrets
 # Assuming docker-compose is available in the PATH
 log $DBG "$0 [docker compose \"$ARGS\"]"
 
-docker compose --env-file .env_with_secrets -f docker-compose.yml -f docker-compose-irods.yml --profile minimal $ARGS
+docker compose --env-file .env_with_secrets -f docker-compose.yml -f docker-compose-irods.yml --profile full $ARGS
 
