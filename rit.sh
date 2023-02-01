@@ -111,11 +111,18 @@ if [[ $1 == "faker" ]]; then
     exit 0
 fi
 
+# Create docker network common_default if it does not exists
+if [ ! $(docker network ls --filter name=common_default --format="true") ] ;
+      then
+       echo "Creating network common_default"
+       docker network create common_default
+fi
+
 # Start minimal docker-dev environment
 if [[ $1 == "minimal" ]]; then
     docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal up -d
     # TODO: we could have a function for: "docker compose -f docker-compose.yml -f docker-compose-irods.yml", perhaps with exec.
-    #       and another one for is_ready (not just the convinience thing
+    #       and another one for is_ready (not just the convenience thing
     until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec icat /dh_is_ready.sh;
     do
       echo "Waiting for iCAT"
@@ -159,13 +166,6 @@ fi
 if [[ "$1" == "is_ready" ]]; then
     docker compose -f docker-compose.yml -f docker-compose-irods.yml exec "$2" /dh_is_ready.sh
     exit $?
-fi
-
-# Create docker network common_default if it does not exists
-if [ ! $(docker network ls --filter name=common_default --format="true") ] ;
-      then
-       echo "Creating network common_default"
-       docker network create common_default
 fi
 
 # Concatenate the .env file together with the irods.secrets.cfg
