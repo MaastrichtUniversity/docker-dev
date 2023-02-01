@@ -135,7 +135,7 @@ if [[ $1 == "minimal" ]]; then
     echo "Running single run of SRAM-SYNC"
     ./rit.sh up -d sram-sync
 
-    until docker logs --tail 1 dev-sram-sync-1 2>&1 | grep -q "Sleeping for 300 seconds";
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec sram-sync /dh_is_ready.sh;
     do
       echo "Waiting for sram-sync"
       sleep 5
