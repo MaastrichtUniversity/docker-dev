@@ -160,7 +160,7 @@ services:
       # Pricing AVU for 'coordinating' resource
       ENV_IRODS_COOR_RESC_PRICING: "0.130"
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
-    profiles: ["minimal","backend","full"]
+    profiles: ["backend","full"]
     volumes:
       # SSL files
       - ./irods/ires-hnas/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro

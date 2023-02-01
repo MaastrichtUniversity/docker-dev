@@ -124,6 +124,9 @@ if [[ $1 == "minimal" ]]; then
 
     echo "iCAT is Done"
 
+    echo "Upping ires-hnas-um now.."
+    ./rit.sh up -d ires-hnas-um
+
     until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec keycloak /dh_is_ready.sh;
     do
       echo "Waiting for keycloak"
