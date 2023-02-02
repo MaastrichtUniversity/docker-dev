@@ -3,7 +3,7 @@
 # source library lib-dh.sh
 if [[ -z $DH_ENV_HOME ]]; then
     DH_ENV_HOME=".."
-    echo "(DH_ENV_HOME not set, using parent folder as default)"
+#    echo "(DH_ENV_HOME not set, using parent folder as default)"
 fi
 . $DH_ENV_HOME/lib-dh.sh
 
@@ -152,6 +152,72 @@ if [[ $1 == "minimal" ]]; then
     done
 
     docker kill dev-sram-sync-1
+
+    exit 0
+fi
+
+# for now same style as minimal, although this all could use a proper refactor!
+if [[ "$1" == "backend" ]]; then
+    # Quick PoC: FIXME! Refactor me! This code below is more of a functional "note" than code.
+    # Modifications to the docker-compose profiles are completely not thought out! Just trying thing out here.
+    #
+    docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal up -d
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec icat /dh_is_ready.sh;
+    do
+      echo "Waiting for iCAT"
+      sleep 10
+    done
+    echo "iCAT is Done."
+
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec keycloak /dh_is_ready.sh;
+    do
+      echo "Waiting for keycloak"
+      sleep 20
+    done
+
+    echo "Keycloak is Done"
+
+    echo "Running single run of SRAM-SYNC"
+    ./rit.sh up -d sram-sync
+
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec sram-sync /dh_is_ready.sh;
+    do
+      echo "Waiting for sram-sync"
+      sleep 5
+    done
+
+    docker kill dev-sram-sync-1
+
+    echo "Starting backend-after-icat (iRES's)"
+    # we bring up all ires's (or anything that depends on iCAT being up)
+    docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend-after-icat up -d
+
+    # We also could do something like:
+    # all_backend_services=$(docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend --profile backend-after-icat config --services)
+    # But this doesn't work nicely & we don't have dh_is_ready.sh for minio for example
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-hnas-um /dh_is_ready.sh;
+    do
+      echo "Waiting for ires-hnas-um"
+      sleep 5
+    done
+
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-hnas-azm /dh_is_ready.sh;
+    do
+      echo "Waiting for ires-hnas-azm"
+      sleep 5
+    done
+
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-ceph-ac /dh_is_ready.sh;
+    do
+      echo "Waiting for ires-ceph-gl"
+      sleep 5
+    done
+
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-ceph-gl /dh_is_ready.sh;
+    do
+      echo "Waiting for ires-ceph-ac"
+      sleep 5
+    done
 
     exit 0
 fi

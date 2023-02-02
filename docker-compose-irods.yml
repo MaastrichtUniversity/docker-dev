@@ -160,7 +160,7 @@ services:
       # Pricing AVU for 'coordinating' resource
       ENV_IRODS_COOR_RESC_PRICING: "0.130"
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
-    profiles: ["backend","full"]
+    profiles: ["backend-after-icat","full"]
     volumes:
       # SSL files
       - ./irods/ires-hnas/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
@@ -242,7 +242,7 @@ services:
       # TODO: This right?
       ENV_IRODS_COOR_RESC_PRICING: "0"
       VIRTUAL_HOST: ires-hnas-azm.${RIT_ENV}.rit.unimaas.nl
-    profiles: ["backend","full"]
+    profiles: ["backend-after-icat","full"]
     volumes:
       # SSL files
       - ./irods/ires-hnas/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
@@ -335,7 +335,7 @@ services:
       # This is persistent because the delay queue depends on files in this directory
       - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
-    profiles: ["backend","full"]
+    profiles: ["backend-after-icat","full"]
     networks:
       default:
         aliases:
@@ -419,7 +419,7 @@ services:
       # This is persistent because the delay queue depends on files in this directory
       - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
-    profiles: ["backend","full"]
+    profiles: ["backend-after-icat","full"]
     networks:
       default:
         aliases:
@@ -436,7 +436,6 @@ services:
       MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY1}
     entrypoint: sh
     command: -c 'mkdir -p /data/dh-irods-bucket-dev && /usr/bin/minio server /data'
-    profiles: ["backend","full"]
     networks:
       default:
         aliases:
@@ -453,7 +452,6 @@ services:
       MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
     entrypoint: sh
     command: -c 'mkdir -p /data/dh-irods-bucket-dev && /usr/bin/minio server /data'
-    profiles: ["backend","full"]
     networks:
       default:
         aliases:
