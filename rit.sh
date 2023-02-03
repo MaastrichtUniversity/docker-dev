@@ -86,7 +86,8 @@ fi
 if [[ $1 == "test" ]]; then
    if [[ $2 == "irods" ]]; then
       set +e
-      docker exec -it ${COMPOSE_PROJECT_NAME}-icat-1 su irods -c "cd /rules/test_cases && /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider ${3}"
+      docker exec -it ${COMPOSE_PROJECT_NAME}-icat-1 su irods -c "cd /rules/test_cases && /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider -k 'not Mounted' ${3}"
+      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-hnas-um-1 su irods -c "cd /rules/test_cases && /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider  -k 'Mounted' ${3}"
       exit 0
    fi
    if [[ $2 == "mdr" ]]; then
@@ -164,5 +165,4 @@ cat irods.secrets.cfg >> .env_with_secrets
 # Assuming docker-compose is available in the PATH
 log $DBG "$0 [docker compose \"$ARGS\"]"
 
-docker compose --env-file .env_with_secrets -f docker-compose.yml -f docker-compose-irods.yml --profile minimal $ARGS
-
+docker compose --env-file .env_with_secrets -f docker-compose.yml -f docker-compose-irods.yml --profile full $ARGS
