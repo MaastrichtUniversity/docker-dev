@@ -1,8 +1,6 @@
-diff --git a/scripts/setup_irods.py b/scripts/setup_irods.py
-index 618f295c3..1d9c3790c 100755
---- a/scripts/setup_irods.py
-+++ b/scripts/setup_irods.py
-@@ -120,16 +120,28 @@ def setup_server(irods_config, json_configuration_file=None):
+--- setup_irods.py	2023-02-06 13:49:24.191708999 +0100
++++ setup_patched_dev.py	2023-02-06 14:09:07.713457048 +0100
+@@ -120,16 +120,28 @@
          default_resource_directory = get_and_create_default_vault(irods_config)
  
      if irods_config.is_catalog:
@@ -17,8 +15,6 @@ index 618f295c3..1d9c3790c 100755
  
      if irods_config.is_resource:
 -        irods.lib.execute_command(['iadmin', 'mkresc', irods_config.server_config['default_resource_name'], 'unixfilesystem', ':'.join([irods.lib.get_hostname(), default_resource_directory]), ''])
--
--    test_put(irods_config)
 +        lr_out = irods.lib.execute_command(['iadmin', 'lr', irods_config.server_config['default_resource_name']])[0]
 +        if not (lr_out.find("No rows found") == 0):
 +            l.info(irods.lib.get_header('PATCHED setup_irods.py for development. Looks like resource was already registered. Skipping mkresc.'))
@@ -26,7 +22,8 @@ index 618f295c3..1d9c3790c 100755
 +            l.info(irods.lib.get_header('PATCHED setup_irods.py for development. Does not look like resource was already registered! Will mkresc'))
 +            # Original line from setup_irods.py:
 +            irods.lib.execute_command(['iadmin', 'mkresc', irods_config.server_config['default_resource_name'], 'unixfilesystem', ':'.join([irods.lib.get_hostname(), default_resource_directory]), ''])
-+
+ 
+-    test_put(irods_config)
 +    # TODO: Rationale correct? Should we test_put?
 +    # If the database exists, we probably have done this:
 +    #   iadmin mkresc rootResc passthru
@@ -34,5 +31,5 @@ index 618f295c3..1d9c3790c 100755
 +    # Which (guessing), makes the iput at this stage (not
 +    #test_put(irods_config)
  
-     l.info(irods.lib.get_header('iRODS is installed and running'))
- 
+     l.info(irods.lib.get_header('Stopping iRODS...'))
+     IrodsController(irods_config).stop()
