@@ -315,6 +315,7 @@ services:
       VIRTUAL_HOST: helpbackend.${RIT_ENV}.dh.unimaas.nl
       CONFLUENCE_CLOUD_URL: https://mumc.atlassian.net
       CONFLUENCE_CLOUD_SPACE_KEY: MDRD
+      LOGSTASH_TAGS: HELP_CENTER_BACKEND
     networks:
       default:
         aliases:
@@ -329,6 +330,7 @@ services:
     image: ${ENV_REGISTRY_HOST}/docker-dev/help-center:${ENV_TAG}
     environment:
       VIRTUAL_HOST: helpcenter.${RIT_ENV}.dh.unimaas.nl
+      LOGSTASH_TAGS: HELP_CENTER_FRONTEND
     networks:
       default:
         aliases:
