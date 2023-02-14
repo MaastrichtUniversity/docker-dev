@@ -334,6 +334,10 @@ services:
     environment:
       VIRTUAL_HOST: helpcenter.${RIT_ENV}.dh.unimaas.nl
       LOGSTASH_TAGS: HELP_CENTER_FRONTEND
+      HOST: 0.0.0.0
+    volumes:
+      - './externals/dh-help-center/frontend/src:/app/src'
+      - './externals/dh-help-center/frontend/public:/app/public'
     networks:
       default:
         aliases:
