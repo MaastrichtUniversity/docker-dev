@@ -316,6 +316,9 @@ services:
       CONFLUENCE_CLOUD_URL: https://mumc.atlassian.net
       CONFLUENCE_CLOUD_SPACE_KEY: MDRD
       LOGSTASH_TAGS: HELP_CENTER_BACKEND
+      WATCHFILES_FORCE_POLLING: true
+    volumes:
+      - ./externals/dh-help-center/backend/main.py:/opt/main.py
     networks:
       default:
         aliases:
