@@ -200,11 +200,22 @@ services:
       LOG_LEVEL: DEBUG
       USERNAME: user
       PASSWORD: foobar
-      RABBITMQ_HOST : rabbitmq.dh.local
-      RABBITMQ_USER : user
-      RABBITMQ_PASS : password
+      RABBITMQ_HOST: rabbitmq.dh.local
+      RABBITMQ_USER: user
+      RABBITMQ_PASS: password
       RABBITMQ_PORT: 5672
-      EPIC_CREDENTIALS: my_credentials_test.json
+      HANDLE_SERVER_URL: "https://epic-pid.storage.surfsara.nl:8003"
+      BASEURI: "https://epic-pid.storage.surfsara.nl:8003"
+      PRIVATE_KEY: "/opt/app/credentials/305_21_T12996_USER01_UM_privkey.pem"
+      CERTIFICATE_ONLY: "/opt/app/credentials/305_21_T12996_USER01_UM_certificate_only.pem"
+      PREFIX: "21.T12996"
+      HANDLE_OWNER: "200:0.NA/21.T12996"
+      HTTPS_VERIFY: "True"
+      # Keys below are only set in production
+#      ALLOWED_SEARCH_KEYS: ""
+#      REVERSE_LOOKUP_BASEURI: ""
+#      REVERSE_LOOKUP_PASSWORD: ""
+#      REVERSE_LOOKUP_USERNAME: ""
       REQUESTS_CA_BUNDLE: /opt/epic5storagesurfsaranlCHAIN.crt
     profiles: ["minimal","full"]
     networks:
