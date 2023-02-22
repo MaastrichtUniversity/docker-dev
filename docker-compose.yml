@@ -336,6 +336,7 @@ services:
     image: ${ENV_REGISTRY_HOST}/docker-dev/help-center:${ENV_TAG}
     environment:
       VIRTUAL_HOST: helpcenter.${RIT_ENV}.dh.unimaas.nl
+      VIRTUAL_PORT: 3000
       LOGSTASH_TAGS: HELP_CENTER_FRONTEND
       HOST: 0.0.0.0
     volumes:
