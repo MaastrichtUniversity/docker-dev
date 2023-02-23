@@ -198,11 +198,11 @@ if [[ "$ENV_DIRECT_INGEST_RESOURCE" == "true" ]]; then
 fi
 
 # Add comment to resource for better identification in MDR's createProject dropdown
-#iadmin modresc ${HOSTNAME%%.dh.local}Resource comment "${ENV_IRODS_HOST_RESC_COMMENT}"
+iadmin modresc ${HOSTNAME%%.dh.local}Resource comment "${ENV_IRODS_HOST_RESC_COMMENT}"
 iadmin modresc ${ENV_IRODS_COOR_RESC_NAME} comment "${ENV_IRODS_COOR_RESC_COMMENT}"
 
 # Add storage pricing to resources
-#imeta add -R ${HOSTNAME%%.dh.local}Resource NCIT:C88193 999
+imeta add -R ${HOSTNAME%%.dh.local}Resource NCIT:C88193 999
 imeta add -R ${ENV_IRODS_COOR_RESC_NAME} NCIT:C88193 ${ENV_IRODS_COOR_RESC_PRICING}
 
 ###########
