@@ -22,7 +22,7 @@ fi
 
 
 # On top of dh-irods being ready, in dev we have other requirements for iCAT to be ready
-dev_mockup_state=$(imeta ls -R rootResc bootstrap_irods_dev_mockup | grep -Po '(value: \K.*)' || true)
+dev_mockup_state=$(imeta ls -R rootResc bootstrap_irods_dev_mockup 2> /dev/null | grep -Po '(value: \K.*)' || true)
 if [[ ! "$dev_mockup_state" =~ "complete" ]]; then
     state="NOT READY"
 fi

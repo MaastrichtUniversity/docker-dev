@@ -164,14 +164,14 @@ if [[ "$1" == "backend" ]]; then
     docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal up -d
     until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec icat /dh_is_ready.sh;
     do
-      echo "Waiting for iCAT"
+      echo "Waiting for iCAT, sleeping 10"
       sleep 10
     done
     echo "iCAT is Done."
 
     until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec keycloak /dh_is_ready.sh;
     do
-      echo "Waiting for keycloak"
+      echo "Waiting for keycloak, sleeping 20"
       sleep 20
     done
 
@@ -182,7 +182,7 @@ if [[ "$1" == "backend" ]]; then
 
     until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec sram-sync /dh_is_ready.sh;
     do
-      echo "Waiting for sram-sync"
+      echo "Waiting for sram-sync, sleeping 5"
       sleep 5
     done
 
@@ -197,25 +197,25 @@ if [[ "$1" == "backend" ]]; then
     # But this doesn't work nicely & we don't have dh_is_ready.sh for minio for example
     until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-hnas-um /dh_is_ready.sh;
     do
-      echo "Waiting for ires-hnas-um"
+      echo "Waiting for ires-hnas-um, sleeping 5"
       sleep 5
     done
 
     until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-hnas-azm /dh_is_ready.sh;
     do
-      echo "Waiting for ires-hnas-azm"
+      echo "Waiting for ires-hnas-azm, sleeping 5"
       sleep 5
     done
 
     until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-ceph-ac /dh_is_ready.sh;
     do
-      echo "Waiting for ires-ceph-gl"
+      echo "Waiting for ires-ceph-gl, sleeping 5"
       sleep 5
     done
 
     until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-ceph-gl /dh_is_ready.sh;
     do
-      echo "Waiting for ires-ceph-ac"
+      echo "Waiting for ires-ceph-ac, sleeping 5"
       sleep 5
     done
 
