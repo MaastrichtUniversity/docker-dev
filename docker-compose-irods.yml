@@ -91,6 +91,8 @@ services:
       - ./externals/dh-irods/icat/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
       # icat's hooks for development
       - ./irods/icat/hooks/:/opt/irods/hooks/
+      # icat's development definition of being ready
+      - ./irods/icat/dh_is_ready.sh:/dh_is_ready.sh
       # mock surfsara operations (?)
       - ./irods/icat/DMFS:/opt/irods/DMFS
       # mock users
@@ -158,7 +160,7 @@ services:
       # Pricing AVU for 'coordinating' resource
       ENV_IRODS_COOR_RESC_PRICING: "0.130"
       VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
-    profiles: ["minimal","backend","full"]
+    profiles: ["backend-after-icat","full"]
     volumes:
       # SSL files
       - ./irods/ires-hnas/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
@@ -241,7 +243,7 @@ services:
       # TODO: This right?
       ENV_IRODS_COOR_RESC_PRICING: "0"
       VIRTUAL_HOST: ires-hnas-azm.${RIT_ENV}.rit.unimaas.nl
-    profiles: ["backend","full"]
+    profiles: ["backend-after-icat","full"]
     volumes:
       # SSL files
       - ./irods/ires-hnas/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
@@ -335,7 +337,7 @@ services:
       # This is persistent because the delay queue depends on files in this directory
       - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
-    profiles: ["backend","full"]
+    profiles: ["backend-after-icat","full"]
     networks:
       default:
         aliases:
@@ -420,7 +422,7 @@ services:
       # This is persistent because the delay queue depends on files in this directory
       - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
-    profiles: ["backend","full"]
+    profiles: ["backend-after-icat","full"]
     networks:
       default:
         aliases:
@@ -437,7 +439,6 @@ services:
       MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY1}
     entrypoint: sh
     command: -c 'mkdir -p /data/dh-irods-bucket-dev && /usr/bin/minio server /data'
-    profiles: ["backend","full"]
     networks:
       default:
         aliases:
@@ -454,7 +455,6 @@ services:
       MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY2}
     entrypoint: sh
     command: -c 'mkdir -p /data/dh-irods-bucket-dev && /usr/bin/minio server /data'
-    profiles: ["backend","full"]
     networks:
       default:
         aliases:
