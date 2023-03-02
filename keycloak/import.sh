@@ -21,6 +21,9 @@ function retry {
   return 0
 }
 
+echo "Starting import"
+echo "starting" > /var/run/dh_import_state
+
 echo $RIT_ENV
 
 echo "Login"
@@ -70,3 +73,7 @@ echo "Full Sync LDAP"
 /opt/jboss/keycloak/bin/kcadm.sh create user-storage/10d55377-d139-4865-bd3e-1375ea079925/sync?action=triggerFullSync -r django
 
 echo "Done syncing LDAP"
+
+# We use this as a quick way of doing (poor man's) orchestration
+# See dh_is_ready.sh
+echo "completed" > /var/run/dh_import_state
