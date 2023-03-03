@@ -63,6 +63,7 @@ services:
       ENV_IRODS_DB_HOSTNAME: irods-db.dh.local
       ENV_IRODS_DB_NAME: icat
       ENV_IRODS_DB_USERNAME: irods
+      ENV_IRODS_DB_PORT: 5432
       # (test) password for postgres user 'irods'
       ENV_IRODS_DB_IRODS_PASSWORD: pgB3rKhqLGFLora
       # password for postgres user 'postgres'
