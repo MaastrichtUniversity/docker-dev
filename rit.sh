@@ -3,7 +3,7 @@
 # source library lib-dh.sh
 if [[ -z $DH_ENV_HOME ]]; then
     DH_ENV_HOME=".."
-    echo "(DH_ENV_HOME not set, using parent folder as default)"
+#    echo "(DH_ENV_HOME not set, using parent folder as default)"
 fi
 . $DH_ENV_HOME/lib-dh.sh
 
@@ -112,10 +112,19 @@ if [[ $1 == "faker" ]]; then
     exit 0
 fi
 
+# Create docker network common_default if it does not exists
+if [ ! $(docker network ls --filter name=common_default --format="true") ] ;
+      then
+       echo "Creating network common_default"
+       docker network create common_default
+fi
+
 # Start minimal docker-dev environment
 if [[ $1 == "minimal" ]]; then
     docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal up -d
-    until docker logs --tail 30 dev-icat-1 2>&1 | grep -q "Config OK";
+    # TODO: we could have a function for: "docker compose -f docker-compose.yml -f docker-compose-irods.yml", perhaps with exec.
+    #       and another one for is_ready (not just the convenience thing
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec icat /dh_is_ready.sh;
     do
       echo "Waiting for iCAT"
       sleep 10
@@ -123,7 +132,10 @@ if [[ $1 == "minimal" ]]; then
 
     echo "iCAT is Done"
 
-    until docker logs --tail 1 dev-keycloak-1 2>&1 | grep -q "Done syncing LDAP";
+    echo "Upping ires-hnas-um now.."
+    ./rit.sh up -d ires-hnas-um
+
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec keycloak /dh_is_ready.sh;
     do
       echo "Waiting for keycloak"
       sleep 20
@@ -134,7 +146,7 @@ if [[ $1 == "minimal" ]]; then
     echo "Running single run of SRAM-SYNC"
     ./rit.sh up -d sram-sync
 
-    until docker logs --tail 1 dev-sram-sync-1 2>&1 | grep -q "Sleeping for 300 seconds";
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec sram-sync /dh_is_ready.sh;
     do
       echo "Waiting for sram-sync"
       sleep 5
@@ -145,17 +157,82 @@ if [[ $1 == "minimal" ]]; then
     exit 0
 fi
 
+# for now same style as minimal, although this all could use a proper refactor!
+if [[ "$1" == "backend" ]]; then
+    # Quick PoC: FIXME! Refactor me! This code below is more of a functional "note" than code.
+    # Modifications to the docker-compose profiles are completely not thought out! Just trying thing out here.
+    #
+    docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal up -d
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec icat /dh_is_ready.sh;
+    do
+      echo "Waiting for iCAT, sleeping 10"
+      sleep 10
+    done
+    echo "iCAT is Done."
+
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec keycloak /dh_is_ready.sh;
+    do
+      echo "Waiting for keycloak, sleeping 20"
+      sleep 20
+    done
+
+    echo "Keycloak is Done"
+
+    echo "Running single run of SRAM-SYNC"
+    ./rit.sh up -d sram-sync
+
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec sram-sync /dh_is_ready.sh;
+    do
+      echo "Waiting for sram-sync, sleeping 5"
+      sleep 5
+    done
+
+    docker kill dev-sram-sync-1
+
+    echo "Starting backend-after-icat (iRES's)"
+    # we bring up all ires's (or anything that depends on iCAT being up)
+    docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend-after-icat up -d
+
+    # We also could do something like:
+    # all_backend_services=$(docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend --profile backend-after-icat config --services)
+    # But this doesn't work nicely & we don't have dh_is_ready.sh for minio for example
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-hnas-um /dh_is_ready.sh;
+    do
+      echo "Waiting for ires-hnas-um, sleeping 5"
+      sleep 5
+    done
+
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-hnas-azm /dh_is_ready.sh;
+    do
+      echo "Waiting for ires-hnas-azm, sleeping 5"
+      sleep 5
+    done
+
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-ceph-ac /dh_is_ready.sh;
+    do
+      echo "Waiting for ires-ceph-gl, sleeping 5"
+      sleep 5
+    done
+
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-ceph-gl /dh_is_ready.sh;
+    do
+      echo "Waiting for ires-ceph-ac, sleeping 5"
+      sleep 5
+    done
+
+    exit 0
+fi
+
 if [[ $1 == "login" ]]; then
     source './.env'
     docker login $ENV_REGISTRY_HOST
     exit 0
 fi
 
-# Create docker network common_default if it does not exists
-if [ ! $(docker network ls --filter name=common_default --format="true") ] ;
-      then
-       echo "Creating network common_default"
-       docker network create common_default
+# FIXME: Just for quick convenience for now
+if [[ "$1" == "is_ready" ]]; then
+    docker compose -f docker-compose.yml -f docker-compose-irods.yml exec "$2" /dh_is_ready.sh
+    exit $?
 fi
 
 # Concatenate the .env file together with the irods.secrets.cfg
@@ -165,5 +242,5 @@ cat irods.secrets.cfg >> .env_with_secrets
 # Assuming docker-compose is available in the PATH
 log $DBG "$0 [docker compose \"$ARGS\"]"
 
-docker compose --env-file .env_with_secrets -f docker-compose.yml -f docker-compose-irods.yml --profile minimal $ARGS
+docker compose --env-file .env_with_secrets -f docker-compose.yml -f docker-compose-irods.yml --profile full $ARGS
 
