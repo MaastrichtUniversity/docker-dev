@@ -199,7 +199,7 @@ services:
       LOGSTASH_TAGS: EPIC_PID
       LOG_LEVEL: DEBUG
       USERNAME: user
-      PASSWORD: foobar
+      PASSWORD: ${ENV_EPICPID_PASSWORD}
       RABBITMQ_HOST : rabbitmq.dh.local
       RABBITMQ_USER : user
       RABBITMQ_PASS : password
