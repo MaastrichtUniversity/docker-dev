@@ -151,7 +151,7 @@ if [[ $1 == "minimal" ]]; then
       sleep 5
     done
 
-    docker kill dev-sram-sync-1
+    ./rit.sh stop sram-sync
 
     exit 0
 fi
@@ -186,7 +186,7 @@ if [[ "$1" == "backend" ]]; then
       sleep 5
     done
 
-    docker kill dev-sram-sync-1
+    ./rit.sh stop sram-sync
 
     echo "Starting backend-after-icat (iRES's)"
     # we bring up all ires's (or anything that depends on iCAT being up)
