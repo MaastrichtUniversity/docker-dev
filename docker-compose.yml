@@ -321,7 +321,7 @@ services:
       WATCHFILES_FORCE_POLLING: true
       AUTO_RELOAD: true
     volumes:
-      - ./externals/dh-help-center/backend/main.py:/opt/main.py
+      - ./externals/dh-help-center/backend/:/opt/
     networks:
       default:
         aliases:
