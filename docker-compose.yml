@@ -66,9 +66,9 @@ services:
       - ./staging-data:/mnt/ingest
     command: "python -c pass"
     environment:
-      IRODS_HOST: icat.dh.local
+      IRODS_HOST: ${ENV_IRODS_ICAT_HOST}
       IRODS_USER: rods
-      IRODS_PASS: irods
+      IRODS_PASS: ${ENV_IRODS_PASSWORD_ADMIN}
       IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
       RABBITMQ_HOST: rabbitmq.dh.local
       RABBITMQ_USER: user
@@ -199,14 +199,25 @@ services:
       LOGSTASH_TAGS: EPIC_PID
       LOG_LEVEL: DEBUG
       USERNAME: user
-      PASSWORD: foobar
+      PASSWORD: ${ENV_EPICPID_PASSWORD}
       RABBITMQ_HOST : rabbitmq.dh.local
       RABBITMQ_USER : user
       RABBITMQ_PASS : password
       RABBITMQ_PORT: 5672
-      EPIC_CREDENTIALS: my_credentials_test.json
+      HANDLE_SERVER_URL: "https://epic-pid.storage.surfsara.nl:8003"
+      BASEURI: "https://epic-pid.storage.surfsara.nl:8003"
+      PRIVATE_KEY: "/opt/app/credentials/305_21_T12996_USER01_UM_privkey.pem"
+      CERTIFICATE_ONLY: "/opt/app/credentials/305_21_T12996_USER01_UM_certificate_only.pem"
+      PREFIX: "21.T12996"
+      HANDLE_OWNER: "200:0.NA/21.T12996"
+      HTTPS_VERIFY: "True"
+      # Keys below are only set in production
+#      ALLOWED_SEARCH_KEYS: ""
+#      REVERSE_LOOKUP_BASEURI: ""
+#      REVERSE_LOOKUP_PASSWORD: ""
+#      REVERSE_LOOKUP_USERNAME: ""
       REQUESTS_CA_BUNDLE: /opt/epic5storagesurfsaranlCHAIN.crt
-    profiles: ["minimal","full"]
+    profiles: ["backend","minimal","full"]
     networks:
       default:
         aliases:
@@ -232,9 +243,9 @@ services:
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_USER: user
       RABBITMQ_PASS: password
-      IRODS_HOST: icat.dh.local
+      IRODS_HOST: ${ENV_IRODS_ICAT_HOST}
       IRODS_USER: rods
-      IRODS_PASS: irods
+      IRODS_PASS: ${ENV_IRODS_PASSWORD_ADMIN}
       IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
       DATAVERSE_HOST: https://demo.dataverse.nl
       DH_MAILER_HOST: mailer.dh.local
@@ -267,9 +278,9 @@ services:
       - ./externals/sram-sync/:/opt/app
     environment:
       LOG_LEVEL: INFO
-      IRODS_HOST: icat.dh.local
+      IRODS_HOST: ${ENV_IRODS_ICAT_HOST}
       IRODS_USER: rods
-      IRODS_PASS: irods
+      IRODS_PASS: ${ENV_IRODS_PASSWORD_ADMIN}
       IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
       LDAP_USER: cn=admin,dc=datahubmaastricht,dc=nl
       LDAP_PASS: admin
