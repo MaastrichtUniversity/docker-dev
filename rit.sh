@@ -40,7 +40,8 @@ externals/dh-irods https://github.com/MaastrichtUniversity/dh-irods.git
 externals/dh-python-irods-utils https://github.com/MaastrichtUniversity/dh-python-irods-utils.git
 externals/cedar-parsing-utils https://github.com/MaastrichtUniversity/cedar-parsing-utils.git
 externals/dh-elasticsearch https://github.com/MaastrichtUniversity/dh-elasticsearch.git
-externals/dh-help-center https://github.com/MaastrichtUniversity/dh-help-center.git"
+externals/dh-help-center https://github.com/MaastrichtUniversity/dh-help-center.git
+externals/dh-admin-tools https://github.com/MaastrichtUniversity/dh-admin-tools"
 
 # do the required action in case of externals or exec
 if [[ $1 == "externals" ]]; then
