@@ -316,7 +316,7 @@ services:
     environment:
       VIRTUAL_HOST: helpbackend.${RIT_ENV}.dh.unimaas.nl
       CONFLUENCE_CLOUD_URL: https://mumc.atlassian.net
-      CONFLUENCE_CLOUD_SPACE_KEY: MDRD
+      CONFLUENCE_CLOUD_SPACE_KEY: MDRDT
       LOGSTASH_TAGS: HELP_CENTER_BACKEND
       WATCHFILES_FORCE_POLLING: true
       AUTO_RELOAD: true
