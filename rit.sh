@@ -152,7 +152,7 @@ if [[ $1 == "minimal" ]]; then
       sleep 5
     done
 
-    docker kill dev-sram-sync-1
+    ./rit.sh stop sram-sync
 
     exit 0
 fi
@@ -187,7 +187,7 @@ if [[ "$1" == "backend" ]]; then
       sleep 5
     done
 
-    docker kill dev-sram-sync-1
+    ./rit.sh stop sram-sync
 
     echo "Starting backend-after-icat (iRES's)"
     # we bring up all ires's (or anything that depends on iCAT being up)
@@ -198,8 +198,8 @@ if [[ "$1" == "backend" ]]; then
     # But this doesn't work nicely & we don't have dh_is_ready.sh for minio for example
     until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-hnas-um /dh_is_ready.sh;
     do
-      echo "Waiting for ires-hnas-um, sleeping 5"
-      sleep 5
+      echo "Waiting for ires-hnas-um, sleeping 10"
+      sleep 10
     done
 
     until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-hnas-azm /dh_is_ready.sh;
