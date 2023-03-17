@@ -353,7 +353,7 @@ services:
       context: externals/dh-help-center/frontend
       dockerfile: Dockerfile
       args:
-        - REACT_APP_MDR_URL=http://mdr.local.dh.unimaas.nl
+        - REACT_APP_MDR_URL=http://mdr.${RIT_ENV}.dh.unimaas.nl
         - REACT_APP_SERVICE_DESK_URL=https://mumc-sandbox.atlassian.net/
     image: ${ENV_REGISTRY_HOST}/docker-dev/help-center:${ENV_TAG}
     environment:
