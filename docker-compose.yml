@@ -312,6 +312,8 @@ services:
       dockerfile: Dockerfile
       args:
         - ENV_FILEBEAT_VERSION
+    env_file:
+      - irods.secrets.cfg
     image: ${ENV_REGISTRY_HOST}/docker-dev/help-center-backend:${ENV_TAG}
     environment:
       VIRTUAL_HOST: helpbackend.${RIT_ENV}.dh.unimaas.nl
@@ -320,6 +322,12 @@ services:
       LOGSTASH_TAGS: HELP_CENTER_BACKEND
       WATCHFILES_FORCE_POLLING: true
       AUTO_RELOAD: true
+      JIRA_URL: https://mumc-sandbox.atlassian.net
+      JIRA_SERVICE_DESK_PROJECT_NAME: "DEC"
+      JIRA_SERVICE_DESK_QUESTION_REQUEST_NAME: "Ask a question"
+      JIRA_SERVICE_DESK_BUG_REQUEST_NAME: "MDR Bug"
+      JIRA_SERVICE_DESK_FEATURE_REQUEST_NAME: "Feature request"
+      JIRA_SERVICE_DESK_SUPPORT_REQUEST_NAME: "Support request"
     volumes:
       - ./externals/dh-help-center/backend/:/opt/
     networks:
@@ -335,6 +343,7 @@ services:
       dockerfile: Dockerfile
       args:
         - REACT_APP_MDR_URL=http://mdr.local.dh.unimaas.nl
+        - REACT_APP_SERVICE_DESK_URL=https://mumc-sandbox.atlassian.net/
     image: ${ENV_REGISTRY_HOST}/docker-dev/help-center:${ENV_TAG}
     environment:
       VIRTUAL_HOST: helpcenter.${RIT_ENV}.dh.unimaas.nl
