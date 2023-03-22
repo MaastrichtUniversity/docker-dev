@@ -370,6 +370,43 @@ services:
       common_default:
         aliases:
           - help-center.dh.local
+  admin-tools-backend:
+    build:
+      context: externals/dh-admin-tools/backend
+      dockerfile: Dockerfile
+    image: ${ENV_REGISTRY_HOST}/docker-dev/admin-tools-backend:${ENV_TAG}
+    environment:
+      VIRTUAL_HOST: admintoolsbackend.${RIT_ENV}.dh.unimaas.nl
+      WATCHFILES_FORCE_POLLING: true
+      AUTO_RELOAD: true
+    volumes:
+      - ./externals/dh-admin-tools/backend/:/opt/
+    networks:
+      default:
+        aliases:
+          - admin-tools-backend.dh.local
+      common_default:
+        aliases:
+          - admin-tools-backend.dh.local
+  admin-tools:
+    build:
+      context: externals/dh-admin-tools/frontend
+      dockerfile: Dockerfile
+    image: ${ENV_REGISTRY_HOST}/docker-dev/admin-tools:${ENV_TAG}
+    environment:
+      VIRTUAL_HOST: admintools.${RIT_ENV}.dh.unimaas.nl
+      VIRTUAL_PORT: 3000
+      HOST: 0.0.0.0
+    volumes:
+      - './externals/dh-admin-tools/frontend/src:/app/src'
+      - './externals/dh-admin-tools/frontend/public:/app/public'
+    networks:
+      default:
+        aliases:
+          - admin-tools.dh.local
+      common_default:
+        aliases:
+          - admin-tools.dh.local
 
 
 networks:
