@@ -381,6 +381,7 @@ services:
       AUTO_RELOAD: true
     volumes:
       - ./externals/dh-admin-tools/backend/:/opt/
+    profiles: ["full"]
     networks:
       default:
         aliases:
@@ -400,6 +401,7 @@ services:
     volumes:
       - './externals/dh-admin-tools/frontend/src:/app/src'
       - './externals/dh-admin-tools/frontend/public:/app/public'
+    profiles: ["full"]
     networks:
       default:
         aliases:
