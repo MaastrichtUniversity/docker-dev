@@ -355,8 +355,6 @@ services:
     build:
       context: externals/dh-admin-tools/backend
       dockerfile: Dockerfile
-      args:
-        - ENV_FILEBEAT_VERSION
     image: ${ENV_REGISTRY_HOST}/docker-dev/admin-tools-backend:${ENV_TAG}
     environment:
       VIRTUAL_HOST: admintoolsbackend.${RIT_ENV}.dh.unimaas.nl
