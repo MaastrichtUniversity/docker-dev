@@ -21,6 +21,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ./irods/irods-db/create_icat_db.sh:/docker-entrypoint-initdb.d/create_icat_db.sh
     profiles: ["minimal","backend","full"]
+    # See https://docs.irods.org/4.2.11/system_overview/configuration/#special-characters
+    command: postgres -c standard_conforming_strings=off
     networks:
       default:
         aliases:
