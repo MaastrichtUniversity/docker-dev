@@ -235,8 +235,6 @@ services:
       args:
         - SSL_ENV=${RIT_ENV}
     image: ${ENV_REGISTRY_HOST}/docker-dev/open-access-worker:${ENV_TAG}
-#    depends_on:
-#      - irods
     env_file:
       - irods.secrets.cfg # Using ONLY DATAVERSE_TOKEN
     environment:
@@ -271,7 +269,6 @@ services:
         - SSL_ENV=${RIT_ENV}          # Whether to add our own CA-certificate to the CA-rootstore
     image: ${ENV_REGISTRY_HOST}/docker-dev/sram-sync:${ENV_TAG}
     depends_on:
-      - icat
       - ldap
     volumes:
       - /etc/localtime:/etc/localtime:ro
