@@ -103,8 +103,6 @@ services:
       # repos
       - ./externals/irods-ruleset:/rules
       - ./externals/irods-microservices:/microservices
-      # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
-      - microservices-build:/tmp/microservices-build
       # This is persistent because the delay queue depends on files in this directory
       - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
@@ -185,8 +183,6 @@ services:
       - ./staging-data/direct-ingest:/mnt/stagingResc01
       #- direct-dropzones:/mnt/stagingResc01
       #- mounted-dropzones:/mnt/ingest/zones
-      # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
-      - microservices-build:/tmp/microservices-build
       # This is persistent because the delay queue depends on files in this directory
       - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
@@ -266,8 +262,6 @@ services:
       # If you want to make use of the samba mounts, comment the line below and uncomment the mounted-dropzones line
       - ./staging-data/zones:/mnt/ingest/zones
       #- mounted-dropzones:/mnt/ingest/zones
-      # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
-      - microservices-build:/tmp/microservices-build
       # This is persistent because the delay queue depends on files in this directory
       - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
@@ -335,8 +329,6 @@ services:
       - ./externals/irods-helper-cmd:/helpers
       # irods-helper-cmd uses /etc/secrets
       - ./irods.secrets.cfg:/etc/secrets:ro
-      # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
-      - microservices-build:/tmp/microservices-build
       # This is persistent because the delay queue depends on files in this directory
       - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
@@ -420,8 +412,6 @@ services:
       - ./externals/irods-helper-cmd:/helpers
       # irods-helper-cmd uses /etc/secrets
       - ./irods.secrets.cfg:/etc/secrets:ro
-      # shared across containers (TODO: move this to Dockerfile, and eventually to staged-build Dockerfile)
-      - microservices-build:/tmp/microservices-build
       # This is persistent because the delay queue depends on files in this directory
       - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
@@ -468,12 +458,6 @@ services:
 
 volumes:
   delay-queue:
-  # this volume exists so already-compiled microservices shared across
-  # icat/ires's don't have to be recompiled. If icat already compiled them, no
-  # need for ires's to recompile. For acc/prod, maybe useful if container is
-  # restarted, no need to recompile if already up to date? Although I don't
-  # know if make will know nothing changed.
-  microservices-build:
   # If you want to use SAMBA, uncomment all lines below
 #  mounted-dropzones:
 #    driver: local
