@@ -336,6 +336,7 @@ services:
       JIRA_SERVICE_DESK_BUG_REQUEST_NAME: "Bug report"
       JIRA_SERVICE_DESK_FEATURE_REQUEST_NAME: "Feature request"
       JIRA_SERVICE_DESK_SUPPORT_REQUEST_NAME: "Support request"
+      JIRA_SERVICE_DESK_EXTERNAL_ACCESS_REQUEST_NAME: "External Access Request"
     volumes:
       - ./externals/dh-help-center/backend/:/opt/
     networks:
