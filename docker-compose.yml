@@ -331,9 +331,9 @@ services:
       WATCHFILES_FORCE_POLLING: true
       AUTO_RELOAD: true
       JIRA_URL: https://mumc-sandbox.atlassian.net
-      JIRA_SERVICE_DESK_PROJECT_NAME: "ServiceDesk"
+      JIRA_SERVICE_DESK_PROJECT_NAME: "Maastricht Data Repository Support"
       JIRA_SERVICE_DESK_QUESTION_REQUEST_NAME: "Ask a question"
-      JIRA_SERVICE_DESK_BUG_REQUEST_NAME: "MDR Bug"
+      JIRA_SERVICE_DESK_BUG_REQUEST_NAME: "Bug report"
       JIRA_SERVICE_DESK_FEATURE_REQUEST_NAME: "Feature request"
       JIRA_SERVICE_DESK_SUPPORT_REQUEST_NAME: "Support request"
     volumes:
