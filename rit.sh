@@ -209,13 +209,13 @@ if [[ "$1" == "backend" ]]; then
       sleep 5
     done
 
-    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-ceph-ac /dh_is_ready.sh;
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-ceph-gl /dh_is_ready.sh;
     do
       echo "Waiting for ires-ceph-gl, sleeping 5"
       sleep 5
     done
 
-    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-ceph-gl /dh_is_ready.sh;
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-ceph-ac /dh_is_ready.sh;
     do
       echo "Waiting for ires-ceph-ac, sleeping 5"
       sleep 5
