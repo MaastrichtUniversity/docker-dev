@@ -11,8 +11,8 @@ LDAP_DOMAIN=DC=unimaas,DC=nl
 USE_SAMBA=false
 DATAVERSE_TOKEN=
 BIOPORTAL_API_KEY=
-JIRA_API_KEY=(JIRA_API_KEY)
-JIRA_API_USERNAME=(JIRA_EMAIL)
+ATLASSIAN_API_KEY=(ATLASSIAN_API_KEY)
+ATLASSIAN_API_USERNAME=(ATLASSIAN_EMAIL)
 ```
 
 * Specify the default values and versions for environment vars in the _.env_ file
