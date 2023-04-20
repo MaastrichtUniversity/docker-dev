@@ -314,6 +314,100 @@ services:
       common_default:
         aliases:
           - mdr-db.dh.local
+  help-center-backend:
+    build:
+      context: externals/dh-help-center/backend
+      dockerfile: Dockerfile
+      args:
+        - ENV_FILEBEAT_VERSION
+    env_file:
+      - irods.secrets.cfg
+    image: ${ENV_REGISTRY_HOST}/docker-dev/help-center-backend:${ENV_TAG}
+    environment:
+      VIRTUAL_HOST: helpbackend.${RIT_ENV}.dh.unimaas.nl
+      CONFLUENCE_CLOUD_URL: https://mumc.atlassian.net
+      CONFLUENCE_CLOUD_SPACE_KEY: MDRDT
+      LOGSTASH_TAGS: HELP_CENTER_BACKEND
+      WATCHFILES_FORCE_POLLING: true
+      AUTO_RELOAD: true
+      JIRA_URL: https://mumc-sandbox.atlassian.net
+      JIRA_SERVICE_DESK_PROJECT_NAME: "Maastricht Data Repository Support"
+      JIRA_SERVICE_DESK_QUESTION_REQUEST_NAME: "Ask a question"
+      JIRA_SERVICE_DESK_BUG_REQUEST_NAME: "Bug report"
+      JIRA_SERVICE_DESK_FEATURE_REQUEST_NAME: "Feature request"
+      JIRA_SERVICE_DESK_SUPPORT_REQUEST_NAME: "Support request"
+      JIRA_SERVICE_DESK_EXTERNAL_ACCESS_REQUEST_NAME: "External Access Request"
+    volumes:
+      - ./externals/dh-help-center/backend/:/opt/
+    networks:
+      default:
+        aliases:
+          - help-center-backend.dh.local
+      common_default:
+        aliases:
+          - help-center-backend.dh.local
+  help-center:
+    build:
+      context: externals/dh-help-center/frontend
+      dockerfile: Dockerfile
+    image: ${ENV_REGISTRY_HOST}/docker-dev/help-center:${ENV_TAG}
+    environment:
+      VIRTUAL_HOST: helpcenter.${RIT_ENV}.dh.unimaas.nl
+      VIRTUAL_PORT: 3000
+      LOGSTASH_TAGS: HELP_CENTER_FRONTEND
+      HOST: 0.0.0.0
+      REACT_APP_MDR_URL : http://mdr.${RIT_ENV}.dh.unimaas.nl
+      REACT_APP_SERVICE_DESK_URL : https://mumc-sandbox.atlassian.net/
+    volumes:
+      - './externals/dh-help-center/frontend/src:/app/src'
+      - './externals/dh-help-center/frontend/public:/app/public'
+    networks:
+      default:
+        aliases:
+          - help-center.dh.local
+      common_default:
+        aliases:
+          - help-center.dh.local
+  admin-tools-backend:
+    build:
+      context: externals/dh-admin-tools/backend
+      dockerfile: Dockerfile
+    image: ${ENV_REGISTRY_HOST}/docker-dev/admin-tools-backend:${ENV_TAG}
+    environment:
+      VIRTUAL_HOST: admintoolsbackend.${RIT_ENV}.dh.unimaas.nl
+      WATCHFILES_FORCE_POLLING: true
+      AUTO_RELOAD: true
+    volumes:
+      - ./externals/dh-admin-tools/backend/:/opt/
+    profiles: ["full"]
+    networks:
+      default:
+        aliases:
+          - admin-tools-backend.dh.local
+      common_default:
+        aliases:
+          - admin-tools-backend.dh.local
+  admin-tools:
+    build:
+      context: externals/dh-admin-tools/frontend
+      dockerfile: Dockerfile
+    image: ${ENV_REGISTRY_HOST}/docker-dev/admin-tools:${ENV_TAG}
+    environment:
+      VIRTUAL_HOST: admintools.${RIT_ENV}.dh.unimaas.nl
+      VIRTUAL_PORT: 3000
+      HOST: 0.0.0.0
+    volumes:
+      - './externals/dh-admin-tools/frontend/src:/app/src'
+      - './externals/dh-admin-tools/frontend/public:/app/public'
+    profiles: ["full"]
+    networks:
+      default:
+        aliases:
+          - admin-tools.dh.local
+      common_default:
+        aliases:
+          - admin-tools.dh.local
+
 
 networks:
   common_default:

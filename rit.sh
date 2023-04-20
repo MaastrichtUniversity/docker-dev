@@ -39,7 +39,9 @@ externals/dh-faker https://github.com/MaastrichtUniversity/dh-faker.git
 externals/dh-irods https://github.com/MaastrichtUniversity/dh-irods.git
 externals/dh-python-irods-utils https://github.com/MaastrichtUniversity/dh-python-irods-utils.git
 externals/cedar-parsing-utils https://github.com/MaastrichtUniversity/cedar-parsing-utils.git
-externals/dh-elasticsearch https://github.com/MaastrichtUniversity/dh-elasticsearch.git"
+externals/dh-elasticsearch https://github.com/MaastrichtUniversity/dh-elasticsearch.git
+externals/dh-help-center https://github.com/MaastrichtUniversity/dh-help-center.git
+externals/dh-admin-tools https://github.com/MaastrichtUniversity/dh-admin-tools"
 
 # do the required action in case of externals or exec
 if [[ $1 == "externals" ]]; then
@@ -207,13 +209,13 @@ if [[ "$1" == "backend" ]]; then
       sleep 5
     done
 
-    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-ceph-ac /dh_is_ready.sh;
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-ceph-gl /dh_is_ready.sh;
     do
       echo "Waiting for ires-ceph-gl, sleeping 5"
       sleep 5
     done
 
-    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-ceph-gl /dh_is_ready.sh;
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-ceph-ac /dh_is_ready.sh;
     do
       echo "Waiting for ires-ceph-ac, sleeping 5"
       sleep 5

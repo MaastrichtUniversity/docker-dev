@@ -11,8 +11,8 @@ LDAP_DOMAIN=DC=unimaas,DC=nl
 USE_SAMBA=false
 DATAVERSE_TOKEN=
 BIOPORTAL_API_KEY=
-JIRA_API_KEY=(JIRA_API_KEY)
-JIRA_API_USERNAME=(JIRA_EMAIL)
+ATLASSIAN_API_KEY=(ATLASSIAN_API_KEY)
+ATLASSIAN_API_USERNAME=(ATLASSIAN_EMAIL)
 ```
 
 * Specify the default values and versions for environment vars in the _.env_ file
@@ -62,7 +62,6 @@ Where `[user]` is a valid iRODS user as defined in `irods/bootstrap_irods.sh` or
 
 You can also execute commands from the irods-ruleset repository like this:
 ```
-./i [user] irule -F rules/projects/listContributingProjects.r 
 ./i [user] irule -F rules/projects/detailsProject.r "*project='P000000001'" "*inherited='false'"
 ./i [user] imeta add -C /nlmumc/ingest/zones/[collectionName] [attribute] [value] [unit]
 etc..
