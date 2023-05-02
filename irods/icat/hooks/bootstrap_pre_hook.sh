@@ -59,6 +59,7 @@ _main() {
         postgresql-client-"${ENV_POSTGRES_CLIENT_VERSION}"
 
     local was_db_setup=$(print_is_icat_db_setup)
+    mkdir -p /cache && chown irods /cache
 
     # patch setup_irods.py so it doesn't break if DB was already populated from previous install
     if [[ "$was_db_setup" == "yes" ]]; then
