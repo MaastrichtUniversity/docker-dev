@@ -337,6 +337,7 @@ services:
       JIRA_SERVICE_DESK_FEATURE_REQUEST_NAME: "Feature request"
       JIRA_SERVICE_DESK_SUPPORT_REQUEST_NAME: "Support request"
       JIRA_SERVICE_DESK_EXTERNAL_ACCESS_REQUEST_NAME: "External Access Request"
+      JIRA_SERVICE_DESK_AUTOMATED_PROCESS_SUPPORT_REQUEST_NAME: "Automated process support request"
     volumes:
       - ./externals/dh-help-center/backend/:/opt/
     networks:
