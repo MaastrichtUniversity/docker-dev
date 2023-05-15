@@ -249,6 +249,7 @@ services:
       DH_MAILER_HOST: mailer.dh.local
       DH_MAILER_USERNAME: user
       DH_MAILER_PASSWORD: password
+      HC_BACKEND_URL: http://help-center-backend.dh.local:8000
       LOG_LEVEL: INFO
       LOGSTASH_TAGS: OPEN_ACCESS_WORKER
     volumes:
