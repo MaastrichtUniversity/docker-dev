@@ -389,6 +389,25 @@ services:
       common_default:
         aliases:
           - homepage.dh.local
+  mdr-home:
+    build:
+      context: externals/dh-mdr-home
+      dockerfile: Dockerfile
+    image: ${ENV_REGISTRY_HOST}/docker-dev/dh-mdr-home:${ENV_TAG}
+    environment:
+      VIRTUAL_HOST: mdrhomepage.${RIT_ENV}.dh.unimaas.nl
+      VIRTUAL_PORT: 3000
+      HOST: 0.0.0.0
+    volumes:
+      - './externals/dh-mdr-home/src:/app/src'
+      - './externals/dh-mdr-home/public:/app/public'
+    networks:
+      default:
+        aliases:
+          - mdrhomepage.dh.local
+      common_default:
+        aliases:
+          - mdrhomepage.dh.local
   admin-tools-backend:
     build:
       context: externals/dh-admin-tools/backend

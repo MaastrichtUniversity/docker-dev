@@ -42,7 +42,8 @@ externals/cedar-parsing-utils https://github.com/MaastrichtUniversity/cedar-pars
 externals/dh-elasticsearch https://github.com/MaastrichtUniversity/dh-elasticsearch.git
 externals/dh-help-center https://github.com/MaastrichtUniversity/dh-help-center.git
 externals/dh-admin-tools https://github.com/MaastrichtUniversity/dh-admin-tools
-externals/dh-home https://github.com/MaastrichtUniversity/dh-home"
+externals/dh-home https://github.com/MaastrichtUniversity/dh-home
+externals/dh-mdr-home https://github.com/MaastrichtUniversity/dh-mdr-home"
 
 # do the required action in case of externals or exec
 if [[ $1 == "externals" ]]; then
