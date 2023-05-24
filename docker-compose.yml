@@ -370,6 +370,25 @@ services:
       common_default:
         aliases:
           - help-center.dh.local
+  dh-home:
+    build:
+      context: externals/dh-home
+      dockerfile: Dockerfile
+    image: ${ENV_REGISTRY_HOST}/docker-dev/dh-home:${ENV_TAG}
+    environment:
+      VIRTUAL_HOST: homepage.${RIT_ENV}.dh.unimaas.nl
+      VIRTUAL_PORT: 3000
+      HOST: 0.0.0.0
+    volumes:
+      - './externals/dh-home/src:/app/src'
+      - './externals/dh-home/public:/app/public'
+    networks:
+      default:
+        aliases:
+          - homepage.dh.local
+      common_default:
+        aliases:
+          - homepage.dh.local
   admin-tools-backend:
     build:
       context: externals/dh-admin-tools/backend
