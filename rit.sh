@@ -79,9 +79,9 @@ fi
 # Run test cases
 # e.g:
 # * irods
-# ./rit.sh test irods . # to execute all tests in the folder '/rules/test_cases'
-# ./rit.sh test irods test_policies.py # to execute the tests inside '/rules/test_cases/test_policies.py'
-# ./rit.sh test irods test_policies.py::TestPolicies::test_post_proc_for_coll_create # to only execute a single test
+# ./rit.sh test irods /rules/test_cases # to execute all tests in the folder '/rules/test_cases'
+# ./rit.sh test irods /rules/test_cases/test_policies.py # to execute the tests inside '/rules/test_cases/test_policies.py'
+# ./rit.sh test irods /rules/test_cases/test_policies.py::TestPolicies::test_post_proc_for_coll_create # to only execute a single test
 # * mdr
 # ./rit.sh test mdr # to execute all tests
 # ./rit.sh test mdr app.tests.test_projects # to execute the tests inside '/app/tests/test_projects'
