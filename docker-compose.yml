@@ -376,7 +376,7 @@ services:
       dockerfile: Dockerfile
     image: ${ENV_REGISTRY_HOST}/docker-dev/dh-home:${ENV_TAG}
     environment:
-      VIRTUAL_HOST: homepage.${RIT_ENV}.dh.unimaas.nl
+      VIRTUAL_HOST: datahubhomepage.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 3000
       HOST: 0.0.0.0
     volumes:
@@ -385,10 +385,10 @@ services:
     networks:
       default:
         aliases:
-          - homepage.dh.local
+          - datahub-homepage.dh.local
       common_default:
         aliases:
-          - homepage.dh.local
+          - datahub-homepage.dh.local
   mdr-home:
     build:
       context: externals/dh-mdr-home
