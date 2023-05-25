@@ -85,11 +85,6 @@ services:
       ENV_IRODS_SSL_CERT: icat.dh.local.crt
       ENV_IRODS_SSL_KEY: icat.dh.local.key
       ENV_IRODS_SSL_DH_PARAMS: dhparams.pem
-      # S3 project creation
-      ENV_S3_RESC_NAME_AC: "UM-Ceph-S3-AC"
-      ENV_S3_HOST_AC: "minio1.dh.local:9000"
-      ENV_S3_RESC_NAME_GL: "UM-Ceph-S3-GL"
-      ENV_S3_HOST_GL: "minio2.dh.local:9000"
       # defaults to '/etc/ssl/certs/ca-certificates.crt' (in the container)
       ENV_IRODS_SSL_CA_CERTIFICATE: test_only_dev_irods_dh_ca_cert.pem
       ENV_FILEBEAT_PRIMARY_TAG: ICAT
@@ -148,6 +143,9 @@ services:
         - ENV_S3_SECRET_KEY_GL
         - ENV_S3_AUTH_FILE_GL
     image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
+    depends_on:
+      - minio1
+      - minio2
     # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
     # https://github.com/irods/irods/issues/5218
     sysctls:
