@@ -27,10 +27,10 @@ services:
     networks:
       default:
         aliases:
-          - mdr.dh.local
+          - mdrinternal.dh.local
       common_default:
         aliases:
-          - mdr.dh.local
+          - mdrinternal.dh.local
   elastic:
     build:
       context: externals/dh-elasticsearch
@@ -395,7 +395,7 @@ services:
       dockerfile: Dockerfile
     image: ${ENV_REGISTRY_HOST}/docker-dev/dh-mdr-home:${ENV_TAG}
     environment:
-      VIRTUAL_HOST: mdrhomepage.${RIT_ENV}.dh.unimaas.nl
+      VIRTUAL_HOST: mdr.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 3000
       HOST: 0.0.0.0
     volumes:
@@ -404,10 +404,10 @@ services:
     networks:
       default:
         aliases:
-          - mdrhomepage.dh.local
+          - mdrhome.dh.local
       common_default:
         aliases:
-          - mdrhomepage.dh.local
+          - mdrhome.dh.local
   admin-tools-backend:
     build:
       context: externals/dh-admin-tools/backend
