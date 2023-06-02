@@ -382,6 +382,7 @@ services:
     volumes:
       - './externals/dh-home/src:/app/src'
       - './externals/dh-home/public:/app/public'
+    profiles: ["full"]
     networks:
       default:
         aliases:
@@ -403,6 +404,7 @@ services:
     volumes:
       - './externals/dh-mdr-home/src:/app/src'
       - './externals/dh-mdr-home/public:/app/public'
+    profiles: ["full"]
     networks:
       default:
         aliases:
