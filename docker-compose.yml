@@ -370,6 +370,48 @@ services:
       common_default:
         aliases:
           - help-center.dh.local
+  dh-home:
+    build:
+      context: externals/dh-home
+      dockerfile: Dockerfile
+    image: ${ENV_REGISTRY_HOST}/docker-dev/dh-home:${ENV_TAG}
+    environment:
+      VIRTUAL_HOST: datahubhomepage.${RIT_ENV}.dh.unimaas.nl
+      VIRTUAL_PORT: 3000
+      HOST: 0.0.0.0
+    volumes:
+      - './externals/dh-home/src:/app/src'
+      - './externals/dh-home/public:/app/public'
+    profiles: ["full"]
+    networks:
+      default:
+        aliases:
+          - datahub-homepage.dh.local
+      common_default:
+        aliases:
+          - datahub-homepage.dh.local
+  mdr-home:
+    build:
+      context: externals/dh-mdr-home
+      dockerfile: Dockerfile
+    image: ${ENV_REGISTRY_HOST}/docker-dev/dh-mdr-home:${ENV_TAG}
+    environment:
+      VIRTUAL_HOST: mdrhomepage.${RIT_ENV}.dh.unimaas.nl
+      VIRTUAL_PORT: 3000
+      HOST: 0.0.0.0
+      REACT_APP_MDR_URL : http://mdr.${RIT_ENV}.dh.unimaas.nl
+      REACT_APP_DATAHUB_HOME_URL : http://datahubhomepage.${RIT_ENV}.dh.unimaas.nl
+    volumes:
+      - './externals/dh-mdr-home/src:/app/src'
+      - './externals/dh-mdr-home/public:/app/public'
+    profiles: ["full"]
+    networks:
+      default:
+        aliases:
+          - mdrhomepage.dh.local
+      common_default:
+        aliases:
+          - mdrhomepage.dh.local
   admin-tools-backend:
     build:
       context: externals/dh-admin-tools/backend
