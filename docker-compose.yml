@@ -27,10 +27,10 @@ services:
     networks:
       default:
         aliases:
-          - mdr.dh.local
+          - app.mdr.dh.local
       common_default:
         aliases:
-          - mdr.dh.local
+          - app.mdr.dh.local
   elastic:
     build:
       context: externals/dh-elasticsearch
@@ -249,7 +249,7 @@ services:
       DH_MAILER_HOST: mailer.dh.local
       DH_MAILER_USERNAME: user
       DH_MAILER_PASSWORD: password
-      HC_BACKEND_URL: http://help-center-backend.dh.local:8000
+      HC_BACKEND_URL: http://help.mdr.${RIT_ENV}.dh.unimaas.nl
       LOG_LEVEL: INFO
       LOGSTASH_TAGS: OPEN_ACCESS_WORKER
     volumes:
@@ -331,6 +331,7 @@ services:
       LOGSTASH_TAGS: HELP_CENTER_BACKEND
       WATCHFILES_FORCE_POLLING: true
       AUTO_RELOAD: true
+      MDR_URL : http://app.mdr.${RIT_ENV}.dh.unimaas.nl
       JIRA_URL: https://mumc-sandbox.atlassian.net
       JIRA_SERVICE_DESK_PROJECT_NAME: "Maastricht Data Repository Support"
       JIRA_SERVICE_DESK_QUESTION_REQUEST_NAME: "Ask a question"
@@ -354,11 +355,11 @@ services:
       dockerfile: Dockerfile
     image: ${ENV_REGISTRY_HOST}/docker-dev/help-center:${ENV_TAG}
     environment:
-      VIRTUAL_HOST: helpcenter.${RIT_ENV}.dh.unimaas.nl
+      VIRTUAL_HOST: help.mdr.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 3000
       LOGSTASH_TAGS: HELP_CENTER_FRONTEND
       HOST: 0.0.0.0
-      REACT_APP_MDR_URL : http://mdr.${RIT_ENV}.dh.unimaas.nl
+      REACT_APP_MDR_URL : http://app.mdr.${RIT_ENV}.dh.unimaas.nl
       REACT_APP_SERVICE_DESK_URL : https://mumc-sandbox.atlassian.net/
     volumes:
       - './externals/dh-help-center/frontend/src:/app/src'
@@ -376,13 +377,13 @@ services:
       dockerfile: Dockerfile
     image: ${ENV_REGISTRY_HOST}/docker-dev/dh-home:${ENV_TAG}
     environment:
-      VIRTUAL_HOST: datahubhomepage.${RIT_ENV}.dh.unimaas.nl
+      VIRTUAL_HOST: ${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 3000
       HOST: 0.0.0.0
     volumes:
       - './externals/dh-home/src:/app/src'
       - './externals/dh-home/public:/app/public'
-    profiles: ["full"]
+    profiles: ["minimal","full"]
     networks:
       default:
         aliases:
@@ -396,15 +397,16 @@ services:
       dockerfile: Dockerfile
     image: ${ENV_REGISTRY_HOST}/docker-dev/dh-mdr-home:${ENV_TAG}
     environment:
-      VIRTUAL_HOST: mdrhomepage.${RIT_ENV}.dh.unimaas.nl
+      VIRTUAL_HOST: mdr.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 3000
       HOST: 0.0.0.0
-      REACT_APP_MDR_URL : http://mdr.${RIT_ENV}.dh.unimaas.nl
-      REACT_APP_DATAHUB_HOME_URL : http://datahubhomepage.${RIT_ENV}.dh.unimaas.nl
+      REACT_APP_MDR_URL : http://app.mdr.${RIT_ENV}.dh.unimaas.nl
+      REACT_APP_DATAHUB_HC_URL : http://help.mdr.${RIT_ENV}.dh.unimaas.nl
+      REACT_APP_DATAHUB_HOME_URL : http://${RIT_ENV}.dh.unimaas.nl
     volumes:
       - './externals/dh-mdr-home/src:/app/src'
       - './externals/dh-mdr-home/public:/app/public'
-    profiles: ["full"]
+    profiles: ["minimal","full"]
     networks:
       default:
         aliases:
