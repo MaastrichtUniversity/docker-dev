@@ -13,6 +13,8 @@ DATAVERSE_TOKEN=
 BIOPORTAL_API_KEY=
 ATLASSIAN_API_KEY=(ATLASSIAN_API_KEY)
 ATLASSIAN_API_USERNAME=(ATLASSIAN_EMAIL)
+REACT_APP_CAPTCHA_SECRET_KEY=(Google captcha API secret key)
+REACT_APP_CAPTCHA_SITE_KEY=(Google captcha API public site key)
 ```
 
 * Specify the default values and versions for environment vars in the _.env_ file
