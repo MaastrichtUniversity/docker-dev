@@ -360,6 +360,7 @@ services:
       HOST: 0.0.0.0
       REACT_APP_MDR_URL : http://mdr.${RIT_ENV}.dh.unimaas.nl
       REACT_APP_SERVICE_DESK_URL : https://mumc-sandbox.atlassian.net/
+      REACT_APP_DATAHUB_HOME_URL : http://datahubhomepage.${RIT_ENV}.dh.unimaas.nl
     volumes:
       - './externals/dh-help-center/frontend/src:/app/src'
       - './externals/dh-help-center/frontend/public:/app/public'
