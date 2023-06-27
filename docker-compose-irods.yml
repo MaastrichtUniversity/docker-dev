@@ -462,6 +462,7 @@ services:
       MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY_AC}
     entrypoint: sh
     command: -c 'mkdir -p /data/dh-irods-bucket-dev && minio server /data'
+    profiles: ["backend-after-icat","full"]
     networks:
       default:
         aliases:
@@ -478,6 +479,7 @@ services:
       MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY_GL}
     entrypoint: sh
     command: -c 'mkdir -p /data/dh-irods-bucket-dev && minio server /data'
+    profiles: ["backend-after-icat","full"]
     networks:
       default:
         aliases:
