@@ -294,199 +294,199 @@ services:
         aliases:
           - ires-hnas-azm.dh.local
 
-  ires-ceph-ac:
-    build:
-      context: externals/dh-irods/irods-base/
-      dockerfile: Dockerfile
-      args:
-        - ENV_IRODS_VERSION
-        - ENV_IRODS_PYTHON_PLUGIN_VERSION
-        - ENV_IRODS_EXT_CLANG_VERSION
-        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
-        - ENV_FILEBEAT_VERSION
-        - ENV_IRODS_RESC_PLUGIN_S3_VERSION
-        - ENV_DOCKERIZE_VERSION
-        - ENV_IRODS_GID
-        - ENV_IRODS_UID
-        # S3 variables to create secret files
-        - ENV_S3_ACCESS_KEY_AC
-        - ENV_S3_SECRET_KEY_AC
-        - ENV_S3_AUTH_FILE_AC
-        - ENV_S3_ACCESS_KEY_GL
-        - ENV_S3_SECRET_KEY_GL
-        - ENV_S3_AUTH_FILE_GL
-    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
-    # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
-    # https://github.com/irods/irods/issues/5218
-    sysctls:
-      - net.ipv4.tcp_keepalive_intvl=75
-      - net.ipv4.tcp_keepalive_probes=9
-      - net.ipv4.tcp_keepalive_time=600
-    hostname: ires-ceph-ac.dh.local
-    env_file: .env
-    depends_on:
-      - minio1
-    environment:
-      # Name of SSL-related files expected in /opt/irods_ssl_staging/ (volume mapped)
-      ENV_IRODS_SSL_CERT: ires-ceph-ac.dh.local.crt
-      ENV_IRODS_SSL_KEY: ires-ceph-ac.dh.local.key
-      ENV_IRODS_SSL_DH_PARAMS: dhparams.pem
-      # defaults to '/etc/ssl/certs/ca-certificates.crt' (in the container)
-      ENV_IRODS_SSL_CA_CERTIFICATE: test_only_dev_irods_dh_ca_cert.pem
-      # Yet another work around :( READ corresponding entry comment in ires-ceph-gl
-      S3_AUTH_FILE: ${ENV_S3_AUTH_FILE_AC}
-      ENV_S3_RESC_NAME: "UM-Ceph-S3-AC"
-      ENV_S3_HOST: "minio1.dh.local:9000"
-      ENV_FILEBEAT_PRIMARY_TAG: IRES
-      ENV_FILEBEAT_SECONDARY_TAG: IRES_UM04
-      VIRTUAL_HOST: ires-ceph-ac.${RIT_ENV}.rit.unimaas.nl
-    volumes:
-      # SSL files
-      - ./irods/ires-s3/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
-      # patch so we setup_irods.py doesn't re-create tables
-      - ./irods/patch/setup_irods_already_installed_dev.patch:/opt/irods/patch/setup_irods_already_installed_dev.patch
-      # ires-s3's bootstrap.sh (to be called by init.sh)
-      - ./externals/dh-irods/ires-s3/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
-      # ires-s3's hooks for development
-      - ./irods/ires-s3/hooks/:/opt/irods/hooks/
-      # repos
-      - ./externals/irods-ruleset:/rules
-      - ./externals/irods-microservices:/microservices
-      - ./externals/irods-helper-cmd:/helpers
-      # irods-helper-cmd uses /etc/secrets
-      - ./irods.secrets.cfg:/etc/secrets:ro
-      # This is persistent because the delay queue depends on files in this directory
-      - delay-queue:/var/lib/irods/config/packedRei
-      - /etc/localtime:/etc/localtime:ro
-    profiles: ["backend-after-icat","full"]
-    networks:
-      default:
-        aliases:
-          - ires-ceph-ac.dh.local
-      common_default:
-        aliases:
-          - ires-ceph-ac.dh.local
-
-  ires-ceph-gl:
-    build:
-      context: externals/dh-irods/irods-base/
-      dockerfile: Dockerfile
-      args:
-        - ENV_IRODS_VERSION
-        - ENV_IRODS_PYTHON_PLUGIN_VERSION
-        - ENV_IRODS_EXT_CLANG_VERSION
-        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
-        - ENV_FILEBEAT_VERSION
-        - ENV_IRODS_RESC_PLUGIN_S3_VERSION
-        - ENV_DOCKERIZE_VERSION
-        - ENV_IRODS_GID
-        - ENV_IRODS_UID
-        # S3 variables to create secret files
-        - ENV_S3_ACCESS_KEY_AC
-        - ENV_S3_SECRET_KEY_AC
-        - ENV_S3_AUTH_FILE_AC
-        - ENV_S3_ACCESS_KEY_GL
-        - ENV_S3_SECRET_KEY_GL
-        - ENV_S3_AUTH_FILE_GL
-    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
-    # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
-    # https://github.com/irods/irods/issues/5218
-    sysctls:
-      - net.ipv4.tcp_keepalive_intvl=75
-      - net.ipv4.tcp_keepalive_probes=9
-      - net.ipv4.tcp_keepalive_time=600
-    hostname: ires-ceph-gl.dh.local
-    env_file: .env
-    depends_on:
-      - minio2
-    environment:
-      # Name of SSL-related files expected in /opt/irods_ssl_staging/ (volume mapped)
-      ENV_IRODS_SSL_CERT: ires-ceph-gl.dh.local.crt
-      ENV_IRODS_SSL_KEY: ires-ceph-gl.dh.local.key
-      ENV_IRODS_SSL_DH_PARAMS: dhparams.pem
-      # defaults to '/etc/ssl/certs/ca-certificates.crt' (in the container)
-      ENV_IRODS_SSL_CA_CERTIFICATE: test_only_dev_irods_dh_ca_cert.pem
-      # Yet another work around :(
-      # In the ICAT DB (think production). The way the S3 resource was
-      # configured (mkresc), includes this:
-      #    iadmin mkresc .... "... S3_AUTH_FILE=/some/fixed/path/here.keypair ; .... "
-      # This probably means that iRES S3 needs to access /some/fixed/path/here.keypair
-      # to read the S3 credentials? Perhaps not? And it just read that file once during mkresc?
-      # So we should write the credentials (given right below to the container)
-      # in that path. We cannot arbitrarily choose the path, because in
-      # proc/acc it was already chosen!
-      # But wait there's more! https://github.com/irods/irods_resource_plugin_s3/issues/1837
-      # The env file must be named S3_AUTH_FILE?
-      # Is it because the value written on iCAT is actually ignored?
-      # Or... and what about what Terrell says at the end?
-      # https://github.com/irods/irods_resource_plugin_s3/issues/1837#issuecomment-965919232
-      # Do we have to create that file everywhere? What?
-      S3_AUTH_FILE: ${ENV_S3_AUTH_FILE_GL}
-      ENV_S3_RESC_NAME: "UM-Ceph-S3-GL"
-      ENV_S3_HOST: "minio2.dh.local:9000"
-      ENV_FILEBEAT_PRIMARY_TAG: IRES
-      ENV_FILEBEAT_SECONDARY_TAG: IRES_UM01
-      VIRTUAL_HOST: ires-ceph-gl.${RIT_ENV}.rit.unimaas.nl
-    volumes:
-      # SSL files
-      - ./irods/ires-s3/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
-      # patch so we setup_irods.py doesn't re-create tables
-      - ./irods/patch/setup_irods_already_installed_dev.patch:/opt/irods/patch/setup_irods_already_installed_dev.patch
-      # ires-s3's bootstrap.sh (to be called by init.sh)
-      - ./externals/dh-irods/ires-s3/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
-      # ires-s3's hooks for development
-      - ./irods/ires-s3/hooks/:/opt/irods/hooks/
-      # repos
-      - ./externals/irods-ruleset:/rules
-      - ./externals/irods-microservices:/microservices
-      - ./externals/irods-helper-cmd:/helpers
-      # irods-helper-cmd uses /etc/secrets
-      - ./irods.secrets.cfg:/etc/secrets:ro
-      # This is persistent because the delay queue depends on files in this directory
-      - delay-queue:/var/lib/irods/config/packedRei
-      - /etc/localtime:/etc/localtime:ro
-    profiles: ["backend-after-icat","full"]
-    networks:
-      default:
-        aliases:
-          - ires-ceph-gl.dh.local
-      common_default:
-        aliases:
-          - ires-ceph-gl.dh.local
-
-  minio1:
-    image: minio/minio:RELEASE.2023-01-12T02-06-16Z
-    environment:
-      VIRTUAL_HOST: minio1.${RIT_ENV}.rit.unimaas.nl
-      MINIO_ACCESS_KEY: ${ENV_S3_ACCESS_KEY_AC}
-      MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY_AC}
-    entrypoint: sh
-    command: -c 'mkdir -p /data/dh-irods-bucket-dev && minio server /data'
-    profiles: ["backend-after-icat","full"]
-    networks:
-      default:
-        aliases:
-          - minio1.dh.local
-      common_default:
-        aliases:
-          - minio1.dh.local
-
-  minio2:
-    image: minio/minio:RELEASE.2023-01-12T02-06-16Z
-    environment:
-      VIRTUAL_HOST: minio2.${RIT_ENV}.rit.unimaas.nl
-      MINIO_ACCESS_KEY: ${ENV_S3_ACCESS_KEY_GL}
-      MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY_GL}
-    entrypoint: sh
-    command: -c 'mkdir -p /data/dh-irods-bucket-dev && minio server /data'
-    profiles: ["backend-after-icat","full"]
-    networks:
-      default:
-        aliases:
-          - minio2.dh.local
-      common_default:
-        aliases:
-          - minio2.dh.local
+#  ires-ceph-ac:
+#    build:
+#      context: externals/dh-irods/irods-base/
+#      dockerfile: Dockerfile
+#      args:
+#        - ENV_IRODS_VERSION
+#        - ENV_IRODS_PYTHON_PLUGIN_VERSION
+#        - ENV_IRODS_EXT_CLANG_VERSION
+#        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+#        - ENV_FILEBEAT_VERSION
+#        - ENV_IRODS_RESC_PLUGIN_S3_VERSION
+#        - ENV_DOCKERIZE_VERSION
+#        - ENV_IRODS_GID
+#        - ENV_IRODS_UID
+#        # S3 variables to create secret files
+#        - ENV_S3_ACCESS_KEY_AC
+#        - ENV_S3_SECRET_KEY_AC
+#        - ENV_S3_AUTH_FILE_AC
+#        - ENV_S3_ACCESS_KEY_GL
+#        - ENV_S3_SECRET_KEY_GL
+#        - ENV_S3_AUTH_FILE_GL
+#    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
+#    # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
+#    # https://github.com/irods/irods/issues/5218
+#    sysctls:
+#      - net.ipv4.tcp_keepalive_intvl=75
+#      - net.ipv4.tcp_keepalive_probes=9
+#      - net.ipv4.tcp_keepalive_time=600
+#    hostname: ires-ceph-ac.dh.local
+#    env_file: .env
+#    depends_on:
+#      - minio1
+#    environment:
+#      # Name of SSL-related files expected in /opt/irods_ssl_staging/ (volume mapped)
+#      ENV_IRODS_SSL_CERT: ires-ceph-ac.dh.local.crt
+#      ENV_IRODS_SSL_KEY: ires-ceph-ac.dh.local.key
+#      ENV_IRODS_SSL_DH_PARAMS: dhparams.pem
+#      # defaults to '/etc/ssl/certs/ca-certificates.crt' (in the container)
+#      ENV_IRODS_SSL_CA_CERTIFICATE: test_only_dev_irods_dh_ca_cert.pem
+#      # Yet another work around :( READ corresponding entry comment in ires-ceph-gl
+#      S3_AUTH_FILE: ${ENV_S3_AUTH_FILE_AC}
+#      ENV_S3_RESC_NAME: "UM-Ceph-S3-AC"
+#      ENV_S3_HOST: "minio1.dh.local:9000"
+#      ENV_FILEBEAT_PRIMARY_TAG: IRES
+#      ENV_FILEBEAT_SECONDARY_TAG: IRES_UM04
+#      VIRTUAL_HOST: ires-ceph-ac.${RIT_ENV}.rit.unimaas.nl
+#    volumes:
+#      # SSL files
+#      - ./irods/ires-s3/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
+#      # patch so we setup_irods.py doesn't re-create tables
+#      - ./irods/patch/setup_irods_already_installed_dev.patch:/opt/irods/patch/setup_irods_already_installed_dev.patch
+#      # ires-s3's bootstrap.sh (to be called by init.sh)
+#      - ./externals/dh-irods/ires-s3/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
+#      # ires-s3's hooks for development
+#      - ./irods/ires-s3/hooks/:/opt/irods/hooks/
+#      # repos
+#      - ./externals/irods-ruleset:/rules
+#      - ./externals/irods-microservices:/microservices
+#      - ./externals/irods-helper-cmd:/helpers
+#      # irods-helper-cmd uses /etc/secrets
+#      - ./irods.secrets.cfg:/etc/secrets:ro
+#      # This is persistent because the delay queue depends on files in this directory
+#      - delay-queue:/var/lib/irods/config/packedRei
+#      - /etc/localtime:/etc/localtime:ro
+#    profiles: ["backend-after-icat","full"]
+#    networks:
+#      default:
+#        aliases:
+#          - ires-ceph-ac.dh.local
+#      common_default:
+#        aliases:
+#          - ires-ceph-ac.dh.local
+#
+#  ires-ceph-gl:
+#    build:
+#      context: externals/dh-irods/irods-base/
+#      dockerfile: Dockerfile
+#      args:
+#        - ENV_IRODS_VERSION
+#        - ENV_IRODS_PYTHON_PLUGIN_VERSION
+#        - ENV_IRODS_EXT_CLANG_VERSION
+#        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
+#        - ENV_FILEBEAT_VERSION
+#        - ENV_IRODS_RESC_PLUGIN_S3_VERSION
+#        - ENV_DOCKERIZE_VERSION
+#        - ENV_IRODS_GID
+#        - ENV_IRODS_UID
+#        # S3 variables to create secret files
+#        - ENV_S3_ACCESS_KEY_AC
+#        - ENV_S3_SECRET_KEY_AC
+#        - ENV_S3_AUTH_FILE_AC
+#        - ENV_S3_ACCESS_KEY_GL
+#        - ENV_S3_SECRET_KEY_GL
+#        - ENV_S3_AUTH_FILE_GL
+#    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
+#    # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
+#    # https://github.com/irods/irods/issues/5218
+#    sysctls:
+#      - net.ipv4.tcp_keepalive_intvl=75
+#      - net.ipv4.tcp_keepalive_probes=9
+#      - net.ipv4.tcp_keepalive_time=600
+#    hostname: ires-ceph-gl.dh.local
+#    env_file: .env
+#    depends_on:
+#      - minio2
+#    environment:
+#      # Name of SSL-related files expected in /opt/irods_ssl_staging/ (volume mapped)
+#      ENV_IRODS_SSL_CERT: ires-ceph-gl.dh.local.crt
+#      ENV_IRODS_SSL_KEY: ires-ceph-gl.dh.local.key
+#      ENV_IRODS_SSL_DH_PARAMS: dhparams.pem
+#      # defaults to '/etc/ssl/certs/ca-certificates.crt' (in the container)
+#      ENV_IRODS_SSL_CA_CERTIFICATE: test_only_dev_irods_dh_ca_cert.pem
+#      # Yet another work around :(
+#      # In the ICAT DB (think production). The way the S3 resource was
+#      # configured (mkresc), includes this:
+#      #    iadmin mkresc .... "... S3_AUTH_FILE=/some/fixed/path/here.keypair ; .... "
+#      # This probably means that iRES S3 needs to access /some/fixed/path/here.keypair
+#      # to read the S3 credentials? Perhaps not? And it just read that file once during mkresc?
+#      # So we should write the credentials (given right below to the container)
+#      # in that path. We cannot arbitrarily choose the path, because in
+#      # proc/acc it was already chosen!
+#      # But wait there's more! https://github.com/irods/irods_resource_plugin_s3/issues/1837
+#      # The env file must be named S3_AUTH_FILE?
+#      # Is it because the value written on iCAT is actually ignored?
+#      # Or... and what about what Terrell says at the end?
+#      # https://github.com/irods/irods_resource_plugin_s3/issues/1837#issuecomment-965919232
+#      # Do we have to create that file everywhere? What?
+#      S3_AUTH_FILE: ${ENV_S3_AUTH_FILE_GL}
+#      ENV_S3_RESC_NAME: "UM-Ceph-S3-GL"
+#      ENV_S3_HOST: "minio2.dh.local:9000"
+#      ENV_FILEBEAT_PRIMARY_TAG: IRES
+#      ENV_FILEBEAT_SECONDARY_TAG: IRES_UM01
+#      VIRTUAL_HOST: ires-ceph-gl.${RIT_ENV}.rit.unimaas.nl
+#    volumes:
+#      # SSL files
+#      - ./irods/ires-s3/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
+#      # patch so we setup_irods.py doesn't re-create tables
+#      - ./irods/patch/setup_irods_already_installed_dev.patch:/opt/irods/patch/setup_irods_already_installed_dev.patch
+#      # ires-s3's bootstrap.sh (to be called by init.sh)
+#      - ./externals/dh-irods/ires-s3/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
+#      # ires-s3's hooks for development
+#      - ./irods/ires-s3/hooks/:/opt/irods/hooks/
+#      # repos
+#      - ./externals/irods-ruleset:/rules
+#      - ./externals/irods-microservices:/microservices
+#      - ./externals/irods-helper-cmd:/helpers
+#      # irods-helper-cmd uses /etc/secrets
+#      - ./irods.secrets.cfg:/etc/secrets:ro
+#      # This is persistent because the delay queue depends on files in this directory
+#      - delay-queue:/var/lib/irods/config/packedRei
+#      - /etc/localtime:/etc/localtime:ro
+#    profiles: ["backend-after-icat","full"]
+#    networks:
+#      default:
+#        aliases:
+#          - ires-ceph-gl.dh.local
+#      common_default:
+#        aliases:
+#          - ires-ceph-gl.dh.local
+#
+#  minio1:
+#    image: minio/minio:RELEASE.2023-01-12T02-06-16Z
+#    environment:
+#      VIRTUAL_HOST: minio1.${RIT_ENV}.rit.unimaas.nl
+#      MINIO_ACCESS_KEY: ${ENV_S3_ACCESS_KEY_AC}
+#      MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY_AC}
+#    entrypoint: sh
+#    command: -c 'mkdir -p /data/dh-irods-bucket-dev && minio server /data'
+#    profiles: ["backend-after-icat","full"]
+#    networks:
+#      default:
+#        aliases:
+#          - minio1.dh.local
+#      common_default:
+#        aliases:
+#          - minio1.dh.local
+#
+#  minio2:
+#    image: minio/minio:RELEASE.2023-01-12T02-06-16Z
+#    environment:
+#      VIRTUAL_HOST: minio2.${RIT_ENV}.rit.unimaas.nl
+#      MINIO_ACCESS_KEY: ${ENV_S3_ACCESS_KEY_GL}
+#      MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY_GL}
+#    entrypoint: sh
+#    command: -c 'mkdir -p /data/dh-irods-bucket-dev && minio server /data'
+#    profiles: ["backend-after-icat","full"]
+#    networks:
+#      default:
+#        aliases:
+#          - minio2.dh.local
+#      common_default:
+#        aliases:
+#          - minio2.dh.local
 
 volumes:
   delay-queue:
