@@ -353,6 +353,8 @@ services:
     build:
       context: externals/dh-help-center/frontend
       dockerfile: Dockerfile
+    env_file:
+      - irods.secrets.cfg
     image: ${ENV_REGISTRY_HOST}/docker-dev/help-center:${ENV_TAG}
     environment:
       VIRTUAL_HOST: help.mdr.${RIT_ENV}.dh.unimaas.nl
@@ -360,7 +362,9 @@ services:
       LOGSTASH_TAGS: HELP_CENTER_FRONTEND
       HOST: 0.0.0.0
       REACT_APP_MDR_URL : http://app.mdr.${RIT_ENV}.dh.unimaas.nl
+      REACT_APP_MDR_HOME_URL : http://mdrhomepage.${RIT_ENV}.dh.unimaas.nl
       REACT_APP_SERVICE_DESK_URL : https://mumc-sandbox.atlassian.net/
+      REACT_APP_DATAHUB_HOME_URL : http://datahubhomepage.${RIT_ENV}.dh.unimaas.nl
     volumes:
       - './externals/dh-help-center/frontend/src:/app/src'
       - './externals/dh-help-center/frontend/public:/app/public'
