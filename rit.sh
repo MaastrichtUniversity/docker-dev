@@ -90,8 +90,7 @@ fi
 if [[ $1 == "test" ]]; then
    if [[ $2 == "irods" ]]; then
       set +e
-      docker exec -t -u irods ${COMPOSE_PROJECT_NAME}-icat-1 /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider -k 'not Mounted and not S3' ${3}
-      docker exec -t -u irods ${COMPOSE_PROJECT_NAME}-ires-hnas-um-1 /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider  -k 'Mounted and not S3' ${3}
+      docker exec -t -u irods ${COMPOSE_PROJECT_NAME}-icat-1 /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider -k 'not S3' ${3}
       exit 0
    fi
    if [[ $2 == "mdr" ]]; then

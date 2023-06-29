@@ -120,6 +120,9 @@ services:
       common_default:
         aliases:
           - icat.dh.local
+      azm_network:
+        aliases:
+          - icat.dh.local
 
   ires-hnas-um:
     build:
@@ -287,10 +290,7 @@ services:
       - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
     networks:
-      default:
-        aliases:
-          - ires-hnas-azm.dh.local
-      common_default:
+      azm_network:
         aliases:
           - ires-hnas-azm.dh.local
 
@@ -487,6 +487,9 @@ services:
 #      common_default:
 #        aliases:
 #          - minio2.dh.local
+
+networks:
+  azm_network:
 
 volumes:
   delay-queue:
