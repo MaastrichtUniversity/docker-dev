@@ -345,6 +345,7 @@ services:
       JIRA_SERVICE_DESK_AUTOMATED_PROCESS_SUPPORT_REQUEST_NAME: "Automated process support request"
     volumes:
       - ./externals/dh-help-center/backend/:/opt/
+    profiles: ["minimal","full"]
     networks:
       default:
         aliases:
@@ -372,6 +373,7 @@ services:
     volumes:
       - './externals/dh-help-center/frontend/src:/app/src'
       - './externals/dh-help-center/frontend/public:/app/public'
+    profiles: ["minimal","full"]
     networks:
       default:
         aliases:
