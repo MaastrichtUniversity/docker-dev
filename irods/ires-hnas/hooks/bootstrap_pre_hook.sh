@@ -44,3 +44,14 @@ if [[ ! -d "/mnt/stagingResc01" ]]; then
 else
     echo "INFO: Found /mnt/stagingResc01, will not mock by creating now."
 fi
+
+
+# Hacky! This is to prevent the ires trying to resolve an address that it does not have access to, resulting in very poor performance in dev
+# These values are fictive, the server in question cannot access the server anyway.
+if [[ "$ENV_IRODS_COOR_RESC_NAME" =~ "UM" ]]; then
+    echo "172.0.0.1 ires-hnas-azm.dh.local" >> /etc/hosts
+elif [[ "$ENV_IRODS_COOR_RESC_NAME" =~ "AZM" ]]; then
+    echo "172.0.0.1 ires-hnas-um.dh.local" >> /etc/hosts
+    echo "172.0.0.2 ires-ceph-ac.dh.local" >> /etc/hosts
+    echo "172.0.0.3 ires-ceph-gl.dh.local" >> /etc/hosts
+fi

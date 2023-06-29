@@ -87,10 +87,7 @@ fi
 # ./rit.sh test mdr app.tests.test_projects # to execute the tests inside '/app/tests/test_projects'
 if [[ $1 == "test" ]]; then
    if [[ $2 == "irods" ]]; then
-      set +e
-      docker exec -t -u irods ${COMPOSE_PROJECT_NAME}-icat-1 /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider -k 'not Mounted' ${3}
-      docker exec -t -u irods ${COMPOSE_PROJECT_NAME}-ires-hnas-um-1 /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider  -k 'Mounted' ${3}
-      exit 0
+      docker exec -t -u irods ${COMPOSE_PROJECT_NAME}-icat-1 /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider ${3}
    fi
    if [[ $2 == "mdr" ]]; then
       set +e
