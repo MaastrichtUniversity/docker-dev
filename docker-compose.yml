@@ -28,9 +28,6 @@ services:
       default:
         aliases:
           - app.mdr.dh.local
-      common_default:
-        aliases:
-          - app.mdr.dh.local
   elastic:
     build:
       context: externals/dh-elasticsearch
