@@ -238,6 +238,7 @@ services:
     env_file:
       - irods.secrets.cfg # Using ONLY DATAVERSE_TOKEN
     environment:
+      ENV: ${RIT_ENV}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_USER: user
       RABBITMQ_PASS: password
@@ -347,10 +348,8 @@ services:
       - ./externals/dh-help-center/backend/:/opt/
     profiles: ["minimal","full"]
     networks:
-      default:
-        aliases:
-          - help-center-backend.dh.local
-      common_default:
+      dh_public:
+        ipv4_address: 172.22.1.9
         aliases:
           - help-center-backend.dh.local
   help-center:
@@ -375,10 +374,8 @@ services:
       - './externals/dh-help-center/frontend/public:/app/public'
     profiles: ["minimal","full"]
     networks:
-      default:
-        aliases:
-          - help-center.dh.local
-      common_default:
+      dh_public:
+        ipv4_address: 172.22.1.10
         aliases:
           - help-center.dh.local
   dh-home:
@@ -395,10 +392,8 @@ services:
       - './externals/dh-home/public:/app/public'
     profiles: ["minimal","full"]
     networks:
-      default:
-        aliases:
-          - datahub-homepage.dh.local
-      common_default:
+      dh_public:
+        ipv4_address: 172.22.1.11
         aliases:
           - datahub-homepage.dh.local
   mdr-home:
@@ -418,10 +413,8 @@ services:
       - './externals/dh-mdr-home/public:/app/public'
     profiles: ["minimal","full"]
     networks:
-      default:
-        aliases:
-          - mdrhomepage.dh.local
-      common_default:
+      dh_public:
+        ipv4_address: 172.22.1.12
         aliases:
           - mdrhomepage.dh.local
   admin-tools-backend:
@@ -466,6 +459,16 @@ services:
 
 
 networks:
+  default:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.21.1.0/24"
+  dh_public:
+      ipam:
+        driver: default
+        config:
+          - subnet: "172.22.1.0/24"
   common_default:
     external: true
 
