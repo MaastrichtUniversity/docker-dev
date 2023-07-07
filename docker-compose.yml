@@ -25,6 +25,9 @@ services:
       - ./externals/dh-python-irods-utils/dhpythonirodsutils:/usr/local/lib/python3.11/site-packages/dhpythonirodsutils
     profiles: ["minimal","full"]
     networks:
+      common_default:
+        aliases:
+          - app.mdr.dh.local
       default:
         aliases:
           - app.mdr.dh.local
@@ -110,7 +113,6 @@ services:
       default:
         aliases:
           - keycloak.dh.local
-          - keycloak.${RIT_ENV}.dh.unimaas.nl   # having this alias lets the mdr-container connect to the keycloak metadata URL
       common_default:
         aliases:
           - keycloak.dh.local
