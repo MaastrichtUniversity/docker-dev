@@ -123,7 +123,7 @@ fi
 if [ ! $(docker network ls --filter name=common_default --format="true") ] ;
       then
        echo "Creating network common_default"
-       docker network create common_default
+       docker network create common_default --subnet "172.20.1.0/24" --label "com.docker.compose.project"="common" --label "com.docker.compose.network"="default"
 fi
 
 # Start minimal docker-dev environment
