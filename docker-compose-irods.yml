@@ -88,8 +88,6 @@ services:
       # defaults to '/etc/ssl/certs/ca-certificates.crt' (in the container)
       ENV_IRODS_SSL_CA_CERTIFICATE: test_only_dev_irods_dh_ca_cert.pem
       ENV_FILEBEAT_PRIMARY_TAG: ICAT
-      # TODO: Do we want to change this to icat?
-      VIRTUAL_HOST: irods.${RIT_ENV}.rit.unimaas.nl
     profiles: ["minimal","backend","full"]
     volumes:
       # TODO: maybe make some of these :ro? More strict, we catch errors earlier?
@@ -177,7 +175,6 @@ services:
       ENV_IRODS_COOR_RESC_COMMENT: "Replicated-resource-for-UM"
       # Pricing AVU for 'coordinating' resource
       ENV_IRODS_COOR_RESC_PRICING: "0.130"
-      VIRTUAL_HOST: ires.${RIT_ENV}.rit.unimaas.nl
     profiles: ["backend-after-icat","full"]
     volumes:
       # SSL files
@@ -265,7 +262,6 @@ services:
       # Pricing AVU for 'coordinating' resource
       # TODO: This right?
       ENV_IRODS_COOR_RESC_PRICING: "0"
-      VIRTUAL_HOST: ires-hnas-azm.${RIT_ENV}.rit.unimaas.nl
     profiles: ["backend-after-icat","full"]
     volumes:
       # SSL files

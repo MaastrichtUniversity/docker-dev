@@ -69,8 +69,7 @@ fi
 
 ############
 ## Resources
-iadmin mkresc ${ENV_S3_RESC_NAME} s3 ${HOSTNAME}:/dh-irods-bucket-dev "S3_DEFAULT_HOSTNAME=${ENV_S3_HOST};S3_AUTH_FILE=${S3_AUTH_FILE};S3_REGIONNAME=irods-dev;S3_RETRY_COUNT=1;S3_WAIT_TIME_SEC=3;S3_PROTO=HTTP;ARCHIVE_NAMING_POLICY=consistent;HOST_MODE=cacheless_detached;S3_CACHE_DIR=/cache"
-
+iadmin mkresc ${ENV_S3_RESC_NAME} s3 ${HOSTNAME}:/dh-irods-bucket-dev "S3_DEFAULT_HOSTNAME=${ENV_S3_HOST};S3_AUTH_FILE=${S3_AUTH_FILE};S3_REGIONNAME=irods-dev;S3_RETRY_COUNT=1;S3_WAIT_TIME_SEC=3;S3_PROTO=HTTPS;ARCHIVE_NAMING_POLICY=consistent;HOST_MODE=cacheless_detached;S3_CACHE_DIR=/cache"
 
 # We use this AVU to tell if this isn't the first time we ran this script against iCAT.
 imeta add -R ${ENV_S3_RESC_NAME} bootstrap_irods_dev_mockup "creating"
@@ -132,5 +131,10 @@ done
 
 ##########
 ## Special
+
+# TODO Update in 4.3.0
+# While doing the iRODS unattended installation, default_general_json_configuration.json is pass to setup_irods.py
+# But the value of 'default_resource_directory' is not picked up correctly
+iadmin modresc ${HOSTNAME%%.dh.local}Resource path /var/lib/irods/vault
 
 imeta set -R ${ENV_S3_RESC_NAME} bootstrap_irods_dev_mockup "complete"
