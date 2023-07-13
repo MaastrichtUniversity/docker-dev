@@ -192,6 +192,12 @@ iadmin asq "DELETE FROM r_user_password WHERE user_id = ? AND pass_expiry_ts = '
 iadmin asq "SELECT COUNT(*) FROM r_user_password WHERE user_id = ? AND pass_expiry_ts = '$ENV_IRODS_TEMP_PASSWORD_LIFETIME';" count_password
 iadmin asq "SELECT create_ts FROM r_user_password WHERE user_id = ? AND pass_expiry_ts = '$ENV_IRODS_TEMP_PASSWORD_LIFETIME';" get_create_ts_password
 
+# TODO Update in 4.3.0
+# While doing the iRODS unattended installation, default_general_json_configuration.json is pass to setup_irods.py
+# But the value of 'default_resource_directory' is not picked up correctly.
+# Historically, we set the path as '/var/lib/irods/vault'. However, the default iRODS value is '/var/lib/irods/Vault'.
+iadmin modresc demoResc path /var/lib/irods/vault
+
 # We make a mark in the DB signifying that the iCAT mock dev environment has
 # been set up. Meaning, that this bootstrap_irods.sh has run.
 imeta set -R rootResc bootstrap_irods_dev_mockup "complete"
