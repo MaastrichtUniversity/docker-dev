@@ -1,0 +1,43 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /var/logs/public-containers/dh-help-center/backend/dh-help-center-backend-access.log
+      - /var/logs/public-containers/dh-help-center/backend/dh-help-center-backend-error.log
+
+    #Tags
+    tags: ["HELP_CENTER_BACKEND"]
+
+  - type: log
+    enabled: true
+    paths:
+      - /var/logs/public-containers/dh-help-center/frontend/dh-help-center-frontend-access.log
+      - /var/logs/public-containers/dh-help-center/frontend/dh-help-center-frontend-error.log
+
+    #Tags
+    tags: [ "HELP_CENTER_FRONTEND" ]
+
+  - type: log
+    enabled: true
+    paths:
+      - /var/logs/public-containers/dh-home/dh-home-access.log
+      - /var/logs/public-containers/dh-home/dh-home-error.log
+
+    #Tags
+    tags: [ "DATAHUB_HOMEPAGE" ]
+
+
+  - type: log
+    enabled: true
+    paths:
+      - /var/logs/public-containers/dh-mdr-home/dh-mdr-home-access.log
+      - /var/logs/public-containers/dh-mdr-home/dh-mdr-home-error.log
+
+    #Tags
+    tags: [ "MDR_HOMEPAGE" ]
+
+# Disable filebeat monitoring
+logging.metrics.enabled: false
+
+output.logstash:
+  hosts: ["elk.dh.local:5044"]
