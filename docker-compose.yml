@@ -335,6 +335,7 @@ services:
       WATCHFILES_FORCE_POLLING: true
       AUTO_RELOAD: true
       MDR_URL : http://app.mdr.${RIT_ENV}.dh.unimaas.nl
+      MDR_HOME_URL : http://mdr.${RIT_ENV}.dh.unimaas.nl
       JIRA_URL: https://mumc-sandbox.atlassian.net
       JIRA_SERVICE_DESK_PROJECT_NAME: "Maastricht Data Repository Support"
       JIRA_SERVICE_DESK_QUESTION_REQUEST_NAME: "Ask a question"
