@@ -328,6 +328,7 @@ services:
       - irods.secrets.cfg
     image: ${ENV_REGISTRY_HOST}/docker-dev/help-center-backend:${ENV_TAG}
     environment:
+      FORWARDED_ALLOW_IPS: "*"  # Allow header from proxy for real ip
       VIRTUAL_HOST: helpbackend.${RIT_ENV}.dh.unimaas.nl
       CONFLUENCE_CLOUD_URL: https://mumc.atlassian.net
       CONFLUENCE_CLOUD_SPACE_KEY: MDRDT

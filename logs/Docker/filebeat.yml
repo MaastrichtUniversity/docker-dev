@@ -2,8 +2,7 @@ filebeat.inputs:
   - type: log
     enabled: true
     paths:
-      - /var/logs/public-containers/dh-help-center/backend/dh-help-center-backend-access.log
-      - /var/logs/public-containers/dh-help-center/backend/dh-help-center-backend-error.log
+      - /var/logs/public-containers/dh-help-center/backend/dh-help-center-backend.log
 
     #Tags
     tags: ["HELP_CENTER_BACKEND"]
