@@ -332,7 +332,6 @@ services:
       VIRTUAL_HOST: helpbackend.${RIT_ENV}.dh.unimaas.nl
       CONFLUENCE_CLOUD_URL: https://mumc.atlassian.net
       CONFLUENCE_CLOUD_SPACE_KEY: MDRDT
-      LOGSTASH_TAGS: HELP_CENTER_BACKEND
       LOGSPOUT: ignore
       WATCHFILES_FORCE_POLLING: true  #DEV
       AUTO_RELOAD: true                #DEV
@@ -366,7 +365,6 @@ services:
       LOGSPOUT: ignore
       VIRTUAL_HOST: help.mdr.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 3000
-      LOGSTASH_TAGS: HELP_CENTER_FRONTEND
       HOST: 0.0.0.0
       REACT_APP_MDR_URL : http://app.mdr.${RIT_ENV}.dh.unimaas.nl
       REACT_APP_MDR_HOME_URL : http://mdr.${RIT_ENV}.dh.unimaas.nl
