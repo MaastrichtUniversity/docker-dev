@@ -328,12 +328,13 @@ services:
       - irods.secrets.cfg
     image: ${ENV_REGISTRY_HOST}/docker-dev/help-center-backend:${ENV_TAG}
     environment:
+      FORWARDED_ALLOW_IPS: "*"  # Allow header from proxy for real ip
       VIRTUAL_HOST: helpbackend.${RIT_ENV}.dh.unimaas.nl
       CONFLUENCE_CLOUD_URL: https://mumc.atlassian.net
       CONFLUENCE_CLOUD_SPACE_KEY: MDRDT
-      LOGSTASH_TAGS: HELP_CENTER_BACKEND
-      WATCHFILES_FORCE_POLLING: true
-      AUTO_RELOAD: true
+      LOGSPOUT: ignore
+      WATCHFILES_FORCE_POLLING: true  #DEV
+      AUTO_RELOAD: true                #DEV
       MDR_URL : http://app.mdr.${RIT_ENV}.dh.unimaas.nl
       JIRA_URL: https://mumc-sandbox.atlassian.net
       JIRA_SERVICE_DESK_PROJECT_NAME: "Maastricht Data Repository Support"
@@ -344,7 +345,8 @@ services:
       JIRA_SERVICE_DESK_EXTERNAL_ACCESS_REQUEST_NAME: "External Access Request"
       JIRA_SERVICE_DESK_AUTOMATED_PROCESS_SUPPORT_REQUEST_NAME: "Automated process support request"
     volumes:
-      - ./externals/dh-help-center/backend/:/opt/
+      - ./externals/dh-help-center/backend/:/opt/   #DEV
+#      -  ./logs/dh-help-center/backend/:/var/log/gunicorn/ #acc/prd
     profiles: ["minimal","full"]
     networks:
       dh_public:
@@ -360,17 +362,18 @@ services:
       - irods.secrets.cfg
     image: ${ENV_REGISTRY_HOST}/docker-dev/help-center:${ENV_TAG}
     environment:
+      LOGSPOUT: ignore
       VIRTUAL_HOST: help.mdr.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 3000
-      LOGSTASH_TAGS: HELP_CENTER_FRONTEND
       HOST: 0.0.0.0
       REACT_APP_MDR_URL : http://app.mdr.${RIT_ENV}.dh.unimaas.nl
       REACT_APP_MDR_HOME_URL : http://mdr.${RIT_ENV}.dh.unimaas.nl
       REACT_APP_SERVICE_DESK_URL : https://mumc-sandbox.atlassian.net/
       REACT_APP_DATAHUB_HOME_URL : http://${RIT_ENV}.dh.unimaas.nl
     volumes:
-      - './externals/dh-help-center/frontend/src:/app/src'
-      - './externals/dh-help-center/frontend/public:/app/public'
+#       -  ./logs/dh-help-center/frontend/:/var/log/nginx/ #acc/prd
+      - './externals/dh-help-center/frontend/src:/app/src'   #DEV
+      - './externals/dh-help-center/frontend/public:/app/public' #DEV
     profiles: ["minimal","full"]
     networks:
       dh_public:
@@ -383,12 +386,14 @@ services:
       dockerfile: Dockerfile
     image: ${ENV_REGISTRY_HOST}/docker-dev/dh-home:${ENV_TAG}
     environment:
+      LOGSPOUT: ignore
       VIRTUAL_HOST: ${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 3000
       HOST: 0.0.0.0
     volumes:
-      - './externals/dh-home/src:/app/src'
-      - './externals/dh-home/public:/app/public'
+#      - ./logs/dh-home:/var/log/nginx/ #acc/prd
+      - './externals/dh-home/src:/app/src'  #DEV
+      - './externals/dh-home/public:/app/public'  #DEV
     profiles: ["minimal","full"]
     networks:
       dh_public:
@@ -401,6 +406,7 @@ services:
       dockerfile: Dockerfile
     image: ${ENV_REGISTRY_HOST}/docker-dev/dh-mdr-home:${ENV_TAG}
     environment:
+      LOGSPOUT: ignore
       VIRTUAL_HOST: mdr.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 3000
       HOST: 0.0.0.0
@@ -408,14 +414,32 @@ services:
       REACT_APP_DATAHUB_HC_URL : http://help.mdr.${RIT_ENV}.dh.unimaas.nl
       REACT_APP_DATAHUB_HOME_URL : http://${RIT_ENV}.dh.unimaas.nl
     volumes:
-      - './externals/dh-mdr-home/src:/app/src'
-      - './externals/dh-mdr-home/public:/app/public'
+#      - ./logs/dh-mdr-home/:/var/log/nginx/ #acc/prd
+      - './externals/dh-mdr-home/src:/app/src'  #DEV
+      - './externals/dh-mdr-home/public:/app/public'  #DEV
     profiles: ["minimal","full"]
     networks:
       dh_public:
         ipv4_address: 172.22.1.12
         aliases:
           - mdrhomepage.dh.local
+
+  filebeat-public-logs:
+    build:
+      context: logs/Docker/
+      dockerfile: Dockerfile
+    image: ${ENV_REGISTRY_HOST}/docker-dev/filebeat-public-logs:${ENV_TAG}
+    volumes:
+          - ./logs/:/var/logs/public-containers/ #acc/prd
+    profiles: ["full"]
+    networks:
+      default:
+        aliases:
+          - filebeat-public-logs.dh.local
+      common_default:
+        aliases:
+          - filebeat-public-logs.dh.local
+
   admin-tools-backend:
     build:
       context: externals/dh-admin-tools/backend
