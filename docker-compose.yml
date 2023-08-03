@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 services:
   mdr:
     build:
@@ -404,6 +404,7 @@ services:
     build:
       context: externals/dh-mdr-home
       dockerfile: Dockerfile
+      target: "dev" # For production use "prd"
     image: ${ENV_REGISTRY_HOST}/docker-dev/dh-mdr-home:${ENV_TAG}
     environment:
       LOGSPOUT: ignore
@@ -414,7 +415,7 @@ services:
       REACT_APP_DATAHUB_HC_URL : http://help.mdr.${RIT_ENV}.dh.unimaas.nl
       REACT_APP_DATAHUB_HOME_URL : http://${RIT_ENV}.dh.unimaas.nl
     volumes:
-#      - ./logs/dh-mdr-home/:/var/log/nginx/ #acc/prd
+      - ./logs/dh-mdr-home/:/var/log/nginx/ #acc/prd
       - './externals/dh-mdr-home/src:/app/src'  #DEV
       - './externals/dh-mdr-home/public:/app/public'  #DEV
     profiles: ["minimal","full"]
