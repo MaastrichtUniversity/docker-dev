@@ -23,7 +23,7 @@ services:
       # comment the following line.
       - ./externals/irods-rule-wrapper:/opt/src/irods-rule-wrapper
       - ./externals/dh-python-irods-utils/dhpythonirodsutils:/usr/local/lib/python3.11/site-packages/dhpythonirodsutils
-    profiles: ["minimal","full"]
+    profiles: ["frontend","minimal","full"]
     networks:
       common_default:
         aliases:
@@ -46,7 +46,7 @@ services:
       VIRTUAL_PORT: 9200
     volumes:
       - elastic_metadata:/usr/share/elasticsearch/data
-    profiles: ["minimal","full"]
+    profiles: ["backend","minimal","full"]
     networks:
         default:
           aliases:
@@ -108,7 +108,7 @@ services:
       - "8080:8080"   # In order to bypass nginx-virtual-proxy while being redirected during Saml logins
     depends_on:
       - ldap
-    profiles: ["minimal","full"]
+    profiles: ["backend","minimal","full"]
     networks:
       default:
         aliases:
@@ -131,7 +131,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./ldap/ldif_custom:/container/service/slapd/assets/config/bootstrap/ldif/custom/
-    profiles: ["minimal","full"]
+    profiles: ["backend","minimal","full"]
     networks:
       default:
         aliases:
@@ -307,7 +307,7 @@ services:
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
-    profiles: ["minimal","full"]
+    profiles: ["frontend","minimal","full"]
     networks:
       default:
         aliases:
@@ -345,7 +345,7 @@ services:
       JIRA_SERVICE_DESK_AUTOMATED_PROCESS_SUPPORT_REQUEST_NAME: "Automated process support request"
     volumes:
       - ./externals/dh-help-center/backend/:/opt/
-    profiles: ["minimal","full"]
+    profiles: ["full","public"]
     networks:
       dh_public:
         ipv4_address: 172.22.1.9
@@ -371,7 +371,7 @@ services:
     volumes:
       - './externals/dh-help-center/frontend/src:/app/src'
       - './externals/dh-help-center/frontend/public:/app/public'
-    profiles: ["minimal","full"]
+    profiles: ["full","public"]
     networks:
       dh_public:
         ipv4_address: 172.22.1.10
@@ -389,7 +389,7 @@ services:
     volumes:
       - './externals/dh-home/src:/app/src'
       - './externals/dh-home/public:/app/public'
-    profiles: ["minimal","full"]
+    profiles: ["full","public"]
     networks:
       dh_public:
         ipv4_address: 172.22.1.11
@@ -410,7 +410,7 @@ services:
     volumes:
       - './externals/dh-mdr-home/src:/app/src'
       - './externals/dh-mdr-home/public:/app/public'
-    profiles: ["minimal","full"]
+    profiles: ["full","public"]
     networks:
       dh_public:
         ipv4_address: 172.22.1.12
