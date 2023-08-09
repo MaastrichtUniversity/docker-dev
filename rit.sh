@@ -24,6 +24,108 @@ export COMPOSE_PROJECT_NAME
 
 set -e
 
+run_minimal(){
+    docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal up -d
+    # TODO: we could have a function for: "docker compose -f docker-compose.yml -f docker-compose-irods.yml", perhaps with exec.
+    #       and another one for is_ready (not just the convenience thing
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec icat /dh_is_ready.sh;
+    do
+      echo "Waiting for iCAT"
+      sleep 10
+    done
+
+    echo "iCAT is Done"
+
+    echo "Upping ires-hnas-um now.."
+    ./rit.sh up -d ires-hnas-um
+
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec keycloak /dh_is_ready.sh;
+    do
+      echo "Waiting for keycloak"
+      sleep 20
+    done
+
+    echo "Keycloak is Done"
+
+    echo "Running single run of SRAM-SYNC"
+    ./rit.sh up -d sram-sync
+
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec sram-sync /dh_is_ready.sh;
+    do
+      echo "Waiting for sram-sync"
+      sleep 5
+    done
+
+    ./rit.sh stop sram-sync
+
+    exit 0
+}
+
+run_backend(){
+      # Quick PoC: FIXME! Refactor me! This code below is more of a functional "note" than code.
+    # Modifications to the docker-compose profiles are completely not thought out! Just trying thing out here.
+    #
+    docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend up -d
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec icat /dh_is_ready.sh;
+    do
+      echo "Waiting for iCAT, sleeping 10"
+      sleep 10
+    done
+    echo "iCAT is Done."
+
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec keycloak /dh_is_ready.sh;
+    do
+      echo "Waiting for keycloak, sleeping 20"
+      sleep 20
+    done
+
+    echo "Keycloak is Done"
+
+    echo "Running single run of SRAM-SYNC"
+    ./rit.sh up -d sram-sync
+
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec sram-sync /dh_is_ready.sh;
+    do
+      echo "Waiting for sram-sync, sleeping 5"
+      sleep 5
+    done
+
+    ./rit.sh stop sram-sync
+
+    echo "Starting backend-after-icat (iRES's)"
+    # we bring up all ires's (or anything that depends on iCAT being up)
+    docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend-after-icat up -d
+
+    # We also could do something like:
+    # all_backend_services=$(docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend --profile backend-after-icat config --services)
+    # But this doesn't work nicely & we don't have dh_is_ready.sh for minio for example
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-hnas-um /dh_is_ready.sh;
+    do
+      echo "Waiting for ires-hnas-um, sleeping 10"
+      sleep 10
+    done
+
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-hnas-azm /dh_is_ready.sh;
+    do
+      echo "Waiting for ires-hnas-azm, sleeping 5"
+      sleep 5
+    done
+
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-ceph-gl /dh_is_ready.sh;
+    do
+      echo "Waiting for ires-ceph-gl, sleeping 5"
+      sleep 5
+    done
+
+    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-ceph-ac /dh_is_ready.sh;
+    do
+      echo "Waiting for ires-ceph-ac, sleeping 5"
+      sleep 5
+    done
+
+    exit 0
+}
+
 
 # specify externals for this project
 externals="externals/irods-helper-cmd https://github.com/MaastrichtUniversity/irods-helper-cmd.git
@@ -128,106 +230,12 @@ fi
 
 # Start minimal docker-dev environment
 if [[ $1 == "minimal" ]]; then
-    docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal up -d
-    # TODO: we could have a function for: "docker compose -f docker-compose.yml -f docker-compose-irods.yml", perhaps with exec.
-    #       and another one for is_ready (not just the convenience thing
-    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec icat /dh_is_ready.sh;
-    do
-      echo "Waiting for iCAT"
-      sleep 10
-    done
-
-    echo "iCAT is Done"
-
-    echo "Upping ires-hnas-um now.."
-    ./rit.sh up -d ires-hnas-um
-
-    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec keycloak /dh_is_ready.sh;
-    do
-      echo "Waiting for keycloak"
-      sleep 20
-    done
-
-    echo "Keycloak is Done"
-
-    echo "Running single run of SRAM-SYNC"
-    ./rit.sh up -d sram-sync
-
-    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec sram-sync /dh_is_ready.sh;
-    do
-      echo "Waiting for sram-sync"
-      sleep 5
-    done
-
-    ./rit.sh stop sram-sync
-
-    exit 0
+    run_minimal
 fi
 
 # for now same style as minimal, although this all could use a proper refactor!
 if [[ "$1" == "backend" ]]; then
-    # Quick PoC: FIXME! Refactor me! This code below is more of a functional "note" than code.
-    # Modifications to the docker-compose profiles are completely not thought out! Just trying thing out here.
-    #
-    docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal up -d
-    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec icat /dh_is_ready.sh;
-    do
-      echo "Waiting for iCAT, sleeping 10"
-      sleep 10
-    done
-    echo "iCAT is Done."
-
-    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec keycloak /dh_is_ready.sh;
-    do
-      echo "Waiting for keycloak, sleeping 20"
-      sleep 20
-    done
-
-    echo "Keycloak is Done"
-
-    echo "Running single run of SRAM-SYNC"
-    ./rit.sh up -d sram-sync
-
-    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec sram-sync /dh_is_ready.sh;
-    do
-      echo "Waiting for sram-sync, sleeping 5"
-      sleep 5
-    done
-
-    ./rit.sh stop sram-sync
-
-    echo "Starting backend-after-icat (iRES's)"
-    # we bring up all ires's (or anything that depends on iCAT being up)
-    docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend-after-icat up -d
-
-    # We also could do something like:
-    # all_backend_services=$(docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend --profile backend-after-icat config --services)
-    # But this doesn't work nicely & we don't have dh_is_ready.sh for minio for example
-    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-hnas-um /dh_is_ready.sh;
-    do
-      echo "Waiting for ires-hnas-um, sleeping 10"
-      sleep 10
-    done
-
-    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-hnas-azm /dh_is_ready.sh;
-    do
-      echo "Waiting for ires-hnas-azm, sleeping 5"
-      sleep 5
-    done
-
-    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-ceph-gl /dh_is_ready.sh;
-    do
-      echo "Waiting for ires-ceph-gl, sleeping 5"
-      sleep 5
-    done
-
-    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-ceph-ac /dh_is_ready.sh;
-    do
-      echo "Waiting for ires-ceph-ac, sleeping 5"
-      sleep 5
-    done
-
-    exit 0
+  run_backend
 fi
 
 if [[ $1 == "login" ]]; then
