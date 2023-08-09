@@ -235,6 +235,59 @@ if [ ! $(docker network ls --filter name=common_default --format="true") ] ;
        docker network create common_default --subnet "172.20.1.0/24" --label "com.docker.compose.project"="common" --label "com.docker.compose.network"="default"
 fi
 
+if [[ $1 == "stack" ]]; then
+   if [[ $2 == "minimal" ]]; then
+     if [[ $3 == "up" ]]; then
+        run_minimal
+     fi
+     if [[ $3 == "down" ]]; then
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal --profile minimal-after-icat stop
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal --profile minimal-after-icat rm -f
+     fi
+     if [[ $3 == "build" ]]; then
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal --profile minimal-after-icat build
+     fi
+     if [[ $3 == "logs" ]]; then
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal --profile minimal-after-icat logs -f
+     fi
+   fi
+   if [[ $2 == "backend" ]]; then
+      if [[ $3 == "up" ]]; then
+        run_backend
+     fi
+     if [[ $3 == "down" ]]; then
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend --profile backend-after-icat stop
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend --profile backend-after-icat rm -f
+     fi
+     if [[ $3 == "build" ]]; then
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend --profile backend-after-icat build
+     fi
+     if [[ $3 == "logs" ]]; then
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend --profile backend-after-icat logs -f
+     fi
+   fi
+   if [[ $2 == "public" ]]; then
+      if [[ $3 == "up" ]]; then
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile public up -d
+        exit 0
+      fi
+      if [[ $3 == "down" ]]; then
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile public stop
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile public rm -f
+        exit 0
+      fi
+      if [[ $3 == "build" ]]; then
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile public build
+        exit 0
+      fi
+      if [[ $3 == "logs" ]]; then
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile public logs -f
+        exit 0
+      fi
+   fi
+   exit 0
+fi
+
 # Start minimal docker-dev environment
 if [[ $1 == "minimal" ]]; then
     run_minimal
