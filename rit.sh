@@ -159,6 +159,34 @@ if [[ $1 == "exec" ]]; then
     exit 0
 fi
 
+if [[ $1 == "install" ]]; then
+   if [[ $2 == "dhdev" ]]; then
+      if test -f ./dhdev-completion.config ; then
+        source ./dhdev-completion.config
+      else
+        echo "No configuration 'dhdev-completion.config' file found in '$(pwd)'"
+        echo "Have a look at the README.md file"
+        exit 1
+      fi
+      scriptName=dhdev-completion.bash
+      if ! test -f ./dhdev-completion.bash ; then
+        echo "No completion '${scriptName}' script found in '$(pwd)'"
+        exit 1
+      fi
+      echo "Install dhdev with auto-completion to ${localBinDir}"
+      install rit.sh ${localBinDir}/dhdev
+      if grep -q ${scriptName} ${localBashrcDir}/.bashrc; then
+        echo "Source ${scriptName} already exists in ${localBashrcDir}/.bashrc"
+      else
+        echo "Append $(pwd)/${scriptName} to ${localBashrcDir}/.bashrc"
+        echo "source $(pwd)/${scriptName}" >> ${localBashrcDir}/.bashrc
+      fi
+      echo "Done. Start using it by OPENING a NEW terminal!"
+      exit 0
+   fi
+fi
+
+
 if [[ $1 == "make" ]]; then
    if [[ $2 == "rules" ]]; then
       set +e
