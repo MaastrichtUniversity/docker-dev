@@ -189,6 +189,8 @@ fi
 # * mdr
 # ./rit.sh test mdr # to execute all tests
 # ./rit.sh test mdr app.tests.test_projects # to execute the tests inside '/app/tests/test_projects'
+# * help-center-backend
+# ./rit.sh test help-center-backend # to execute all tests
 if [[ $1 == "test" ]]; then
    if [[ $2 == "irods" ]]; then
       docker exec -t -u irods ${COMPOSE_PROJECT_NAME}-icat-1 /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider /rules/test_cases/${3}
@@ -202,6 +204,11 @@ if [[ $1 == "test" ]]; then
    if [[ $2 == "mdr" ]]; then
       set +e
       docker exec -it ${COMPOSE_PROJECT_NAME}-mdr-1 su -c "python manage.py test ${3}"
+      exit 0
+   fi
+   if [[ $2 == "help-center-backend" ]]; then
+      set +e
+      docker exec -it ${COMPOSE_PROJECT_NAME}-help-center-backend-1 su -c "python -m pip install pytest && pytest tests/tests_confluence_documents/${3}"
       exit 0
    fi
 fi
