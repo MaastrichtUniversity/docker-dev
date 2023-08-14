@@ -279,7 +279,7 @@ services:
       IRODS_HOST: ${ENV_IRODS_ICAT_HOST}
       IRODS_USER: rods
       IRODS_PASS: ${ENV_IRODS_PASSWORD_ADMIN}
-      IRODS_CLIENT_SERVER_POLICY: CS_NEG_REFUSE
+      IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
       LDAP_USER: cn=admin,dc=datahubmaastricht,dc=nl
       LDAP_PASS: admin
       LDAP_HOST: ldap://ldap.dh.local
