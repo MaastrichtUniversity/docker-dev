@@ -293,7 +293,7 @@ services:
       SYNC_GROUPS: "True"
       DELETE_GROUPS: "True"
     command: sram-sync.py --commit --scheduled
-    profiles: ["full"]
+    profiles: ["backend-after-icat","full","minimal-after-icat"]
     networks:
       default:
       common_default:
