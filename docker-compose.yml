@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   mdr:
     build:
@@ -7,7 +7,7 @@ services:
       args:
         - ENV_FILEBEAT_VERSION
         - ENV_RULE_WRAPPER_VERSION
-        - SSL_ENV=${RIT_ENV}            # Whether to add our own CA-certificate to the CA-rootstore
+        - SSL_ENV=${RIT_ENV} # Whether to add our own CA-certificate to the CA-rootstore
     image: ${ENV_REGISTRY_HOST}/docker-dev/mdr:${ENV_TAG}
     depends_on:
       - keycloak
@@ -17,13 +17,13 @@ services:
       - mdr.env
     volumes:
       - static_content:/opt/staticfiles
-      # This volume bind gets the code that is in your rule-wrapper local repository and adds it to MDR. This allows 
+      # This volume bind gets the code that is in your rule-wrapper local repository and adds it to MDR. This allows
       # for PyCharm to auto-reload when you edit the irods-rule-wrapper code locally.
       # If you want to use the irods-rule-wrapper code provided by the "ENV_RULE_WRAPPER_VERSION" variable in the .env file of this repository,
       # comment the following line.
       - ./externals/irods-rule-wrapper:/opt/src/irods-rule-wrapper
       - ./externals/dh-python-irods-utils/dhpythonirodsutils:/usr/local/lib/python3.11/site-packages/dhpythonirodsutils
-    profiles: ["frontend","minimal","full"]
+    profiles: ["frontend", "minimal", "full"]
     networks:
       common_default:
         aliases:
@@ -46,14 +46,14 @@ services:
       VIRTUAL_PORT: 9200
     volumes:
       - elastic_metadata:/usr/share/elasticsearch/data
-    profiles: ["backend","minimal","full"]
+    profiles: ["backend", "minimal", "full"]
     networks:
-        default:
-          aliases:
-            - elastic.dh.local
-        common_default:
-          aliases:
-            - elastic.dh.local
+      default:
+        aliases:
+          - elastic.dh.local
+      common_default:
+        aliases:
+          - elastic.dh.local
   dh-faker:
     build:
       context: externals/dh-faker
@@ -105,10 +105,10 @@ services:
       - ./keycloak/datahub-keycloak-theme:/opt/jboss/keycloak/themes/datahub
     ports:
       # TODO: Find a better way to support both mdr->keycloak container traffic and browser->keycloak client traffic
-      - "8080:8080"   # In order to bypass nginx-virtual-proxy while being redirected during Saml logins
+      - "8080:8080" # In order to bypass nginx-virtual-proxy while being redirected during Saml logins
     depends_on:
       - ldap
-    profiles: ["backend","minimal","full"]
+    profiles: ["backend", "minimal", "full"]
     networks:
       default:
         aliases:
@@ -131,7 +131,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./ldap/ldif_custom:/container/service/slapd/assets/config/bootstrap/ldif/custom/
-    profiles: ["backend","minimal","full"]
+    profiles: ["backend", "minimal", "full"]
     networks:
       default:
         aliases:
@@ -143,10 +143,10 @@ services:
         - ENV_DAVRODS_IRODS_VERSION
         - ENV_DAVRODS_VERSION
         - ENV_FILEBEAT_VERSION
-        - SSL_ENV=${RIT_ENV}            # Whether to add our own CA-certificate to the CA-rootstore
+        - SSL_ENV=${RIT_ENV} # Whether to add our own CA-certificate to the CA-rootstore
         - VHOST_FILE=davrods-vhost.conf
         - FILEBEAT_CONFIG_FILE=filebeat.yml
-    image:  ${ENV_REGISTRY_HOST}/docker-dev/davrods:${ENV_TAG}
+    image: ${ENV_REGISTRY_HOST}/docker-dev/davrods:${ENV_TAG}
     depends_on:
       - icat
     environment:
@@ -170,7 +170,7 @@ services:
         - ENV_DAVRODS_IRODS_VERSION
         - ENV_DAVRODS_VERSION
         - ENV_FILEBEAT_VERSION
-        - SSL_ENV=${RIT_ENV}            # Whether to add our own CA-certificate to the CA-rootstore
+        - SSL_ENV=${RIT_ENV} # Whether to add our own CA-certificate to the CA-rootstore
         - VHOST_FILE=upload-davrods-vhost.conf
         - FILEBEAT_CONFIG_FILE=filebeat-upload.yml
     image: ${ENV_REGISTRY_HOST}/docker-dev/davrods-upload:${ENV_TAG}
@@ -199,9 +199,9 @@ services:
       LOG_LEVEL: DEBUG
       USERNAME: user
       PASSWORD: ${ENV_EPICPID_PASSWORD}
-      RABBITMQ_HOST : rabbitmq.dh.local
-      RABBITMQ_USER : user
-      RABBITMQ_PASS : password
+      RABBITMQ_HOST: rabbitmq.dh.local
+      RABBITMQ_USER: user
+      RABBITMQ_PASS: password
       RABBITMQ_PORT: 5672
       HANDLE_SERVER_URL: "https://epic-pid.storage.surfsara.nl:8003"
       BASEURI: "https://epic-pid.storage.surfsara.nl:8003"
@@ -211,12 +211,12 @@ services:
       HANDLE_OWNER: "200:0.NA/21.T12996"
       HTTPS_VERIFY: "True"
       # Keys below are only set in production
-#      ALLOWED_SEARCH_KEYS: ""
-#      REVERSE_LOOKUP_BASEURI: ""
-#      REVERSE_LOOKUP_PASSWORD: ""
-#      REVERSE_LOOKUP_USERNAME: ""
+      #      ALLOWED_SEARCH_KEYS: ""
+      #      REVERSE_LOOKUP_BASEURI: ""
+      #      REVERSE_LOOKUP_PASSWORD: ""
+      #      REVERSE_LOOKUP_USERNAME: ""
       REQUESTS_CA_BUNDLE: /opt/epic5storagesurfsaranlCHAIN.crt
-    profiles: ["backend","minimal","full"]
+    profiles: ["backend", "minimal", "full"]
     networks:
       default:
         aliases:
@@ -267,7 +267,7 @@ services:
       context: externals/sram-sync/
       dockerfile: Dockerfile
       args:
-        - SSL_ENV=${RIT_ENV}          # Whether to add our own CA-certificate to the CA-rootstore
+        - SSL_ENV=${RIT_ENV} # Whether to add our own CA-certificate to the CA-rootstore
     image: ${ENV_REGISTRY_HOST}/docker-dev/sram-sync:${ENV_TAG}
     depends_on:
       - ldap
@@ -285,7 +285,7 @@ services:
       LDAP_HOST: ldap://ldap.dh.local
       LDAP_USERS_BASE_DN: ou=People,dc=flat,dc=datahubmaastricht,dc=nl
       LDAP_GROUPS_BASE_DN: ou=Groups,dc=flat,dc=datahubmaastricht,dc=nl
-      LDAP_COS_BASE_DN:  dc=ordered,dc=datahubmaastricht,dc=nl
+      LDAP_COS_BASE_DN: dc=ordered,dc=datahubmaastricht,dc=nl
       DEFAULT_USER_PASSWORD: foobar
       LOGSTASH_TAGS: SRAMSYNC
       SYNC_USERS: "True"
@@ -293,7 +293,7 @@ services:
       SYNC_GROUPS: "True"
       DELETE_GROUPS: "True"
     command: sram-sync.py --commit --scheduled
-    profiles: ["backend-after-icat","full","minimal-after-icat"]
+    profiles: ["backend-after-icat", "full", "minimal-after-icat"]
     networks:
       default:
       common_default:
@@ -307,7 +307,7 @@ services:
       LOGSPOUT: ignore
     volumes:
       - /etc/localtime:/etc/localtime:ro
-    profiles: ["frontend","minimal","full"]
+    profiles: ["frontend", "minimal", "full"]
     networks:
       default:
         aliases:
@@ -328,13 +328,15 @@ services:
       - irods.secrets.cfg
     image: ${ENV_REGISTRY_HOST}/docker-dev/help-center-backend:${ENV_TAG}
     environment:
+      FORWARDED_ALLOW_IPS: "*" # Allow header from proxy for real ip
       VIRTUAL_HOST: helpbackend.${RIT_ENV}.dh.unimaas.nl
       CONFLUENCE_CLOUD_URL: https://mumc.atlassian.net
       CONFLUENCE_CLOUD_SPACE_KEY: MDRDT
-      LOGSTASH_TAGS: HELP_CENTER_BACKEND
-      WATCHFILES_FORCE_POLLING: true
-      AUTO_RELOAD: true
-      MDR_URL : http://app.mdr.${RIT_ENV}.dh.unimaas.nl
+      LOGSPOUT: ignore
+      WATCHFILES_FORCE_POLLING: true #DEV
+      AUTO_RELOAD: true #DEV
+      MDR_URL: http://app.mdr.${RIT_ENV}.dh.unimaas.nl
+      MDR_HOME_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl
       JIRA_URL: https://mumc-sandbox.atlassian.net
       JIRA_SERVICE_DESK_PROJECT_NAME: "Maastricht Data Repository Support"
       JIRA_SERVICE_DESK_QUESTION_REQUEST_NAME: "Ask a question"
@@ -344,8 +346,9 @@ services:
       JIRA_SERVICE_DESK_EXTERNAL_ACCESS_REQUEST_NAME: "External Access Request"
       JIRA_SERVICE_DESK_AUTOMATED_PROCESS_SUPPORT_REQUEST_NAME: "Automated process support request"
     volumes:
-      - ./externals/dh-help-center/backend/:/opt/
-    profiles: ["full","public"]
+      - ./externals/dh-help-center/backend/:/opt/ #DEV
+    #      -  ./logs/dh-help-center/backend/:/var/log/gunicorn/ #acc/prd
+    profiles: ["full", "public"]
     networks:
       dh_public:
         ipv4_address: 172.22.1.9
@@ -360,18 +363,19 @@ services:
       - irods.secrets.cfg
     image: ${ENV_REGISTRY_HOST}/docker-dev/help-center:${ENV_TAG}
     environment:
+      LOGSPOUT: ignore
       VIRTUAL_HOST: help.mdr.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 3000
-      LOGSTASH_TAGS: HELP_CENTER_FRONTEND
       HOST: 0.0.0.0
-      REACT_APP_MDR_URL : http://app.mdr.${RIT_ENV}.dh.unimaas.nl
-      REACT_APP_MDR_HOME_URL : http://mdr.${RIT_ENV}.dh.unimaas.nl
-      REACT_APP_SERVICE_DESK_URL : https://mumc-sandbox.atlassian.net/
-      REACT_APP_DATAHUB_HOME_URL : http://${RIT_ENV}.dh.unimaas.nl
+      REACT_APP_MDR_URL: http://app.mdr.${RIT_ENV}.dh.unimaas.nl
+      REACT_APP_MDR_HOME_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl
+      REACT_APP_SERVICE_DESK_URL: https://mumc-sandbox.atlassian.net/
+      REACT_APP_DATAHUB_HOME_URL: http://${RIT_ENV}.dh.unimaas.nl
     volumes:
-      - './externals/dh-help-center/frontend/src:/app/src'
-      - './externals/dh-help-center/frontend/public:/app/public'
-    profiles: ["full","public"]
+      #       -  ./logs/dh-help-center/frontend/:/var/log/nginx/ #acc/prd
+      - "./externals/dh-help-center/frontend/src:/app/src" #DEV
+      - "./externals/dh-help-center/frontend/public:/app/public" #DEV
+    profiles: ["full", "public"]
     networks:
       dh_public:
         ipv4_address: 172.22.1.10
@@ -383,13 +387,15 @@ services:
       dockerfile: Dockerfile
     image: ${ENV_REGISTRY_HOST}/docker-dev/dh-home:${ENV_TAG}
     environment:
+      LOGSPOUT: ignore
       VIRTUAL_HOST: ${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 3000
       HOST: 0.0.0.0
     volumes:
-      - './externals/dh-home/src:/app/src'
-      - './externals/dh-home/public:/app/public'
-    profiles: ["full","public"]
+      #      - ./logs/dh-home:/var/log/nginx/ #acc/prd
+      - "./externals/dh-home/src:/app/src" #DEV
+      - "./externals/dh-home/public:/app/public" #DEV
+    profiles: ["full", "public"]
     networks:
       dh_public:
         ipv4_address: 172.22.1.11
@@ -401,21 +407,40 @@ services:
       dockerfile: Dockerfile
     image: ${ENV_REGISTRY_HOST}/docker-dev/dh-mdr-home:${ENV_TAG}
     environment:
+      LOGSPOUT: ignore
       VIRTUAL_HOST: mdr.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 3000
       HOST: 0.0.0.0
-      REACT_APP_MDR_URL : http://app.mdr.${RIT_ENV}.dh.unimaas.nl
-      REACT_APP_DATAHUB_HC_URL : http://help.mdr.${RIT_ENV}.dh.unimaas.nl
-      REACT_APP_DATAHUB_HOME_URL : http://${RIT_ENV}.dh.unimaas.nl
+      REACT_APP_MDR_URL: http://app.mdr.${RIT_ENV}.dh.unimaas.nl
+      REACT_APP_DATAHUB_HC_URL: http://help.mdr.${RIT_ENV}.dh.unimaas.nl
+      REACT_APP_DATAHUB_HOME_URL: http://${RIT_ENV}.dh.unimaas.nl
     volumes:
-      - './externals/dh-mdr-home/src:/app/src'
-      - './externals/dh-mdr-home/public:/app/public'
-    profiles: ["full","public"]
+      #      - ./logs/dh-mdr-home/:/var/log/nginx/ #acc/prd
+      - "./externals/dh-mdr-home/src:/app/src" #DEV
+      - "./externals/dh-mdr-home/public:/app/public" #DEV
+    profiles: ["full", "public"]
     networks:
       dh_public:
         ipv4_address: 172.22.1.12
         aliases:
           - mdrhomepage.dh.local
+
+  filebeat-public-logs:
+    build:
+      context: logs/Docker/
+      dockerfile: Dockerfile
+    image: ${ENV_REGISTRY_HOST}/docker-dev/filebeat-public-logs:${ENV_TAG}
+    volumes:
+      - ./logs/:/var/logs/public-containers/ #acc/prd
+    profiles: ["full"]
+    networks:
+      default:
+        aliases:
+          - filebeat-public-logs.dh.local
+      common_default:
+        aliases:
+          - filebeat-public-logs.dh.local
+
   admin-tools-backend:
     build:
       context: externals/dh-admin-tools/backend
@@ -445,8 +470,8 @@ services:
       VIRTUAL_PORT: 3000
       HOST: 0.0.0.0
     volumes:
-      - './externals/dh-admin-tools/frontend/src:/app/src'
-      - './externals/dh-admin-tools/frontend/public:/app/public'
+      - "./externals/dh-admin-tools/frontend/src:/app/src"
+      - "./externals/dh-admin-tools/frontend/public:/app/public"
     profiles: ["full"]
     networks:
       default:
@@ -456,7 +481,6 @@ services:
         aliases:
           - admin-tools.dh.local
 
-
 networks:
   default:
     ipam:
@@ -464,10 +488,10 @@ networks:
       config:
         - subnet: "172.21.1.0/24"
   dh_public:
-      ipam:
-        driver: default
-        config:
-          - subnet: "172.22.1.0/24"
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.22.1.0/24"
   common_default:
     external: true
 
