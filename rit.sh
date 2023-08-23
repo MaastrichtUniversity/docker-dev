@@ -81,20 +81,17 @@ run_backend(){
 
     echo "Keycloak is Done"
 
-    echo "Running single run of SRAM-SYNC"
-    ./rit.sh up -d sram-sync
+    echo "Starting backend-after-icat (SRAM & iRES's)"
+    # we bring up all ires's (or anything that depends on iCAT being up)
+    docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend-after-icat up -d
 
+    echo "Running single run of SRAM-SYNC"
     until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec sram-sync /dh_is_ready.sh;
     do
       echo "Waiting for sram-sync, sleeping 5"
       sleep 5
     done
-
     ./rit.sh stop sram-sync
-
-    echo "Starting backend-after-icat (iRES's)"
-    # we bring up all ires's (or anything that depends on iCAT being up)
-    docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend-after-icat up -d
 
     # We also could do something like:
     # all_backend_services=$(docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend --profile backend-after-icat config --services)
