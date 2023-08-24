@@ -13,4 +13,3 @@ staging-data/direct-ingest
 *.crt
 .DS_STORE
 .env_with_secrets
-logs/**/*.log
