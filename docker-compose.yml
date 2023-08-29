@@ -345,6 +345,7 @@ services:
       JIRA_SERVICE_DESK_SUPPORT_REQUEST_NAME: "Support request"
       JIRA_SERVICE_DESK_EXTERNAL_ACCESS_REQUEST_NAME: "External Access Request"
       JIRA_SERVICE_DESK_AUTOMATED_PROCESS_SUPPORT_REQUEST_NAME: "Automated process support request"
+      JIRA_SERVICE_DESK_DATA_DELETION_REQUEST_NAME: "Data deletion request"
     volumes:
       - ./externals/dh-help-center/backend/:/opt/ #DEV
     #      -  ./logs/dh-help-center/backend/:/var/log/gunicorn/ #acc/prd
