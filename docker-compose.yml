@@ -393,6 +393,8 @@ services:
       VIRTUAL_HOST: ${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 3000
       HOST: 0.0.0.0
+      REACT_APP_MDR_HOME_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl
+      REACT_APP_DATAHUB_HC_URL: http://help.mdr.${RIT_ENV}.dh.unimaas.nl
     volumes:
       #      - ./logs/dh-home:/var/log/nginx/ #acc/prd
       - "./externals/dh-home/src:/app/src" #DEV
