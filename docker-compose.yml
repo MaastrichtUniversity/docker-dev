@@ -348,7 +348,7 @@ services:
       JIRA_SERVICE_DESK_DATA_DELETION_REQUEST_NAME: "Data deletion request"
     volumes:
       - ./externals/dh-help-center/backend/:/opt/ #DEV
-    #      -  ./logs/dh-help-center/backend/:/var/log/gunicorn/ #acc/prd
+    #      - ../docker-common/public-logs/dh-help-center/backend/:/var/log/gunicorn/ #acc/prd
     profiles: ["full", "public"]
     networks:
       dh_public:
@@ -358,7 +358,7 @@ services:
   help-center:
     build:
       context: externals/dh-help-center/frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile #dockerfile: Dockerfile.prd
     env_file:
       # REACT_APP_CAPTCHA_SITE_KEY
       - irods.secrets.cfg
@@ -373,7 +373,7 @@ services:
       REACT_APP_SERVICE_DESK_URL: https://mumc-sandbox.atlassian.net/
       REACT_APP_DATAHUB_HOME_URL: http://${RIT_ENV}.dh.unimaas.nl
     volumes:
-      #       -  ./logs/dh-help-center/frontend/:/var/log/nginx/ #acc/prd
+      #      - ../docker-common/public-logs/dh-help-center/frontend/:/var/log/nginx/ #acc/prd
       - "./externals/dh-help-center/frontend/src:/app/src" #DEV
       - "./externals/dh-help-center/frontend/public:/app/public" #DEV
     profiles: ["full", "public"]
@@ -385,7 +385,7 @@ services:
   dh-home:
     build:
       context: externals/dh-home
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile #dockerfile: Dockerfile.prd
     image: ${ENV_REGISTRY_HOST}/docker-dev/dh-home:${ENV_TAG}
     environment:
       LOGSPOUT: ignore
@@ -393,7 +393,7 @@ services:
       VIRTUAL_PORT: 3000
       HOST: 0.0.0.0
     volumes:
-      #      - ./logs/dh-home:/var/log/nginx/ #acc/prd
+      #      - ../docker-common/public-logs/dh-home:/var/log/nginx/ #acc/prd
       - "./externals/dh-home/src:/app/src" #DEV
       - "./externals/dh-home/public:/app/public" #DEV
     profiles: ["full", "public"]
@@ -405,7 +405,7 @@ services:
   mdr-home:
     build:
       context: externals/dh-mdr-home
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prd
     image: ${ENV_REGISTRY_HOST}/docker-dev/dh-mdr-home:${ENV_TAG}
     environment:
       LOGSPOUT: ignore
@@ -416,7 +416,7 @@ services:
       REACT_APP_DATAHUB_HC_URL: http://help.mdr.${RIT_ENV}.dh.unimaas.nl
       REACT_APP_DATAHUB_HOME_URL: http://${RIT_ENV}.dh.unimaas.nl
     volumes:
-      #      - ./logs/dh-mdr-home/:/var/log/nginx/ #acc/prd
+      #      - ../docker-common/public-logs/dh-mdr-home/:/var/log/nginx/ #acc/prd
       - "./externals/dh-mdr-home/src:/app/src" #DEV
       - "./externals/dh-mdr-home/public:/app/public" #DEV
     profiles: ["full", "public"]
