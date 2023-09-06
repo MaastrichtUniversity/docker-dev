@@ -131,7 +131,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./ldap/ldif_custom:/container/service/slapd/assets/config/bootstrap/ldif/custom/
-    profiles: ["backend", "minimal", "full"]
+    profiles: ["backend", "minimal", "full", "backend-after-icat"]
     networks:
       default:
         aliases:
@@ -408,7 +408,7 @@ services:
   mdr-home:
     build:
       context: externals/dh-mdr-home
-      dockerfile: Dockerfile.prd
+      dockerfile: Dockerfile #dockerfile: Dockerfile.prd
     image: ${ENV_REGISTRY_HOST}/docker-dev/dh-mdr-home:${ENV_TAG}
     environment:
       LOGSPOUT: ignore
@@ -428,22 +428,6 @@ services:
         ipv4_address: 172.22.1.12
         aliases:
           - mdrhomepage.dh.local
-
-  filebeat-public-logs:
-    build:
-      context: logs/Docker/
-      dockerfile: Dockerfile
-    image: ${ENV_REGISTRY_HOST}/docker-dev/filebeat-public-logs:${ENV_TAG}
-    volumes:
-      - ./logs/:/var/logs/public-containers/ #acc/prd
-    profiles: ["full"]
-    networks:
-      default:
-        aliases:
-          - filebeat-public-logs.dh.local
-      common_default:
-        aliases:
-          - filebeat-public-logs.dh.local
 
   admin-tools-backend:
     build:
