@@ -1,13 +1,8 @@
 [
   {
-    "userName": "mcoonen",
-    "eduPersonUniqueId": "mcoonen@sram.surf.nl",
-    "voPersonExternalID": "m.coonen@unimaas.nl"
-  },
-  {
-    "userName": "mcoonen2",
-    "eduPersonUniqueId": "mcoonen2@sram.surf.nl",
-    "voPersonExternalID": "dr.coonen@mumc.nl"
+    "userName": "rjuhasz",
+    "eduPersonUniqueId": "rjuhasz@sram.surf.nl",
+    "voPersonExternalID": "r.juhasz@unimaas.nl"
   },
   {
     "userName": "dtheuniss",
@@ -23,6 +18,11 @@
     "userName": "dlinssen",
     "eduPersonUniqueId": "dlinssen@sram.surf.nl",
     "voPersonExternalID": "p70072425@unimaas.nl"
+  },
+  {
+    "userName": "dlinssen2",
+    "eduPersonUniqueId": "dlinssen2@sram.surf.nl",
+    "voPersonExternalID": "dlinssen@mumc.nl"
   },
   {
     "userName": "pvanschay2",
