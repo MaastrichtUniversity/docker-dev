@@ -90,7 +90,7 @@ create_mock_projects_um() {
         imeta set -C ${project} enableArchive 'true'
         imeta set -C ${project} enableUnarchive 'true'
         imeta set -C ${project} enableDropzoneSharing 'true'
-        imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema,DataHub_extended_schema'
+        imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema'
 
         # Manage access
         ichmod -r own "pvanschay2" ${project}
