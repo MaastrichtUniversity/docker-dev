@@ -115,7 +115,7 @@ for i in {01..2}; do
     imeta set -C ${project} enableOpenAccessExport 'false'
     imeta set -C ${project} enableArchive 'true'
     imeta set -C ${project} enableUnarchive 'true'
-    imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema'
+    imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema,DataHub_extended_schema'
 
     # Manage access
     ichmod -r own "psuppers" ${project}
