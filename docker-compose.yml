@@ -25,12 +25,12 @@ services:
       - ./externals/dh-python-irods-utils/dhpythonirodsutils:/usr/local/lib/python3.11/site-packages/dhpythonirodsutils
     profiles: ["minimal","full"]
     networks:
-      default:
-        aliases:
-          - mdr.dh.local
       common_default:
         aliases:
-          - mdr.dh.local
+          - app.mdr.dh.local
+      default:
+        aliases:
+          - app.mdr.dh.local
   elastic:
     build:
       context: externals/dh-elasticsearch
@@ -113,7 +113,6 @@ services:
       default:
         aliases:
           - keycloak.dh.local
-          - keycloak.${RIT_ENV}.dh.unimaas.nl   # having this alias lets the mdr-container connect to the keycloak metadata URL
       common_default:
         aliases:
           - keycloak.dh.local
@@ -238,6 +237,7 @@ services:
     env_file:
       - irods.secrets.cfg # Using ONLY DATAVERSE_TOKEN
     environment:
+      ENV: ${RIT_ENV}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_USER: user
       RABBITMQ_PASS: password
@@ -249,7 +249,7 @@ services:
       DH_MAILER_HOST: mailer.dh.local
       DH_MAILER_USERNAME: user
       DH_MAILER_PASSWORD: password
-      HC_BACKEND_URL: http://help-center-backend.dh.local:8000
+      HC_BACKEND_URL: http://help.mdr.${RIT_ENV}.dh.unimaas.nl
       LOG_LEVEL: INFO
       LOGSTASH_TAGS: OPEN_ACCESS_WORKER
     volumes:
@@ -322,15 +322,21 @@ services:
       args:
         - ENV_FILEBEAT_VERSION
     env_file:
+      # REACT_APP_CAPTCHA_SECRET_KEY
+      # ATLASSIAN_API_USERNAME
+      # ATLASSIAN_API_KEY
       - irods.secrets.cfg
     image: ${ENV_REGISTRY_HOST}/docker-dev/help-center-backend:${ENV_TAG}
     environment:
+      FORWARDED_ALLOW_IPS: "*"  # Allow header from proxy for real ip
       VIRTUAL_HOST: helpbackend.${RIT_ENV}.dh.unimaas.nl
       CONFLUENCE_CLOUD_URL: https://mumc.atlassian.net
       CONFLUENCE_CLOUD_SPACE_KEY: MDRDT
-      LOGSTASH_TAGS: HELP_CENTER_BACKEND
-      WATCHFILES_FORCE_POLLING: true
-      AUTO_RELOAD: true
+      LOGSPOUT: ignore
+      WATCHFILES_FORCE_POLLING: true  #DEV
+      AUTO_RELOAD: true                #DEV
+      MDR_URL : http://app.mdr.${RIT_ENV}.dh.unimaas.nl
+      MDR_HOME_URL : http://mdr.${RIT_ENV}.dh.unimaas.nl
       JIRA_URL: https://mumc-sandbox.atlassian.net
       JIRA_SERVICE_DESK_PROJECT_NAME: "Maastricht Data Repository Support"
       JIRA_SERVICE_DESK_QUESTION_REQUEST_NAME: "Ask a question"
@@ -340,36 +346,85 @@ services:
       JIRA_SERVICE_DESK_EXTERNAL_ACCESS_REQUEST_NAME: "External Access Request"
       JIRA_SERVICE_DESK_AUTOMATED_PROCESS_SUPPORT_REQUEST_NAME: "Automated process support request"
     volumes:
-      - ./externals/dh-help-center/backend/:/opt/
+      - ./externals/dh-help-center/backend/:/opt/   #DEV
+#      - ../docker-common/public-logs/dh-help-center/backend/:/var/log/gunicorn/ #acc/prd
+    profiles: ["minimal","full"]
     networks:
-      default:
-        aliases:
-          - help-center-backend.dh.local
-      common_default:
+      dh_public:
+        ipv4_address: 172.22.1.9
         aliases:
           - help-center-backend.dh.local
   help-center:
     build:
       context: externals/dh-help-center/frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile #dockerfile: Dockerfile.prd
+    env_file:
+      # REACT_APP_CAPTCHA_SITE_KEY
+      - irods.secrets.cfg
     image: ${ENV_REGISTRY_HOST}/docker-dev/help-center:${ENV_TAG}
     environment:
-      VIRTUAL_HOST: helpcenter.${RIT_ENV}.dh.unimaas.nl
+      LOGSPOUT: ignore
+      VIRTUAL_HOST: help.mdr.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 3000
-      LOGSTASH_TAGS: HELP_CENTER_FRONTEND
       HOST: 0.0.0.0
-      REACT_APP_MDR_URL : http://mdr.${RIT_ENV}.dh.unimaas.nl
+      REACT_APP_MDR_URL : http://app.mdr.${RIT_ENV}.dh.unimaas.nl
+      REACT_APP_MDR_HOME_URL : http://mdr.${RIT_ENV}.dh.unimaas.nl
       REACT_APP_SERVICE_DESK_URL : https://mumc-sandbox.atlassian.net/
+      REACT_APP_DATAHUB_HOME_URL : http://${RIT_ENV}.dh.unimaas.nl
     volumes:
-      - './externals/dh-help-center/frontend/src:/app/src'
-      - './externals/dh-help-center/frontend/public:/app/public'
+#      - ../docker-common/public-logs/dh-help-center/frontend/:/var/log/nginx/ #acc/prd
+      - './externals/dh-help-center/frontend/src:/app/src'   #DEV
+      - './externals/dh-help-center/frontend/public:/app/public' #DEV
+    profiles: ["minimal","full"]
     networks:
-      default:
+      dh_public:
+        ipv4_address: 172.22.1.10
         aliases:
           - help-center.dh.local
-      common_default:
+  dh-home:
+    build:
+      context: externals/dh-home
+      dockerfile: Dockerfile #dockerfile: Dockerfile.prd
+    image: ${ENV_REGISTRY_HOST}/docker-dev/dh-home:${ENV_TAG}
+    environment:
+      LOGSPOUT: ignore
+      VIRTUAL_HOST: ${RIT_ENV}.dh.unimaas.nl
+      VIRTUAL_PORT: 3000
+      HOST: 0.0.0.0
+    volumes:
+#      - ../docker-common/public-logs/dh-home:/var/log/nginx/ #acc/prd
+      - './externals/dh-home/src:/app/src'  #DEV
+      - './externals/dh-home/public:/app/public'  #DEV
+    profiles: ["minimal","full"]
+    networks:
+      dh_public:
+        ipv4_address: 172.22.1.11
         aliases:
-          - help-center.dh.local
+          - datahub-homepage.dh.local
+  mdr-home:
+    build:
+      context: externals/dh-mdr-home
+      dockerfile: Dockerfile.prd
+    image: ${ENV_REGISTRY_HOST}/docker-dev/dh-mdr-home:${ENV_TAG}
+    environment:
+      LOGSPOUT: ignore
+      VIRTUAL_HOST: mdr.${RIT_ENV}.dh.unimaas.nl
+      VIRTUAL_PORT: 3000
+      HOST: 0.0.0.0
+      REACT_APP_MDR_URL : http://app.mdr.${RIT_ENV}.dh.unimaas.nl
+      REACT_APP_DATAHUB_HC_URL : http://help.mdr.${RIT_ENV}.dh.unimaas.nl
+      REACT_APP_DATAHUB_HOME_URL : http://${RIT_ENV}.dh.unimaas.nl
+    volumes:
+#      - ../docker-common/public-logs/dh-mdr-home/:/var/log/nginx/ #acc/prd
+      - './externals/dh-mdr-home/src:/app/src'  #DEV
+      - './externals/dh-mdr-home/public:/app/public'  #DEV
+    profiles: ["minimal","full"]
+    networks:
+      dh_public:
+        ipv4_address: 172.22.1.12
+        aliases:
+          - mdrhomepage.dh.local
+
   admin-tools-backend:
     build:
       context: externals/dh-admin-tools/backend
@@ -419,6 +474,16 @@ services:
 
 
 networks:
+  default:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.21.1.0/24"
+  dh_public:
+      ipam:
+        driver: default
+        config:
+          - subnet: "172.22.1.0/24"
   common_default:
     external: true
 
