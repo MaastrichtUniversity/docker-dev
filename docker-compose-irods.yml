@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 services:
   irods-db:
     image: postgres:${ENV_POSTGRES_VERSION}
@@ -35,6 +35,7 @@ services:
     build:
       context: externals/dh-irods/irods-base/
       dockerfile: Dockerfile
+      target: icat
       args:
         - ENV_IRODS_VERSION
         - ENV_IRODS_PYTHON_PLUGIN_VERSION
@@ -45,6 +46,7 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
+        - ENV_POSTGRES_CLIENT_VERSION
         # S3 variables to create secret files
         - ENV_S3_ACCESS_KEY_AC
         - ENV_S3_SECRET_KEY_AC
@@ -52,7 +54,7 @@ services:
         - ENV_S3_ACCESS_KEY_GL
         - ENV_S3_SECRET_KEY_GL
         - ENV_S3_AUTH_FILE_GL
-    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
+    image: ${ENV_REGISTRY_HOST}/docker-dev/icat:${ENV_TAG}
     # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
     # https://github.com/irods/irods/issues/5218
     sysctls:
@@ -126,6 +128,7 @@ services:
     build:
       context: externals/dh-irods/irods-base/
       dockerfile: Dockerfile
+      target: ires-hnas
       args:
         - ENV_IRODS_VERSION
         - ENV_IRODS_PYTHON_PLUGIN_VERSION
@@ -143,7 +146,7 @@ services:
         - ENV_S3_ACCESS_KEY_GL
         - ENV_S3_SECRET_KEY_GL
         - ENV_S3_AUTH_FILE_GL
-    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
+    image: ${ENV_REGISTRY_HOST}/docker-dev/ires-hnas:${ENV_TAG}
     # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
     # https://github.com/irods/irods/issues/5218
     sysctls:
@@ -212,6 +215,7 @@ services:
     build:
       context:  externals/dh-irods/irods-base/
       dockerfile: Dockerfile
+      target: ires-hnas
       args:
         - ENV_IRODS_VERSION
         - ENV_IRODS_PYTHON_PLUGIN_VERSION
@@ -229,7 +233,7 @@ services:
         - ENV_S3_ACCESS_KEY_GL
         - ENV_S3_SECRET_KEY_GL
         - ENV_S3_AUTH_FILE_GL
-    image: ${ENV_REGISTRY_HOST}/docker-dev/irods-base:${ENV_TAG}
+    image: ${ENV_REGISTRY_HOST}/docker-dev/ires-hnas:${ENV_TAG}
     # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
     # https://github.com/irods/irods/issues/5218
     sysctls:
@@ -294,6 +298,7 @@ services:
     build:
       context: externals/dh-irods/irods-base/
       dockerfile: Dockerfile
+      target: irods-base
       args:
         - ENV_IRODS_VERSION
         - ENV_IRODS_PYTHON_PLUGIN_VERSION
@@ -366,6 +371,7 @@ services:
     build:
       context: externals/dh-irods/irods-base/
       dockerfile: Dockerfile
+      target: irods-base
       args:
         - ENV_IRODS_VERSION
         - ENV_IRODS_PYTHON_PLUGIN_VERSION

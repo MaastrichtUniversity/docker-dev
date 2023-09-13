@@ -59,7 +59,12 @@ create_mock_projects_um() {
         imeta set -C ${project} enableArchive 'true'
         imeta set -C ${project} enableUnarchive 'true'
         imeta set -C ${project} enableDropzoneSharing 'true'
-        imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema,DataHub_extended_schema'
+        if [ $? -eq 0 ]
+        then
+            imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema,DataHub_extended_schema'
+        else
+            imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema'
+        fi
 
         # Manage access
         ichmod -r own "psuppers" ${project}
@@ -90,7 +95,12 @@ create_mock_projects_um() {
         imeta set -C ${project} enableArchive 'true'
         imeta set -C ${project} enableUnarchive 'true'
         imeta set -C ${project} enableDropzoneSharing 'true'
-        imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema'
+        if [ ${i} -eq 1 ]
+        then
+            imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema,DataHub_extended_schema'
+        else
+            imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema'
+        fi
 
         # Manage access
         ichmod -r own "pvanschay2" ${project}
