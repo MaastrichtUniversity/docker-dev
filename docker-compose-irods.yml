@@ -178,7 +178,7 @@ services:
       ENV_IRODS_COOR_RESC_COMMENT: "Replicated-resource-for-UM"
       # Pricing AVU for 'coordinating' resource
       ENV_IRODS_COOR_RESC_PRICING: "0.130"
-    profiles: ["backend-after-icat","full"]
+    profiles: ["backend-after-icat","full","minimal-after-icat"]
     volumes:
       # SSL files
       - ./irods/ires-hnas/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
@@ -467,6 +467,7 @@ services:
       - ./irods/minio/minio1.dh.local.crt:/root/.minio/certs/public.crt
       - ./irods/minio/minio1.dh.local.key:/root/.minio/certs/private.key
       - ./irods/minio/test_only_dev_irods_dh_ca_cert.pem:/root/.minio/certs/CAs/test_only_dev_irods_dh_ca_cert.pem
+    profiles: ["backend-after-icat","full"]
     networks:
       default:
         aliases:
@@ -488,6 +489,7 @@ services:
       - ./irods/minio/minio2.dh.local.crt:/root/.minio/certs/public.crt
       - ./irods/minio/minio2.dh.local.key:/root/.minio/certs/private.key
       - ./irods/minio/test_only_dev_irods_dh_ca_cert.pem:/root/.minio/certs/CAs/test_only_dev_irods_dh_ca_cert.pem
+    profiles: ["backend-after-icat","full"]
     networks:
       default:
         aliases:

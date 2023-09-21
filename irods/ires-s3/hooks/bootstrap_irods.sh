@@ -137,4 +137,9 @@ done
 ##########
 ## Special
 
+# TODO Update in 4.3.0
+# While doing the iRODS unattended installation, default_general_json_configuration.json is pass to setup_irods.py
+# But the value of 'default_resource_directory' is not picked up correctly
+iadmin modresc ${HOSTNAME%%.dh.local}Resource path /var/lib/irods/vault
+
 imeta set -R ${ENV_S3_RESC_NAME} bootstrap_irods_dev_mockup "complete"
