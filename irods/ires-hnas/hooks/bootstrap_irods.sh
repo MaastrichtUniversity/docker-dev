@@ -59,7 +59,8 @@ create_mock_projects_um() {
         imeta set -C ${project} enableArchive 'true'
         imeta set -C ${project} enableUnarchive 'true'
         imeta set -C ${project} enableDropzoneSharing 'true'
-        if [ $? -eq 0 ]
+        # We make sure that the first project created has both metadata schemas, that is what Selenium expects in its tests
+        if [ ${i} -eq 1 ]
         then
             imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema,DataHub_extended_schema'
         else
@@ -95,6 +96,7 @@ create_mock_projects_um() {
         imeta set -C ${project} enableArchive 'true'
         imeta set -C ${project} enableUnarchive 'true'
         imeta set -C ${project} enableDropzoneSharing 'true'
+        # We make sure that the first project created has both metadata schemas, that is what Selenium expects in its tests
         if [ ${i} -eq 1 ]
         then
             imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema,DataHub_extended_schema'
