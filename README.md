@@ -155,3 +155,29 @@ Create fake ingest zones and project collections
 ./rit.sh create-project-collections
 ```
 
+## dhdev
+A copy version of rit.sh with auto-completion enabled
+### Configuration
+* dhdev-completion.bash
+* dhdev-completion.config
+```
+# Create the configuration file if it doesn't exist yet
+# 2 variables are expectes localBinDir & localBashrcDir
+# cat dhdev-completion.config
+localBinDir=~/.local/bin
+localBashrcDir=~
+```
+### Installation
+```
+./rit.sh install dhdev
+# or to update
+dhdev install dhdev
+```
+### Usage
+```
+dhdev stack public build
+dhdev stack public up
+dhdev stack public logs
+dhdev test help-center-backend test_process_html.py
+dhdev externals status
+```
