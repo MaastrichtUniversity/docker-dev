@@ -25,7 +25,7 @@ source /opt/irods/lib/helpers.sh
 
 create_mock_projects_azm() {
     for i in {01..2}; do
-        project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"${HOSTNAME%%.dh.local}Resource,${ENV_IRODS_COOR_RESC_NAME},(azM) Test project #${i},dlinssen,opalmen,AZM-123456,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
+        project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"${HOSTNAME%%.dh.local}Resource,${ENV_IRODS_COOR_RESC_NAME},(azM) Test project #${i},psuppers,opalmen,AZM-123456,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
 
         imeta set -C ${project} authorizationPeriodEndDate '1-1-2018'
         imeta set -C ${project} dataRetentionPeriodEndDate '1-1-2018'
