@@ -44,6 +44,9 @@ create_mock_projects_azm() {
         # Manage access
         ichmod -r own "dlinssen" ${project}
 
+        # Manage access
+        ichmod -r own "psuppers" ${project}
+
         # Data Steward gets manager rights
         ichmod -r own "opalmen" ${project}
 
