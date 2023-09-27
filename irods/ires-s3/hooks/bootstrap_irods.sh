@@ -115,7 +115,13 @@ for i in {01..2}; do
     imeta set -C ${project} enableOpenAccessExport 'false'
     imeta set -C ${project} enableArchive 'true'
     imeta set -C ${project} enableUnarchive 'true'
-    imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema'
+    # We make sure that the first project created has both metadata schemas, that is what Selenium expects in its tests
+    if [ ${i} -eq 1 ]
+    then
+        imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema,DataHub_extended_schema'
+    else
+        imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema'
+    fi
 
     # Manage access
     ichmod -r own "psuppers" ${project}
@@ -131,5 +137,10 @@ done
 
 ##########
 ## Special
+
+# TODO Update in 4.3.0
+# While doing the iRODS unattended installation, default_general_json_configuration.json is pass to setup_irods.py
+# But the value of 'default_resource_directory' is not picked up correctly
+iadmin modresc ${HOSTNAME%%.dh.local}Resource path /var/lib/irods/vault
 
 imeta set -R ${ENV_S3_RESC_NAME} bootstrap_irods_dev_mockup "complete"
