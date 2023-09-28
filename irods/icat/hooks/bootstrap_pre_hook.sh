@@ -49,15 +49,6 @@ print_is_icat_db_setup() {
 }
 
 _main() {
-    # TODO: FIXME? Installing postgresql-client here, but bootstrap.sh will do it again.
-    #              Problem is that this hook needs psql, but it's only installed in bootstrap.sh.
-    #              I could make the hooks trigger in bootstrap.sh, but that would lead to duplicated code.
-    wget -qO - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
-        && echo 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main' | sudo tee /etc/apt/sources.list.d/pgdg.list \
-        && apt-get update \
-        && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-        postgresql-client-"${ENV_POSTGRES_CLIENT_VERSION}"
-
     local was_db_setup=$(print_is_icat_db_setup)
     mkdir -p /cache && chown irods /cache
 
