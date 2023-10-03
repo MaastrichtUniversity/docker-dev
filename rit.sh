@@ -132,7 +132,6 @@ externals/rit-davrods https://github.com/MaastrichtUniversity/rit-davrods.git
 externals/epicpid-microservice https://github.com/MaastrichtUniversity/epicpid-microservice.git
 externals/dh-mdr https://github.com/MaastrichtUniversity/dh-mdr.git
 externals/irods-rule-wrapper https://github.com/MaastrichtUniversity/irods-rule-wrapper.git
-externals/irods-open-access-repo https://github.com/MaastrichtUniversity/irods-open-access-repo.git
 externals/sram-sync https://github.com/MaastrichtUniversity/sram-sync.git
 externals/dh-faker https://github.com/MaastrichtUniversity/dh-faker.git
 externals/dh-irods https://github.com/MaastrichtUniversity/dh-irods.git
