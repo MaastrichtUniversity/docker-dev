@@ -1,4 +1,4 @@
-version: "3"
+version: '3.4'
 services:
   mdr:
     build:
@@ -359,7 +359,8 @@ services:
   help-center:
     build:
       context: externals/dh-help-center/frontend
-      dockerfile: Dockerfile #dockerfile: Dockerfile.prd
+      dockerfile: Dockerfile
+      target: dev # For production use "prd"
     env_file:
       # REACT_APP_CAPTCHA_SITE_KEY
       - irods.secrets.cfg
@@ -386,7 +387,8 @@ services:
   dh-home:
     build:
       context: externals/dh-home
-      dockerfile: Dockerfile #dockerfile: Dockerfile.prd
+      dockerfile: Dockerfile
+      target: dev # For production use "prd"
     image: ${ENV_REGISTRY_HOST}/docker-dev/dh-home:${ENV_TAG}
     environment:
       LOGSPOUT: ignore
@@ -408,7 +410,8 @@ services:
   mdr-home:
     build:
       context: externals/dh-mdr-home
-      dockerfile: Dockerfile #dockerfile: Dockerfile.prd
+      dockerfile: Dockerfile
+      target: dev # For production use "prd"
     image: ${ENV_REGISTRY_HOST}/docker-dev/dh-mdr-home:${ENV_TAG}
     environment:
       LOGSPOUT: ignore
@@ -422,7 +425,7 @@ services:
       #      - ../docker-common/public-logs/dh-mdr-home/:/var/log/nginx/ #acc/prd
       - "./externals/dh-mdr-home/src:/app/src" #DEV
       - "./externals/dh-mdr-home/public:/app/public" #DEV
-    profiles: ["full", "public"]
+    profiles: [ "full", "public" ]
     networks:
       dh_public:
         ipv4_address: 172.22.1.12
