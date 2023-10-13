@@ -20,9 +20,9 @@ REACT_APP_CAPTCHA_SITE_KEY=(Google captcha API public site key)
 * Specify the default values and versions for environment vars in the _.env_ file
 ```
 # iRODS and iRES
-ENV_IRODS_VERSION=4.2.4
-ENV_IRODS_EXT_CLANG_VERSION=3.8-0
-ENV_IRODS_EXT_CLANG_RUNTIME_VERSION=3.8-0
+ENV_IRODS_VERSION=4.2.11-1~bionic
+ENV_IRODS_PYTHON_PLUGIN_VERSION=4.2.11.1-1~bionic
+ENV_IRODS_RESC_PLUGIN_S3_VERSION=4.2.11.2-1~bionic
 
 <...>
 
