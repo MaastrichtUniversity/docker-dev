@@ -112,7 +112,6 @@ for i in {01..2}; do
     imeta set -C ${project} authorizationPeriodEndDate '1-1-2018'
     imeta set -C ${project} dataRetentionPeriodEndDate '1-1-2018'
     imeta set -C ${project} storageQuotaGb '10'
-    imeta set -C ${project} enableOpenAccessExport 'false'
     imeta set -C ${project} enableArchive 'true'
     imeta set -C ${project} enableUnarchive 'true'
     # We make sure that the first project created has both metadata schemas, that is what Selenium expects in its tests

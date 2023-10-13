@@ -30,7 +30,6 @@ create_mock_projects_azm() {
         imeta set -C ${project} authorizationPeriodEndDate '1-1-2018'
         imeta set -C ${project} dataRetentionPeriodEndDate '1-1-2018'
         imeta set -C ${project} storageQuotaGb '10'
-        imeta set -C ${project} enableOpenAccessExport 'false'
         imeta set -C ${project} enableArchive 'true'
         imeta set -C ${project} enableUnarchive 'true'
         # We make sure that the first project created has both metadata schemas, that is what Selenium expects in its tests
@@ -64,7 +63,6 @@ create_mock_projects_um() {
         imeta set -C ${project} authorizationPeriodEndDate '1-1-2018'
         imeta set -C ${project} dataRetentionPeriodEndDate '1-1-2018'
         imeta set -C ${project} storageQuotaGb '10'
-        imeta set -C ${project} enableOpenAccessExport 'false'
         imeta set -C ${project} enableArchive 'true'
         imeta set -C ${project} enableUnarchive 'true'
         imeta set -C ${project} enableDropzoneSharing 'true'
@@ -87,8 +85,6 @@ create_mock_projects_um() {
 
         # Enable archiving for this project
         imeta set -C ${project} enableArchive true
-        # Enable export to Open Access for this project
-        imeta set -C ${project} enableOpenAccessExport true
         # Set the destination archive resource
         imeta set -C ${project} archiveDestinationResource arcRescSURF01
 
@@ -101,7 +97,6 @@ create_mock_projects_um() {
         imeta set -C ${project} authorizationPeriodEndDate '1-1-2018'
         imeta set -C ${project} dataRetentionPeriodEndDate '1-1-2018'
         imeta set -C ${project} storageQuotaGb '10'
-        imeta set -C ${project} enableOpenAccessExport 'false'
         imeta set -C ${project} enableArchive 'true'
         imeta set -C ${project} enableUnarchive 'true'
         imeta set -C ${project} enableDropzoneSharing 'true'
@@ -131,7 +126,6 @@ create_mock_projects_um() {
         imeta set -C ${project} authorizationPeriodEndDate '1-1-2018'
         imeta set -C ${project} dataRetentionPeriodEndDate '1-1-2018'
         imeta set -C ${project} storageQuotaGb '10'
-        imeta set -C ${project} enableOpenAccessExport 'false'
         imeta set -C ${project} enableArchive 'true'
         imeta set -C ${project} enableUnarchive 'true'
         imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema'
