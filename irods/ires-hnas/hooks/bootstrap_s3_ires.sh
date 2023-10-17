@@ -115,7 +115,13 @@ for i in {01..2}; do
     imeta set -C ${project} enableOpenAccessExport 'false'
     imeta set -C ${project} enableArchive 'true'
     imeta set -C ${project} enableUnarchive 'true'
-    imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema'
+    # We make sure that the first project created has both metadata schemas, that is what Selenium expects in its tests
+    if [ ${i} -eq 1 ]
+    then
+        imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema,DataHub_extended_schema'
+    else
+        imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema'
+    fi
 
     # Manage access
     ichmod -r own "psuppers" ${project}
