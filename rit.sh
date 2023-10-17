@@ -41,7 +41,9 @@ externals/dh-python-irods-utils https://github.com/MaastrichtUniversity/dh-pytho
 externals/cedar-parsing-utils https://github.com/MaastrichtUniversity/cedar-parsing-utils.git
 externals/dh-elasticsearch https://github.com/MaastrichtUniversity/dh-elasticsearch.git
 externals/dh-help-center https://github.com/MaastrichtUniversity/dh-help-center.git
-externals/dh-admin-tools https://github.com/MaastrichtUniversity/dh-admin-tools"
+externals/dh-admin-tools https://github.com/MaastrichtUniversity/dh-admin-tools
+externals/dh-home https://github.com/MaastrichtUniversity/dh-home
+externals/dh-mdr-home https://github.com/MaastrichtUniversity/dh-mdr-home"
 
 # do the required action in case of externals or exec
 if [[ $1 == "externals" ]]; then
@@ -79,18 +81,21 @@ fi
 # Run test cases
 # e.g:
 # * irods
-# ./rit.sh test irods /rules/test_cases # to execute all tests in the folder '/rules/test_cases'
-# ./rit.sh test irods /rules/test_cases/test_policies.py # to execute the tests inside '/rules/test_cases/test_policies.py'
-# ./rit.sh test irods /rules/test_cases/test_policies.py::TestPolicies::test_post_proc_for_coll_create # to only execute a single test
+# ./rit.sh test irods # to execute all tests in the folder '/rules/test_cases'
+# ./rit.sh test irods test_policies.py # to execute the tests inside '/rules/test_cases/test_policies.py'
+# ./rit.sh test irods test_policies.py::TestPolicies::test_post_proc_for_coll_create # to only execute a single test
 # * mdr
 # ./rit.sh test mdr # to execute all tests
 # ./rit.sh test mdr app.tests.test_projects # to execute the tests inside '/app/tests/test_projects'
 if [[ $1 == "test" ]]; then
    if [[ $2 == "irods" ]]; then
-      set +e
-      docker exec -t -u irods ${COMPOSE_PROJECT_NAME}-icat-1 /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider -k 'not Mounted' ${3}
-      docker exec -t -u irods ${COMPOSE_PROJECT_NAME}-ires-hnas-um-1 /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider  -k 'Mounted' ${3}
-      exit 0
+      docker exec -t -u irods ${COMPOSE_PROJECT_NAME}-icat-1 /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider /rules/test_cases/${3}
+      if [ $? -eq 0 ]
+      then
+        exit 0
+      else
+        exit 1
+      fi
    fi
    if [[ $2 == "mdr" ]]; then
       set +e
@@ -118,7 +123,7 @@ fi
 if [ ! $(docker network ls --filter name=common_default --format="true") ] ;
       then
        echo "Creating network common_default"
-       docker network create common_default
+       docker network create common_default --subnet "172.20.1.0/24" --label "com.docker.compose.project"="common" --label "com.docker.compose.network"="default"
 fi
 
 # Start minimal docker-dev environment

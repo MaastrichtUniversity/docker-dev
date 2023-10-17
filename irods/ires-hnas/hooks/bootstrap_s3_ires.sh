@@ -95,6 +95,12 @@ echo "INFO: Add child resources to repl resource";
 iadmin addchildtoresc replRescUMCeph01 ${ENV_S3_AC_RESC_NAME}
 iadmin addchildtoresc replRescUMCeph01 ${ENV_S3_GL_RESC_NAME}
 
+# Add comment to resource for better identification in MDR's createProject dropdown
+iadmin modresc ${HOSTNAME%%.dh.local}Resource comment DO-NOT-USE
+
+# Add storage pricing to resources
+imeta add -R ${HOSTNAME%%.dh.local}Resource NCIT:C88193 999
+
 ###########
 ## Projects and project permissions
 
