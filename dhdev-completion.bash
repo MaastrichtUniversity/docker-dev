@@ -43,7 +43,7 @@ sram-sync"
       case ${level1} in
         make)
           # 'make' subcommand completion
-          COMPREPLY=($(compgen -W "rules microservices" -- ${cur}))
+          COMPREPLY=($(compgen -W "rules" -- ${cur}))
           ;;
         test)
           # 'test' subcommand completion

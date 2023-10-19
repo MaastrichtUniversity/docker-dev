@@ -193,15 +193,6 @@ if [[ $1 == "make" ]]; then
       docker exec -u irods ${COMPOSE_PROJECT_NAME}-ires-ceph-ac-1 make -C /rules
       exit 0
    fi
-   if [[ $2 == "microservices" ]]; then
-      set +e
-      docker exec -it ${COMPOSE_PROJECT_NAME}-icat-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
-      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-hnas-um-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
-      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-hnas-azm-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
-      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-ceph-gl-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
-      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-ceph-ac-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
-      exit 0
-   fi
 fi
 
 # Run test cases
