@@ -441,6 +441,10 @@ services:
       IRODS_USER: rods
       IRODS_PASS: ${ENV_IRODS_PASSWORD_ADMIN}
       IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
+      SMTP_SERVER: smtp.maastrichtuniversity.nl
+      SMTP_PORT: 25
+      EMAIL_SENDER: datahub-support@maastrichtuniversity.nl
+      EMAIL_FRIENDLY_NAME: "DataHub Support"
       VIRTUAL_HOST: admintoolsbackend.${RIT_ENV}.dh.unimaas.nl
       WATCHFILES_FORCE_POLLING: true
       AUTO_RELOAD: true
