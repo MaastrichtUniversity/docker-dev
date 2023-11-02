@@ -465,7 +465,7 @@ services:
       dockerfile: Dockerfile
     image: ${ENV_REGISTRY_HOST}/docker-dev/admin-tools:${ENV_TAG}
     environment:
-      VIRTUAL_HOST: admintools.${RIT_ENV}.dh.unimaas.nl
+      VIRTUAL_HOST: admin.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 3000
       HOST: 0.0.0.0
     volumes:
