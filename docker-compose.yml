@@ -434,8 +434,12 @@ services:
       context: externals/dh-admin-tools/backend
       dockerfile: Dockerfile
       args:
-        - SSL_ENV=${RIT_ENV}          # Whether to add our own CA-certificate to the CA-rootstore
+        - SSL_ENV=${RIT_ENV} # Whether to add our own CA-certificate to the CA-rootstore
     image: ${ENV_REGISTRY_HOST}/docker-dev/admin-tools-backend:${ENV_TAG}
+    env_file:
+      # ATLASSIAN_API_USERNAME
+      # ATLASSIAN_API_KEY
+      - irods.secrets.cfg
     environment:
       IRODS_HOST: ${ENV_IRODS_ICAT_HOST}
       IRODS_USER: rods
@@ -449,6 +453,14 @@ services:
       WATCHFILES_FORCE_POLLING: true
       AUTO_RELOAD: true
       CACHE_TTL_VALUE: 86400 # in seconds => 24 hours
+      JIRA_URL: https://mumc.atlassian.net
+      PROJECT_KEY: DHDOSB #DH #PROD!
+      EPIC_LINK_CUSTOMFIELD_ID: customfield_10014
+      ADMINISTRATION_EPIC_KEY: DHS-3353 #DH-181 PROD!
+      TRANSITION_ID: 21
+      RESOLUTION_ID: 10000
+      CONTROLLER_EMAIL: tim.lustberg@maastrichtuniversity.nl #d.bakker@maastrichtuniversity.nl
+      LINK_EMAIL: tim.lustberg@maastrichtuniversity.nl;d.linssen@maastrichtuniversity.nl #luc.voncken@maastrichtuniversity.nl;sef.janssen@maastrichtuniversity.nl
     volumes:
       - ./externals/dh-admin-tools/backend/:/opt/
     profiles: ["full"]
