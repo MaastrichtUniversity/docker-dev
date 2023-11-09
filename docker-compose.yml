@@ -435,6 +435,7 @@ services:
       dockerfile: Dockerfile
       args:
         - SSL_ENV=${RIT_ENV} # Whether to add our own CA-certificate to the CA-rootstore
+        - ENV_FILEBEAT_VERSION
     image: ${ENV_REGISTRY_HOST}/docker-dev/admin-tools-backend:${ENV_TAG}
     env_file:
       # ATLASSIAN_API_USERNAME
@@ -475,6 +476,8 @@ services:
     build:
       context: externals/dh-admin-tools/frontend
       dockerfile: Dockerfile
+      args:
+        - ENV_FILEBEAT_VERSION
     image: ${ENV_REGISTRY_HOST}/docker-dev/admin-tools:${ENV_TAG}
     environment:
       VIRTUAL_HOST: admin.${RIT_ENV}.dh.unimaas.nl
