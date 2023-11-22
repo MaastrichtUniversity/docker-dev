@@ -436,11 +436,35 @@ services:
     build:
       context: externals/dh-admin-tools/backend
       dockerfile: Dockerfile
+      args:
+        - SSL_ENV=${RIT_ENV} # Whether to add our own CA-certificate to the CA-rootstore
+        - ENV_FILEBEAT_VERSION
     image: ${ENV_REGISTRY_HOST}/docker-dev/admin-tools-backend:${ENV_TAG}
+    env_file:
+      # ATLASSIAN_API_USERNAME
+      # ATLASSIAN_API_KEY
+      - irods.secrets.cfg
     environment:
+      IRODS_HOST: ${ENV_IRODS_ICAT_HOST}
+      IRODS_USER: rods
+      IRODS_PASS: ${ENV_IRODS_PASSWORD_ADMIN}
+      IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
+      SMTP_SERVER: smtp.maastrichtuniversity.nl
+      SMTP_PORT: 25
+      EMAIL_SENDER: datahub-support@maastrichtuniversity.nl
+      EMAIL_FRIENDLY_NAME: "DataHub Support"
       VIRTUAL_HOST: admintoolsbackend.${RIT_ENV}.dh.unimaas.nl
       WATCHFILES_FORCE_POLLING: true
       AUTO_RELOAD: true
+      CACHE_TTL_VALUE: 86400 # in seconds => 24 hours
+      JIRA_URL: https://mumc.atlassian.net
+      PROJECT_KEY: DHDOSB #DH #PROD!
+      EPIC_LINK_CUSTOMFIELD_ID: customfield_10014
+      ADMINISTRATION_EPIC_KEY: DHS-3353 #DH-181 PROD!
+      TRANSITION_ID: 21
+      RESOLUTION_ID: 10000
+      CONTROLLER_EMAIL: tim.lustberg@maastrichtuniversity.nl #d.bakker@maastrichtuniversity.nl
+      LINK_EMAIL: tim.lustberg@maastrichtuniversity.nl;d.linssen@maastrichtuniversity.nl #luc.voncken@maastrichtuniversity.nl;sef.janssen@maastrichtuniversity.nl
     volumes:
       - ./externals/dh-admin-tools/backend/:/opt/
     profiles: ["full"]
@@ -455,9 +479,11 @@ services:
     build:
       context: externals/dh-admin-tools/frontend
       dockerfile: Dockerfile
+      args:
+        - ENV_FILEBEAT_VERSION
     image: ${ENV_REGISTRY_HOST}/docker-dev/admin-tools:${ENV_TAG}
     environment:
-      VIRTUAL_HOST: admintools.${RIT_ENV}.dh.unimaas.nl
+      VIRTUAL_HOST: admin.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 3000
       HOST: 0.0.0.0
     volumes:
