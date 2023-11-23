@@ -39,8 +39,6 @@ services:
       args:
         - ENV_IRODS_VERSION
         - ENV_IRODS_PYTHON_PLUGIN_VERSION
-        - ENV_IRODS_EXT_CLANG_VERSION
-        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_FILEBEAT_VERSION
         - ENV_IRODS_RESC_PLUGIN_S3_VERSION
         - ENV_DOCKERIZE_VERSION
@@ -109,7 +107,6 @@ services:
       - ./keycloak/users.json:/opt/irods/users.json
       # repos
       - ./externals/irods-ruleset:/rules
-      - ./externals/irods-microservices:/microservices
       # This is persistent because the delay queue depends on files in this directory
       - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
@@ -132,8 +129,6 @@ services:
       args:
         - ENV_IRODS_VERSION
         - ENV_IRODS_PYTHON_PLUGIN_VERSION
-        - ENV_IRODS_EXT_CLANG_VERSION
-        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_FILEBEAT_VERSION
         - ENV_IRODS_RESC_PLUGIN_S3_VERSION
         - ENV_DOCKERIZE_VERSION
@@ -190,7 +185,6 @@ services:
       - ./irods/ires-hnas/hooks/:/opt/irods/hooks/
       # repos
       - ./externals/irods-ruleset:/rules
-      - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
       # irods-helper-cmd uses /etc/secrets
       - ./irods.secrets.cfg:/etc/secrets:ro
@@ -219,8 +213,6 @@ services:
       args:
         - ENV_IRODS_VERSION
         - ENV_IRODS_PYTHON_PLUGIN_VERSION
-        - ENV_IRODS_EXT_CLANG_VERSION
-        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_FILEBEAT_VERSION
         - ENV_IRODS_RESC_PLUGIN_S3_VERSION
         - ENV_DOCKERIZE_VERSION
@@ -278,7 +270,6 @@ services:
       - ./irods/ires-hnas/hooks/:/opt/irods/hooks/
       # repos
       - ./externals/irods-ruleset:/rules
-      - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
       # irods-helper-cmd uses /etc/secrets
       - ./irods.secrets.cfg:/etc/secrets:ro
@@ -302,8 +293,6 @@ services:
       args:
         - ENV_IRODS_VERSION
         - ENV_IRODS_PYTHON_PLUGIN_VERSION
-        - ENV_IRODS_EXT_CLANG_VERSION
-        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_FILEBEAT_VERSION
         - ENV_IRODS_RESC_PLUGIN_S3_VERSION
         - ENV_DOCKERIZE_VERSION
@@ -351,7 +340,6 @@ services:
       - ./irods/ires-s3/hooks/:/opt/irods/hooks/
       # repos
       - ./externals/irods-ruleset:/rules
-      - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
       # irods-helper-cmd uses /etc/secrets
       - ./irods.secrets.cfg:/etc/secrets:ro
@@ -375,8 +363,6 @@ services:
       args:
         - ENV_IRODS_VERSION
         - ENV_IRODS_PYTHON_PLUGIN_VERSION
-        - ENV_IRODS_EXT_CLANG_VERSION
-        - ENV_IRODS_EXT_CLANG_RUNTIME_VERSION
         - ENV_FILEBEAT_VERSION
         - ENV_IRODS_RESC_PLUGIN_S3_VERSION
         - ENV_DOCKERIZE_VERSION
@@ -438,7 +424,6 @@ services:
       - ./irods/ires-s3/hooks/:/opt/irods/hooks/
       # repos
       - ./externals/irods-ruleset:/rules
-      - ./externals/irods-microservices:/microservices
       - ./externals/irods-helper-cmd:/helpers
       # irods-helper-cmd uses /etc/secrets
       - ./irods.secrets.cfg:/etc/secrets:ro

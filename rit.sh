@@ -126,7 +126,6 @@ run_backend(){
 
 # specify externals for this project
 externals="externals/irods-helper-cmd https://github.com/MaastrichtUniversity/irods-helper-cmd.git
-externals/irods-microservices https://github.com/MaastrichtUniversity/irods-microservices.git
 externals/irods-ruleset https://github.com/MaastrichtUniversity/irods-ruleset.git
 externals/rit-davrods https://github.com/MaastrichtUniversity/rit-davrods.git
 externals/epicpid-microservice https://github.com/MaastrichtUniversity/epicpid-microservice.git
@@ -191,15 +190,6 @@ if [[ $1 == "make" ]]; then
       docker exec -u irods ${COMPOSE_PROJECT_NAME}-ires-hnas-azm-1 make -C /rules
       docker exec -u irods ${COMPOSE_PROJECT_NAME}-ires-ceph-gl-1 make -C /rules
       docker exec -u irods ${COMPOSE_PROJECT_NAME}-ires-ceph-ac-1 make -C /rules
-      exit 0
-   fi
-   if [[ $2 == "microservices" ]]; then
-      set +e
-      docker exec -it ${COMPOSE_PROJECT_NAME}-icat-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
-      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-hnas-um-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
-      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-hnas-azm-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
-      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-ceph-gl-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
-      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-ceph-ac-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
       exit 0
    fi
 fi
