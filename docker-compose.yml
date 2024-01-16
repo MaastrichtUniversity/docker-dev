@@ -70,10 +70,6 @@ services:
       IRODS_USER: rods
       IRODS_PASS: ${ENV_IRODS_PASSWORD_ADMIN}
       IRODS_CLIENT_SERVER_POLICY: CS_NEG_REQUIRE
-      RABBITMQ_HOST: rabbitmq.dh.local
-      RABBITMQ_USER: user
-      RABBITMQ_PASS: password
-      RABBITMQ_PORT: 5672
       LOG_LEVEL: INFO
     profiles: ["faker"]
     networks:
@@ -199,10 +195,6 @@ services:
       LOG_LEVEL: DEBUG
       USERNAME: user
       PASSWORD: ${ENV_EPICPID_PASSWORD}
-      RABBITMQ_HOST: rabbitmq.dh.local
-      RABBITMQ_USER: user
-      RABBITMQ_PASS: password
-      RABBITMQ_PORT: 5672
       HANDLE_SERVER_URL: "https://epic-pid.storage.surfsara.nl:8003"
       BASEURI: "https://epic-pid.storage.surfsara.nl:8003"
       PRIVATE_KEY: "/opt/app/credentials/305_21_T12996_USER01_UM_privkey.pem"
