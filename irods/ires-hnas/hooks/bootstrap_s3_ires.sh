@@ -22,6 +22,13 @@ if [[ "$(print_is_dev_env)" != "yes" ]]; then
     exit 1
 fi
 
+ENV_S3_AC_RESC_NAME=$1
+ENV_S3_AC_HOST=$2
+ENV_S3_AUTH_AC_FILE=$3
+
+ENV_S3_GL_RESC_NAME=$4
+ENV_S3_GL_HOST=$5
+ENV_S3_AUTH_GL_FILE=$6
 
 # This bootstrap_irods.sh (mock dev env for this iRES) depends on the
 # successful (and finished) creation of the iCAT mock dev env.
@@ -52,13 +59,14 @@ retry_and_wait icat_mock_dev_env_probe "state: complete" || { echo "ERROR: Gave 
 # Find out if this is not the first time this bootstrap_irods.sh has run the same iCAT.
 # FIXME: We extrapolate from this AVU that all other operations in this
 #        bootstrap_irods.sh have also been run. Not great!
-dev_mockup_state=$(imeta ls -R ${ENV_S3_RESC_NAME} bootstrap_irods_dev_mockup | grep -Po '(value: \K.*)' || true)
-if [[ "$dev_mockup_state" =~ "complete" ]]; then
+dev_ac_mockup_state=$(imeta ls -R ${ENV_S3_AC_RESC_NAME} bootstrap_irods_dev_mockup | grep -Po '(value: \K.*)' || true)
+dev_gl_mockup_state=$(imeta ls -R ${ENV_S3_GL_RESC_NAME} bootstrap_irods_dev_mockup | grep -Po '(value: \K.*)' || true)
+if [[ "$dev_ac_mockup_state" =~ "complete" ]] && [[ "$dev_gl_mockup_state" =~ "complete" ]]; then
     # TODO: this should say INFO not WARNING? Change prototype test if you change this
     echo "WARNING: This bootstrap_irods.sh seems to have already been run against the iCAT instance."
     echo "INFO: If you think this is a mistake, consider stopping and rm'ing icat and its database container."
     exit 0
-elif [[ "$dev_mockup_state" =~ "creating" ]]; then
+elif [[ "$dev_ac_mockup_state" =~ "creating" ]] || [[ "$dev_gl_mockup_state" =~ "creating" ]]; then
     echo "WARNING: It looks like last time bootstrap_irods.sh run against this iCAT, it didn't fully finish."
     echo "WARNING: It's probably easiest if you stop & rm the icat and icat db container."
     exit 1
@@ -69,37 +77,23 @@ fi
 
 ############
 ## Resources
-iadmin mkresc ${ENV_S3_RESC_NAME} s3 ${HOSTNAME}:/dh-irods-bucket-dev "S3_DEFAULT_HOSTNAME=${ENV_S3_HOST};S3_AUTH_FILE=${S3_AUTH_FILE};S3_REGIONNAME=irods-dev;S3_RETRY_COUNT=1;S3_WAIT_TIME_SEC=3;S3_PROTO=HTTPS;ARCHIVE_NAMING_POLICY=consistent;HOST_MODE=cacheless_detached;S3_CACHE_DIR=/cache"
+echo "INFO: Create child resources S3"
+iadmin mkresc ${ENV_S3_AC_RESC_NAME} s3 ${HOSTNAME}:/dh-irods-bucket-dev "S3_DEFAULT_HOSTNAME=${ENV_S3_AC_HOST};S3_AUTH_FILE=${ENV_S3_AUTH_AC_FILE};S3_REGIONNAME=irods-dev;S3_RETRY_COUNT=1;S3_WAIT_TIME_SEC=3;S3_PROTO=HTTPS;ARCHIVE_NAMING_POLICY=consistent;HOST_MODE=cacheless_detached;S3_CACHE_DIR=/cache"
+iadmin mkresc ${ENV_S3_GL_RESC_NAME} s3 ${HOSTNAME}:/dh-irods-bucket-dev "S3_DEFAULT_HOSTNAME=${ENV_S3_GL_HOST};S3_AUTH_FILE=${ENV_S3_AUTH_GL_FILE};S3_REGIONNAME=irods-dev;S3_RETRY_COUNT=1;S3_WAIT_TIME_SEC=3;S3_PROTO=HTTPS;ARCHIVE_NAMING_POLICY=consistent;HOST_MODE=cacheless_detached;S3_CACHE_DIR=/cache"
 
 # We use this AVU to tell if this isn't the first time we ran this script against iCAT.
-imeta add -R ${ENV_S3_RESC_NAME} bootstrap_irods_dev_mockup "creating"
+imeta add -R ${ENV_S3_AC_RESC_NAME} bootstrap_irods_dev_mockup "creating"
+imeta add -R ${ENV_S3_GL_RESC_NAME} bootstrap_irods_dev_mockup "creating"
 
-# Sleep for a varying amount (3 * last digit of hostname) of seconds to prevent simultaneous checking for existence of replResc
-# TODO: heh interesting way of minimizing chances of this race condition biting
-#       us I guess :P, but of course doesn't solve it :p Is there an easier way to
-#       solve it? Or at least minimize chances even further?
-if grep -q "gl" <<< "${HOSTNAME%%.dh.local}"; then
-  sleep 9
-fi
+echo "INFO: Create replicated resource S3";
+iadmin mkresc replRescUMCeph01 replication;
+iadmin modresc replRescUMCeph01 comment Replicated-Ceph-resource-for-UM
+imeta add -R replRescUMCeph01 NCIT:C88193 0.062
 
-# Check if repl ('coordinating') resource exists, if not, create it
-if [ "$(iadmin lr replRescUMCeph01)" == "No rows found" ];
-then
-  iadmin mkresc replRescUMCeph01 replication;
-  iadmin modresc replRescUMCeph01 comment Replicated-Ceph-resource-for-UM
-  imeta add -R replRescUMCeph01 NCIT:C88193 0.062
-else
-  echo "Replication resource already exists";
-fi
-
+echo "INFO: Add child resources to repl resource";
 # Add child resource to repl resource
-iadmin addchildtoresc replRescUMCeph01 ${ENV_S3_RESC_NAME}
-
-# Add comment to resource for better identification in MDR's createProject dropdown
-iadmin modresc ${HOSTNAME%%.dh.local}Resource comment DO-NOT-USE
-
-# Add storage pricing to resources
-imeta add -R ${HOSTNAME%%.dh.local}Resource NCIT:C88193 999
+iadmin addchildtoresc replRescUMCeph01 ${ENV_S3_AC_RESC_NAME}
+iadmin addchildtoresc replRescUMCeph01 ${ENV_S3_GL_RESC_NAME}
 
 ###########
 ## Projects and project permissions
@@ -107,7 +101,7 @@ imeta add -R ${HOSTNAME%%.dh.local}Resource NCIT:C88193 999
 echo "INFO: Creating mock projects"
 
 for i in {01..2}; do
-    project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"ires-hnas-umResource,replRescUMCeph01,(S3-${ENV_S3_RESC_NAME: -2}) Test project #${i},psuppers,pvanschay2,UM-01234567890R,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
+    project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"ires-hnas-umResource,replRescUMCeph01,(S3) Test project #${i},psuppers,pvanschay2,UM-01234567890R,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
 
     imeta set -C ${project} authorizationPeriodEndDate '1-1-2018'
     imeta set -C ${project} dataRetentionPeriodEndDate '1-1-2018'
@@ -137,9 +131,5 @@ done
 ##########
 ## Special
 
-# TODO Update in 4.3.0
-# While doing the iRODS unattended installation, default_general_json_configuration.json is pass to setup_irods.py
-# But the value of 'default_resource_directory' is not picked up correctly
-iadmin modresc ${HOSTNAME%%.dh.local}Resource path /var/lib/irods/vault
-
-imeta set -R ${ENV_S3_RESC_NAME} bootstrap_irods_dev_mockup "complete"
+imeta set -R ${ENV_S3_AC_RESC_NAME} bootstrap_irods_dev_mockup "complete"
+imeta set -R ${ENV_S3_GL_RESC_NAME} bootstrap_irods_dev_mockup "complete"
