@@ -414,8 +414,8 @@ services:
       WATCHFILES_FORCE_POLLING: true
       AUTO_RELOAD: true
       CACHE_TTL_VALUE: 86400 # in seconds => 24 hours
-      JIRA_URL: https://mumc.atlassian.net
-      PROJECT_KEY: DHDOSB #DH #PROD!
+      JIRA_URL: https://mumc-sandbox.atlassian.net
+      PROJECT_KEY: DHDO #DH #PROD!
       EPIC_LINK_CUSTOMFIELD_ID: customfield_10014
       ADMINISTRATION_EPIC_KEY: DHS-3353 #DH-181 PROD!
       TRANSITION_ID: 21
