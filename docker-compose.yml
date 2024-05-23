@@ -415,11 +415,10 @@ services:
       AUTO_RELOAD: true
       CACHE_TTL_VALUE: 86400 # in seconds => 24 hours
       JIRA_URL: https://mumc-sandbox.atlassian.net
-      PROJECT_KEY: DHDO #DH #PROD!
-      EPIC_LINK_CUSTOMFIELD_ID: customfield_10014
-      ADMINISTRATION_EPIC_KEY: DHS-3353 #DH-181 PROD!
-      TRANSITION_ID: 21
-      RESOLUTION_ID: 10000
+      PROJECT_KEY: MDRS
+      ADMINISTRATION_EPIC_KEY: DH-181 # DHDO-1336 PROD!
+      TRANSITION_ID_REVIEW: 11
+      TRANSITION_ID_DONE: 61
       CONTROLLER_EMAIL: tim.lustberg@maastrichtuniversity.nl #d.bakker@maastrichtuniversity.nl
       LINK_EMAIL: tim.lustberg@maastrichtuniversity.nl;d.linssen@maastrichtuniversity.nl #luc.voncken@maastrichtuniversity.nl;sef.janssen@maastrichtuniversity.nl
     volumes:
