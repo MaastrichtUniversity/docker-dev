@@ -81,20 +81,17 @@ run_backend(){
 
     echo "Keycloak is Done"
 
-    echo "Running single run of SRAM-SYNC"
-    ./rit.sh up -d sram-sync
+    echo "Starting backend-after-icat (SRAM & iRES's)"
+    # we bring up all ires's (or anything that depends on iCAT being up)
+    docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend-after-icat up -d
 
+    echo "Running single run of SRAM-SYNC"
     until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec sram-sync /dh_is_ready.sh;
     do
       echo "Waiting for sram-sync, sleeping 5"
       sleep 5
     done
-
     ./rit.sh stop sram-sync
-
-    echo "Starting backend-after-icat (iRES's)"
-    # we bring up all ires's (or anything that depends on iCAT being up)
-    docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend-after-icat up -d
 
     # We also could do something like:
     # all_backend_services=$(docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend --profile backend-after-icat config --services)
@@ -111,31 +108,17 @@ run_backend(){
       sleep 5
     done
 
-    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-ceph-gl /dh_is_ready.sh;
-    do
-      echo "Waiting for ires-ceph-gl, sleeping 5"
-      sleep 5
-    done
-
-    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-ceph-ac /dh_is_ready.sh;
-    do
-      echo "Waiting for ires-ceph-ac, sleeping 5"
-      sleep 5
-    done
-
     exit 0
 }
 
 
 # specify externals for this project
 externals="externals/irods-helper-cmd https://github.com/MaastrichtUniversity/irods-helper-cmd.git
-externals/irods-microservices https://github.com/MaastrichtUniversity/irods-microservices.git
 externals/irods-ruleset https://github.com/MaastrichtUniversity/irods-ruleset.git
 externals/rit-davrods https://github.com/MaastrichtUniversity/rit-davrods.git
 externals/epicpid-microservice https://github.com/MaastrichtUniversity/epicpid-microservice.git
 externals/dh-mdr https://github.com/MaastrichtUniversity/dh-mdr.git
 externals/irods-rule-wrapper https://github.com/MaastrichtUniversity/irods-rule-wrapper.git
-externals/irods-open-access-repo https://github.com/MaastrichtUniversity/irods-open-access-repo.git
 externals/sram-sync https://github.com/MaastrichtUniversity/sram-sync.git
 externals/dh-faker https://github.com/MaastrichtUniversity/dh-faker.git
 externals/dh-irods https://github.com/MaastrichtUniversity/dh-irods.git
@@ -193,17 +176,6 @@ if [[ $1 == "make" ]]; then
       docker exec -u irods ${COMPOSE_PROJECT_NAME}-icat-1 make -C /rules
       docker exec -u irods ${COMPOSE_PROJECT_NAME}-ires-hnas-um-1 make -C /rules
       docker exec -u irods ${COMPOSE_PROJECT_NAME}-ires-hnas-azm-1 make -C /rules
-      docker exec -u irods ${COMPOSE_PROJECT_NAME}-ires-ceph-gl-1 make -C /rules
-      docker exec -u irods ${COMPOSE_PROJECT_NAME}-ires-ceph-ac-1 make -C /rules
-      exit 0
-   fi
-   if [[ $2 == "microservices" ]]; then
-      set +e
-      docker exec -it ${COMPOSE_PROJECT_NAME}-icat-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
-      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-hnas-um-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
-      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-hnas-azm-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
-      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-ceph-gl-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
-      docker exec -it ${COMPOSE_PROJECT_NAME}-ires-ceph-ac-1 sh -c "cmake /microservices/ && make -C /microservices/ && make install -C  /microservices/"
       exit 0
    fi
 fi

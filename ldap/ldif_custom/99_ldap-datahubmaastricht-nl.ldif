@@ -185,20 +185,20 @@ uid: jmelius
 voPersonExternalAffiliation: employee@maastrichtuniversity.nl
 voPersonExternalID: jonathan.melius@unimaas.nl
 
-dn: uid=mcoonen,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+dn: uid=rjuhasz,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 objectClass: eduPerson
 objectClass: inetOrgPerson
 objectClass: person
 objectClass: voPerson
 cn:: IA==
-sn: Coonen
-displayName: Maarten Coonen
-eduPersonUniqueId: mcoonen@sram.surf.nl
-givenName: Maarten
-mail: m.coonen@maastrichtuniversity.nl
-uid: mcoonen
+sn: Juhasz
+displayName: Ricardo Juhasz
+eduPersonUniqueId: rjuhasz@sram.surf.nl
+givenName: Ricardo
+mail: ricardo.juhasz@maastrichtuniversity.nl
+uid: rjuhasz
 voPersonExternalAffiliation: employee@maastrichtuniversity.nl
-voPersonExternalID: m.coonen@unimaas.nl
+voPersonExternalID: r.juhasz@unimaas.nl
 
 dn: uid=opalmen,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 objectClass: eduPerson
@@ -230,20 +230,20 @@ uid: dlinssen
 voPersonExternalAffiliation: employee@maastrichtuniversity.nl
 voPersonExternalID: p70072425@unimaas.nl
 
-dn: uid=mcoonen2,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+dn: uid=dlinssen2,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 objectClass: eduPerson
 objectClass: inetOrgPerson
 objectClass: person
 objectClass: voPerson
 cn:: IA==
-sn: Coonen
-displayName: Maarten Coonen (MUMC+)
-eduPersonUniqueId: mcoonen2@sram.surf.nl
-givenName: Maarten
-mail: mcoonen2
-uid: mcoonen2
+sn: Linssen
+displayName: Dean Linssen (MUMC+)
+eduPersonUniqueId: dlinssen2@sram.surf.nl
+givenName: Dean
+mail: dlinssen@mumc.nl
+uid: dlinssen2
 voPersonExternalAffiliation: employee@mumc.nl
-voPersonExternalID: dr.coonen@mumc.nl
+voPersonExternalID: dlinssen@mumc.nl
 
 dn: uid=psuppers,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 objectClass: eduPerson
@@ -315,7 +315,7 @@ sn: van Schayck
 displayName: Paul van Schayck
 eduPersonUniqueId: pvanschay2@sram.surf.nl
 givenName: Paul
-mail: p.vanschayck@maastrichtuniversity.nl
+mail: onzin_email@maastrichtuniversity.nl
 uid: pvanschay2
 voPersonExternalAffiliation: employee@university.nl
 voPersonExternalID: P.Vanschayck@unimaas.n
@@ -330,8 +330,8 @@ cn: mumc.datahub.@all
 member: uid=dlinssen,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 member: uid=dtheuniss,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 member: uid=jmelius,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
-member: uid=mcoonen,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
-member: uid=mcoonen2,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+member: uid=rjuhasz,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
+member: uid=dlinssen2,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 member: uid=opalmen,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 member: uid=psuppers,ou=People,dc=flat,dc=datahubmaastricht,dc=nl
 member: uid=pvanschay2,ou=People,dc=flat,dc=datahubmaastricht,dc=nl

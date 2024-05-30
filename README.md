@@ -9,7 +9,6 @@ LDAP_USER="CN=Rit-dev (DATAHUB),OU=Resources,OU=Users,OU=DATAHUB,OU=FHML,DC=unim
 LDAP_URL=ldap://ldap.maastrichtuniversity.nl
 LDAP_DOMAIN=DC=unimaas,DC=nl
 USE_SAMBA=false
-DATAVERSE_TOKEN=
 BIOPORTAL_API_KEY=
 ATLASSIAN_API_KEY=(ATLASSIAN_API_KEY)
 ATLASSIAN_API_USERNAME=(ATLASSIAN_EMAIL)
@@ -20,9 +19,9 @@ REACT_APP_CAPTCHA_SITE_KEY=(Google captcha API public site key)
 * Specify the default values and versions for environment vars in the _.env_ file
 ```
 # iRODS and iRES
-ENV_IRODS_VERSION=4.2.4
-ENV_IRODS_EXT_CLANG_VERSION=3.8-0
-ENV_IRODS_EXT_CLANG_RUNTIME_VERSION=3.8-0
+ENV_IRODS_VERSION=4.2.11-1~bionic
+ENV_IRODS_PYTHON_PLUGIN_VERSION=4.2.11.1-1~bionic
+ENV_IRODS_RESC_PLUGIN_S3_VERSION=4.2.11.2-1~bionic
 
 <...>
 
@@ -49,25 +48,6 @@ ENV_FILEBEAT_VERSION=5.2.0
 ./rit.sh build --pull --no-cache     # Attempts to pull a newer version of the upstream base image
 ```
 > **NOTE:** Please be aware that these containers depend on a running ``proxy`` container from [docker-common](https://github.com/MaastrichtUniversity/docker-common) in order to be accessible on their ``VIRTUAL_HOST`` address.
-
-
-## Usage of the i command
-First build the icommands image:
-```
-./i build
-```
-To execute a command:
-```
-./i [user] ils
-```
-Where `[user]` is a valid iRODS user as defined in `irods/bootstrap_irods.sh` or `keycloak/users.json`. 
-
-You can also execute commands from the irods-ruleset repository like this:
-```
-./i [user] irule -F rules/projects/detailsProject.r "*project='P000000001'" "*inherited='false'"
-./i [user] imeta add -C /nlmumc/ingest/zones/[collectionName] [attribute] [value] [unit]
-etc..
-```
 
 
 ## Advanced usage

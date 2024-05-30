@@ -19,8 +19,6 @@ epicpid
 help-center
 help-center-backend
 icat
-ires-ceph-ac
-ires-ceph-gl
 ires-hnas-azm
 ires-hnas-um
 irods-db
@@ -43,7 +41,7 @@ sram-sync"
       case ${level1} in
         make)
           # 'make' subcommand completion
-          COMPREPLY=($(compgen -W "rules microservices" -- ${cur}))
+          COMPREPLY=($(compgen -W "rules" -- ${cur}))
           ;;
         test)
           # 'test' subcommand completion

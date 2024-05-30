@@ -25,18 +25,26 @@ source /opt/irods/lib/helpers.sh
 
 create_mock_projects_azm() {
     for i in {01..2}; do
-        project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"${HOSTNAME%%.dh.local}Resource,${ENV_IRODS_COOR_RESC_NAME},(azM) Test project #${i},mcoonen,opalmen,AZM-123456,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
+        project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"${HOSTNAME%%.dh.local}Resource,${ENV_IRODS_COOR_RESC_NAME},(azM) Test project #${i},psuppers,opalmen,AZM-123456,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
 
         imeta set -C ${project} authorizationPeriodEndDate '1-1-2018'
         imeta set -C ${project} dataRetentionPeriodEndDate '1-1-2018'
         imeta set -C ${project} storageQuotaGb '10'
-        imeta set -C ${project} enableOpenAccessExport 'false'
         imeta set -C ${project} enableArchive 'true'
         imeta set -C ${project} enableUnarchive 'true'
-        imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema'
+        # We make sure that the first project created has both metadata schemas, that is what Selenium expects in its tests
+        if [ ${i} -eq 1 ]
+        then
+            imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema,DataHub_extended_schema'
+        else
+            imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema'
+        fi
 
         # Manage access
-        ichmod -r own "mcoonen" ${project}
+        ichmod -r own "dlinssen" ${project}
+
+        # Manage access
+        ichmod -r own "psuppers" ${project}
 
         # Data Steward gets manager rights
         ichmod -r own "opalmen" ${project}
@@ -55,11 +63,16 @@ create_mock_projects_um() {
         imeta set -C ${project} authorizationPeriodEndDate '1-1-2018'
         imeta set -C ${project} dataRetentionPeriodEndDate '1-1-2018'
         imeta set -C ${project} storageQuotaGb '10'
-        imeta set -C ${project} enableOpenAccessExport 'false'
         imeta set -C ${project} enableArchive 'true'
         imeta set -C ${project} enableUnarchive 'true'
         imeta set -C ${project} enableDropzoneSharing 'true'
-        imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema,DataHub_extended_schema'
+        # We make sure that the first project created has both metadata schemas, that is what Selenium expects in its tests
+        if [ ${i} -eq 1 ]
+        then
+            imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema,DataHub_extended_schema'
+        else
+            imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema'
+        fi
 
         # Manage access
         ichmod -r own "psuppers" ${project}
@@ -72,8 +85,6 @@ create_mock_projects_um() {
 
         # Enable archiving for this project
         imeta set -C ${project} enableArchive true
-        # Enable export to Open Access for this project
-        imeta set -C ${project} enableOpenAccessExport true
         # Set the destination archive resource
         imeta set -C ${project} archiveDestinationResource arcRescSURF01
 
@@ -86,11 +97,16 @@ create_mock_projects_um() {
         imeta set -C ${project} authorizationPeriodEndDate '1-1-2018'
         imeta set -C ${project} dataRetentionPeriodEndDate '1-1-2018'
         imeta set -C ${project} storageQuotaGb '10'
-        imeta set -C ${project} enableOpenAccessExport 'false'
         imeta set -C ${project} enableArchive 'true'
         imeta set -C ${project} enableUnarchive 'true'
         imeta set -C ${project} enableDropzoneSharing 'true'
-        imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema,DataHub_extended_schema'
+        # We make sure that the first project created has both metadata schemas, that is what Selenium expects in its tests
+        if [ ${i} -eq 1 ]
+        then
+            imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema,DataHub_extended_schema'
+        else
+            imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema'
+        fi
 
         # Manage access
         ichmod -r own "pvanschay2" ${project}
@@ -105,18 +121,17 @@ create_mock_projects_um() {
     done
 
     for i in {01..1}; do
-        project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"${HOSTNAME%%.dh.local}Resource,${ENV_IRODS_COOR_RESC_NAME},(ScanNexus) Test project #${i},mcoonen,opalmen,UM-01234567890X,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
+        project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"${HOSTNAME%%.dh.local}Resource,${ENV_IRODS_COOR_RESC_NAME},(ScanNexus) Test project #${i},dlinssen,opalmen,UM-01234567890X,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
 
         imeta set -C ${project} authorizationPeriodEndDate '1-1-2018'
         imeta set -C ${project} dataRetentionPeriodEndDate '1-1-2018'
         imeta set -C ${project} storageQuotaGb '10'
-        imeta set -C ${project} enableOpenAccessExport 'false'
         imeta set -C ${project} enableArchive 'true'
         imeta set -C ${project} enableUnarchive 'true'
         imeta set -C ${project} collectionMetadataSchemas 'DataHub_general_schema'
 
         # Manage access
-        ichmod -r own "mcoonen" ${project}
+        ichmod -r own "dlinssen" ${project}
 
         # Data Steward gets manager rights
         ichmod -r own "opalmen" ${project}

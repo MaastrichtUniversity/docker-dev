@@ -1,4 +1,4 @@
-FROM jboss/keycloak:15.0.2
+FROM quay.io/keycloak/keycloak:15.0.2
 
 USER root
 RUN microdnf update -y && microdnf install -y jq
