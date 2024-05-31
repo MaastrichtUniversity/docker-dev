@@ -1,29 +1,18 @@
---- /var/lib/irods/scripts/setup_irods.py	2022-06-10 03:27:19.000000000 +0200
-+++ newSetup	2023-08-10 11:15:42.943078959 +0200
-@@ -140,13 +140,19 @@
-
-     # create local storage resource for consumer (provider was configured directly in database_interface.setup_catalog above)
-     if irods_config.is_consumer:
--        irods.lib.execute_command(['iadmin', 'mkresc', irods_config.server_config['default_resource_name'], 'unixfilesystem', ':'.join([irods.lib.get_hostname(), default_resource_directory]), ''])
-+        # irods.lib.execute_command(['iadmin', 'mkresc', irods_config.server_config['default_resource_name'], 'unixfilesystem', ':'.join([irods.lib.get_hostname(), default_resource_directory]), ''])
+--- /var/lib/irods/scripts/setup_irods.py	2024-05-31 10:22:27.120880851 +0200
++++ setup_modified.py	2024-05-31 10:21:52.080199164 +0200
+@@ -141,7 +141,14 @@
+     # prompt, the local storage resource should not be created. This is indicated by default_resource_directory being
+     # None, as returned by setup_storage().
+     if irods_config.is_consumer and default_resource_directory is not None:
+-        irods.lib.execute_command(['iadmin', 'mkresc', default_resource_name, 'unixfilesystem', ':'.join([irods.lib.get_hostname(), default_resource_directory]), ''])
++        #irods.lib.execute_command(['iadmin', 'mkresc', default_resource_name, 'unixfilesystem', ':'.join([irods.lib.get_hostname(), default_resource_directory]), ''])
 +        lr_out = irods.lib.execute_command(['iadmin', 'lr', irods_config.server_config['default_resource_name']])[0]
 +        if not (lr_out.find("No rows found") == 0):
 +            l.info(irods.lib.get_header('PATCHED setup_irods.py for development. Looks like resource was already registered. Skipping mkresc.'))
 +        else:
 +            l.info(irods.lib.get_header('PATCHED setup_irods.py for development. Does not look like resource was already registered! Will mkresc'))
 +            # Original line from setup_irods.py:
-+            irods.lib.execute_command(['iadmin', 'mkresc', irods_config.server_config['default_resource_name'], 'unixfilesystem', ':'.join([irods.lib.get_hostname(), default_resource_directory]), ''])
-
++            irods.lib.execute_command(['iadmin', 'mkresc', default_resource_name, 'unixfilesystem', ':'.join([irods.lib.get_hostname(), default_resource_directory]), ''])
+ 
      # update core.re with default resource
      core_re_path = os.path.join(irods_config.core_re_directory, 'core.re')
-     replace_in_file(core_re_path, 'demoResc', irods_config.server_config['default_resource_name'])
-
--    # test put
-     test_put(irods_config)
-
-     l.info(irods.lib.get_header('Log Configuration Notes'))
-@@ -527,3 +533,4 @@
-
- if __name__ == '__main__':
-     sys.exit(main())
-+
