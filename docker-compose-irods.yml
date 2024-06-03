@@ -107,8 +107,6 @@ services:
       - ./keycloak/users.json:/opt/irods/users.json
       # repos
       - ./externals/irods-ruleset:/rules
-      # This is persistent because the delay queue depends on files in this directory
-      - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
     networks:
       default:
@@ -202,8 +200,6 @@ services:
       - ./staging-data/direct-ingest:/mnt/stagingResc01
       #- direct-dropzones:/mnt/stagingResc01
       #- mounted-dropzones:/mnt/ingest/zones
-      # This is persistent because the delay queue depends on files in this directory
-      - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
     networks:
       default:
@@ -285,8 +281,6 @@ services:
       # If you want to make use of the samba mounts, comment the line below and uncomment the mounted-dropzones line
       - ./staging-data/zones:/mnt/ingest/zones
       #- mounted-dropzones:/mnt/ingest/zones
-      # This is persistent because the delay queue depends on files in this directory
-      - delay-queue:/var/lib/irods/config/packedRei
       - /etc/localtime:/etc/localtime:ro
     networks:
       azm_network:
