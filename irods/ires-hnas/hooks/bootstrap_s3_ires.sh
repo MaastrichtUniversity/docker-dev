@@ -78,8 +78,8 @@ fi
 ############
 ## Resources
 echo "INFO: Create child resources S3"
-iadmin mkresc ${ENV_S3_AC_RESC_NAME} s3 ${HOSTNAME}:/dh-irods-bucket-dev "S3_DEFAULT_HOSTNAME=${ENV_S3_AC_HOST};S3_AUTH_FILE=${ENV_S3_AUTH_AC_FILE};S3_REGIONNAME=irods-dev;S3_RETRY_COUNT=1;S3_WAIT_TIME_SEC=3;S3_PROTO=HTTPS;ARCHIVE_NAMING_POLICY=consistent;HOST_MODE=cacheless_detached;S3_CACHE_DIR=/cache"
-iadmin mkresc ${ENV_S3_GL_RESC_NAME} s3 ${HOSTNAME}:/dh-irods-bucket-dev "S3_DEFAULT_HOSTNAME=${ENV_S3_GL_HOST};S3_AUTH_FILE=${ENV_S3_AUTH_GL_FILE};S3_REGIONNAME=irods-dev;S3_RETRY_COUNT=1;S3_WAIT_TIME_SEC=3;S3_PROTO=HTTPS;ARCHIVE_NAMING_POLICY=consistent;HOST_MODE=cacheless_detached;S3_CACHE_DIR=/cache"
+iadmin mkresc ${ENV_S3_AC_RESC_NAME} s3 ${HOSTNAME}:/dh-irods-bucket-dev "S3_DEFAULT_HOSTNAME=${ENV_S3_AC_HOST};S3_AUTH_FILE=${ENV_S3_AUTH_AC_FILE};S3_REGIONNAME=irods-dev;S3_RETRY_COUNT=1;S3_WAIT_TIME_SECONDS=3;S3_PROTO=HTTPS;ARCHIVE_NAMING_POLICY=consistent;HOST_MODE=cacheless_detached;S3_CACHE_DIR=/cache"
+iadmin mkresc ${ENV_S3_GL_RESC_NAME} s3 ${HOSTNAME}:/dh-irods-bucket-dev "S3_DEFAULT_HOSTNAME=${ENV_S3_GL_HOST};S3_AUTH_FILE=${ENV_S3_AUTH_GL_FILE};S3_REGIONNAME=irods-dev;S3_RETRY_COUNT=1;S3_WAIT_TIME_SECONDS=3;S3_PROTO=HTTPS;ARCHIVE_NAMING_POLICY=consistent;HOST_MODE=cacheless_detached;S3_CACHE_DIR=/cache"
 
 # We use this AVU to tell if this isn't the first time we ran this script against iCAT.
 imeta add -R ${ENV_S3_AC_RESC_NAME} bootstrap_irods_dev_mockup "creating"

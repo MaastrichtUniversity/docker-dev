@@ -243,6 +243,8 @@ if [[ $1 == "stack" ]]; then
      if [[ $3 == "down" ]]; then
         docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal --profile minimal-after-icat stop
         docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal --profile minimal-after-icat rm -f
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml stop sram-sync
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml rm -f sram-sync
      fi
      if [[ $3 == "build" ]]; then
         docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal --profile minimal-after-icat build
@@ -258,6 +260,8 @@ if [[ $1 == "stack" ]]; then
      if [[ $3 == "down" ]]; then
         docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend --profile backend-after-icat stop
         docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend --profile backend-after-icat rm -f
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml stop sram-sync
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml rm -f sram-sync
      fi
      if [[ $3 == "build" ]]; then
         docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend --profile backend-after-icat build
