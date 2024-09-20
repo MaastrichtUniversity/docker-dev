@@ -135,9 +135,11 @@ services:
   davrods:
     build:
       context: externals/rit-davrods/
+      dockerfile: Dockerfile_ubuntu.dockerfile
       args:
         - ENV_DAVRODS_IRODS_VERSION
         - ENV_DAVRODS_VERSION
+        - ENV_IRODS_VERSION
         - ENV_FILEBEAT_VERSION
         - SSL_ENV=${RIT_ENV} # Whether to add our own CA-certificate to the CA-rootstore
         - VHOST_FILE=davrods-vhost.conf
@@ -147,6 +149,7 @@ services:
       - icat
     environment:
       VIRTUAL_HOST: download.${RIT_ENV}.dh.unimaas.nl
+      IRODS_SERVER: ${ENV_IRODS_ICAT_HOST}
       LOGSPOUT: ignore
     profiles: ["full"]
     networks:
@@ -162,9 +165,11 @@ services:
   davrods-upload:
     build:
       context: externals/rit-davrods/
+      dockerfile: Dockerfile_ubuntu.dockerfile
       args:
         - ENV_DAVRODS_IRODS_VERSION
         - ENV_DAVRODS_VERSION
+        - ENV_IRODS_VERSION
         - ENV_FILEBEAT_VERSION
         - SSL_ENV=${RIT_ENV} # Whether to add our own CA-certificate to the CA-rootstore
         - VHOST_FILE=upload-davrods-vhost.conf
@@ -175,6 +180,7 @@ services:
     environment:
       VIRTUAL_HOST: upload.${RIT_ENV}.dh.unimaas.nl
       LOGSPOUT: ignore
+      IRODS_SERVER: ${ENV_IRODS_ICAT_HOST}
     profiles: ["full"]
     networks:
       default:
