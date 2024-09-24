@@ -135,7 +135,6 @@ services:
   davrods:
     build:
       context: externals/rit-davrods/
-      dockerfile: Dockerfile_ubuntu.dockerfile
       args:
         - ENV_DAVRODS_IRODS_VERSION
         - ENV_DAVRODS_VERSION
@@ -165,7 +164,6 @@ services:
   davrods-upload:
     build:
       context: externals/rit-davrods/
-      dockerfile: Dockerfile_ubuntu.dockerfile
       args:
         - ENV_DAVRODS_IRODS_VERSION
         - ENV_DAVRODS_VERSION
