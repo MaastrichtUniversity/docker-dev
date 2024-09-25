@@ -64,6 +64,8 @@ iadmin mkresc arcRescSURF01 unixfilesystem ${HOSTNAME}:/mnt/SURF-Archive
 imeta add -R arcRescSURF01 service-account service-surfarchive
 # Set arcRescSURF01 as the archive destination resource, this AVU is required the createProject.r workflow
 imeta add -R arcRescSURF01 archiveDestResc true
+# Set arcRescSURF01's minimum file size to be able to move files to this resource
+imeta add -R arcRescSURF01 minimumFileSize 262144000
 
 # Add storage pricing to resources
 imeta add -R rootResc NCIT:C88193 999
