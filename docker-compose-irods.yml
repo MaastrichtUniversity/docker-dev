@@ -1,4 +1,3 @@
-version: '3.4'
 services:
   irods-db:
     image: postgres:${ENV_POSTGRES_VERSION}
