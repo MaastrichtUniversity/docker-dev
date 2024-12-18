@@ -142,6 +142,7 @@ services:
         - SSL_ENV=${RIT_ENV} # Whether to add our own CA-certificate to the CA-rootstore
         - VHOST_FILE=davrods-vhost.conf
         - FILEBEAT_CONFIG_FILE=filebeat.yml
+        - ALLOWED_METHODS_FILE=allowed_methods_download.conf
     image: ${ENV_REGISTRY_HOST}/docker-dev/davrods:${ENV_TAG}
     depends_on:
       - icat
@@ -171,6 +172,7 @@ services:
         - SSL_ENV=${RIT_ENV} # Whether to add our own CA-certificate to the CA-rootstore
         - VHOST_FILE=upload-davrods-vhost.conf
         - FILEBEAT_CONFIG_FILE=filebeat-upload.yml
+        - ALLOWED_METHODS_FILE=allowed_methods_upload.conf
     image: ${ENV_REGISTRY_HOST}/docker-dev/davrods-upload:${ENV_TAG}
     depends_on:
       - icat
