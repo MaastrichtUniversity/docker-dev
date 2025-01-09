@@ -228,11 +228,11 @@ if [[ $1 == "faker" ]]; then
     exit 0
 fi
 
-# Create docker network common_default if it does not exists
-if [ ! $(docker network ls --filter name=common_default --format="true") ] ;
+# Create docker network if it does not exists
+if [ ! $(docker network ls --filter name=dh_default --format="true") ] ;
       then
-       echo "Creating network common_default"
-       docker network create common_default --subnet "172.20.1.0/24" --label "com.docker.compose.project"="common" --label "com.docker.compose.network"="default"
+       echo "Creating network dh_default"
+       docker network create dh_default --subnet "172.21.1.0/24" --label "com.docker.compose.project"="common" --label "com.docker.compose.network"="default"
 fi
 
 if [[ $1 == "stack" ]]; then
