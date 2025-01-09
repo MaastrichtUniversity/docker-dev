@@ -23,10 +23,7 @@ services:
     # See https://docs.irods.org/4.2.11/system_overview/configuration/#special-characters
     command: postgres -c standard_conforming_strings=off
     networks:
-      default:
-        aliases:
-          - irods-db.dh.local
-      common_default:
+      dh_default:
         aliases:
           - irods-db.dh.local
 
@@ -108,10 +105,7 @@ services:
       - ./externals/irods-ruleset:/rules
       - /etc/localtime:/etc/localtime:ro
     networks:
-      default:
-        aliases:
-          - icat.dh.local
-      common_default:
+      dh_default:
         aliases:
           - icat.dh.local
       azm_network:
@@ -201,10 +195,7 @@ services:
       #- mounted-dropzones:/mnt/ingest/zones
       - /etc/localtime:/etc/localtime:ro
     networks:
-      default:
-        aliases:
-          - ires-hnas-um.dh.local
-      common_default:
+      dh_default:
         aliases:
           - ires-hnas-um.dh.local
 
@@ -301,10 +292,7 @@ services:
       - ./irods/minio/test_only_dev_irods_dh_ca_cert.pem:/root/.minio/certs/CAs/test_only_dev_irods_dh_ca_cert.pem
     profiles: ["backend-after-icat","full"]
     networks:
-      default:
-        aliases:
-          - minio1.dh.local
-      common_default:
+      dh_default:
         aliases:
           - minio1.dh.local
 
@@ -323,14 +311,13 @@ services:
       - ./irods/minio/test_only_dev_irods_dh_ca_cert.pem:/root/.minio/certs/CAs/test_only_dev_irods_dh_ca_cert.pem
     profiles: ["backend-after-icat","full"]
     networks:
-      default:
-        aliases:
-          - minio2.dh.local
-      common_default:
+      dh_default:
         aliases:
           - minio2.dh.local
 
 networks:
+  dh_default:
+    external: true
   azm_network:
 
 volumes:
