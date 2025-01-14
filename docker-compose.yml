@@ -24,10 +24,7 @@ services:
       - ./externals/dh-python-irods-utils/dhpythonirodsutils:/usr/local/lib/python3.11/site-packages/dhpythonirodsutils
     profiles: ["frontend", "minimal", "full"]
     networks:
-      common_default:
-        aliases:
-          - app.mdr.dh.local
-      default:
+      dh_default:
         aliases:
           - app.mdr.dh.local
   elastic:
@@ -47,10 +44,7 @@ services:
       - elastic_metadata:/usr/share/elasticsearch/data
     profiles: ["backend", "minimal", "full"]
     networks:
-      default:
-        aliases:
-          - elastic.dh.local
-      common_default:
+      dh_default:
         aliases:
           - elastic.dh.local
   dh-faker:
@@ -72,10 +66,7 @@ services:
       LOG_LEVEL: INFO
     profiles: ["faker"]
     networks:
-      default:
-        aliases:
-          - faker.dh.local
-      common_default:
+      dh_default:
         aliases:
           - faker.dh.local
   keycloak:
@@ -105,10 +96,7 @@ services:
       - ldap
     profiles: ["backend", "minimal", "full"]
     networks:
-      default:
-        aliases:
-          - keycloak.dh.local
-      common_default:
+      dh_default:
         aliases:
           - keycloak.dh.local
   ldap:
@@ -128,7 +116,7 @@ services:
       - ./ldap/ldif_custom:/container/service/slapd/assets/config/bootstrap/ldif/custom/
     profiles: ["backend", "minimal", "full", "backend-after-icat"]
     networks:
-      default:
+      dh_default:
         aliases:
           - ldap.dh.local
   davrods:
@@ -152,10 +140,7 @@ services:
       LOGSPOUT: ignore
     profiles: ["full"]
     networks:
-      default:
-        aliases:
-          - davrods.dh.local
-      common_default:
+      dh_default:
         aliases:
           - davrods.dh.local
     volumes:
@@ -182,10 +167,7 @@ services:
       IRODS_SERVER: ${ENV_IRODS_ICAT_HOST}
     profiles: ["full"]
     networks:
-      default:
-        aliases:
-          - davrods-upload.dh.local
-      common_default:
+      dh_default:
         aliases:
           - davrods-upload.dh.local
     volumes:
@@ -215,10 +197,7 @@ services:
       REQUESTS_CA_BUNDLE: /opt/epic5storagesurfsaranlCHAIN.crt
     profiles: ["backend", "minimal", "full"]
     networks:
-      default:
-        aliases:
-          - epicpid.dh.local
-      common_default:
+      dh_default:
         aliases:
           - epicpid.dh.local
     volumes:
@@ -257,8 +236,7 @@ services:
     command: sram-sync.py --commit --scheduled
     profiles: ["backend-after-icat", "full", "minimal-after-icat"]
     networks:
-      default:
-      common_default:
+      dh_default:
   mdr-db:
     image: postgres:${ENV_MDR_POSTGRES_VERSION}
     hostname: mdr-db
@@ -271,10 +249,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     profiles: ["frontend", "minimal", "full"]
     networks:
-      default:
-        aliases:
-          - mdr-db.dh.local
-      common_default:
+      dh_default:
         aliases:
           - mdr-db.dh.local
   help-center-backend:
@@ -430,12 +405,10 @@ services:
       - ./externals/dh-admin-tools/backend/:/opt/
     profiles: ["full"]
     networks:
-      default:
+      dh_default:
         aliases:
           - admin-tools-backend.dh.local
-      common_default:
-        aliases:
-          - admin-tools-backend.dh.local
+
   admin-tools:
     build:
       context: externals/dh-admin-tools/frontend
@@ -452,25 +425,22 @@ services:
       - "./externals/dh-admin-tools/frontend/public:/app/public"
     profiles: ["full"]
     networks:
-      default:
-        aliases:
-          - admin-tools.dh.local
-      common_default:
+      dh_default:
         aliases:
           - admin-tools.dh.local
 
 networks:
-  default:
+  dh_default:
     ipam:
       driver: default
       config:
         - subnet: "172.21.1.0/24"
+    external: true
   dh_public:
     ipam:
       driver: default
       config:
         - subnet: "172.22.1.0/24"
-  common_default:
     external: true
 
 volumes:
