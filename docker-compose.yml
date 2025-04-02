@@ -368,7 +368,23 @@ services:
         ipv4_address: 172.22.1.12
         aliases:
           - mdrhomepage.dh.local
-
+  admin-tools-db:
+    build:
+      context: externals/dh-admin-tools/db
+      dockerfile: Dockerfile
+    image: ${ENV_REGISTRY_HOST}/docker-dev/admin-tools-db:${ENV_TAG}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres      # These will override the defaults in the Dockerfile
+      - POSTGRES_PASSWORD=postgres  # Use more secure credentials in production
+      - POSTGRES_DB=dhadmin
+    networks:
+      dh_default:
+        aliases:
+          - admin-tools-db.dh.local
   admin-tools-backend:
     build:
       context: externals/dh-admin-tools/backend
@@ -382,6 +398,11 @@ services:
       # ATLASSIAN_API_KEY
       - irods.secrets.cfg
     environment:
+      DB_USER: your_username
+      DB_PASSWORD: your_password
+      DB_NAME: dhadmin
+      DB_HOST: localhost
+      DB_PORT: 5432
       IRODS_HOST: ${ENV_IRODS_ICAT_HOST}
       IRODS_USER: rods
       IRODS_PASS: ${ENV_IRODS_PASSWORD_ADMIN}
