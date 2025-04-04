@@ -374,13 +374,16 @@ services:
       dockerfile: Dockerfile
     image: ${ENV_REGISTRY_HOST}/docker-dev/admin-tools-db:${ENV_TAG}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - admin_db_data:/var/lib/postgresql/data
+      - /etc/localtime:/etc/localtime:ro
     ports:
       - "5432:5432"
     environment:
       - POSTGRES_USER=postgres      # These will override the defaults in the Dockerfile
       - POSTGRES_PASSWORD=postgres  # Use more secure credentials in production
       - POSTGRES_DB=dhadmin
+      - LOGSPOUT=ignore
+    profiles: ["full", "admin"]
     networks:
       dh_default:
         aliases:
@@ -398,8 +401,8 @@ services:
       # ATLASSIAN_API_KEY
       - irods.secrets.cfg
     environment:
-      DB_USER: your_username
-      DB_PASSWORD: your_password
+      DB_USER: postgres
+      DB_PASSWORD: postgres
       DB_NAME: dhadmin
       DB_HOST: localhost
       DB_PORT: 5432
@@ -424,7 +427,7 @@ services:
       LINK_EMAIL: tim.lustberg@maastrichtuniversity.nl;d.linssen@maastrichtuniversity.nl #luc.voncken@maastrichtuniversity.nl;sef.janssen@maastrichtuniversity.nl
     volumes:
       - ./externals/dh-admin-tools/backend/:/opt/
-    profiles: ["full"]
+    profiles: ["full", "admin"]
     networks:
       dh_default:
         aliases:
@@ -444,7 +447,7 @@ services:
     volumes:
       - "./externals/dh-admin-tools/frontend/src:/app/src"
       - "./externals/dh-admin-tools/frontend/public:/app/public"
-    profiles: ["full"]
+    profiles: ["full", "admin"]
     networks:
       dh_default:
         aliases:
@@ -469,3 +472,4 @@ volumes:
   webdav_logs:
   upload_logs:
   elastic_metadata:
+  admin_db_data:
