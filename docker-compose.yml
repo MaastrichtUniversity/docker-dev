@@ -373,6 +373,7 @@ services:
       context: externals/dh-admin-tools/db
       dockerfile: Dockerfile
     image: ${ENV_REGISTRY_HOST}/docker-dev/admin-tools-db:${ENV_TAG}
+    hostname: admin-tools-db
     volumes:
       - admin_db_data:/var/lib/postgresql/data
       - /etc/localtime:/etc/localtime:ro
