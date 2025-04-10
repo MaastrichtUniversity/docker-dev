@@ -404,7 +404,7 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_NAME: dhadmin
-      DB_HOST: localhost
+      DB_HOST: admin-tools-db.dh.local
       DB_PORT: 5432
       IRODS_HOST: ${ENV_IRODS_ICAT_HOST}
       IRODS_USER: rods
