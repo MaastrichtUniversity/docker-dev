@@ -369,10 +369,7 @@ services:
         aliases:
           - mdrhomepage.dh.local
   admin-tools-db:
-    build:
-      context: externals/dh-admin-tools/db
-      dockerfile: Dockerfile
-    image: ${ENV_REGISTRY_HOST}/docker-dev/admin-tools-db:${ENV_TAG}
+    image: postgres:${ENV_POSTGRES_VERSION}
     hostname: admin-tools-db
     volumes:
       - admin_db_data:/var/lib/postgresql/data
@@ -380,8 +377,8 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=postgres      # These will override the defaults in the Dockerfile
-      - POSTGRES_PASSWORD=postgres  # Use more secure credentials in production
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=dhadmin
       - LOGSPOUT=ignore
     profiles: ["full", "admin"]
