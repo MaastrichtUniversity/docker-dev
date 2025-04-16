@@ -289,6 +289,25 @@ if [[ $1 == "stack" ]]; then
         exit 0
       fi
    fi
+   if [[ $2 == "admin" ]]; then
+      if [[ $3 == "up" ]]; then
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile admin up -d
+        exit 0
+      fi
+      if [[ $3 == "down" ]]; then
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile admin stop
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile admin rm -f
+        exit 0
+      fi
+      if [[ $3 == "build" ]]; then
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile admin build
+        exit 0
+      fi
+      if [[ $3 == "logs" ]]; then
+        docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile admin logs -f
+        exit 0
+      fi
+   fi
    exit 0
 fi
 
@@ -322,4 +341,3 @@ cat irods.secrets.cfg >> .env_with_secrets
 log $DBG "$0 [docker compose \"$ARGS\"]"
 
 docker compose --env-file .env_with_secrets -f docker-compose.yml -f docker-compose-irods.yml --profile full $ARGS
-

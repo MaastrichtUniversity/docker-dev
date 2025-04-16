@@ -368,7 +368,24 @@ services:
         ipv4_address: 172.22.1.12
         aliases:
           - mdrhomepage.dh.local
-
+  admin-tools-db:
+    image: postgres:${ENV_POSTGRES_VERSION}
+    hostname: admin-tools-db
+    volumes:
+      - admin_db_data:/var/lib/postgresql/data
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=dhadmin
+      - LOGSPOUT=ignore
+    profiles: ["full", "admin"]
+    networks:
+      dh_default:
+        aliases:
+          - admin-tools-db.dh.local
   admin-tools-backend:
     build:
       context: externals/dh-admin-tools/backend
@@ -382,6 +399,11 @@ services:
       # ATLASSIAN_API_KEY
       - irods.secrets.cfg
     environment:
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: dhadmin
+      DB_HOST: admin-tools-db.dh.local
+      DB_PORT: 5432
       IRODS_HOST: ${ENV_IRODS_ICAT_HOST}
       IRODS_USER: rods
       IRODS_PASS: ${ENV_IRODS_PASSWORD_ADMIN}
@@ -403,7 +425,7 @@ services:
       LINK_EMAIL: tim.lustberg@maastrichtuniversity.nl;d.linssen@maastrichtuniversity.nl #luc.voncken@maastrichtuniversity.nl;sef.janssen@maastrichtuniversity.nl
     volumes:
       - ./externals/dh-admin-tools/backend/:/opt/
-    profiles: ["full"]
+    profiles: ["full", "admin"]
     networks:
       dh_default:
         aliases:
@@ -423,7 +445,7 @@ services:
     volumes:
       - "./externals/dh-admin-tools/frontend/src:/app/src"
       - "./externals/dh-admin-tools/frontend/public:/app/public"
-    profiles: ["full"]
+    profiles: ["full", "admin"]
     networks:
       dh_default:
         aliases:
@@ -448,3 +470,4 @@ volumes:
   webdav_logs:
   upload_logs:
   elastic_metadata:
+  admin_db_data:
