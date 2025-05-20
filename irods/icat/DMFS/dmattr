@@ -3,7 +3,8 @@
 
 # This is arbitrary, but does conform to a "format".
 # See: https://github.com/MaastrichtUniversity/irods-ruleset/blob/86e922a2339c151a4b019549bf31f536a6289bcf/tapeArchive/dmattr.r#L6
-echo "109834fjksjv09sdrf+DUL+0+2014"
+# DL: Changed this to match new output provided by SURF! (DHDO-1752) https://servicedesk.surf.nl/wiki/spaces/WIKI/pages/166920959/Migration+Guide+DMF+to+DA+commands
+echo "DUL+2147483648"
 
 
 exit 0
