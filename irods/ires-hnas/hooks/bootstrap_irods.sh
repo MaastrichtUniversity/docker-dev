@@ -194,10 +194,16 @@ fi
 
 # Create coordination- and child-resources for project data
 iadmin mkresc "${ENV_IRODS_STOR_RESC_NAME}" unixfilesystem "${HOSTNAME}:/mnt/${ENV_IRODS_STOR_RESC_NAME}"
-iadmin mkresc "${ENV_IRODS_STOR_RESC_NAME}-repl" unixfilesystem "${HOSTNAME}:/mnt/${ENV_IRODS_STOR_RESC_NAME}-repl"
-iadmin mkresc "${ENV_IRODS_COOR_RESC_NAME}" replication
+if [[ "$ENV_IRODS_COOR_RESC_NAME" =~ "pass" ]]; then
+    echo "INFO: Creating passhtru resource because coordinating resource contains word \"pass\""
+    iadmin mkresc "${ENV_IRODS_COOR_RESC_NAME}" passthru
+elif [[ "$ENV_IRODS_COOR_RESC_NAME" =~ "repl" ]]; then
+    echo "INFO: Creating replicated resource and 2nd child because coordinating resource contains word \"repl\""
+    iadmin mkresc "${ENV_IRODS_COOR_RESC_NAME}" replication
+    iadmin mkresc "${ENV_IRODS_STOR_RESC_NAME}-repl" unixfilesystem "${HOSTNAME}:/mnt/${ENV_IRODS_STOR_RESC_NAME}-repl"
+    iadmin addchildtoresc "${ENV_IRODS_COOR_RESC_NAME}" "${ENV_IRODS_STOR_RESC_NAME}-repl"
+fi
 iadmin addchildtoresc "${ENV_IRODS_COOR_RESC_NAME}" "${ENV_IRODS_STOR_RESC_NAME}"
-iadmin addchildtoresc "${ENV_IRODS_COOR_RESC_NAME}" "${ENV_IRODS_STOR_RESC_NAME}-repl"
 
 # We use this AVU to tell if this isn't the first time we ran this script against iCAT.
 imeta add -R "${ENV_IRODS_COOR_RESC_NAME}" bootstrap_irods_dev_mockup "creating"
