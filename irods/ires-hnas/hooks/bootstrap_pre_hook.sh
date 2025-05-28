@@ -12,9 +12,12 @@ if [[ ! -d "/mnt/${ENV_IRODS_STOR_RESC_NAME}" ]]; then
     # Create fake HNAS (nothing real is volume mapped in development)
     mkdir -p "/mnt/${ENV_IRODS_STOR_RESC_NAME}"
     chown irods:irods "/mnt/${ENV_IRODS_STOR_RESC_NAME}"
-    mkdir -p "/mnt/${ENV_IRODS_STOR_RESC_NAME}-repl"
-    chown irods:irods "/mnt/${ENV_IRODS_STOR_RESC_NAME}-repl"
-    echo "INFO: Creating fake physical resource for HNAS at /mnt/${ENV_IRODS_STOR_RESC_NAME} and /mnt/${ENV_IRODS_STOR_RESC_NAME}-repl"
+    if [[ "$ENV_IRODS_COOR_RESC_NAME" =~ "repl" ]]; then
+        echo "INFO: Creating fake physical resource for HNAS-repl at /mnt/${ENV_IRODS_STOR_RESC_NAME}-repl"
+        mkdir -p "/mnt/${ENV_IRODS_STOR_RESC_NAME}-repl"
+        chown irods:irods "/mnt/${ENV_IRODS_STOR_RESC_NAME}-repl"
+    fi
+    echo "INFO: Creating fake physical resource for HNAS at /mnt/${ENV_IRODS_STOR_RESC_NAME}"
 else
     echo "INFO: HNAS physical resource at /mnt/${ENV_IRODS_STOR_RESC_NAME} already exists."
 fi
