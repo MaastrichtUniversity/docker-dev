@@ -158,13 +158,13 @@ services:
       ENV_DIRECT_INGEST_RESOURCE: "true"
       # Name for 'coordinating' resource of type replication.
       # In bootstrap_irods.sh we expect find substring 'UM' or 'AZM'
-      ENV_IRODS_COOR_RESC_NAME: "replRescUM01"
+      ENV_IRODS_COOR_RESC_NAME: "passRescUM01"
       # Base name for 'storage' resources
       ENV_IRODS_STOR_RESC_NAME: "UM-hnas-4k"
       # Comment for ${HOSTNAME}Resource
       ENV_IRODS_HOST_RESC_COMMENT: "UM-UBUNTU-INGEST-RESOURCE"
       # Comment for 'coordinating' resource
-      ENV_IRODS_COOR_RESC_COMMENT: "Replicated-resource-for-UM"
+      ENV_IRODS_COOR_RESC_COMMENT: "Passthru-resource-for-UM"
       # Pricing AVU for 'coordinating' resource
       ENV_IRODS_COOR_RESC_PRICING: "0.130"
       # S3 project creation
