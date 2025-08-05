@@ -242,9 +242,9 @@ services:
       ENV_DIRECT_INGEST_RESOURCE: "false"
       # Name for 'coordinating' resource of type replication
       # In bootstrap_irods.sh we expect find substring 'UM' or 'AZM'
-      ENV_IRODS_COOR_RESC_NAME: "replRescAZM01"
+      ENV_IRODS_COOR_RESC_NAME: "replRescAZM02"
       # Base name for 'storage' resources
-      ENV_IRODS_STOR_RESC_NAME: "AZM-storage"
+      ENV_IRODS_STOR_RESC_NAME: "AZM-storage2"
       # Comment for ${HOSTNAME}Resource
       ENV_IRODS_HOST_RESC_COMMENT: "AZM-UBUNTU-INGEST-RESOURCE"
       # Comment for 'coordinating' resource
