@@ -276,7 +276,7 @@ services:
       MDR_HOME_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl
       DH_HOME_URL: http://${RIT_ENV}.dh.unimaas.nl
       JIRA_URL: https://mumc-sandbox.atlassian.net
-      JIRA_SERVICE_DESK_PROJECT_NAME: "Maastricht Data Repository Support"
+      JIRA_SERVICE_DESK_PROJECT_NAME: "DataHub Service Desk"
       JIRA_SERVICE_DESK_QUESTION_REQUEST_NAME: "Ask a question"
       JIRA_SERVICE_DESK_BUG_REQUEST_NAME: "Bug report"
       JIRA_SERVICE_DESK_FEATURE_REQUEST_NAME: "Feature request"
