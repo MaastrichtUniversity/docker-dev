@@ -417,7 +417,7 @@ services:
       AUTO_RELOAD: true
       CACHE_TTL_VALUE: 86400 # in seconds => 24 hours
       JIRA_URL: https://mumc-sandbox.atlassian.net
-      PROJECT_KEY: MDRS
+      PROJECT_KEY: DHS
       ADMINISTRATION_EPIC_KEY: DH-181 # DHDO-1336 PROD!
       TRANSITION_ID_REVIEW: 11
       TRANSITION_ID_DONE: 61
