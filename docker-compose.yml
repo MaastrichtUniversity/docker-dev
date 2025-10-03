@@ -397,7 +397,6 @@ services:
     env_file:
       # ATLASSIAN_API_USERNAME
       # ATLASSIAN_API_KEY
-      - .env
       - irods.secrets.cfg
     environment:
       DB_USER: postgres
