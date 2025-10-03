@@ -397,6 +397,7 @@ services:
     env_file:
       # ATLASSIAN_API_USERNAME
       # ATLASSIAN_API_KEY
+      - .env
       - irods.secrets.cfg
     environment:
       DB_USER: postgres
@@ -423,6 +424,12 @@ services:
       TRANSITION_ID_DONE: 61
       CONTROLLER_EMAIL: tim.lustberg@maastrichtuniversity.nl #d.bakker@maastrichtuniversity.nl
       LINK_EMAIL: tim.lustberg@maastrichtuniversity.nl;d.linssen@maastrichtuniversity.nl #luc.voncken@maastrichtuniversity.nl;sef.janssen@maastrichtuniversity.nl
+      OIDC_DOMAIN: auth.${RIT_ENV}.dh.unimaas.nl
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
+      SECRET_KEY: ${SECRET_KEY}
+      FRONTEND_URL: admin.${RIT_ENV}.dh.unimaas.nl
+      SECURE_COOKIES: true
     volumes:
       - ./externals/dh-admin-tools/backend/:/opt/
     profiles: ["full", "admin"]
