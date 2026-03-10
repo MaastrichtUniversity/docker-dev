@@ -426,7 +426,7 @@ services:
       OIDC_DOMAIN: auth.${RIT_ENV}.dh.unimaas.nl
       OIDC_CLIENT_ID: foo
       OIDC_CLIENT_SECRET: bar
-      SECRET_KEY=randomly_generated_secret_key
+      SECRET_KEY: randomly_generated_secret_key
       FRONTEND_URL: admin.${RIT_ENV}.dh.unimaas.nl
       SECURE_COOKIES: true
       AIRFLOW_API_KEY: foobar
