@@ -423,9 +423,11 @@ services:
       TRANSITION_ID_DONE: 61
       CONTROLLER_EMAIL: tim.lustberg@maastrichtuniversity.nl #d.bakker@maastrichtuniversity.nl
       LINK_EMAIL: tim.lustberg@maastrichtuniversity.nl;d.linssen@maastrichtuniversity.nl #luc.voncken@maastrichtuniversity.nl;sef.janssen@maastrichtuniversity.nl
+      # OIDC is disabled on dev and tst, to enable it, set AUTH_DISABLED to false
       OIDC_DOMAIN: auth.${RIT_ENV}.dh.unimaas.nl
       OIDC_CLIENT_ID: foo
       OIDC_CLIENT_SECRET: bar
+      AUTH_DISABLED: true
       SECRET_KEY: randomly_generated_secret_key
       FRONTEND_URL: admin.${RIT_ENV}.dh.unimaas.nl
       SECURE_COOKIES: true
