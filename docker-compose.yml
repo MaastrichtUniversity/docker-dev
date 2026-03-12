@@ -394,6 +394,9 @@ services:
         - SSL_ENV=${RIT_ENV} # Whether to add our own CA-certificate to the CA-rootstore
         - ENV_FILEBEAT_VERSION
     image: ${ENV_REGISTRY_HOST}/docker-dev/admin-tools-backend:${ENV_TAG}
+    depends_on:
+      admin-tools-db:
+        condition: service_started
     env_file:
       # ATLASSIAN_API_USERNAME
       # ATLASSIAN_API_KEY
@@ -447,6 +450,9 @@ services:
       args:
         - ENV_FILEBEAT_VERSION
     image: ${ENV_REGISTRY_HOST}/docker-dev/admin-tools:${ENV_TAG}
+    depends_on:
+      admin-tools-backend:
+        condition: service_started
     environment:
       VIRTUAL_HOST: admin.${RIT_ENV}.dh.unimaas.nl
       VIRTUAL_PORT: 3000
