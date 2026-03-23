@@ -268,6 +268,7 @@ services:
       FORWARDED_ALLOW_IPS: "*" # Allow header from proxy for real ip
       VIRTUAL_HOST: helpbackend.${RIT_ENV}.dh.unimaas.nl
       CONFLUENCE_CLOUD_URL: https://mumc.atlassian.net
+      CONFLUENCE_API_URL: https://api.atlassian.com/ex/confluence/01677488-5820-413a-a14a-c273420a3100
       CONFLUENCE_CLOUD_SPACE_KEY: MDRDT
       LOGSPOUT: ignore
       WATCHFILES_FORCE_POLLING: true #DEV
@@ -275,7 +276,7 @@ services:
       MDR_URL: http://app.mdr.${RIT_ENV}.dh.unimaas.nl
       MDR_HOME_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl
       DH_HOME_URL: http://${RIT_ENV}.dh.unimaas.nl
-      JIRA_URL: https://mumc-sandbox.atlassian.net
+      JIRA_URL: https://api.atlassian.com/ex/jira/94a49020-0347-4aeb-833b-5f2834909d4b
       JIRA_SERVICE_DESK_PROJECT_NAME: "DataHub Service Desk"
       JIRA_SERVICE_DESK_QUESTION_REQUEST_NAME: "Ask a question"
       JIRA_SERVICE_DESK_BUG_REQUEST_NAME: "Bug report"
