@@ -55,6 +55,8 @@ services:
       - net.ipv4.tcp_keepalive_intvl=75
       - net.ipv4.tcp_keepalive_probes=9
       - net.ipv4.tcp_keepalive_time=600
+    ulimits:
+      nofile: 65536
     depends_on:
        - irods-db
     hostname: icat.dh.local
@@ -142,6 +144,8 @@ services:
       - net.ipv4.tcp_keepalive_intvl=75
       - net.ipv4.tcp_keepalive_probes=9
       - net.ipv4.tcp_keepalive_time=600
+    ulimits:
+      nofile: 65536
     hostname: ires-hnas-um.dh.local
     env_file:
       - .env
@@ -226,6 +230,8 @@ services:
       - net.ipv4.tcp_keepalive_intvl=75
       - net.ipv4.tcp_keepalive_probes=9
       - net.ipv4.tcp_keepalive_time=600
+    ulimits:
+      nofile: 65536
     hostname: ires-hnas-azm.dh.local
     env_file:
       - .env
