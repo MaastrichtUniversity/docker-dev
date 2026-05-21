@@ -284,7 +284,7 @@ services:
           - ires-hnas-azm.dh.local
 
   minio1:
-    image: minio/minio:RELEASE.2023-05-27T05-56-19Z
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
     environment:
       VIRTUAL_HOST: minio1.${RIT_ENV}.rit.unimaas.nl
       MINIO_ACCESS_KEY: ${ENV_S3_ACCESS_KEY_AC}
@@ -303,7 +303,7 @@ services:
           - minio1.dh.local
 
   minio2:
-    image: minio/minio:RELEASE.2023-05-27T05-56-19Z
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
     environment:
       VIRTUAL_HOST: minio2.${RIT_ENV}.rit.unimaas.nl
       MINIO_ACCESS_KEY: ${ENV_S3_ACCESS_KEY_GL}
