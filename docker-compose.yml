@@ -420,7 +420,7 @@ services:
       WATCHFILES_FORCE_POLLING: true
       AUTO_RELOAD: true
       CACHE_TTL_VALUE: 86400 # in seconds => 24 hours
-      JIRA_URL: https://mumc-sandbox.atlassian.net
+      JIRA_URL: https://api.atlassian.com/ex/jira/94a49020-0347-4aeb-833b-5f2834909d4b
       PROJECT_KEY: DHS
       ADMINISTRATION_EPIC_KEY: DH-181 # DHDO-1336 PROD!
       TRANSITION_ID_REVIEW: 11
