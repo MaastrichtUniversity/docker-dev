@@ -432,6 +432,7 @@ services:
       OIDC_CLIENT_ID: foo
       OIDC_CLIENT_SECRET: bar
       AUTH_DISABLED: true
+      AUTO_INGEST_TEST_MINUTES: "1"
       SECRET_KEY: randomly_generated_secret_key
       FRONTEND_URL: admin.${RIT_ENV}.dh.unimaas.nl
       SECURE_COOKIES: true
