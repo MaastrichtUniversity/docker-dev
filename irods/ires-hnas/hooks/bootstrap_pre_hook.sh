@@ -11,11 +11,11 @@ mkdir -p /cache && chown irods /cache
 if [[ ! -d "/mnt/${ENV_IRODS_STOR_RESC_NAME}" ]]; then
     # Create fake HNAS (nothing real is volume mapped in development)
     mkdir -p "/mnt/${ENV_IRODS_STOR_RESC_NAME}"
-    chown irods:irods "/mnt/${ENV_IRODS_STOR_RESC_NAME}"
+    chown ${ENV_IRODS_UID}:${ENV_IRODS_GID} "/mnt/${ENV_IRODS_STOR_RESC_NAME}"
     if [[ "$ENV_IRODS_COOR_RESC_NAME" =~ "repl" ]]; then
         echo "INFO: Creating fake physical resource for HNAS-repl at /mnt/${ENV_IRODS_STOR_RESC_NAME}-repl"
         mkdir -p "/mnt/${ENV_IRODS_STOR_RESC_NAME}-repl"
-        chown irods:irods "/mnt/${ENV_IRODS_STOR_RESC_NAME}-repl"
+        chown ${ENV_IRODS_UID}:${ENV_IRODS_GID} "/mnt/${ENV_IRODS_STOR_RESC_NAME}-repl"
     fi
     echo "INFO: Creating fake physical resource for HNAS at /mnt/${ENV_IRODS_STOR_RESC_NAME}"
 else
@@ -25,12 +25,12 @@ fi
 echo "INFO: mocking irods-pre-ingest mount"
 # Create the pre-ingest directory
 mkdir -p /var/log/irods-pre-ingest
-chown irods:irods /var/log/irods-pre-ingest
+chown ${ENV_IRODS_UID}:${ENV_IRODS_GID} /var/log/irods-pre-ingest
 
 if [[ ! -d "/mnt/ingest/zones" ]]; then
     echo "INFO: mocking ingest zone: /mnt/ingest/zones (mounted)"
     mkdir -p /mnt/ingest/zones
-    chown irods:irods /mnt/ingest/zones
+    chown ${ENV_IRODS_UID}:${ENV_IRODS_GID} /mnt/ingest/zones
 else
     echo "INFO: Found /mnt/ingest/zones, will not mock by creating now."
 fi
@@ -40,7 +40,7 @@ if [[ ! -d "/mnt/stagingResc01" ]]; then
     if [[ "${ENV_IRODS_STOR_RESC_NAME}" =~ "UM" ]]; then
         echo "INFO: ires-hnas contains \"UM\" in resource name. Assuming we want to mock direct ingest mount at /mnt/stagingResc01"
         mkdir -p /mnt/stagingResc01
-        chown irods:irods /mnt/stagingResc01
+        chown ${ENV_IRODS_UID}:${ENV_IRODS_GID} /mnt/stagingResc01
     else
         echo "INFO: ires-hnas does not contain \"UM\" in resource name. Assuming we _don't_ want to mock direct ingest mount."
     fi
