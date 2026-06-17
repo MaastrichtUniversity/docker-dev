@@ -91,8 +91,6 @@ services:
       # TODO: maybe make some of these :ro? More strict, we catch errors earlier?
       # SSL files
       - ./irods/icat/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
-      # patch so setup_irods.py doesn't re-create tables
-      - ./irods/patch/setup_irods_already_installed_dev.patch:/opt/irods/patch/setup_irods_already_installed_dev.patch
       # icat's bootstrap.sh (to be called by init.sh)
       - ./externals/dh-irods/icat/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
       # icat's hooks for development
@@ -136,8 +134,12 @@ services:
         - ENV_S3_AUTH_FILE_GL
     image: ${ENV_REGISTRY_HOST}/docker-dev/ires-hnas:${ENV_TAG}
     depends_on:
-      - minio1
-      - minio2
+      garage-init:
+        condition: service_completed_successfully
+      garage1-s3-tls:
+        condition: service_started
+      garage2-s3-tls:
+        condition: service_started
     # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
     # https://github.com/irods/irods/issues/5218
     sysctls:
@@ -173,15 +175,13 @@ services:
       ENV_IRODS_COOR_RESC_PRICING: "0.130"
       # S3 project creation
       ENV_S3_RESC_NAME_AC: "UM-Ceph-S3-AC"
-      ENV_S3_HOST_AC: "minio1.dh.local:9000"
+      ENV_S3_HOST_AC: "garage1.dh.local:9000"
       ENV_S3_RESC_NAME_GL: "UM-Ceph-S3-GL"
-      ENV_S3_HOST_GL: "minio2.dh.local:9000"
+      ENV_S3_HOST_GL: "garage2.dh.local:9000"
     profiles: ["backend-after-icat","full","minimal-after-icat"]
     volumes:
       # SSL files
       - ./irods/ires-hnas/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
-      # patch so setup_irods.py in development doesn't re-create a resource if already exists
-      - ./irods/patch/setup_irods_already_installed_dev.patch:/opt/irods/patch/setup_irods_already_installed_dev.patch
       # hnas's bootstrap.sh (to be called by init.sh)
       - ./externals/dh-irods/ires-hnas/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
       # hnas's hooks for development
@@ -262,8 +262,6 @@ services:
     volumes:
       # SSL files
       - ./irods/ires-hnas/test-dev-ssl-certs/:/opt/irods_ssl_staging:ro
-      # patch so setup_irods.py in development doesn't re-create a resource if already exists
-      - ./irods/patch/setup_irods_already_installed_dev.patch:/opt/irods/patch/setup_irods_already_installed_dev.patch
       # hnas's bootstrap.sh (to be called by init.sh)
       - ./externals/dh-irods/ires-hnas/scripts/bootstrap.sh:/opt/irods/bootstrap.sh
       # hnas's hooks for development
@@ -283,43 +281,98 @@ services:
         aliases:
           - ires-hnas-azm.dh.local
 
-  minio1:
-    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+  garage1:
+    image: dxflrs/garage:${ENV_GARAGE_VERSION}
+    entrypoint: ["/garage"]
+    command: ["server"]
     environment:
-      VIRTUAL_HOST: minio1.${RIT_ENV}.rit.unimaas.nl
-      MINIO_ACCESS_KEY: ${ENV_S3_ACCESS_KEY_AC}
-      MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY_AC}
-    entrypoint: sh
-    command: -c 'mkdir -p /data/dh-irods-bucket-dev && minio server /data'
+      GARAGE_RPC_SECRET: ${ENV_GARAGE_RPC_SECRET}
+      GARAGE_ADMIN_TOKEN: ${ENV_GARAGE_ADMIN_TOKEN}
     volumes:
-      # SSL files
-      - ./irods/minio/minio1.dh.local.crt:/root/.minio/certs/public.crt
-      - ./irods/minio/minio1.dh.local.key:/root/.minio/certs/private.key
-      - ./irods/minio/test_only_dev_irods_dh_ca_cert.pem:/root/.minio/certs/CAs/test_only_dev_irods_dh_ca_cert.pem
-    profiles: ["backend-after-icat","full"]
+      - ./irods/garage/garage1.toml:/etc/garage.toml:ro
+      - /var/lib/garage1/meta
+      - /var/lib/garage1/data
+    profiles: ["backend-after-icat","full","minimal-after-icat"]
     networks:
-      dh_default:
-        aliases:
-          - minio1.dh.local
+      - dh_default
 
-  minio2:
-    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+  garage2:
+    image: dxflrs/garage:${ENV_GARAGE_VERSION}
+    entrypoint: ["/garage"]
+    command: ["server"]
     environment:
-      VIRTUAL_HOST: minio2.${RIT_ENV}.rit.unimaas.nl
-      MINIO_ACCESS_KEY: ${ENV_S3_ACCESS_KEY_GL}
-      MINIO_SECRET_KEY: ${ENV_S3_SECRET_KEY_GL}
-    entrypoint: sh
-    command: -c 'mkdir -p /data/dh-irods-bucket-dev && minio server /data'
+      GARAGE_RPC_SECRET: ${ENV_GARAGE_RPC_SECRET}
+      GARAGE_ADMIN_TOKEN: ${ENV_GARAGE_ADMIN_TOKEN}
     volumes:
-      # SSL files
-      - ./irods/minio/minio2.dh.local.crt:/root/.minio/certs/public.crt
-      - ./irods/minio/minio2.dh.local.key:/root/.minio/certs/private.key
-      - ./irods/minio/test_only_dev_irods_dh_ca_cert.pem:/root/.minio/certs/CAs/test_only_dev_irods_dh_ca_cert.pem
-    profiles: ["backend-after-icat","full"]
+      - ./irods/garage/garage2.toml:/etc/garage.toml:ro
+      - /var/lib/garage2/meta
+      - /var/lib/garage2/data
+    profiles: ["backend-after-icat","full","minimal-after-icat"]
+    networks:
+      - dh_default
+
+  garage-init:
+    build:
+      context: irods/garage
+      dockerfile: Dockerfile
+      args:
+        - ENV_GARAGE_VERSION
+    image: ${ENV_REGISTRY_HOST}/docker-dev/garage-init:${ENV_TAG}
+    entrypoint: ["/bin/sh"]
+    command: ["/opt/garage/bootstrap.sh"]
+    depends_on:
+      garage1:
+        condition: service_started
+      garage2:
+        condition: service_started
+    environment:
+      GARAGE_RPC_SECRET: ${ENV_GARAGE_RPC_SECRET}
+      GARAGE_BUCKET: dh-irods-bucket-dev
+      ENV_S3_ACCESS_KEY_AC: ${ENV_S3_ACCESS_KEY_AC}
+      ENV_S3_SECRET_KEY_AC: ${ENV_S3_SECRET_KEY_AC}
+      ENV_S3_ACCESS_KEY_GL: ${ENV_S3_ACCESS_KEY_GL}
+      ENV_S3_SECRET_KEY_GL: ${ENV_S3_SECRET_KEY_GL}
+    volumes:
+      - ./irods/garage/bootstrap.sh:/opt/garage/bootstrap.sh:ro
+      - ./irods/garage/garage1.toml:/etc/garage/garage1.toml:ro
+      - ./irods/garage/garage2.toml:/etc/garage/garage2.toml:ro
+      - /var/lib/garage-bootstrap
+    volumes_from:
+      - garage1:rw
+      - garage2:rw
+    profiles: ["backend-after-icat","full","minimal-after-icat"]
+    networks:
+      - dh_default
+
+  garage1-s3-tls:
+    image: nginx:alpine
+    depends_on:
+      garage-init:
+        condition: service_completed_successfully
+    volumes:
+      - ./irods/garage/nginx-garage1.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./irods/garage/test-dev-ssl-certs/garage1.dh.local.crt:/etc/nginx/certs/garage1.dh.local.crt:ro
+      - ./irods/garage/test-dev-ssl-certs/garage1.dh.local.key:/etc/nginx/certs/garage1.dh.local.key:ro
+    profiles: ["backend-after-icat","full","minimal-after-icat"]
     networks:
       dh_default:
         aliases:
-          - minio2.dh.local
+          - garage1.dh.local
+
+  garage2-s3-tls:
+    image: nginx:alpine
+    depends_on:
+      garage-init:
+        condition: service_completed_successfully
+    volumes:
+      - ./irods/garage/nginx-garage2.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./irods/garage/test-dev-ssl-certs/garage2.dh.local.crt:/etc/nginx/certs/garage2.dh.local.crt:ro
+      - ./irods/garage/test-dev-ssl-certs/garage2.dh.local.key:/etc/nginx/certs/garage2.dh.local.key:ro
+    profiles: ["backend-after-icat","full","minimal-after-icat"]
+    networks:
+      dh_default:
+        aliases:
+          - garage2.dh.local
 
 networks:
   dh_default:
