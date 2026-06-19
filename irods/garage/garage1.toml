@@ -1,0 +1,12 @@
+metadata_dir = "/var/lib/garage1/meta"
+data_dir = "/var/lib/garage1/data"
+replication_factor = 2
+rpc_bind_addr = "[::]:3901"
+rpc_public_addr = "garage1:3901"
+
+[s3_api]
+api_bind_addr = "[::]:3900"
+s3_region = "irods-dev"
+
+[admin]
+api_bind_addr = "[::]:3903"
