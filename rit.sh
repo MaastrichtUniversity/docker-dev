@@ -95,7 +95,7 @@ run_backend(){
 
     # We also could do something like:
     # all_backend_services=$(docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend --profile backend-after-icat config --services)
-    # But this doesn't work nicely & we don't have dh_is_ready.sh for minio for example
+    # But this doesn't work nicely & we don't have dh_is_ready.sh for garage for example
     until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-hnas-um /dh_is_ready.sh;
     do
       echo "Waiting for ires-hnas-um, sleeping 10"
