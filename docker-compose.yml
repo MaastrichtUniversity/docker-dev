@@ -448,6 +448,7 @@ services:
     build:
       context: externals/dh-admin-tools/frontend
       dockerfile: Dockerfile
+      target: dev # For production use "prd"
       args:
         - ENV_FILEBEAT_VERSION
     image: ${ENV_REGISTRY_HOST}/docker-dev/admin-tools:${ENV_TAG}
