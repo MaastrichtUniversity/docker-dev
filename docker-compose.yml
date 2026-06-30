@@ -285,6 +285,8 @@ services:
       JIRA_SERVICE_DESK_EXTERNAL_ACCESS_REQUEST_NAME: "External Access Request"
       JIRA_SERVICE_DESK_AUTOMATED_PROCESS_SUPPORT_REQUEST_NAME: "Automated process support request"
       JIRA_SERVICE_DESK_DATA_DELETION_REQUEST_NAME: "Data deletion request"
+      JIRA_SERVICE_DESK_DELETION_NOTICE_REQUEST_NAME: "Dropzone deletion notice"
+      JIRA_SERVICE_DESK_AUTO_INGEST_NOTICE_REQUEST_NAME: "Dropzone auto ingest notice"
     volumes:
       - ./externals/dh-help-center/backend/:/opt/ #DEV
     #      - ../docker-common/public-logs/dh-help-center/backend/:/var/log/gunicorn/ #acc/prd
@@ -432,10 +434,12 @@ services:
       OIDC_CLIENT_ID: foo
       OIDC_CLIENT_SECRET: bar
       AUTH_DISABLED: true
+      AUTO_INGEST_TEST_MINUTES: "1"
       SECRET_KEY: randomly_generated_secret_key
       FRONTEND_URL: admin.${RIT_ENV}.dh.unimaas.nl
       SECURE_COOKIES: true
       AIRFLOW_API_KEY: foobar
+      HELP_CENTER_HOST: http://help.mdr.${RIT_ENV}.dh.unimaas.nl
     volumes:
       - ./externals/dh-admin-tools/backend/:/opt/
     profiles: ["full", "admin"]
