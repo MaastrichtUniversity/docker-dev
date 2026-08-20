@@ -276,7 +276,7 @@ services:
       MDR_URL: http://app.mdr.${RIT_ENV}.dh.unimaas.nl
       MDR_HOME_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl
       DH_HOME_URL: http://${RIT_ENV}.dh.unimaas.nl
-      JIRA_URL: https://api.atlassian.com/ex/jira/94a49020-0347-4aeb-833b-5f2834909d4b
+      JIRA_URL: https://api.atlassian.com/ex/jira/842be66c-b848-4ca8-97a2-19e210371deb
       JIRA_SERVICE_DESK_PROJECT_NAME: "DataHub Service Desk"
       JIRA_SERVICE_DESK_QUESTION_REQUEST_NAME: "Ask a question"
       JIRA_SERVICE_DESK_BUG_REQUEST_NAME: "Bug report"
@@ -312,7 +312,7 @@ services:
       HOST: 0.0.0.0
       REACT_APP_MDR_URL: http://app.mdr.${RIT_ENV}.dh.unimaas.nl
       REACT_APP_MDR_HOME_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl
-      REACT_APP_SERVICE_DESK_URL: https://mumc-sandbox.atlassian.net/
+      REACT_APP_SERVICE_DESK_URL: https://mumc-acceptance.atlassian.net/
       REACT_APP_DATAHUB_HOME_URL: http://${RIT_ENV}.dh.unimaas.nl
     volumes:
       #      - ../docker-common/public-logs/dh-help-center/frontend/:/var/log/nginx/ #acc/prd
@@ -422,7 +422,7 @@ services:
       WATCHFILES_FORCE_POLLING: true
       AUTO_RELOAD: true
       CACHE_TTL_VALUE: 86400 # in seconds => 24 hours
-      JIRA_URL: https://api.atlassian.com/ex/jira/94a49020-0347-4aeb-833b-5f2834909d4b
+      JIRA_URL: https://api.atlassian.com/ex/jira/842be66c-b848-4ca8-97a2-19e210371deb
       PROJECT_KEY: DHS
       ADMINISTRATION_EPIC_KEY: DH-181 # DHDO-1336 PROD!
       TRANSITION_ID_REVIEW: 11
