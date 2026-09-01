@@ -55,6 +55,8 @@ services:
       - net.ipv4.tcp_keepalive_intvl=75
       - net.ipv4.tcp_keepalive_probes=9
       - net.ipv4.tcp_keepalive_time=600
+    # The shared memory in production / acceptance is larger because of actual usage
+    shm_size: 500mb
     ulimits:
       nofile: 65536
     depends_on:
@@ -146,6 +148,8 @@ services:
       - net.ipv4.tcp_keepalive_intvl=75
       - net.ipv4.tcp_keepalive_probes=9
       - net.ipv4.tcp_keepalive_time=600
+    # The shared memory in production / acceptance is larger because of actual usage
+    shm_size: 500mb
     ulimits:
       nofile: 65536
     hostname: ires-hnas-um.dh.local
@@ -230,6 +234,8 @@ services:
       - net.ipv4.tcp_keepalive_intvl=75
       - net.ipv4.tcp_keepalive_probes=9
       - net.ipv4.tcp_keepalive_time=600
+    # The shared memory in production / acceptance is larger because of actual usage
+    shm_size: 500mb
     ulimits:
       nofile: 65536
     hostname: ires-hnas-azm.dh.local
