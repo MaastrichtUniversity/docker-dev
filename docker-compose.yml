@@ -238,7 +238,7 @@ services:
     networks:
       dh_default:
   mdr-db:
-    image: postgres:${ENV_MDR_POSTGRES_VERSION}
+    image: postgres:${ENV_POSTGRES_VERSION}
     hostname: mdr-db
     environment:
       POSTGRES_DB: mdr
@@ -365,7 +365,7 @@ services:
       #      - ../docker-common/public-logs/dh-mdr-home/:/var/log/nginx/ #acc/prd
       - "./externals/dh-mdr-home/src:/app/src" #DEV
       - "./externals/dh-mdr-home/public:/app/public" #DEV
-    profiles: [ "full", "public" ]
+    profiles: ["full", "public"]
     networks:
       dh_public:
         ipv4_address: 172.22.1.12
@@ -452,6 +452,7 @@ services:
     build:
       context: externals/dh-admin-tools/frontend
       dockerfile: Dockerfile
+      target: dev # For production use "prd"
       args:
         - ENV_FILEBEAT_VERSION
     image: ${ENV_REGISTRY_HOST}/docker-dev/admin-tools:${ENV_TAG}
