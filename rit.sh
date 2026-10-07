@@ -193,13 +193,21 @@ fi
 # ./rit.sh test help-center-backend # to execute all tests
 if [[ $1 == "test" ]]; then
    if [[ $2 == "irods" ]]; then
-      docker exec -t -u irods ${COMPOSE_PROJECT_NAME}-icat-1 /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider /rules/test_cases/${3}
-      if [ $? -eq 0 ]
-      then
-        exit 0
-      else
-        exit 1
+      docker exec -t -u irods \
+        -e STOP_INGEST_TEST_TYPE=direct \
+        ${COMPOSE_PROJECT_NAME}-icat-1 \
+        /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider \
+        "/rules/test_cases/${3}" || exit $?
+
+      # Run mounted stop-ingest tests for the full suite or an explicit selection.
+      if [[ -z ${3} || ${3} == test_stop_ingest.py* ]]; then
+         docker exec -t -u irods \
+           -e STOP_INGEST_TEST_TYPE=mounted \
+           ${COMPOSE_PROJECT_NAME}-ires-hnas-um-1 \
+           /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider \
+           "/rules/test_cases/${3:-test_stop_ingest.py}" || exit $?
       fi
+      exit 0
    fi
    if [[ $2 == "mdr" ]]; then
       set +e

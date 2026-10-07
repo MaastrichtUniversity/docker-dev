@@ -41,13 +41,6 @@ services:
         - ENV_IRODS_GID
         - ENV_IRODS_UID
         - ENV_POSTGRES_CLIENT_VERSION
-        # S3 variables to create secret files
-        - ENV_S3_ACCESS_KEY_AC
-        - ENV_S3_SECRET_KEY_AC
-        - ENV_S3_AUTH_FILE_AC
-        - ENV_S3_ACCESS_KEY_GL
-        - ENV_S3_SECRET_KEY_GL
-        - ENV_S3_AUTH_FILE_GL
     image: ${ENV_REGISTRY_HOST}/docker-dev/icat:${ENV_TAG}
     # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
     # https://github.com/irods/irods/issues/5218
@@ -127,13 +120,6 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
-        # S3 variables to create secret files
-        - ENV_S3_ACCESS_KEY_AC
-        - ENV_S3_SECRET_KEY_AC
-        - ENV_S3_AUTH_FILE_AC
-        - ENV_S3_ACCESS_KEY_GL
-        - ENV_S3_SECRET_KEY_GL
-        - ENV_S3_AUTH_FILE_GL
     image: ${ENV_REGISTRY_HOST}/docker-dev/ires-hnas:${ENV_TAG}
     depends_on:
       garage-init:
@@ -155,6 +141,7 @@ services:
     hostname: ires-hnas-um.dh.local
     env_file:
       - .env
+      - irods/s3.env
       - irods.secrets.cfg
     environment:
       # Name of SSL-related files expected in /opt/irods_ssl_staging/ (volume mapped)
@@ -220,13 +207,6 @@ services:
         - ENV_DOCKERIZE_VERSION
         - ENV_IRODS_GID
         - ENV_IRODS_UID
-        # S3 variables to create secret files
-        - ENV_S3_ACCESS_KEY_AC
-        - ENV_S3_SECRET_KEY_AC
-        - ENV_S3_AUTH_FILE_AC
-        - ENV_S3_ACCESS_KEY_GL
-        - ENV_S3_SECRET_KEY_GL
-        - ENV_S3_AUTH_FILE_GL
     image: ${ENV_REGISTRY_HOST}/docker-dev/ires-hnas:${ENV_TAG}
     # Add TCP KEEPALIVE settings to keep long-lived idle iRODS connection alive across firewalls
     # https://github.com/irods/irods/issues/5218
@@ -331,13 +311,10 @@ services:
         condition: service_started
       garage2:
         condition: service_started
+    env_file: irods/s3.env
     environment:
       GARAGE_RPC_SECRET: ${ENV_GARAGE_RPC_SECRET}
       GARAGE_BUCKET: dh-irods-bucket-dev
-      ENV_S3_ACCESS_KEY_AC: ${ENV_S3_ACCESS_KEY_AC}
-      ENV_S3_SECRET_KEY_AC: ${ENV_S3_SECRET_KEY_AC}
-      ENV_S3_ACCESS_KEY_GL: ${ENV_S3_ACCESS_KEY_GL}
-      ENV_S3_SECRET_KEY_GL: ${ENV_S3_SECRET_KEY_GL}
     volumes:
       - ./irods/garage/bootstrap.sh:/opt/garage/bootstrap.sh:ro
       - ./irods/garage/garage1.toml:/etc/garage/garage1.toml:ro
