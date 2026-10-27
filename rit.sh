@@ -95,7 +95,7 @@ run_backend(){
 
     # We also could do something like:
     # all_backend_services=$(docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend --profile backend-after-icat config --services)
-    # But this doesn't work nicely & we don't have dh_is_ready.sh for minio for example
+    # But this doesn't work nicely & we don't have dh_is_ready.sh for garage for example
     until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec ires-hnas-um /dh_is_ready.sh;
     do
       echo "Waiting for ires-hnas-um, sleeping 10"
@@ -193,13 +193,21 @@ fi
 # ./rit.sh test help-center-backend # to execute all tests
 if [[ $1 == "test" ]]; then
    if [[ $2 == "irods" ]]; then
-      docker exec -t -u irods ${COMPOSE_PROJECT_NAME}-icat-1 /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider /rules/test_cases/${3}
-      if [ $? -eq 0 ]
-      then
-        exit 0
-      else
-        exit 1
+      docker exec -t -u irods \
+        -e STOP_INGEST_TEST_TYPE=direct \
+        ${COMPOSE_PROJECT_NAME}-icat-1 \
+        /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider \
+        "/rules/test_cases/${3}" || exit $?
+
+      # Run mounted stop-ingest tests for the full suite or an explicit selection.
+      if [[ -z ${3} || ${3} == test_stop_ingest.py* ]]; then
+         docker exec -t -u irods \
+           -e STOP_INGEST_TEST_TYPE=mounted \
+           ${COMPOSE_PROJECT_NAME}-ires-hnas-um-1 \
+           /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider \
+           "/rules/test_cases/${3:-test_stop_ingest.py}" || exit $?
       fi
+      exit 0
    fi
    if [[ $2 == "mdr" ]]; then
       set +e

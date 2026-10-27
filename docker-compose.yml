@@ -238,7 +238,7 @@ services:
     networks:
       dh_default:
   mdr-db:
-    image: postgres:${ENV_MDR_POSTGRES_VERSION}
+    image: postgres:${ENV_POSTGRES_VERSION}
     hostname: mdr-db
     environment:
       POSTGRES_DB: mdr
@@ -276,7 +276,7 @@ services:
       MDR_URL: http://app.mdr.${RIT_ENV}.dh.unimaas.nl
       MDR_HOME_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl
       DH_HOME_URL: http://${RIT_ENV}.dh.unimaas.nl
-      JIRA_URL: https://api.atlassian.com/ex/jira/94a49020-0347-4aeb-833b-5f2834909d4b
+      JIRA_URL: https://api.atlassian.com/ex/jira/842be66c-b848-4ca8-97a2-19e210371deb
       JIRA_SERVICE_DESK_PROJECT_NAME: "DataHub Service Desk"
       JIRA_SERVICE_DESK_QUESTION_REQUEST_NAME: "Ask a question"
       JIRA_SERVICE_DESK_BUG_REQUEST_NAME: "Bug report"
@@ -285,6 +285,8 @@ services:
       JIRA_SERVICE_DESK_EXTERNAL_ACCESS_REQUEST_NAME: "External Access Request"
       JIRA_SERVICE_DESK_AUTOMATED_PROCESS_SUPPORT_REQUEST_NAME: "Automated process support request"
       JIRA_SERVICE_DESK_DATA_DELETION_REQUEST_NAME: "Data deletion request"
+      JIRA_SERVICE_DESK_DELETION_NOTICE_REQUEST_NAME: "Dropzone deletion notice"
+      JIRA_SERVICE_DESK_AUTO_INGEST_NOTICE_REQUEST_NAME: "Dropzone auto ingest notice"
     volumes:
       - ./externals/dh-help-center/backend/:/opt/ #DEV
     #      - ../docker-common/public-logs/dh-help-center/backend/:/var/log/gunicorn/ #acc/prd
@@ -310,7 +312,7 @@ services:
       HOST: 0.0.0.0
       REACT_APP_MDR_URL: http://app.mdr.${RIT_ENV}.dh.unimaas.nl
       REACT_APP_MDR_HOME_URL: http://mdr.${RIT_ENV}.dh.unimaas.nl
-      REACT_APP_SERVICE_DESK_URL: https://mumc-sandbox.atlassian.net/
+      REACT_APP_SERVICE_DESK_URL: https://mumc-acceptance.atlassian.net/
       REACT_APP_DATAHUB_HOME_URL: http://${RIT_ENV}.dh.unimaas.nl
     volumes:
       #      - ../docker-common/public-logs/dh-help-center/frontend/:/var/log/nginx/ #acc/prd
@@ -363,7 +365,7 @@ services:
       #      - ../docker-common/public-logs/dh-mdr-home/:/var/log/nginx/ #acc/prd
       - "./externals/dh-mdr-home/src:/app/src" #DEV
       - "./externals/dh-mdr-home/public:/app/public" #DEV
-    profiles: [ "full", "public" ]
+    profiles: ["full", "public"]
     networks:
       dh_public:
         ipv4_address: 172.22.1.12
@@ -420,7 +422,7 @@ services:
       WATCHFILES_FORCE_POLLING: true
       AUTO_RELOAD: true
       CACHE_TTL_VALUE: 86400 # in seconds => 24 hours
-      JIRA_URL: https://mumc-sandbox.atlassian.net
+      JIRA_URL: https://api.atlassian.com/ex/jira/842be66c-b848-4ca8-97a2-19e210371deb
       PROJECT_KEY: DHS
       ADMINISTRATION_EPIC_KEY: DH-181 # DHDO-1336 PROD!
       TRANSITION_ID_REVIEW: 11
@@ -432,10 +434,12 @@ services:
       OIDC_CLIENT_ID: foo
       OIDC_CLIENT_SECRET: bar
       AUTH_DISABLED: true
+      AUTO_INGEST_TEST_MINUTES: "1"
       SECRET_KEY: randomly_generated_secret_key
       FRONTEND_URL: admin.${RIT_ENV}.dh.unimaas.nl
       SECURE_COOKIES: true
       AIRFLOW_API_KEY: foobar
+      HELP_CENTER_HOST: http://help.mdr.${RIT_ENV}.dh.unimaas.nl
     volumes:
       - ./externals/dh-admin-tools/backend/:/opt/
     profiles: ["full", "admin"]
@@ -448,6 +452,7 @@ services:
     build:
       context: externals/dh-admin-tools/frontend
       dockerfile: Dockerfile
+      target: dev # For production use "prd"
       args:
         - ENV_FILEBEAT_VERSION
     image: ${ENV_REGISTRY_HOST}/docker-dev/admin-tools:${ENV_TAG}

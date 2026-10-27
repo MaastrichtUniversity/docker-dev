@@ -55,9 +55,9 @@ _main() {
     # patch setup_irods.py so it doesn't break if DB was already populated from previous install
     if [[ "$was_db_setup" == "yes" ]]; then
         # if db seems to be populated/created already
-        echo "INFO: Applying setup_irods_already_installed_dev.patch to setup_irods.py"
-        echo "INFO: This patch will comment out db creation and test_put()"
-        patch_setup_irods /opt/irods/patch/setup_irods_already_installed_dev.patch || { echo "ERROR: Could not patch, exiting.." ; exit 1; }
+        echo "INFO: Applying setup_irods_already_installed.patch to setup_irods.py"
+        echo "INFO: This patch will comment out db creation"
+        patch_setup_irods /opt/irods/patch/setup_irods_already_installed.patch || { echo "ERROR: Could not patch, exiting.." ; exit 1; }
     elif [[ "$was_db_setup" == "no" ]]; then
         echo "INFO: iCAT database (postgres) does not seem to be set up. No patching required"
     else
