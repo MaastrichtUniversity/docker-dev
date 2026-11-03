@@ -193,19 +193,73 @@ fi
 # ./rit.sh test help-center-backend # to execute all tests
 if [[ $1 == "test" ]]; then
    if [[ $2 == "irods" ]]; then
-      docker exec -t -u irods \
-        -e STOP_INGEST_TEST_TYPE=direct \
-        ${COMPOSE_PROJECT_NAME}-icat-1 \
-        /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider \
-        "/rules/test_cases/${3}" || exit $?
+      shift 2
+      workers=3
+      test_selection=""
+      while [[ $# -gt 0 ]]; do
+         case "$1" in
+            --parallel) shift ;; # Accepted for compatibility; parallel is the default.
+            --workers)
+               if [[ $# -lt 2 || ! $2 =~ ^(0|[1-9][0-9]*)$ ]]; then
+                  echo "--workers requires a nonnegative integer" >&2
+                  exit 2
+               fi
+               workers=$2
+               shift 2
+               ;;
+            -*) echo "Unknown irods test option: $1" >&2; exit 2 ;;
+            *)
+               if [[ -n $test_selection ]]; then
+                  echo "Specify one test file or node ID" >&2
+                  exit 2
+               fi
+               test_selection=$1
+               shift
+               ;;
+         esac
+      done
+
+      phases=(sequential)
+      if [[ $workers != 0 ]]; then
+         phases=(parallel sequential)
+      fi
+      tests_found=false
+      for phase in "${phases[@]}"; do
+         pytest_options=()
+         if [[ $phase == parallel ]]; then
+            pytest_options=(-n "$workers" --dist loadgroup -m parallel)
+         elif [[ $workers != 0 ]]; then
+            pytest_options=(-m "not parallel")
+         fi
+         status=0
+         docker exec -t -u irods \
+           -e STOP_INGEST_TEST_TYPE=direct \
+           ${COMPOSE_PROJECT_NAME}-icat-1 \
+           /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider \
+           "${pytest_options[@]}" "/rules/test_cases/${test_selection}" || status=$?
+         case $status in
+            0) tests_found=true ;;
+            5) ;; # A file/node selection may belong entirely to the other phase.
+            *) exit "$status" ;;
+         esac
+      done
 
       # Run mounted stop-ingest tests for the full suite or an explicit selection.
-      if [[ -z ${3} || ${3} == test_stop_ingest.py* ]]; then
+      if [[ -z $test_selection || $test_selection == test_stop_ingest.py* ]]; then
+         status=0
          docker exec -t -u irods \
            -e STOP_INGEST_TEST_TYPE=mounted \
            ${COMPOSE_PROJECT_NAME}-ires-hnas-um-1 \
            /var/lib/irods/.local/bin/pytest -v -p no:cacheprovider \
-           "/rules/test_cases/${3:-test_stop_ingest.py}" || exit $?
+           "/rules/test_cases/${test_selection:-test_stop_ingest.py}" || status=$?
+         case $status in
+            0) tests_found=true ;;
+            5) ;;
+            *) exit "$status" ;;
+         esac
+      fi
+      if [[ $tests_found == false ]]; then
+         exit 5
       fi
       exit 0
    fi
