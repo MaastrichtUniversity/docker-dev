@@ -75,12 +75,12 @@ sram-sync"
 #          ;;
         exec)
           # 'exec' subcommand completion
-          actives_services=$(dhdev ps --services)
+          actives_services=$("${COMP_WORDS[0]}" ps --services)
           COMPREPLY=($(compgen -W "${actives_services}" -- ${cur}))
           ;;
         logs)
           # 'logs' subcommand completion
-          actives_services=$(dhdev ps --services)
+          actives_services=$("${COMP_WORDS[0]}" ps --services)
           COMPREPLY=($(compgen -W "${actives_services}" -- ${cur}))
           ;;
       esac
@@ -99,7 +99,7 @@ sram-sync"
           case ${level1} in
             -f)
               # subcommand completion for: dhdev logs -f
-              actives_services=$(dhdev ps --services)
+              actives_services=$("${COMP_WORDS[0]}" ps --services)
               COMPREPLY=($(compgen -W "${actives_services}" -- ${cur}))
               ;;
           esac
@@ -147,4 +147,4 @@ sram-sync"
       ;;
   esac
 }
-complete -F _dhdev_completions dhdev
+complete -F _dhdev_completions dhdev rit.sh ./rit.sh
