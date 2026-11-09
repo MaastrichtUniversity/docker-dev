@@ -1,0 +1,118 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elastic
+  labels:
+    app.kubernetes.io/name: elastic
+    app.kubernetes.io/part-of: datahub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: elastic
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: elastic
+        app.kubernetes.io/part-of: datahub
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: false
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: chown-data
+          # same image as the main container (kustomize rewrites both)
+          image: docker-dev/elastic:latest
+          command: ["sh", "-c", "chown -R 1000:1000 /usr/share/elasticsearch/data"]
+          securityContext:
+            runAsUser: 0
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: data
+              mountPath: /usr/share/elasticsearch/data
+      containers:
+        - name: elastic
+          # Overlay rewrites this to <registry>/docker-dev/elastic:<tag>
+          image: docker-dev/elastic:latest
+          env:
+            - name: TZ
+              value: Europe/Amsterdam
+          envFrom:
+            - configMapRef:
+                name: elastic-env
+            - secretRef:
+                name: dh-secrets
+          ports:
+            - name: http
+              containerPort: 9200
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: "1"
+              memory: 2Gi
+          # single-node ES 7.17 + bootstrap_elastic_dh.sh (index bootstrap)
+          startupProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            failureThreshold: 30
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 15
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 60
+            failureThreshold: 3
+          volumeMounts:
+            - name: data
+              mountPath: /usr/share/elasticsearch/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: elastic-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: elastic-data
+  labels:
+    app.kubernetes.io/name: elastic
+    app.kubernetes.io/part-of: datahub
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: longhorn-rwo
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elastic
+  labels:
+    app.kubernetes.io/name: elastic
+    app.kubernetes.io/part-of: datahub
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: elastic
+  ports:
+    - name: http
+      port: 9200
+      targetPort: 9200
+      protocol: TCP

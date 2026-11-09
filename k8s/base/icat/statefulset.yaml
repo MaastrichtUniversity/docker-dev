@@ -34,6 +34,8 @@ spec:
     spec:
       automountServiceAccountToken: false
       hostname: icat.dh.local
+      # compose had shm_size: 500mb (Docker default /dev/shm is 64Mi)
+      shmSize: 512Mi
       # net.* sysctls are in the k8s default-allowed sysctl list
       sysctls:
         - name: net.ipv4.tcp_keepalive_intvl

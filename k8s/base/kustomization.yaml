@@ -1,0 +1,96 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# NOTE: no `namespace:` here - each overlay sets it (dh-dev / dh-tst / ...).
+# The Namespace object itself ships in each overlay.
+resources:
+  - longhorn/storageclasses.yaml
+  - irods-db/service.yaml
+  - irods-db/statefulset.yaml
+  - icat/service.yaml
+  - icat/statefulset.yaml
+  - ires-hnas-um/service.yaml
+  - ires-hnas-um/statefulset.yaml
+  - ires-hnas-azm/service.yaml
+  - ires-hnas-azm/statefulset.yaml
+  - garage/pvcs.yaml
+  - garage/deployments.yaml
+  - garage/s3-tls.yaml
+  - garage/services.yaml
+  - ldap/ldap.yaml
+  - keycloak/keycloak.yaml
+  - mdr/mdr.yaml
+  - mdr-db/mdr-db.yaml
+  - admin-tools-db/admin-tools-db.yaml
+  - elastic/elastic.yaml
+  - epicpid/epicpid.yaml
+  - sram-sync/sram-sync.yaml
+  - davrods/davrods.yaml
+  - davrods-upload/davrods-upload.yaml
+  - help-center-backend/help-center-backend.yaml
+  - admin-tools-backend/admin-tools-backend.yaml
+  - frontends/frontends.yaml
+  # Optional segmentation - add to an overlay once k3s runs with --network-policy:
+  # - networkpolicies/deny-and-dns.yaml
+  # - networkpolicies/irods-flows.yaml
+  # - networkpolicies/app-flows.yaml
+
+# Static config (identical across environments) -> ConfigMaps.
+# Per-environment env files + credentials live in the overlays' generators.
+configMapGenerator:
+  - name: irods-db-init
+    files:
+      - ../../irods/irods-db/create_icat_db.sh
+  - name: icat-bootstrap
+    files:
+      - bootstrap.sh=./irods/config/icat-bootstrap.sh
+      - ../../irods/icat/dh_is_ready.sh
+      - ../../keycloak/users.json
+  - name: icat-dmfs
+    files:
+      - ../../irods/icat/DMFS/dmattr
+      - ../../irods/icat/DMFS/dmget
+      - ../../irods/icat/DMFS/dmput
+  - name: icat-hooks
+    files:
+      - ../../irods/icat/hooks/bootstrap_pre_hook.sh
+      - ../../irods/icat/hooks/bootstrap_irods.sh
+      - ../../irods/icat/hooks/bootstrap_post_hook.sh
+  - name: ires-um-bootstrap
+    files:
+      - bootstrap.sh=./irods/config/ires-bootstrap.sh
+  - name: ires-azm-bootstrap
+    files:
+      - bootstrap.sh=./irods/config/ires-bootstrap.sh
+  - name: ires-um-hooks
+    files:
+      - ../../irods/ires-hnas/hooks/bootstrap_pre_hook.sh
+      - ../../irods/ires-hnas/hooks/bootstrap_irods.sh
+      - ../../irods/ires-hnas/hooks/bootstrap_post_hook.sh
+      - ../../irods/ires-hnas/hooks/bootstrap_s3_ires.sh
+  - name: ires-azm-hooks
+    files:
+      - ../../irods/ires-hnas/hooks/bootstrap_pre_hook.sh
+      - ../../irods/ires-hnas/hooks/bootstrap_irods.sh
+      - ../../irods/ires-hnas/hooks/bootstrap_post_hook.sh
+      - ../../irods/ires-hnas/hooks/bootstrap_s3_ires.sh
+  - name: garage-config
+    files:
+      - ../../irods/garage/garage1.toml
+      - ../../irods/garage/garage2.toml
+  - name: garage-bootstrap
+    files:
+      - ../../irods/garage/bootstrap.sh
+  - name: nginx-garage1-conf
+    files:
+      - ../../irods/garage/nginx-garage1.conf
+  - name: nginx-garage2-conf
+    files:
+      - ../../irods/garage/nginx-garage2.conf
+  - name: ldap-ldif
+    files:
+      - ../../ldap/ldif_custom/01_eduMember.ldif
+      - ../../ldap/ldif_custom/02_openLdapEduperson-201602DV.ldif
+      - ../../ldap/ldif_custom/03_voperson.ldif
+      - ../../ldap/ldif_custom/09_groupOfMembers.ldif
+      - ../../ldap/ldif_custom/99_ldap-datahubmaastricht-nl.ldif

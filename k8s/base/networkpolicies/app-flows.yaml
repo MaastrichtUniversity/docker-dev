@@ -1,0 +1,337 @@
+# Application-layer flows (see deny-and-dns.yaml for default-deny).
+# `traefik` is the k3s ingress controller namespace.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mdr-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: mdr
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: traefik
+      ports: [{port: 8000, protocol: TCP}]
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: mdr-db
+      ports: [{port: 5432, protocol: TCP}]
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: elastic
+      ports: [{port: 9200, protocol: TCP}]
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: icat
+      ports:
+        - {port: 1247, protocol: TCP}
+        - {port: 1248, protocol: TCP}
+        - {port: 20000, endPort: 20199, protocol: TCP}
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: keycloak
+      ports: [{port: 8080, protocol: TCP}]
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16]
+      ports:
+        - {port: 80, protocol: TCP}
+        - {port: 443, protocol: TCP}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mdr-db-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: mdr-db
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: mdr
+      ports: [{port: 5432, protocol: TCP}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: elastic-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: elastic
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: mdr
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: traefik
+      ports: [{port: 9200, protocol: TCP}]
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16]
+      ports: [{port: 443, protocol: TCP}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: keycloak-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: keycloak
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: traefik
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: mdr
+      ports: [{port: 8080, protocol: TCP}]
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ldap
+      ports: [{port: 389, protocol: TCP}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ldap-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: ldap
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: keycloak
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: sram-sync
+      ports: [{port: 389, protocol: TCP}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sram-sync-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: sram-sync
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ldap
+      ports: [{port: 389, protocol: TCP}]
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: icat
+      ports:
+        - {port: 1247, protocol: TCP}
+        - {port: 1248, protocol: TCP}
+        - {port: 20000, endPort: 20199, protocol: TCP}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: davrods-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: davrods
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: traefik
+      ports: [{port: 80, protocol: TCP}]
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: icat
+      ports:
+        - {port: 1247, protocol: TCP}
+        - {port: 1248, protocol: TCP}
+        - {port: 20000, endPort: 20199, protocol: TCP}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: davrods-upload-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: davrods-upload
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: traefik
+      ports: [{port: 80, protocol: TCP}]
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: icat
+      ports:
+        - {port: 1247, protocol: TCP}
+        - {port: 1248, protocol: TCP}
+        - {port: 20000, endPort: 20199, protocol: TCP}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: epicpid-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: epicpid
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: traefik
+      ports: [{port: 80, protocol: TCP}]
+  egress:
+    # Surfsara handle server (https) + external deps
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16]
+      ports: [{port: 443, protocol: TCP}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: help-center-backend-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: help-center-backend
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: traefik
+      ports: [{port: 8000, protocol: TCP}]
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: mdr
+      ports: [{port: 8000, protocol: TCP}]
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16]
+      ports:
+        - {port: 80, protocol: TCP}
+        - {port: 443, protocol: TCP}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: admin-tools-backend-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: admin-tools-backend
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: traefik
+      ports: [{port: 8000, protocol: TCP}]
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: admin-tools-db
+      ports: [{port: 5432, protocol: TCP}]
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: icat
+      ports:
+        - {port: 1247, protocol: TCP}
+        - {port: 1248, protocol: TCP}
+        - {port: 20000, endPort: 20199, protocol: TCP}
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: help-center-backend
+      ports: [{port: 8000, protocol: TCP}]
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16]
+      ports:
+        - {port: 80, protocol: TCP}
+        - {port: 25, protocol: TCP}
+        - {port: 443, protocol: TCP}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: admin-tools-db-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: admin-tools-db
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: admin-tools-backend
+      ports: [{port: 5432, protocol: TCP}]
+---
+# All React dev-server frontends: ingress from traefik only
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: frontends-allow
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/name
+        operator: In
+        values: [help-center, dh-home, mdr-home, admin-tools]
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: traefik
+      ports: [{port: 3000, protocol: TCP}]

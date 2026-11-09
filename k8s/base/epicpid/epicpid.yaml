@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: epicpid
+  labels:
+    app.kubernetes.io/name: epicpid
+    app.kubernetes.io/part-of: datahub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: epicpid
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: epicpid
+        app.kubernetes.io/part-of: datahub
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: false
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: epicpid
+          # Overlay rewrites this to <registry>/docker-dev/epicpid:<tag>
+          image: docker-dev/epicpid:latest
+          env:
+            - name: TZ
+              value: Europe/Amsterdam
+          envFrom:
+            - configMapRef:
+                name: epicpid-env
+            - secretRef:
+                name: dh-secrets
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          startupProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 12
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 15
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 60
+            failureThreshold: 3
+          volumeMounts:
+            # Surfsara handle-server client credentials (committed in the
+            # epicpid-microservice repo; overlay turns them into a Secret)
+            - name: credentials
+              mountPath: /opt/app/credentials
+              readOnly: true
+      volumes:
+        - name: credentials
+          secret:
+            secretName: epicpid-credentials
+            defaultMode: 0644
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: epicpid
+  labels:
+    app.kubernetes.io/name: epicpid
+    app.kubernetes.io/part-of: datahub
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: epicpid
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      protocol: TCP

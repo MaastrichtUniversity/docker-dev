@@ -1,0 +1,302 @@
+# iRODS / garage / DB flows (see deny-and-dns.yaml for default-deny).
+# iRODS data transfers use the 20000-20199 range on iCAT AND iRES pods.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: irods-db-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: irods-db
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: icat
+      ports: [{port: 5432, protocol: TCP}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: icat-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: icat
+  policyTypes: [Ingress, Egress]
+  ingress:
+    # iRODS clients (control + data range)
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: mdr
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: sram-sync
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: davrods
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: davrods-upload
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: admin-tools-backend
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: dh-faker
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ires-hnas-um
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ires-hnas-azm
+      ports:
+        - {port: 1247, protocol: TCP}
+        - {port: 1248, protocol: TCP}
+        - {port: 20000, endPort: 20199, protocol: TCP}
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: irods-db
+      ports: [{port: 5432, protocol: TCP}]
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ires-hnas-um
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ires-hnas-azm
+      ports:
+        - {port: 1247, protocol: TCP}
+        - {port: 1248, protocol: TCP}
+        - {port: 20000, endPort: 20199, protocol: TCP}
+    # ingest rules talk to external LDAP/https
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16]
+      ports:
+        - {port: 443, protocol: TCP}
+        - {port: 389, protocol: TCP}
+        - {port: 636, protocol: TCP}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ires-hnas-um-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: ires-hnas-um
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: icat
+      ports:
+        - {port: 1247, protocol: TCP}
+        - {port: 1248, protocol: TCP}
+        - {port: 20000, endPort: 20199, protocol: TCP}
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: icat
+      ports:
+        - {port: 1247, protocol: TCP}
+        - {port: 1248, protocol: TCP}
+        - {port: 20000, endPort: 20199, protocol: TCP}
+    # S3 resources -> garage nginx TLS front
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: garage1-s3-tls
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: garage2-s3-tls
+      ports: [{port: 9000, protocol: TCP}]
+    # garage bootstrap init container (rpc + admin)
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: garage1
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: garage2
+      ports:
+        - {port: 3901, protocol: TCP}
+        - {port: 3903, protocol: TCP}
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16]
+      ports:
+        - {port: 443, protocol: TCP}
+        - {port: 389, protocol: TCP}
+        - {port: 636, protocol: TCP}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ires-hnas-azm-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: ires-hnas-azm
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: icat
+      ports:
+        - {port: 1247, protocol: TCP}
+        - {port: 1248, protocol: TCP}
+        - {port: 20000, endPort: 20199, protocol: TCP}
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: icat
+      ports:
+        - {port: 1247, protocol: TCP}
+        - {port: 1248, protocol: TCP}
+        - {port: 20000, endPort: 20199, protocol: TCP}
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16]
+      ports:
+        - {port: 443, protocol: TCP}
+        - {port: 389, protocol: TCP}
+        - {port: 636, protocol: TCP}
+    # NOTE: no egress to ires-hnas-um on purpose (mirrors the compose
+    # azm_network separation + /etc/hosts blackhole in the pre-hook)
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: garage-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: garage1
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: garage2
+      ports:
+        - {port: 3900, protocol: TCP}
+        - {port: 3901, protocol: TCP}
+        - {port: 3903, protocol: TCP}
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: garage1-s3-tls
+      ports: [{port: 3900, protocol: TCP}]
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ires-hnas-um
+      ports:
+        - {port: 3901, protocol: TCP}
+        - {port: 3903, protocol: TCP}
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: garage2
+      ports:
+        - {port: 3900, protocol: TCP}
+        - {port: 3901, protocol: TCP}
+        - {port: 3903, protocol: TCP}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: garage2-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: garage2
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: garage1
+      ports:
+        - {port: 3900, protocol: TCP}
+        - {port: 3901, protocol: TCP}
+        - {port: 3903, protocol: TCP}
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: garage2-s3-tls
+      ports: [{port: 3900, protocol: TCP}]
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ires-hnas-um
+      ports:
+        - {port: 3901, protocol: TCP}
+        - {port: 3903, protocol: TCP}
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: garage1
+      ports:
+        - {port: 3900, protocol: TCP}
+        - {port: 3901, protocol: TCP}
+        - {port: 3903, protocol: TCP}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: garage-s3-tls-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: garage1-s3-tls
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ires-hnas-um
+      ports: [{port: 9000, protocol: TCP}]
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: garage1
+      ports: [{port: 3900, protocol: TCP}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: garage2-s3-tls-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: garage2-s3-tls
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ires-hnas-um
+      ports: [{port: 9000, protocol: TCP}]
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: garage2
+      ports: [{port: 3900, protocol: TCP}]

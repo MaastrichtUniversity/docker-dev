@@ -24,6 +24,8 @@ spec:
     spec:
       automountServiceAccountToken: false
       hostname: ires-hnas-azm.dh.local
+      # compose had shm_size: 500mb (Docker default /dev/shm is 64Mi)
+      shmSize: 512Mi
       sysctls:
         - name: net.ipv4.tcp_keepalive_intvl
           value: "75"

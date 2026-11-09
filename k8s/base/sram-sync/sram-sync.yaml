@@ -1,0 +1,57 @@
+# SRAM sync (LDAP <-> iRODS user/group sync). Long-running `--scheduled` loop,
+# same as the docker compose service.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sram-sync
+  labels:
+    app.kubernetes.io/name: sram-sync
+    app.kubernetes.io/part-of: datahub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sram-sync
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: sram-sync
+        app.kubernetes.io/part-of: datahub
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: false
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: sram-sync
+          # Overlay rewrites this to <registry>/docker-dev/sram-sync:<tag>
+          image: docker-dev/sram-sync:latest
+          command: ["sram-sync.py", "--commit", "--scheduled"]
+          env:
+            - name: TZ
+              value: Europe/Amsterdam
+          envFrom:
+            - configMapRef:
+                name: sram-sync-env
+            - secretRef:
+                name: dh-secrets
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          # /dh_is_ready.sh (in image) passes once at least one sync run completed;
+          # generous failureThreshold so a slow iRODS/LDAP round doesn't kill it
+          livenessProbe:
+            exec:
+              command: ["/dh_is_ready.sh"]
+            periodSeconds: 30
+            timeoutSeconds: 15
+            failureThreshold: 10
