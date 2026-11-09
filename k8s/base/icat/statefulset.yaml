@@ -1,0 +1,187 @@
+# iRODS iCAT (catalog provider).
+#
+# Important k8s specifics (see k8s/README.md):
+#  - spec.hostname + HOSTNAME env are forced to icat.dh.local: gen_json_configuration.py
+#    uses socket.gethostname() for irods_host/catalog_provider_hosts and the bash hooks
+#    derive resource names from ${HOSTNAME%%.dh.local}. The SSL cert is issued for
+#    icat.dh.local and coredns-custom rewrites icat.dh.local to this pod.
+#  - Headless Service: clients reach the pod IP directly, so the iRODS data port
+#    range 20000-20199 works (a ClusterIP Service cannot expose 200 ports).
+#  - /var/run/irods_installed (iRODS "bootstrap completed" flag) is persisted on the
+#    vault PVC via subPath so recreated pods skip re-bootstrap when possible.
+#  - runAsNonRoot: false and CAP_NET_BIND_SERVICE are deliberate deviations
+#    (iRODS installs as root, rsyslogd binds :514). Namespace is PSS baseline.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: icat
+  labels:
+    app.kubernetes.io/name: icat
+    app.kubernetes.io/part-of: datahub
+    app.kubernetes.io/component: irods
+spec:
+  serviceName: icat
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: icat
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: icat
+        app.kubernetes.io/part-of: datahub
+        app.kubernetes.io/component: irods
+    spec:
+      automountServiceAccountToken: false
+      hostname: icat.dh.local
+      # net.* sysctls are in the k8s default-allowed sysctl list
+      sysctls:
+        - name: net.ipv4.tcp_keepalive_intvl
+          value: "75"
+        - name: net.ipv4.tcp_keepalive_probes
+          value: "9"
+        - name: net.ipv4.tcp_keepalive_time
+          value: "600"
+      securityContext:
+        runAsNonRoot: false
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        # Make sure irods-db is accepting connections before the pre-hook psql checks
+        - name: wait-db
+          # same image as the main container (kustomize rewrites both)
+          image: docker-dev/icat:latest
+          command:
+            - bash
+            - -c
+            - |
+              until PGPASSWORD="${ENV_IRODS_DB_POSTGRES_PASSWORD}" psql -h "${ENV_IRODS_DB_HOSTNAME}" -U postgres -c '\l' >/dev/null 2>&1; do
+                echo "INFO: waiting for irods-db at ${ENV_IRODS_DB_HOSTNAME}"; sleep 5
+              done
+          envFrom:
+            - configMapRef:
+                name: irods-common-env
+            - configMapRef:
+                name: icat-env
+            - secretRef:
+                name: dh-secrets
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+      containers:
+        - name: icat
+          # Overlay rewrites this to <registry>/docker-dev/icat:<tag>
+          image: docker-dev/icat:latest
+          env:
+            - name: HOSTNAME
+              value: icat.dh.local
+            - name: TZ
+              value: Europe/Amsterdam
+          envFrom:
+            - configMapRef:
+                name: irods-common-env
+            - configMapRef:
+                name: icat-env
+            - secretRef:
+                name: dh-secrets
+          ports:
+            - name: irods
+              containerPort: 1247
+              protocol: TCP
+            - name: irods-control-plane
+              containerPort: 1248
+              protocol: TCP
+            # iRODS data port range (documentary; the pod listens on 20000-20199)
+            - name: irods-data
+              containerPort: 20000
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+              add: ["NET_BIND_SERVICE"] # rsyslogd binds :514
+          resources:
+            requests:
+              cpu: "1"
+              memory: 2Gi
+            limits:
+              cpu: "2"
+              memory: 4Gi
+          # Full bootstrap (setup_irods.py + ruleset make + dev mock env) can take
+          # 10-30 minutes on a fresh stack; only then does /dh_is_ready.sh pass.
+          startupProbe:
+            exec:
+              command: ["/dh_is_ready.sh"]
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 120
+          readinessProbe:
+            exec:
+              command: ["/dh_is_ready.sh"]
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 3
+          # Liveness must not depend on other pods (mock env check in /dh_is_ready.sh
+          # would crashloop icat if e.g. its own irodsServer blips during a DB restart)
+          livenessProbe:
+            exec:
+              command: ["/bin/bash", "-c", "su irods -c 'iadmin whoami'"]
+            periodSeconds: 30
+            timeoutSeconds: 15
+            failureThreshold: 6
+          volumeMounts:
+            - name: vault
+              mountPath: /var/lib/irods
+            # Persist the "installed" flag across pod recreations (subPath file on vault PVC)
+            - name: vault
+              mountPath: /var/run/irods_installed
+              subPath: irods_installed
+            # Overrides that docker-compose bind-mounted
+            - name: icat-bootstrap
+              mountPath: /opt/irods/bootstrap.sh
+              subPath: bootstrap.sh
+            - name: icat-bootstrap
+              mountPath: /dh_is_ready.sh
+              subPath: dh_is_ready.sh
+            - name: icat-hooks
+              mountPath: /opt/irods/hooks
+              readOnly: true
+            - name: icat-dmfs
+              mountPath: /opt/irods/DMFS
+              readOnly: true
+            - name: icat-bootstrap
+              mountPath: /opt/irods/users.json
+              subPath: users.json
+            # SSL staging dir (files picked by name via ENV_IRODS_SSL_* )
+            - name: icat-tls
+              mountPath: /opt/irods_ssl_staging
+              readOnly: true
+      volumes:
+        - name: icat-bootstrap
+          configMap:
+            name: icat-bootstrap
+            defaultMode: 0755
+        - name: icat-hooks
+          configMap:
+            name: icat-hooks
+            defaultMode: 0755
+        - name: icat-dmfs
+          configMap:
+            name: icat-dmfs
+            defaultMode: 0755
+        - name: icat-tls
+          secret:
+            secretName: icat-tls
+            defaultMode: 0644
+  volumeClaimTemplates:
+    - metadata:
+        name: vault
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn-rwo
+        resources:
+          requests:
+            storage: 50Gi

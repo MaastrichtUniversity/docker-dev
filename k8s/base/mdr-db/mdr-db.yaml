@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mdr-db
+  labels:
+    app.kubernetes.io/name: mdr-db
+    app.kubernetes.io/part-of: datahub
+spec:
+  serviceName: mdr-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mdr-db
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: mdr-db
+        app.kubernetes.io/part-of: datahub
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: chown-data
+          image: postgres:17.10-alpine
+          command: ["sh", "-c", "chown -R 999:999 /var/lib/postgresql/data"]
+          securityContext:
+            runAsUser: 0
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+      containers:
+        - name: postgres
+          # Overlay rewrites this to the mirrored registry image
+          image: postgres:17.10-alpine
+          env:
+            - name: TZ
+              value: Europe/Amsterdam
+          envFrom:
+            - configMapRef:
+                name: mdr-db-env
+            - secretRef:
+                name: mdr-db-credentials
+          ports:
+            - name: postgres
+              containerPort: 5432
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "postgres", "-d", "postgres"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "postgres", "-d", "postgres"]
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn-rwo
+        resources:
+          requests:
+            storage: 10Gi
+---
+# Headless Service (StatefulSet stable DNS).
+# coredns-custom rewrites mdr-db.dh.local -> mdr-db.<ns>.svc.cluster.local
+apiVersion: v1
+kind: Service
+metadata:
+  name: mdr-db
+  labels:
+    app.kubernetes.io/name: mdr-db
+    app.kubernetes.io/part-of: datahub
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: mdr-db
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
+      protocol: TCP

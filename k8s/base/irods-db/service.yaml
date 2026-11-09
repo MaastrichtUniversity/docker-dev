@@ -1,0 +1,18 @@
+# Headless Service (required for StatefulSet stable DNS).
+# coredns-custom rewrites irods-db.dh.local -> irods-db.<ns>.svc.cluster.local
+apiVersion: v1
+kind: Service
+metadata:
+  name: irods-db
+  labels:
+    app.kubernetes.io/name: irods-db
+    app.kubernetes.io/part-of: datahub
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: irods-db
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
+      protocol: TCP

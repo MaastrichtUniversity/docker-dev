@@ -1,0 +1,160 @@
+# Garage S3 object storage cluster (2 nodes, was docker compose services
+# garage1/garage2). Deployments + explicit PVCs (see pvcs.yaml).
+# The one-time cluster bootstrap (layout/bucket/keys) is NOT a Job here: it runs
+# as an idempotent init container in ires-hnas-um (the only consumer that needs
+# the bucket to exist), which avoids cross-pod volume sharing for the marker.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: garage1
+  labels:
+    app.kubernetes.io/name: garage1
+    app.kubernetes.io/part-of: datahub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: garage1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: garage1
+        app.kubernetes.io/part-of: datahub
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: false
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: garage
+          # Overlay rewrites this to the mirrored registry image
+          image: dxflrs/garage:v2.3.0
+          entrypoint: ["/garage"]
+          command: ["server"]
+          envFrom:
+            - secretRef:
+                name: dh-secrets
+          ports:
+            - name: s3-api
+              containerPort: 3900
+              protocol: TCP
+            - name: rpc
+              containerPort: 3901
+              protocol: TCP
+            - name: admin
+              containerPort: 3903
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          readinessProbe:
+            tcpSocket:
+              port: rpc
+            periodSeconds: 10
+            failureThreshold: 6
+          livenessProbe:
+            tcpSocket:
+              port: rpc
+            periodSeconds: 30
+            failureThreshold: 4
+          volumeMounts:
+            - name: config
+              mountPath: /etc/garage.toml
+              subPath: garage1.toml
+              readOnly: true
+            - name: garage1-data
+              mountPath: /var/lib/garage1
+      volumes:
+        - name: config
+          configMap:
+            name: garage-config
+        - name: garage1-data
+          persistentVolumeClaim:
+            claimName: garage1-data
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: garage2
+  labels:
+    app.kubernetes.io/name: garage2
+    app.kubernetes.io/part-of: datahub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: garage2
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: garage2
+        app.kubernetes.io/part-of: datahub
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: false
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: garage
+          # Overlay rewrites this to the mirrored registry image
+          image: dxflrs/garage:v2.3.0
+          entrypoint: ["/garage"]
+          command: ["server"]
+          envFrom:
+            - secretRef:
+                name: dh-secrets
+          ports:
+            - name: s3-api
+              containerPort: 3900
+              protocol: TCP
+            - name: rpc
+              containerPort: 3901
+              protocol: TCP
+            - name: admin
+              containerPort: 3903
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          readinessProbe:
+            tcpSocket:
+              port: rpc
+            periodSeconds: 10
+            failureThreshold: 6
+          livenessProbe:
+            tcpSocket:
+              port: rpc
+            periodSeconds: 30
+            failureThreshold: 4
+          volumeMounts:
+            - name: config
+              mountPath: /etc/garage.toml
+              subPath: garage2.toml
+              readOnly: true
+            - name: garage2-data
+              mountPath: /var/lib/garage2
+      volumes:
+        - name: config
+          configMap:
+            name: garage-config
+        - name: garage2-data
+          persistentVolumeClaim:
+            claimName: garage2-data

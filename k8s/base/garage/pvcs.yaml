@@ -1,0 +1,77 @@
+# Explicit PVCs for the garage cluster and the shared ingest zones.
+# (Explicit rather than volumeClaimTemplates because the garage bootstrap init
+# container in ires-hnas-um must also mount the meta volumes, and zones is
+# shared by two iRES pods + the faker job -> RWX.)
+#
+# NOTE: Longhorn RWX (NFS-backed). If your Longhorn version has no RWX support,
+# see k8s/README.md "Risks" for the same-node fallback.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: garage1-data
+  labels:
+    app.kubernetes.io/name: garage1
+    app.kubernetes.io/part-of: datahub
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: longhorn-rwo
+  resources:
+    requests:
+      storage: 100Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: garage2-data
+  labels:
+    app.kubernetes.io/name: garage2
+    app.kubernetes.io/part-of: datahub
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: longhorn-rwo
+  resources:
+    requests:
+      storage: 100Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: garage1-meta
+  labels:
+    app.kubernetes.io/name: garage1
+    app.kubernetes.io/part-of: datahub
+spec:
+  accessModes: ["ReadWriteMany"]
+  storageClassName: longhorn-rwx
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: garage2-meta
+  labels:
+    app.kubernetes.io/name: garage2
+    app.kubernetes.io/part-of: datahub
+spec:
+  accessModes: ["ReadWriteMany"]
+  storageClassName: longhorn-rwx
+  resources:
+    requests:
+      storage: 10Gi
+---
+# Ingest zones, shared by ires-hnas-um, ires-hnas-azm and the dh-faker job
+# (was ./staging-data/zones bind-mounted in docker compose).
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: staging-zones
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  accessModes: ["ReadWriteMany"]
+  storageClassName: longhorn-rwx
+  resources:
+    requests:
+      storage: 50Gi

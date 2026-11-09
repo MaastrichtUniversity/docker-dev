@@ -1,0 +1,27 @@
+# Headless Service for ires-hnas-um (StatefulSet identity + full iRODS port range).
+# coredns-custom rewrites ires-hnas-um.dh.local -> ires-hnas-um.<ns>.svc.cluster.local
+apiVersion: v1
+kind: Service
+metadata:
+  name: ires-hnas-um
+  labels:
+    app.kubernetes.io/name: ires-hnas-um
+    app.kubernetes.io/part-of: datahub
+    app.kubernetes.io/component: irods
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: ires-hnas-um
+  ports:
+    - name: irods
+      port: 1247
+      targetPort: 1247
+      protocol: TCP
+    - name: irods-control-plane
+      port: 1248
+      targetPort: 1248
+      protocol: TCP
+    - name: irods-data
+      port: 20000
+      targetPort: 20000
+      protocol: TCP

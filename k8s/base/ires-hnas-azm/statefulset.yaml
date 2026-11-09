@@ -1,0 +1,175 @@
+# iRODS resource server HNAS-AZM (replication resource replRescAZM02).
+# Identical shape to ires-hnas-um except: no garage/S3 setup init container
+# (S3 resources are only created on the UM side) and no direct-ingest mount.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ires-hnas-azm
+  labels:
+    app.kubernetes.io/name: ires-hnas-azm
+    app.kubernetes.io/part-of: datahub
+    app.kubernetes.io/component: irods
+spec:
+  serviceName: ires-hnas-azm
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ires-hnas-azm
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ires-hnas-azm
+        app.kubernetes.io/part-of: datahub
+        app.kubernetes.io/component: irods
+    spec:
+      automountServiceAccountToken: false
+      hostname: ires-hnas-azm.dh.local
+      sysctls:
+        - name: net.ipv4.tcp_keepalive_intvl
+          value: "75"
+        - name: net.ipv4.tcp_keepalive_probes
+          value: "9"
+        - name: net.ipv4.tcp_keepalive_time
+          value: "600"
+      securityContext:
+        runAsNonRoot: false
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: wait-icat
+          # same image as the main container (kustomize rewrites both)
+          image: docker-dev/ires-hnas:latest
+          command:
+            - bash
+            - -c
+            - |
+              dockerize -wait tcp://${ENV_IRODS_ICAT_HOST:-icat.dh.local}:1247 -timeout 3600s
+          envFrom:
+            - configMapRef:
+                name: irods-common-env
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+      containers:
+        - name: ires
+          # Overlay rewrites this to <registry>/docker-dev/ires-hnas:<tag>
+          image: docker-dev/ires-hnas:latest
+          env:
+            - name: HOSTNAME
+              value: ires-hnas-azm.dh.local
+            - name: TZ
+              value: Europe/Amsterdam
+          envFrom:
+            - configMapRef:
+                name: irods-common-env
+            - configMapRef:
+                name: ires-azm-env
+            - secretRef:
+                name: dh-secrets
+            - secretRef:
+                name: dh-irods-secrets-cfg
+          ports:
+            - name: irods
+              containerPort: 1247
+              protocol: TCP
+            - name: irods-control-plane
+              containerPort: 1248
+              protocol: TCP
+            - name: irods-data
+              containerPort: 20000
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+              add: ["NET_BIND_SERVICE"] # rsyslogd binds :514
+          resources:
+            requests:
+              cpu: "1"
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          startupProbe:
+            exec:
+              command: ["/dh_is_ready.sh"]
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 120
+          readinessProbe:
+            exec:
+              command: ["/dh_is_ready.sh"]
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            exec:
+              command: ["/bin/bash", "-c", "su irods -c 'iadmin whoami'"]
+            periodSeconds: 30
+            timeoutSeconds: 15
+            failureThreshold: 6
+          volumeMounts:
+            - name: vault
+              mountPath: /var/lib/irods
+            - name: vault
+              mountPath: /var/run/irods_installed
+              subPath: irods_installed
+            - name: vault
+              mountPath: /var/log/irods-pre-ingest
+              subPath: irods-pre-ingest
+            - name: mnt
+              mountPath: /mnt
+            - name: zones
+              mountPath: /mnt/ingest/zones
+            - name: ires-azm-bootstrap
+              mountPath: /opt/irods/bootstrap.sh
+              subPath: bootstrap.sh
+            - name: ires-azm-hooks
+              mountPath: /opt/irods/hooks
+              readOnly: true
+            - name: ires-azm-tls
+              mountPath: /opt/irods_ssl_staging
+              readOnly: true
+            - name: irods-secrets-cfg
+              mountPath: /etc/secrets
+              subPath: irods.secrets.cfg
+      volumes:
+        - name: ires-azm-bootstrap
+          configMap:
+            name: ires-azm-bootstrap
+            defaultMode: 0755
+        - name: ires-azm-hooks
+          configMap:
+            name: ires-azm-hooks
+            defaultMode: 0755
+        - name: ires-azm-tls
+          secret:
+            secretName: ires-azm-tls
+            defaultMode: 0644
+        - name: irods-secrets-cfg
+          secret:
+            secretName: dh-irods-secrets-cfg
+            defaultMode: 0644
+        - name: zones
+          persistentVolumeClaim:
+            claimName: staging-zones
+  volumeClaimTemplates:
+    - metadata:
+        name: vault
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn-rwo
+        resources:
+          requests:
+            storage: 20Gi
+    - metadata:
+        name: mnt
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn-rwo
+        resources:
+          requests:
+            storage: 100Gi

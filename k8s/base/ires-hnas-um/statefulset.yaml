@@ -1,0 +1,228 @@
+# iRODS resource server HNAS-UM (passthru resource passRescUM01 + S3 resources).
+# See icat/statefulset.yaml for the shared iRODS-on-k8s notes (hostname, headless
+# service, state file, PSS deviations).
+#
+# Storage:
+#  - vault  (RWO)  : /var/lib/irods  (+ subPath state file, pre-ingest log dir)
+#  - mnt    (RWO)  : /mnt            (UM-hnas-4k, /mnt/stagingResc01, ...)
+#  - zones  (RWX)  : /mnt/ingest/zones -- shared with ires-hnas-azm and the faker job
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ires-hnas-um
+  labels:
+    app.kubernetes.io/name: ires-hnas-um
+    app.kubernetes.io/part-of: datahub
+    app.kubernetes.io/component: irods
+spec:
+  serviceName: ires-hnas-um
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ires-hnas-um
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ires-hnas-um
+        app.kubernetes.io/part-of: datahub
+        app.kubernetes.io/component: irods
+    spec:
+      automountServiceAccountToken: false
+      hostname: ires-hnas-um.dh.local
+      sysctls:
+        - name: net.ipv4.tcp_keepalive_intvl
+          value: "75"
+        - name: net.ipv4.tcp_keepalive_probes
+          value: "9"
+        - name: net.ipv4.tcp_keepalive_time
+          value: "600"
+      securityContext:
+        runAsNonRoot: false
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        # iCAT (incl. its dev mock env) must be up before this pod's bootstrap
+        # (whose built-in dockerize wait is only 200s). Waits up to an hour.
+        - name: wait-icat
+          # same image as the main container (kustomize rewrites both)
+          image: docker-dev/ires-hnas:latest
+          command:
+            - bash
+            - -c
+            - |
+              dockerize -wait tcp://${ENV_IRODS_ICAT_HOST:-icat.dh.local}:1247 -timeout 3600s
+          envFrom:
+            - configMapRef:
+                name: irods-common-env
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+        # One-time garage setup (layout/bucket/keys). Idempotent (see the guard in
+        # irods/garage/bootstrap.sh); needs the garage meta dirs to read node ids.
+        - name: garage-setup
+          # Overlay rewrites this to the mirrored registry image
+          image: dxflrs/garage:v2.3.0
+          command: ["/bin/sh", "/opt/garage/bootstrap.sh"]
+          env:
+            - name: GARAGE_BUCKET
+              value: dh-irods-bucket-dev
+          envFrom:
+            - secretRef:
+                name: dh-secrets
+          volumeMounts:
+            - name: garage-bootstrap
+              mountPath: /opt/garage
+              readOnly: true
+            - name: garage-config
+              mountPath: /etc/garage
+              readOnly: true
+            - name: garage1-meta
+              mountPath: /var/lib/garage1/meta
+              readOnly: true
+            - name: garage2-meta
+              mountPath: /var/lib/garage2/meta
+              readOnly: true
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+      containers:
+        - name: ires
+          # Overlay rewrites this to <registry>/docker-dev/ires-hnas:<tag>
+          image: docker-dev/ires-hnas:latest
+          env:
+            - name: HOSTNAME
+              value: ires-hnas-um.dh.local
+            - name: TZ
+              value: Europe/Amsterdam
+          envFrom:
+            - configMapRef:
+                name: irods-common-env
+            - configMapRef:
+                name: ires-um-env
+            - secretRef:
+                name: dh-secrets
+            - secretRef:
+                name: dh-irods-secrets-cfg
+          ports:
+            - name: irods
+              containerPort: 1247
+              protocol: TCP
+            - name: irods-control-plane
+              containerPort: 1248
+              protocol: TCP
+            - name: irods-data
+              containerPort: 20000
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+              add: ["NET_BIND_SERVICE"] # rsyslogd binds :514
+          resources:
+            requests:
+              cpu: "1"
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          startupProbe:
+            exec:
+              command: ["/dh_is_ready.sh"]
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 120
+          readinessProbe:
+            exec:
+              command: ["/dh_is_ready.sh"]
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            exec:
+              command: ["/bin/bash", "-c", "su irods -c 'iadmin whoami'"]
+            periodSeconds: 30
+            timeoutSeconds: 15
+            failureThreshold: 6
+          volumeMounts:
+            - name: vault
+              mountPath: /var/lib/irods
+            - name: vault
+              mountPath: /var/run/irods_installed
+              subPath: irods_installed
+            # flight_checks() requires this dir; it is created by the (skipped on
+            # re-bootstrap) pre-hook, so persist it on the vault PVC
+            - name: vault
+              mountPath: /var/log/irods-pre-ingest
+              subPath: irods-pre-ingest
+            - name: mnt
+              mountPath: /mnt
+            - name: zones
+              mountPath: /mnt/ingest/zones
+            # k8s equivalents of the compose bind mounts
+            - name: ires-um-bootstrap
+              mountPath: /opt/irods/bootstrap.sh
+              subPath: bootstrap.sh
+            - name: ires-um-hooks
+              mountPath: /opt/irods/hooks
+              readOnly: true
+            - name: ires-um-tls
+              mountPath: /opt/irods_ssl_staging
+              readOnly: true
+            # irods-helper-cmd expects /etc/secrets
+            - name: irods-secrets-cfg
+              mountPath: /etc/secrets
+              subPath: irods.secrets.cfg
+      volumes:
+        - name: ires-um-bootstrap
+          configMap:
+            name: ires-um-bootstrap
+            defaultMode: 0755
+        - name: ires-um-hooks
+          configMap:
+            name: ires-um-hooks
+            defaultMode: 0755
+        - name: ires-um-tls
+          secret:
+            secretName: ires-um-tls
+            defaultMode: 0644
+        - name: irods-secrets-cfg
+          secret:
+            secretName: dh-irods-secrets-cfg
+            defaultMode: 0644
+        - name: garage-bootstrap
+          configMap:
+            name: garage-bootstrap
+            defaultMode: 0755
+        - name: garage-config
+          configMap:
+            name: garage-config
+        - name: garage1-meta
+          persistentVolumeClaim:
+            claimName: garage1-meta
+        - name: garage2-meta
+          persistentVolumeClaim:
+            claimName: garage2-meta
+        - name: zones
+          persistentVolumeClaim:
+            claimName: staging-zones
+  volumeClaimTemplates:
+    - metadata:
+        name: vault
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn-rwo
+        resources:
+          requests:
+            storage: 20Gi
+    - metadata:
+        name: mnt
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn-rwo
+        resources:
+          requests:
+            storage: 100Gi

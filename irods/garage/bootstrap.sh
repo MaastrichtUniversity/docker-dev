@@ -41,10 +41,16 @@ if [ -f "$marker" ]; then
     exit 0
 fi
 
-echo "INFO: Creating Garage layout"
-$garage --rpc-host "$garage1_id" layout assign "$garage1_node" -z garage-dev-1 -c 1G -t garage1
-$garage --rpc-host "$garage1_id" layout assign "$garage2_node" -z garage-dev-2 -c 1G -t garage2
-$garage --rpc-host "$garage1_id" layout apply --version 1
+# k8s: this script may re-run (init container) with the marker file lost, so
+# guard the (not idempotent) layout steps: only assign/apply if none is deployed.
+if $garage --rpc-host "$garage1_id" layout current >/dev/null 2>&1; then
+    echo "INFO: Garage layout already deployed, skipping layout assign/apply"
+else
+    echo "INFO: Creating Garage layout"
+    $garage --rpc-host "$garage1_id" layout assign "$garage1_node" -z garage-dev-1 -c 1G -t garage1
+    $garage --rpc-host "$garage1_id" layout assign "$garage2_node" -z garage-dev-2 -c 1G -t garage2
+    $garage --rpc-host "$garage1_id" layout apply --version 1
+fi
 
 echo "INFO: Creating Garage bucket and iRODS S3 keys"
 $garage --rpc-host "$garage1_id" bucket info "$bucket" >/dev/null 2>&1 || \

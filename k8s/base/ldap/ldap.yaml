@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ldap
+  labels:
+    app.kubernetes.io/name: ldap
+    app.kubernetes.io/part-of: datahub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ldap
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ldap
+        app.kubernetes.io/part-of: datahub
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: chown-data
+          image: osixia/openldap:1.3.0
+          command:
+            - /bin/sh
+            - -c
+            - chown -R "$(id -u openldap):$(id -g openldap)" /container/service/data
+          securityContext:
+            runAsUser: 0
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: data
+              mountPath: /container/service/data
+      containers:
+        - name: ldap
+          # Overlay rewrites this to the mirrored registry image
+          image: osixia/openldap:1.3.0
+          command: ["--copy-service"]
+          env:
+            - name: TZ
+              value: Europe/Amsterdam
+          envFrom:
+            - configMapRef:
+                name: ldap-env
+            - secretRef:
+                name: dh-secrets
+          ports:
+            - name: ldap
+              containerPort: 389
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          # NOTE: persistence added vs docker compose (data used to be ephemeral);
+          # bootstrap LDIFs still only apply to an empty data dir, sram-sync keeps
+          # the tree in sync afterwards.
+          readinessProbe:
+            tcpSocket:
+              port: ldap
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 12
+          livenessProbe:
+            tcpSocket:
+              port: ldap
+            periodSeconds: 30
+            failureThreshold: 4
+          volumeMounts:
+            - name: ldif
+              mountPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
+              readOnly: true
+            - name: data
+              mountPath: /container/service/data
+      volumes:
+        - name: ldif
+          configMap:
+            name: ldap-ldif
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ldap
+  labels:
+    app.kubernetes.io/name: ldap
+    app.kubernetes.io/part-of: datahub
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: ldap
+  ports:
+    - name: ldap
+      port: 389
+      targetPort: 389
+      protocol: TCP

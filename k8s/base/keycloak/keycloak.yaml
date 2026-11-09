@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  labels:
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/part-of: datahub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: keycloak
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: keycloak
+        app.kubernetes.io/part-of: datahub
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: false
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: keycloak
+          # Built from ./keycloak in THIS repo (see Jenkinsfile.build).
+          # Realm export, users, import.sh, startup.sh and the theme are baked in.
+          image: docker-dev/keycloak:latest
+          env:
+            - name: TZ
+              value: Europe/Amsterdam
+          envFrom:
+            - configMapRef:
+                name: keycloak-env
+            - secretRef:
+                name: dh-secrets
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          # startup.sh kicks off import.sh in the background; the import writes
+          # /var/run/dh_import_state=completed when done (checked by the probe).
+          startupProbe:
+            exec:
+              command: ["/dh_is_ready.sh"]
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 60
+          readinessProbe:
+            exec:
+              command: ["/dh_is_ready.sh"]
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 30
+            failureThreshold: 4
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  labels:
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/part-of: datahub
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: keycloak
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
