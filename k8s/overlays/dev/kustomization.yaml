@@ -21,6 +21,40 @@ resources:
   - namespaces.yaml
   - gateway.yaml
 
+# dev runs on a local minikube: Longhorn SCs/sizes don't apply there -
+# retarget all volumes to minikube's local-path class, shrink them, make
+# the shared zones a hostPath, and reduce CPU/memory (see patches/).
+patches:
+  - path: patches/storage-dev.yaml
+  - path: patches/resources-dev.yaml
+  # the shared ingest zones (staging-zones PVC is RWX - local-path can't
+  # do that) become a hostPath volume: single node, so this is the
+  # compose-era host-dir behavior. /staging-data is created in the minikube
+  # VM on demand (to share the host folder instead: minikube start --mount
+  # --mount-string=$PWD/staging-data:/staging-data).
+  - target:
+      kind: StatefulSet
+      name: ires-hnas-um
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/volumes/8
+        value:
+          name: zones
+          hostPath:
+            path: /staging-data
+            type: DirectoryOrCreate
+  - target:
+      kind: StatefulSet
+      name: ires-hnas-azm
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/volumes/4
+        value:
+          name: zones
+          hostPath:
+            path: /staging-data
+            type: DirectoryOrCreate
+
 # Per-env ConfigMap env files (consumed via envFrom by the base manifests).
 configMapGenerator:
   - name: irods-common-env

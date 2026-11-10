@@ -112,7 +112,85 @@ The **dev** overlay additionally needs an `externals/` checkout at the repo
 root (epicpid SURF credentials are sourced from it; it is gitignored).
 tst/acc/prd build in a clean clone — those creds come from Vault.
 
+## Local dev on minikube (dev overlay)
+
+The dev overlay targets a **local minikube cluster** (not k3s).
+`overlays/dev/patches/` retargets every volume to minikube's `local-path`
+StorageClass, shrinks them (~50Gi total), lowers CPU/memory (sum of all
+pod requests: 2.45 CPU / 6.0Gi), and turns the shared ingest zones into a
+hostPath `/staging-data` volume (single node = the compose-era host-dir
+behavior). It is for validation and feature development, not load.
+
+### One-time cluster setup
+
+```
+minikube start --cpus 4 --memory 8192 --disk-size 80
+# (docker driver; the local-path StorageClass ships with minikube)
+
+k8s/bin/minikube-traefik.sh
+# enables the minikube loadbalancer addon (metallb), installs the
+# Gateway API CRDs (v1.7.0) + Traefik v3.7 with the Gateway API provider
+# + a LoadBalancer Service, then prints an /etc/hosts block for all 13
+# dev public hosts. Re-runnable.
+
+sudo tee -a /etc/hosts <<'EOF'
+<LB-IP> app.mdr.dev.dh.unimaas.nl
+... (the 13 hosts, printed by the script)
+EOF
+```
+
+Alternative to the LB IP: `minikube tunnel` (needs sudo, docker driver)
+serves cluster LoadBalancer traffic on `127.0.0.1` — then use
+`127.0.0.1` in /etc/hosts. Note the Vite frontends enforce
+`allowedHosts` = the public host name, so always access them through the
+/etc/hosts names (a `localhost` Host header is rejected).
+
+### Apply
+
+```
+kubectl kustomize k8s/overlays/dev --load-restrictor LoadRestrictionsNone | kubectl apply -f -
+```
+
+(Building dev requires an `externals/` checkout at the repo root — the
+main tree has a symlink, a worktree does not by default.) Then Steps 4-5
+of "Deploying (step by step)" apply (iRODS bootstrap, verify).
+
+### Staging data (zones)
+
+Both iress pods (and faker jobs, see below) share the minikube-VM
+directory `/staging-data` via hostPath. Fresh cluster = empty, i.e. the
+compose behavior of a clean `staging-data/`. To start from existing data
+instead:
+
+```
+minikube start ... --mount --mount-string=$PWD/staging-data:/staging-data
+```
+
+### faker jobs on minikube
+
+The faker job template mounts the `staging-zones` PVC; on minikube the
+zones live on the hostPath, so apply it with the volume replaced
+(`k8s/bin/faker.sh` will do this automatically for dev):
+
+```
+sed -e 's|^          persistentVolumeClaim:$|          hostPath:|' \
+    -e 's|^            claimName: staging-zones$|            path: /staging-data\n            type: DirectoryOrCreate|' \
+    k8s/base/faker/job-template.yaml | kubectl apply -f -
+```
+
+### dev secrets
+
+`overlays/dev/secrets/irods-secrets-cfg.env` contains `<set-from-local-...>`
+placeholders for the three vendor credentials (Atlassian API token,
+BioPortal key, reCAPTCHA secret) instead of real values. Copy the real
+ones from the local gitignored `irods.secrets.cfg` / `.env` (main tree)
+before relying on those integrations.
+
 ## Deploying (step by step)
+
+This section covers the k3s environments (tst/acc/prd); the local
+minikube dev cluster has its own shorter path ("Local dev on
+minikube").
 
 ### Prerequisites (per cluster, once)
 
@@ -147,8 +225,11 @@ and pushing under the registry names — including the mirrored base images
 
 ### Step 2 — secrets
 
-**dev:** nothing to do — values are committed in `overlays/dev/secrets/`
-(same as the compose `.env` / `irods.secrets.cfg`).
+**dev:** values are committed in `overlays/dev/secrets/` (same as the
+compose `.env` / `irods.secrets.cfg`), except the three vendor
+credentials in `irods-secrets-cfg.env` are `<set-from-local-irods-secrets.cfg>`
+placeholders — fill them from the local gitignored files (see
+"Local dev on minikube").
 
 **tst:** provision Vault (KV v2), one path per k8s Secret, one Vault key
 per Secret key (key names = the exact keys in the inventory table below):
@@ -383,6 +464,10 @@ Two StorageClasses: `longhorn-rwo` (default) and `longhorn-rwx`
   host, in the namespace of the backend Service. The cluster does not use
   the Ingress resource.
 - No `hostPort`s; dev access to DBs via `kubectl port-forward`.
+- dev (minikube): the same Gateway/HTTPRoute objects are served by a
+  local Traefik installed by `bin/minikube-traefik.sh` (metallb LB IP in
+  /etc/hosts, see "Local dev on minikube"); tst/acc/prd use the k3s
+  Traefik.
 - NetworkPolicies (default-deny + per-flow allows, incl. iRODS 20000-20199
   ranges and um<->azm isolation) live in `base/networkpolicies/` and are
   **not** applied by default: k3s must run with `--network-policy` for them
