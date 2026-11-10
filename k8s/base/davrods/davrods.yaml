@@ -8,6 +8,7 @@ metadata:
   labels:
     app.kubernetes.io/name: davrods
     app.kubernetes.io/part-of: datahub
+    datahub.dh/profile: full
 spec:
   replicas: 1
   selector:
@@ -74,6 +75,7 @@ metadata:
   labels:
     app.kubernetes.io/name: davrods
     app.kubernetes.io/part-of: datahub
+    datahub.dh/profile: full
 spec:
   type: ClusterIP
   selector:

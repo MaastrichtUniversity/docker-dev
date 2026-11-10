@@ -6,6 +6,7 @@ metadata:
   labels:
     app.kubernetes.io/name: help-center-backend
     app.kubernetes.io/part-of: datahub
+    datahub.dh/profile: full
 spec:
   replicas: 1
   selector:
@@ -76,6 +77,7 @@ metadata:
   labels:
     app.kubernetes.io/name: help-center-backend
     app.kubernetes.io/part-of: datahub
+    datahub.dh/profile: full
 spec:
   type: ClusterIP
   selector:

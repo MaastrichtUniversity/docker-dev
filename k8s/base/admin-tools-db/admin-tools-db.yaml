@@ -6,6 +6,7 @@ metadata:
   labels:
     app.kubernetes.io/name: admin-tools-db
     app.kubernetes.io/part-of: datahub
+    datahub.dh/profile: full
 spec:
   serviceName: admin-tools-db
   replicas: 1
@@ -99,6 +100,7 @@ metadata:
   labels:
     app.kubernetes.io/name: admin-tools-db
     app.kubernetes.io/part-of: datahub
+    datahub.dh/profile: full
 spec:
   clusterIP: None
   selector:

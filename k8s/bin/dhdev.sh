@@ -18,7 +18,17 @@
 #                                readiness checks. Idempotent - re-run
 #                                after a git pull to roll out changes.
 #
-# Usage:  k8s/bin/dhdev.sh <externals|dev-up|help>
+#                                --profile <full|minimal> (default full):
+#                                'minimal' is the compose 'minimal' set -
+#                                iRODS (db, icat, ires-um, garage), keycloak,
+#                                ldap, epicpid, elastic, mdr - and skips the
+#                                full-only workloads (ires-hnas-azm, davrods,
+#                                help-center, dh-home, admin-tools, ...).
+#                                Switching back to 'full' re-adds them; it
+#                                never deletes workloads of a bigger
+#                                previous profile.
+#
+# Usage:  k8s/bin/dhdev.sh <externals|dev-up [--profile full|minimal]|help>
 set -euo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
@@ -120,6 +130,20 @@ EOF
 }
 
 cmd_dev_up() {
+  local deploy_profile=full
+  local -a args=("$@")
+  local i=0
+  while [ "$i" -lt "${#args[@]}" ]; do
+    case "${args[$i]}" in
+      --profile) deploy_profile=${args[$((i+1))]:-}; i=$((i+2)) ;;
+      *) echo "unknown option: ${args[$i]}" >&2; exit 1 ;;
+    esac
+  done
+  case "$deploy_profile" in
+    full|minimal) ;;
+    *) echo "unknown profile: '$deploy_profile' (use: full|minimal)" >&2; exit 1 ;;
+  esac
+
   command -v minikube >/dev/null || {
     echo "minikube not found in PATH - install it first: https://minikube.sigs.k8s.io/docs/start/" >&2
     exit 1; }
@@ -145,9 +169,21 @@ cmd_dev_up() {
   echo "==> traefik (Gateway API)"
   "$SCRIPT_DIR/minikube-traefik.sh"
 
-  echo "==> applying dev overlay"
-  kubectl kustomize "$REPO_ROOT/k8s/overlays/dev" \
-      --load-restrictor LoadRestrictionsNone | kubectl apply -f -
+  echo "==> applying dev overlay (profile: $deploy_profile)"
+  local build
+  build=$(kubectl kustomize "$REPO_ROOT/k8s/overlays/dev" \
+      --load-restrictor LoadRestrictionsNone)
+  if [ "$deploy_profile" = minimal ]; then
+    # workloads (and their Services) that only the 'full' profile needs
+    # carry the label datahub.dh/profile=full
+    printf '%s\n' "$build" | kubectl apply -f - -l 'datahub.dh/profile!=full'
+    echo "    skipped (full-only workloads):"
+    printf '%s\n' "$build" \
+      | kubectl apply --dry-run=client -f - -l 'datahub.dh/profile=full' -o name 2>/dev/null \
+      | grep -v '^service/' | sed 's/^/      /'
+  else
+    printf '%s\n' "$build" | kubectl apply -f -
+  fi
 
   echo "==> waiting for PVCs to bind (local-path)"
   for _ in $(seq 1 30); do
@@ -182,9 +218,9 @@ EOF
 
 case "${1:-help}" in
   externals) cmd_externals ;;
-  dev-up)    cmd_dev_up ;;
+  dev-up)    shift; cmd_dev_up "$@" ;;
   help|-h|--help)
-    sed -n '2,21p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '2,31p' "$0" | sed 's/^# \{0,1\}//'
     ;;
   *) echo "unknown command: $1 (try: externals, dev-up, help)" >&2; exit 1 ;;
 esac

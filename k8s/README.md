@@ -168,6 +168,27 @@ serves cluster LoadBalancer traffic on `127.0.0.1` — then use
 `allowedHosts` = the public host name, so always access them through the
 /etc/hosts names (a `localhost` Host header is rejected).
 
+### Deploy profiles
+
+Not every workload is needed for every kind of development.
+`dev-up --profile minimal` applies only the compose "minimal" set
+(iRODS development): irods-db, icat, ires-hnas-um, garage1/2 (+s3-tls),
+keycloak, ldap, epicpid, elastic, mdr-db, mdr, sram-sync.
+
+```
+k8s/bin/dhdev.sh dev-up --profile minimal   # iRODS core + auth only
+k8s/bin/dhdev.sh dev-up                     # full stack (default)
+```
+
+The full-only workloads (ires-hnas-azm, davrods, davrods-upload,
+help-center, help-center-backend, dh-home, mdr-home, admin-tools,
+admin-tools-backend, admin-tools-db) carry the label
+`datahub.dh/profile: full` in the base manifests, and `dev-up` applies
+through a label selector — so the profile lists can't drift from the
+manifests, and the script prints what it skips. Switching
+full -> minimal does not delete the already-running full-only workloads;
+re-run `dev-up` without `--profile` to bring them back.
+
 ### Staging data (zones)
 
 Both iress pods (and faker jobs, see below) share the minikube-VM

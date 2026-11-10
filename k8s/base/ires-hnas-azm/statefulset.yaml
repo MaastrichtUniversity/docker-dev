@@ -9,6 +9,7 @@ metadata:
   labels:
     app.kubernetes.io/name: ires-hnas-azm
     app.kubernetes.io/part-of: datahub
+    datahub.dh/profile: full
     app.kubernetes.io/component: irods
 spec:
   serviceName: ires-hnas-azm
