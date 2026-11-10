@@ -93,9 +93,39 @@ EOF
   return 0
 }
 
+# minikube start's --cpus/--memory/--disk-size only apply when the profile
+# is CREATED. An existing profile (running or stopped) keeps its old size,
+# so verify it is big enough for the dev overlay (sum of pod requests:
+# 2.45 CPU / 6Gi) before starting.
+check_minikube_size() {
+  command -v jq >/dev/null || return 0
+  local profile=${MINIKUBE_PROFILE:-minikube} spec
+  spec=$(minikube profile list -o json 2>/dev/null \
+    | jq -r --arg p "$profile" '.[].Profile | select(.Name==$p) | "\(.CPUs) \(.Memory) \(.DiskSize)"' 2>/dev/null || true)
+  [ -n "$spec" ] || return 0   # no profile yet - start flags will apply
+  local cpus mem disk
+  read -r cpus mem disk <<< "$spec"
+  if [ "${cpus:-0}" -lt 4 ] || [ "${mem:-0}" -lt 8192 ] || [ "${disk:-0}" -lt 80 ]; then
+    cat >&2 <<EOF
+minikube profile '$profile' is ${cpus} CPU / ${mem}Mi / ${disk}Gi, but the
+dev overlay needs at least 4 CPU / 8192Mi / 80Gi (sum of pod requests:
+2.45 CPU / 6Gi). 'start' does not resize an existing profile, so delete it
+and re-run:
+
+  minikube delete
+  k8s/bin/dhdev.sh dev-up
+EOF
+    exit 1
+  fi
+}
+
 cmd_dev_up() {
-  command -v minikube >/dev/null || { echo "minikube not found in PATH" >&2; exit 1; }
-  command -v kubectl  >/dev/null || { echo "kubectl not found in PATH" >&2; exit 1; }
+  command -v minikube >/dev/null || {
+    echo "minikube not found in PATH - install it first: https://minikube.sigs.k8s.io/docs/start/" >&2
+    exit 1; }
+  command -v kubectl  >/dev/null || {
+    echo "kubectl not found in PATH - install it first: https://kubernetes.io/docs/tasks/tools/" >&2
+    exit 1; }
 
   echo "==> externals"
   if ! cmd_externals; then
@@ -105,11 +135,10 @@ cmd_dev_up() {
   fi
 
   echo "==> minikube"
+  check_minikube_size
   if minikube ip >/dev/null 2>&1; then
     echo "    already running"
   else
-    # flags only apply when the profile is created; if your profile was
-    # created smaller, 'minikube delete' first.
     minikube start --cpus 4 --memory 8192 --disk-size 80
   fi
 
