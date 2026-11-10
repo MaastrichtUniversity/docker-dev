@@ -88,7 +88,7 @@ spec:
             storage: 10Gi
 ---
 # Headless Service (StatefulSet stable DNS).
-# coredns-custom rewrites mdr-db.dh.local -> mdr-db.<ns>.svc.cluster.local
+# TODO(k8s-rename): mdr-db.dh.local -> mdr-db.<ns>.svc.cluster.local, see k8s/dh-local-worklist.md (B)
 apiVersion: v1
 kind: Service
 metadata:

@@ -14,41 +14,37 @@ k8s/
   overlays/
     dev/                 # the primary environment (what docker-dev used to be)
       config/*.env       # per-env ConfigMap env files (envFrom)
-      secrets/*.env      # per-env Secret env files
-      cluster/           # cluster-scoped: coredns-custom (kube-system)
+      secrets/*.env      # dev-only: Secret env files (secretGenerator)
+      tls/               # dev-only: test certs for the iRODS/garage TLS Secrets
+      external-secrets.yaml  # tst/acc/prd: ExternalSecrets -> Vault (dev: absent)
       kustomization.yaml # namespace, images, generators
-    tst/ acc/ prd/       # same shape; fill in real credentials
+    tst/ acc/ prd/       # same shape; secrets come from Vault
   images/                # "finalize" Dockerfiles: bake ruleset/helpers into iRODS images
   bin/                   # helper scripts (up/down/test/logs/reset/tls)
   Jenkinsfile.build      # build & push all images
   Jenkinsfile.deploy     # kustomize build | kubectl apply
 ```
 
-Deploy a single env: `kubectl apply -k k8s/overlays/dev` (plus the
-cluster-scoped `k8s/overlays/dev/cluster`).
+Deploy a single env (the base references files outside `k8s/base/`, so the
+build needs `--load-restrictor LoadRestrictionsNone`; `bin/dhdev` wraps this):
+
+```
+kubectl kustomize k8s/overlays/dev --load-restrictor LoadRestrictionsNone | kubectl apply -f -
+```
 
 ## Key decisions
 
-### 1. `.dh.local` hostnames are kept, resolved via CoreDNS rewrite
-iRODS bakes `*.dh.local` hostnames into the iCAT catalog (resource hosts),
-SSL certs (already committed in `irods/*/test-dev-ssl-certs/`) and scripts
-(resource names are derived as `${HOSTNAME%%.dh.local}Resource`). Renaming
-would force cert re-issue and script surgery. Instead, a **`coredns-custom`**
-ConfigMap in `kube-system` (the documented k3s extension point) adds a
-`dh.local` server block that rewrites known names to cluster Service DNS:
-
-```
-icat.dh.local        -> icat.<ns>.svc.cluster.local        (headless -> pod IP)
-ires-hnas-um.dh.local-> ires-hnas-um.<ns>.svc.cluster.local (headless -> pod IP)
-ires-hnas-azm.dh.local-> ...same
-garage1.dh.local     -> garage1-s3-tls.<ns>.svc...   (nginx TLS :9000)
-garage2.dh.local     -> garage2-s3-tls...
-ldap.dh.local, mdr-db.dh.local, admin-tools-db.dh.local,
-irods-db.dh.local, elastic.dh.local, keycloak.dh.local -> same-named Services
-```
-
-Constraint: **one environment per cluster** (the rewrite is cluster-global).
-If multiple envs ever share a cluster, they need distinct suffixes.
+### 1. `.dh.local` hostnames are renamed to native k8s Service names
+The compose stack used `*.dh.local` hostnames (resolved by compose DNS).
+On k8s we do **not** customize CoreDNS: every usage becomes the native
+Service FQDN (`<svc>.<ns>.svc.cluster.local`, e.g.
+`icat.dh.local` -> `icat.dh-dev.svc.cluster.local`). Headless Services
+already make iCAT/iRES reachable on the 20000-20199 data range via pod IP.
+The full census of `.dh.local` usages and the concrete work per item
+(pod hostnames + cert re-issue, hook resource-name derivation, env values,
+external-repo code) is in **`k8s/dh-local-worklist.md`** - execute once the
+namespaces are finalized. Until then the base manifests still carry the
+`.dh.local` hostnames.
 
 ### 2. iRODS data-port range (20000-20199)
 A normal Service can't expose 200 ports (100-port limit). iCAT/iRES therefore
@@ -96,16 +92,56 @@ Everything is pulled from `registry.prod.dh.unimaas.nl/docker-dev/<name>:<tag>`.
   (previously bind-mounted).
 
 ### 7. Secrets & env
-Per overlay: `secretGenerator` (credentials) + `configMapGenerator`
-(env files), consumed via `envFrom`. Base references fixed names
-(`dh-irods-secrets`, `<svc>-env`, ...). Dev values mirror the current
-`.env`/`irods.secrets.cfg`; **TST/ACC/PRD files are placeholders to fill**
-(and eventually source from your secret store).
-iRODS TLS certs: dev uses the committed test certs; `bin/gen-irods-tls.sh`
-generates per-env certs + Secrets (needed for tst/acc/prd).
-Ingress TLS: wildcard `*.<env>.dh.unimaas.nl` self-signed via
-`bin/gen-ingress-tls.sh` (trust the CA in browsers; internal traffic stays
-HTTP, as today).
+Per overlay: `configMapGenerator` (env files) + Secrets, consumed via
+`envFrom`/volume mounts. Base references fixed names (see the inventory
+below); overlays only decide *where the values come from*.
+
+Two secret backends, same k8s Secret names:
+- **dev** (no Vault): `secretGenerator` from committed files in
+  `overlays/dev/secrets/` + `overlays/dev/tls/` (the repo's test certs).
+- **tst/acc/prd** (Vault): **ExternalSecrets Operator**
+  (`external-secrets.io/v1`). Each overlay ships `external-secrets.yaml`
+  (one `ExternalSecret` per k8s Secret) + a `ClusterSecretStore`
+  (`dh-vault`) pointing at Vault. The operator creates/refreshes the k8s
+  Secrets with exactly the names the base manifests reference. Do not
+  combine both backends for the same Secret name in one env.
+  ExternalSecret `data:` mappings in `overlays/<env>/external-secrets.yaml`
+  use **placeholder Vault paths** (`secret/datahub/<env>/...`) - adjust to
+  your actual Vault layout when you wire it up.
+
+Suggested Vault layout (KV v2, one path per k8s Secret, one key per
+Secret key): `secret/datahub/<env>/{dh,irods-db,mdr-db,admin-tools-db,
+irods-secrets-cfg,epicpid,icat-tls,ires-um-tls,ires-azm-tls,garage1-tls,
+garage2-tls}`.
+
+**Inventory of every Secret the base manifests reference** (this is the
+list to provision in Vault):
+
+| Secret | Kind | Keys | Consumed by |
+|---|---|---|---|
+| `dh-secrets` | Opaque (env) | `ENV_IRODS_PASSWORD_ADMIN`, `IRODS_PASS`, `ENV_IRODS_KEY_SERVER_ZONE`, `ENV_IRODS_KEY_SERVER_NEGOTIATION`, `ENV_IRODS_KEY_CONTROL_PLANE`, `ENV_IRODS_PASSWORDS_SALT`, `ENV_IRODS_DB_IRODS_PASSWORD`, `ENV_IRODS_DB_POSTGRES_PASSWORD`, `GARAGE_RPC_SECRET`, `GARAGE_ADMIN_TOKEN`, `ENV_S3_ACCESS_KEY_AC`, `ENV_S3_SECRET_KEY_AC`, `ENV_S3_ACCESS_KEY_GL`, `ENV_S3_SECRET_KEY_GL`, `ELASTIC_PASSWORD`, `PASSWORD` (epicpid), `KEYCLOAK_PASSWORD`, `LDAP_ADMIN_PASSWORD`, `DB_PASSWORD` (admin-tools-backend), `MDR_POSTGRES_PASSWORD`, `DJANGO_SECRET_KEY`, `SECRET_KEY` (admin-tools-backend), `AIRFLOW_API_KEY`, `OIDC_CLIENT_SECRET` | icat, ires-um, ires-azm (+init ctrs), garage1/2, irods-db, ldap, keycloak, mdr, elastic, epicpid, sram-sync, admin-tools-backend, faker |
+| `irods-db-credentials` | Opaque (env) | `POSTGRES_PASSWORD`, `ENV_IRODS_DB_IRODS_PASSWORD` | irods-db |
+| `mdr-db-credentials` | Opaque (env) | `POSTGRES_PASSWORD` | mdr-db |
+| `admin-tools-db-credentials` | Opaque (env) | `POSTGRES_PASSWORD` | admin-tools-db |
+| `dh-irods-secrets-cfg` | Opaque (env + file) | env: `INGEST_PASSWORD`, `INGEST_USER`, `INGEST_MOUNT`, `LDAP_PASSWORD`, `LDAP_USER`, `LDAP_URL`, `LDAP_DOMAIN`, `USE_SAMBA`, `DATAVERSE_TOKEN`, `BIOPORTAL_API_KEY`, `ATLASSIAN_API_USERNAME`, `ATLASSIAN_API_KEY`, `REACT_APP_CAPTCHA_SECRET_KEY`, `REACT_APP_CAPTCHA_SITE_KEY`; file: `irods.secrets.cfg` | mdr, ires-um, ires-azm (env + `/etc/secrets` file), help-center-backend, admin-tools-backend, help-center (env) |
+| `epicpid-credentials` | Opaque (files) | `305_21_T12996_USER01_UM_privkey.pem`, `305_21_T12996_USER01_UM_certificate_only.pem` | epicpid (mounted at `/opt/app/credentials`) |
+| `icat-tls` | Opaque (files) | `icat.dh.local.crt`, `icat.dh.local.key`, `dhparams.pem`, `<ca>.pem` | icat (`/opt/irods_ssl_staging`) |
+| `ires-um-tls` | Opaque (files) | `ires-hnas-um.dh.local.crt`, `ires-hnas-um.dh.local.key`, `dhparams.pem`, `<ca>.pem` | ires-hnas-um (`/opt/irods_ssl_staging`) |
+| `ires-azm-tls` | Opaque (files) | `ires-hnas-azm.dh.local.crt`, `ires-hnas-azm.dh.local.key`, `dhparams.pem`, `<ca>.pem` | ires-hnas-azm (`/opt/irods_ssl_staging`) |
+| `garage1-tls` | Opaque (files) | `garage1.dh.local.crt`, `garage1.dh.local.key` | garage1-s3-tls nginx (`/etc/nginx/certs`) |
+| `garage2-tls` | Opaque (files) | `garage2.dh.local.crt`, `garage2.dh.local.key` | garage2-s3-tls nginx (`/etc/nginx/certs`) |
+
+Notes:
+- `PASSWORD`, `DB_PASSWORD`, `SECRET_KEY`, `POSTGRES_PASSWORD` are
+  *container-expected* key names (each service reads its own name); in
+  Vault they live under distinct paths, the mapping is in
+  `external-secrets.yaml`.
+- iRODS TLS: dev uses the committed test certs; `bin/gen-irods-tls.sh`
+  generates per-env certs (needed to populate Vault for tst/acc/prd; the
+  `<ca>.pem` key name must match `ENV_IRODS_SSL_CA_CERTIFICATE`).
+- Ingress TLS: wildcard `*.<env>.dh.unimaas.nl` self-signed via
+  `bin/gen-ingress-tls.sh` (trust the CA in browsers; internal traffic
+  stays HTTP, as today).
 
 ### 8. Storage (Longhorn)
 Two StorageClasses: `longhorn-rwo` (default) and `longhorn-rwx`

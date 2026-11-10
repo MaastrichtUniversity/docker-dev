@@ -1,6 +1,7 @@
 # nginx TLS front for the garage S3 API (was garage1-s3-tls/garage2-s3-tls).
-# iRODS S3 plugin connects to garage1.dh.local:9000 / garage2.dh.local:9000,
-# which coredns-custom rewrites to these services.
+# TODO(k8s-rename): the iRODS S3 plugin connects to garage1/2.dh.local:9000
+# now; after the rename (k8s/dh-local-worklist.md B) it will use
+# garage1/2-s3-tls.<ns>.svc.cluster.local:9000.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
