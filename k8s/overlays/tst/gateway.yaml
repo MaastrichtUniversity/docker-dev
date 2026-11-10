@@ -1,0 +1,591 @@
+# Traefik Gateway API routes for the tst environment (replaces the
+# docker-common nginx-virtual-proxy + VIRTUAL_HOST labels). The cluster
+# uses Gateway API, not Ingress: one Gateway + one HTTPRoute per public
+# host (gatewayClassName traefik).
+#
+# Listeners: hosts covered by the multi-SAN tst cert get both an https
+# (443, Terminate) and an http (80) listener, so both schemes work. Hosts
+# NOT in the cert are HTTP-only until it is re-issued with them:
+# epicpid.tst, helpbackend.tst, auth.tst, admintoolsbackend.tst.
+#
+# Public host names follow the cert's SANs (the published tst names): the
+# MDR app is `app.mdr.tst...` and the elastic UI `elk.tst...`.
+#
+# TLS: certificateRefs point at the `ingress-tls` Secret
+# (kubernetes.io/tls), created by the ExternalSecret of the same name in
+# each of these namespaces (external-secrets.yaml, Vault path
+# `ingress-tls`: tls.crt/tls.key).
+#
+# Follow-up: once the public hosts are reached over https, flip the
+# app-level URLs in config/*.env (DATAHUB_HOME_URL, SAML_DJANGO_BASE_URL,
+# WEBDAV_*_URL, ...) from http:// to https:// to avoid mixed content.
+
+# ============ external: app.mdr.tst (MDR app) ============
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: app-mdr-gateway
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: https
+      port: 443
+      protocol: HTTPS
+      hostname: app.mdr.tst.dh.unimaas.nl
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: ingress-tls
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: app.mdr.tst.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: app-mdr-route
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: app-mdr-gateway
+  hostnames:
+    - app.mdr.tst.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: mdr
+          port: 8000
+---
+# ============ external: mdr.tst (mdr-home frontend) ============
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: mdr-gateway
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: https
+      port: 443
+      protocol: HTTPS
+      hostname: mdr.tst.dh.unimaas.nl
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: ingress-tls
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: mdr.tst.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: mdr-route
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: mdr-gateway
+  hostnames:
+    - mdr.tst.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: mdr-home
+          port: 3000
+---
+# ============ external: download.tst (DavRODS WebDAV download) ============
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: download-gateway
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: https
+      port: 443
+      protocol: HTTPS
+      hostname: download.tst.dh.unimaas.nl
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: ingress-tls
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: download.tst.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: download-route
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: download-gateway
+  hostnames:
+    - download.tst.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: davrods
+          port: 80
+---
+# ============ external: upload.tst (DavRODS WebDAV upload) ============
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: upload-gateway
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: https
+      port: 443
+      protocol: HTTPS
+      hostname: upload.tst.dh.unimaas.nl
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: ingress-tls
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: upload.tst.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: upload-route
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: upload-gateway
+  hostnames:
+    - upload.tst.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: davrods-upload
+          port: 80
+---
+# ============ external: elk.tst (Elasticsearch UI) ============
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: elk-gateway
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: https
+      port: 443
+      protocol: HTTPS
+      hostname: elk.tst.dh.unimaas.nl
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: ingress-tls
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: elk.tst.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: elk-route
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: elk-gateway
+  hostnames:
+    - elk.tst.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: elastic
+          port: 9200
+---
+# ============ irods: epicpid.tst (HTTP-only, not in the cert) ============
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: epicpid-gateway
+  namespace: irods
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: epicpid.tst.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: epicpid-route
+  namespace: irods
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: epicpid-gateway
+  hostnames:
+    - epicpid.tst.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: epicpid
+          port: 80
+---
+# ============ public: help.mdr.tst (help-center + /help_backend API) ============
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: help-gateway
+  namespace: public
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: https
+      port: 443
+      protocol: HTTPS
+      hostname: help.mdr.tst.dh.unimaas.nl
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: ingress-tls
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: help.mdr.tst.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: help-route
+  namespace: public
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: help-gateway
+  hostnames:
+    - help.mdr.tst.dh.unimaas.nl
+  rules:
+    # /help_backend routes already carry the prefix in the FastAPI paths,
+    # so no path rewrite is needed.
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /help_backend
+      backendRefs:
+        - name: help-center-backend
+          port: 8000
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: help-center
+          port: 3000
+---
+# ============ public: helpbackend.tst (HTTP-only, not in the cert) ============
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: helpbackend-gateway
+  namespace: public
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: helpbackend.tst.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: helpbackend-route
+  namespace: public
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: helpbackend-gateway
+  hostnames:
+    - helpbackend.tst.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: help-center-backend
+          port: 8000
+---
+# ============ public: tst.dh.unimaas.nl (dh-home frontend) ============
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: dh-home-gateway
+  namespace: public
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: https
+      port: 443
+      protocol: HTTPS
+      hostname: tst.dh.unimaas.nl
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: ingress-tls
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: tst.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: dh-home-route
+  namespace: public
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: dh-home-gateway
+  hostnames:
+    - tst.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: dh-home
+          port: 3000
+---
+# ============ internal: keycloak.tst (Keycloak) ============
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: keycloak-gateway
+  namespace: internal
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: https
+      port: 443
+      protocol: HTTPS
+      hostname: keycloak.tst.dh.unimaas.nl
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: ingress-tls
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: keycloak.tst.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: keycloak-route
+  namespace: internal
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: keycloak-gateway
+  hostnames:
+    - keycloak.tst.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: keycloak
+          port: 8080
+---
+# ============ internal: auth.tst (Keycloak OIDC alias, HTTP-only, not in the cert) ============
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: auth-gateway
+  namespace: internal
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: auth.tst.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: auth-route
+  namespace: internal
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: auth-gateway
+  hostnames:
+    - auth.tst.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: keycloak
+          port: 8080
+---
+# ============ internal: admin.tst (admin-tools + /api backend) ============
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: admin-gateway
+  namespace: internal
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: https
+      port: 443
+      protocol: HTTPS
+      hostname: admin.tst.dh.unimaas.nl
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: ingress-tls
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: admin.tst.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: admin-route
+  namespace: internal
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: admin-gateway
+  hostnames:
+    - admin.tst.dh.unimaas.nl
+  rules:
+    # /api keeps its prefix in the FastAPI routes, so no rewrite is needed.
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api
+      backendRefs:
+        - name: admin-tools-backend
+          port: 8000
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: admin-tools
+          port: 3000
+---
+# ============ internal: admintoolsbackend.tst (HTTP-only, not in the cert) ============
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: admintoolsbackend-gateway
+  namespace: internal
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: admintoolsbackend.tst.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: admintoolsbackend-route
+  namespace: internal
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: admintoolsbackend-gateway
+  hostnames:
+    - admintoolsbackend.tst.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: admin-tools-backend
+          port: 8000

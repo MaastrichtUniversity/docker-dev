@@ -19,7 +19,7 @@ generatorOptions:
 resources:
   - ../../base
   - namespaces.yaml
-  - ingress.yaml
+  - gateway.yaml
 
 # Per-env ConfigMap env files (consumed via envFrom by the base manifests).
 configMapGenerator:

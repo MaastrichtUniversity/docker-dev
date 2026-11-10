@@ -22,7 +22,7 @@ generatorOptions:
 resources:
   - ../../base
   - namespaces.yaml
-  - ingress.yaml
+  - gateway.yaml
   - external-secrets.yaml
 
 # Per-env ConfigMap env files (consumed via envFrom by the base manifests).

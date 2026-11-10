@@ -1,0 +1,496 @@
+# Traefik Gateway API routes for the dev environment (replaces the
+# docker-common nginx-virtual-proxy + VIRTUAL_HOST labels). The cluster
+# uses Gateway API, not Ingress: one Gateway + one HTTPRoute per public
+# host (gatewayClassName traefik).
+#
+# Dev is HTTP-only (as the compose stack was) - http listeners only. For
+# acc/prd add https listeners with tls: (mode Terminate +
+# certificateRefs) like overlays/tst/gateway.yaml does.
+#
+# Host names follow the dev public naming: the MDR app is
+# `app.mdr.dev...` (the app-level URLs point there), the elastic UI
+# `elastic.dev...` (compose VIRTUAL_HOST).
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: app-mdr-gateway
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: app.mdr.dev.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: app-mdr-route
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: app-mdr-gateway
+  hostnames:
+    - app.mdr.dev.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: mdr
+          port: 8000
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: elastic-gateway
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: elastic.dev.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: elastic-route
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: elastic-gateway
+  hostnames:
+    - elastic.dev.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: elastic
+          port: 9200
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: download-gateway
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: download.dev.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: download-route
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: download-gateway
+  hostnames:
+    - download.dev.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: davrods
+          port: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: upload-gateway
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: upload.dev.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: upload-route
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: upload-gateway
+  hostnames:
+    - upload.dev.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: davrods-upload
+          port: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: mdr-gateway
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: mdr.dev.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: mdr-route
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: mdr-gateway
+  hostnames:
+    - mdr.dev.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: mdr-home
+          port: 3000
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: epicpid-gateway
+  namespace: irods
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: epicpid.dev.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: epicpid-route
+  namespace: irods
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: epicpid-gateway
+  hostnames:
+    - epicpid.dev.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: epicpid
+          port: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: help-gateway
+  namespace: public
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: help.mdr.dev.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: help-route
+  namespace: public
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: help-gateway
+  hostnames:
+    - help.mdr.dev.dh.unimaas.nl
+  rules:
+    # /help_backend routes already carry the prefix in the FastAPI paths,
+    # so no path rewrite is needed.
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /help_backend
+      backendRefs:
+        - name: help-center-backend
+          port: 8000
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: help-center
+          port: 3000
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: helpbackend-gateway
+  namespace: public
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: helpbackend.dev.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: helpbackend-route
+  namespace: public
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: helpbackend-gateway
+  hostnames:
+    - helpbackend.dev.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: help-center-backend
+          port: 8000
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: dh-home-gateway
+  namespace: public
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: dev.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: dh-home-route
+  namespace: public
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: dh-home-gateway
+  hostnames:
+    - dev.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: dh-home
+          port: 3000
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: keycloak-gateway
+  namespace: internal
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: keycloak.dev.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: keycloak-route
+  namespace: internal
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: keycloak-gateway
+  hostnames:
+    - keycloak.dev.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: keycloak
+          port: 8080
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: auth-gateway
+  namespace: internal
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: auth.dev.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: auth-route
+  namespace: internal
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: auth-gateway
+  hostnames:
+    - auth.dev.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: keycloak
+          port: 8080
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: admin-gateway
+  namespace: internal
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: admin.dev.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: admin-route
+  namespace: internal
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: admin-gateway
+  hostnames:
+    - admin.dev.dh.unimaas.nl
+  rules:
+    # /api keeps its prefix in the FastAPI routes, so no rewrite is needed.
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api
+      backendRefs:
+        - name: admin-tools-backend
+          port: 8000
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: admin-tools
+          port: 3000
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: admintoolsbackend-gateway
+  namespace: internal
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: admintoolsbackend.dev.dh.unimaas.nl
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: admintoolsbackend-route
+  namespace: internal
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: admintoolsbackend-gateway
+  hostnames:
+    - admintoolsbackend.dev.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: admin-tools-backend
+          port: 8000

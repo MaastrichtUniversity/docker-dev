@@ -129,7 +129,7 @@ Also: `k8s/base/**` comments/`-icat.dh.local` fallbacks in the
 1. **dh-admin-tools frontend, prd target** (`.nginx/nginx.conf`):
    `resolver 127.0.0.11` (Docker DNS - dead in k8s) +
    `server admin-tools-backend.dh.local:8000 resolve`.
-   - Mitigation in place: the Ingress already splits `/api` ->
+   - Mitigation in place: the HTTPRoute already splits `/api` ->
      admin-tools-backend, so this upstream is never hit from the browser.
    - Proper fix (follow-up): template the upstream FQDN + cluster DNS IP at
      build time (per-env build arg) or change the repo to read them.
@@ -154,10 +154,10 @@ Also: `k8s/base/**` comments/`-icat.dh.local` fallbacks in the
    `elastic.dh.local`) are **overridden at bootstrap** by
    `gen_json_configuration.py` from envs (A1 + B) -> no change needed.
 
-## E. Ingress / public URLs - no change
+## E. Gateway (HTTPRoute) / public URLs - no change
 
 All `*.<env>.dh.unimaas.nl` hosts (incl. SAML/OIDC metadata URLs in mdr
-envs and keycloak) stay public and are served by the Ingress.
+envs and keycloak) stay public and are served by the HTTPRoutes.
 
 ## F. Already k8s-compatible (no work, recorded for the record)
 

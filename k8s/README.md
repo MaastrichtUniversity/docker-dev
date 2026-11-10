@@ -22,8 +22,9 @@ Consequences:
 - ConfigMaps/Secrets are namespace-scoped, so every overlay generator is
   placed in the consuming namespace (`dh-secrets`/`dh-irods-secrets-cfg`
   exist in several).
-- Ingress objects live in the namespace of the Services they route to
-  (one Ingress per namespace; Traefik watches all namespaces).
+- Gateway API (not Ingress) objects live in the namespace of the Services
+  they route to: one Gateway + one HTTPRoute per public host
+  (gatewayClassName `traefik`).
 - Cross-namespace calls use Service FQDNs (see `dh-local-worklist.md`).
 
 ## Layout
@@ -161,12 +162,12 @@ Notes:
 - iRODS TLS: dev uses the committed test certs; `bin/gen-irods-tls.sh`
   generates per-env certs (needed to populate Vault for tst/acc/prd; the
   `<ca>.pem` key name must match `ENV_IRODS_SSL_CA_CERTIFICATE`).
-- Ingress TLS: dev is HTTP-only (as the compose stack was). tst uses the
-  real multi-SAN `*.tst.dh.unimaas.nl` cert, stored in Vault under
-  `ingress-tls` and materialized per Ingress namespace by the
-  `ingress-tls` ExternalSecrets (type `kubernetes.io/tls`; the Ingress
-  `tls:` blocks list only the SANs the cert covers - see
-  `overlays/tst/ingress.yaml`). acc/prd: same pattern with their certs
+- Ingress (Gateway) TLS: dev is HTTP-only (as the compose stack was).
+  tst uses the real multi-SAN `*.tst.dh.unimaas.nl` cert, stored in Vault
+  under `ingress-tls` and materialized per Gateway namespace by the
+  `ingress-tls` ExternalSecrets (type `kubernetes.io/tls`; the Gateway
+  `https` listeners only cover the SANs the cert has - see
+  `overlays/tst/gateway.yaml`). acc/prd: same pattern with their certs
   (a self-signed fallback would be `bin/gen-ingress-tls.sh`, still to
   write).
 
@@ -176,8 +177,11 @@ Two StorageClasses: `longhorn-rwo` (default) and `longhorn-rwx`
 3 nodes -> `numberOfReplicas: "2"`.
 
 ### 9. Networking
-- Traefik Ingress (class `traefik`) per overlay for all `*.<env>.dh.unimaas.nl`
-  hosts (replaces the docker-common nginx proxy incl. SAML browser redirect).
+- Traefik **Gateway API** (gatewayClassName `traefik`) per overlay for all
+  `*.<env>.dh.unimaas.nl` hosts (replaces the docker-common nginx proxy
+  incl. SAML browser redirect). One Gateway + one HTTPRoute per public
+  host, in the namespace of the backend Service. The cluster does not use
+  the Ingress resource.
 - No `hostPort`s; dev access to DBs via `kubectl port-forward`.
 - NetworkPolicies (default-deny + per-flow allows, incl. iRODS 20000-20199
   ranges and um<->azm isolation) live in `base/networkpolicies/` and are
