@@ -77,6 +77,24 @@ _main() {
     # install iRODS iCAT with our DH settings (if not already installed) & start service
     install_and_start_irods "ires"
 
+    # The iRODS S3 plugin reads "<access_key> <secret_key>" from S3_AUTH_FILE
+    # (see mkresc in hooks/bootstrap_s3_ires.sh). In the compose stack those
+    # files were created manually once on the bind-mounted /var/lib/irods; on
+    # a fresh k8s vault PVC they must be created here. Idempotent: only writes
+    # when missing, and only when the S3 key env vars are present (UM side only).
+    if [[ -n "${ENV_S3_ACCESS_KEY_AC:-}" ]]; then
+        _write_s3_keypair() {
+            local file=$1 access=$2 secret=$3
+            if [[ ! -f "$file" && -n "$access" && -n "$secret" ]]; then
+                (umask 077; printf '%s %s\n' "$access" "$secret" > "$file")
+                chown irods:irods "$file"
+                echo "INFO: Created S3 keypair file $file"
+            fi
+        }
+        [[ -n "${ENV_S3_AUTH_FILE_AC:-}" ]] && _write_s3_keypair "$ENV_S3_AUTH_FILE_AC" "$ENV_S3_ACCESS_KEY_AC" "$ENV_S3_SECRET_KEY_AC"
+        [[ -n "${ENV_S3_AUTH_FILE_GL:-}" ]] && _write_s3_keypair "$ENV_S3_AUTH_FILE_GL" "$ENV_S3_ACCESS_KEY_GL" "$ENV_S3_SECRET_KEY_GL"
+    fi
+
     # Replace TAGS entry in filebeat.yml and start filebeat if present.
     if [[ -f /etc/filebeat/filebeat.yml ]]; then
         sed -i "s/\"FILEBEAT_PRIMARY_TAG\"/\"$ENV_FILEBEAT_PRIMARY_TAG\"/g" /etc/filebeat/filebeat.yml

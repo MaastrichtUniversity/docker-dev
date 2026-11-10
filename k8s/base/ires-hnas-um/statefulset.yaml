@@ -67,10 +67,9 @@ spec:
           # Overlay rewrites this to the mirrored registry image
           image: dxflrs/garage:v2.3.0
           command: ["/bin/sh", "/opt/garage/bootstrap.sh"]
-          env:
-            - name: GARAGE_BUCKET
-              value: dh-irods-bucket-dev
           envFrom:
+            - configMapRef:
+                name: ires-um-env
             - secretRef:
                 name: dh-secrets
           volumeMounts:
