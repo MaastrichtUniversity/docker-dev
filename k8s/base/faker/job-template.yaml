@@ -27,8 +27,8 @@ spec:
           type: RuntimeDefault
       containers:
         - name: faker
-          # Overlay rewrites this to <registry>/docker-dev/faker:<tag>
-          image: docker-dev/faker:latest
+          # the overlay's images: section rewrites the tag
+          image: registry.prod.dh.unimaas.nl/docker-dev/faker:latest
           command: ["python", "-u", "create_fake_data.py"]
           args: __ARGS__
           env:

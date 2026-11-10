@@ -26,7 +26,7 @@ spec:
       containers:
         - name: help-center
           # Overlay rewrites this to <registry>/docker-dev/help-center:<tag>
-          image: docker-dev/help-center:latest
+          image: registry.prod.dh.unimaas.nl/docker-dev/help-center:latest
           env:
             - name: TZ
               value: Europe/Amsterdam
@@ -112,7 +112,7 @@ spec:
       containers:
         - name: dh-home
           # Overlay rewrites this to <registry>/docker-dev/dh-home:<tag>
-          image: docker-dev/dh-home:latest
+          image: registry.prod.dh.unimaas.nl/docker-dev/dh-home:latest
           env:
             - name: TZ
               value: Europe/Amsterdam
@@ -196,7 +196,7 @@ spec:
       containers:
         - name: mdr-home
           # Overlay rewrites this to <registry>/docker-dev/dh-mdr-home:<tag>
-          image: docker-dev/dh-mdr-home:latest
+          image: registry.prod.dh.unimaas.nl/docker-dev/dh-mdr-home:latest
           env:
             - name: TZ
               value: Europe/Amsterdam
@@ -280,7 +280,7 @@ spec:
       containers:
         - name: admin-tools
           # Overlay rewrites this to <registry>/docker-dev/admin-tools:<tag>
-          image: docker-dev/admin-tools:latest
+          image: registry.prod.dh.unimaas.nl/docker-dev/admin-tools:latest
           env:
             - name: TZ
               value: Europe/Amsterdam

@@ -25,7 +25,7 @@ spec:
       containers:
         - name: mdr
           # Overlay rewrites this to <registry>/docker-dev/mdr:<tag>
-          image: docker-dev/mdr:latest
+          image: registry.prod.dh.unimaas.nl/docker-dev/mdr:latest
           env:
             - name: TZ
               value: Europe/Amsterdam

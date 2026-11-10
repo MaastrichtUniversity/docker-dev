@@ -25,7 +25,7 @@ spec:
       containers:
         - name: help-center-backend
           # Overlay rewrites this to <registry>/docker-dev/help-center-backend:<tag>
-          image: docker-dev/help-center-backend:latest
+          image: registry.prod.dh.unimaas.nl/docker-dev/help-center-backend:latest
           env:
             - name: TZ
               value: Europe/Amsterdam

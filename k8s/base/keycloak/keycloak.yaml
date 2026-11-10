@@ -26,7 +26,7 @@ spec:
         - name: keycloak
           # Built from ./keycloak in THIS repo (see Jenkinsfile.build).
           # Realm export, users, import.sh, startup.sh and the theme are baked in.
-          image: docker-dev/keycloak:latest
+          image: registry.prod.dh.unimaas.nl/docker-dev/keycloak:latest
           env:
             - name: TZ
               value: Europe/Amsterdam

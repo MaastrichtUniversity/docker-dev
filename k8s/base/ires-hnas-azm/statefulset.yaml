@@ -42,7 +42,7 @@ spec:
       initContainers:
         - name: wait-icat
           # same image as the main container (kustomize rewrites both)
-          image: docker-dev/ires-hnas:latest
+          image: registry.prod.dh.unimaas.nl/docker-dev/ires-hnas:latest
           command:
             - bash
             - -c
@@ -58,7 +58,7 @@ spec:
       containers:
         - name: ires
           # Overlay rewrites this to <registry>/docker-dev/ires-hnas:<tag>
-          image: docker-dev/ires-hnas:latest
+          image: registry.prod.dh.unimaas.nl/docker-dev/ires-hnas:latest
           env:
             - name: HOSTNAME
               value: ires-hnas-azm.irods.svc.cluster.local

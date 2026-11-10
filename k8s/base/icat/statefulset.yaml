@@ -56,7 +56,7 @@ spec:
         # Make sure irods-db is accepting connections before the pre-hook psql checks
         - name: wait-db
           # same image as the main container (kustomize rewrites both)
-          image: docker-dev/icat:latest
+          image: registry.prod.dh.unimaas.nl/docker-dev/icat:latest
           command:
             - bash
             - -c
@@ -78,7 +78,7 @@ spec:
       containers:
         - name: icat
           # Overlay rewrites this to <registry>/docker-dev/icat:<tag>
-          image: docker-dev/icat:latest
+          image: registry.prod.dh.unimaas.nl/docker-dev/icat:latest
           env:
             - name: HOSTNAME
               value: icat.irods.svc.cluster.local

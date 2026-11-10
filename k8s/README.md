@@ -46,9 +46,11 @@ pods in 4 namespaces:  irods / external / public / internal
   - **tst (later acc/prd)** — the **ExternalSecrets operator** creates and
     keeps the same k8s Secrets in sync with Vault
     (`secret/datahub/<env>/...`). See *Deploying*, step 2.
-- **Images:** everything is pulled from `registry.prod.dh.unimaas.nl`
-  (`/docker-dev/<name>:<tag>` plus mirrored postgres/garage/openldap/nginx).
-  No local builds at deploy time.
+- **Images:** the built app images are pulled from
+  `registry.prod.dh.unimaas.nl/docker-dev/<name>:<tag>` (the base manifests
+  reference them with that full registry path already). External base
+  images (postgres/garage/openldap/nginx) are pulled from docker.io in dev
+  and mirrored into the registry for tst+. No local builds at deploy time.
 
 ## Namespaces
 
@@ -381,14 +383,20 @@ container (idempotent; `layout assign/apply` guarded). Dependent pods
 + bucket instead of running the bootstrap (no races).
 
 ### 6. Images: registry, not local builds
-Everything is pulled from `registry.prod.dh.unimaas.nl/docker-dev/<name>:<tag>`.
+Every built app image is pulled from
+`registry.prod.dh.unimaas.nl/docker-dev/<name>:<tag>` — the base manifests
+reference it with the full registry path.
 - `Jenkinsfile.build` (TODO) clones each external repo at a pinned ref (or
   branch head for dev), builds with the same `--build-arg`s as compose, and
   pushes. External base images (postgres, openldap, nginx, garage) are
-  mirrored too.
-- Base manifests use neutral image names; each overlay's `images:`
-  transformer sets registry + tag (dev/tst default to `latest`; the deploy
-  pipeline will override per-service with `kustomize --image`).
+  mirrored into the registry too (for the k3s envs).
+- External base images keep their docker.io names in the base manifests:
+  dev pulls them from docker.io (local minikube, as the compose stack
+  did); tst+ overlays rewrite them to the registry mirror via their
+  `images:` section.
+- Each overlay's `images:` transformer sets the tags for the built images
+  (dev/tst default to `latest`; the deploy pipeline will override
+  per-service with `kustomize --image`).
 - Frontend images are built with `--target dev` for dev/tst (CRA dev
   server, as today) and `--target prd` for acc/prd (pipeline parameter).
 - `keycloak/Dockerfile` bakes realm-export/users/import/startup/theme

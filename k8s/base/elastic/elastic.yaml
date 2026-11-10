@@ -25,7 +25,7 @@ spec:
       initContainers:
         - name: chown-data
           # same image as the main container (kustomize rewrites both)
-          image: docker-dev/elastic:latest
+          image: registry.prod.dh.unimaas.nl/docker-dev/elastic:latest
           command: ["sh", "-c", "chown -R 1000:1000 /usr/share/elasticsearch/data"]
           securityContext:
             runAsUser: 0
@@ -38,7 +38,7 @@ spec:
       containers:
         - name: elastic
           # Overlay rewrites this to <registry>/docker-dev/elastic:<tag>
-          image: docker-dev/elastic:latest
+          image: registry.prod.dh.unimaas.nl/docker-dev/elastic:latest
           env:
             - name: TZ
               value: Europe/Amsterdam

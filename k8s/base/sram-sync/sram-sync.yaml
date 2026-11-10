@@ -27,7 +27,7 @@ spec:
       containers:
         - name: sram-sync
           # Overlay rewrites this to <registry>/docker-dev/sram-sync:<tag>
-          image: docker-dev/sram-sync:latest
+          image: registry.prod.dh.unimaas.nl/docker-dev/sram-sync:latest
           command: ["sram-sync.py", "--commit", "--scheduled"]
           env:
             - name: TZ

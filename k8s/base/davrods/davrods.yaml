@@ -27,7 +27,7 @@ spec:
       containers:
         - name: davrods
           # Overlay rewrites this to <registry>/docker-dev/davrods:<tag>
-          image: docker-dev/davrods:latest
+          image: registry.prod.dh.unimaas.nl/docker-dev/davrods:latest
           env:
             - name: TZ
               value: Europe/Amsterdam

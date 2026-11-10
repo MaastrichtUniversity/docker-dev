@@ -25,7 +25,7 @@ spec:
       containers:
         - name: admin-tools-backend
           # Overlay rewrites this to <registry>/docker-dev/admin-tools-backend:<tag>
-          image: docker-dev/admin-tools-backend:latest
+          image: registry.prod.dh.unimaas.nl/docker-dev/admin-tools-backend:latest
           env:
             - name: TZ
               value: Europe/Amsterdam

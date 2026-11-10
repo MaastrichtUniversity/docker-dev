@@ -100,53 +100,37 @@ configMapGenerator:
 # All images from the own registry (Jenkinsfile.build pushes them;
 # postgres/openldap/garage/nginx are mirrored there).
 images:
-  - name: docker-dev/icat
-    newName: registry.prod.dh.unimaas.nl/docker-dev/icat
+  - name: registry.prod.dh.unimaas.nl/docker-dev/icat
     newTag: latest
-  - name: docker-dev/ires-hnas
-    newName: registry.prod.dh.unimaas.nl/docker-dev/ires-hnas
+  - name: registry.prod.dh.unimaas.nl/docker-dev/ires-hnas
     newTag: latest
-  - name: docker-dev/mdr
-    newName: registry.prod.dh.unimaas.nl/docker-dev/mdr
+  - name: registry.prod.dh.unimaas.nl/docker-dev/mdr
     newTag: latest
-  - name: docker-dev/keycloak
-    newName: registry.prod.dh.unimaas.nl/docker-dev/keycloak
+  - name: registry.prod.dh.unimaas.nl/docker-dev/keycloak
     newTag: latest
-  - name: docker-dev/elastic
-    newName: registry.prod.dh.unimaas.nl/docker-dev/elastic
+  - name: registry.prod.dh.unimaas.nl/docker-dev/elastic
     newTag: latest
-  - name: docker-dev/faker
-    newName: registry.prod.dh.unimaas.nl/docker-dev/faker
+  - name: registry.prod.dh.unimaas.nl/docker-dev/faker
     newTag: latest
-  - name: docker-dev/davrods
-    newName: registry.prod.dh.unimaas.nl/docker-dev/davrods
+  - name: registry.prod.dh.unimaas.nl/docker-dev/davrods
     newTag: latest
-  - name: docker-dev/davrods-upload
-    newName: registry.prod.dh.unimaas.nl/docker-dev/davrods-upload
+  - name: registry.prod.dh.unimaas.nl/docker-dev/davrods-upload
     newTag: latest
-  - name: docker-dev/epicpid
-    newName: registry.prod.dh.unimaas.nl/docker-dev/epicpid
+  - name: registry.prod.dh.unimaas.nl/docker-dev/epicpid
     newTag: latest
-  - name: docker-dev/sram-sync
-    newName: registry.prod.dh.unimaas.nl/docker-dev/sram-sync
+  - name: registry.prod.dh.unimaas.nl/docker-dev/sram-sync
     newTag: latest
-  - name: docker-dev/help-center-backend
-    newName: registry.prod.dh.unimaas.nl/docker-dev/help-center-backend
+  - name: registry.prod.dh.unimaas.nl/docker-dev/help-center-backend
     newTag: latest
-  - name: docker-dev/help-center
-    newName: registry.prod.dh.unimaas.nl/docker-dev/help-center
+  - name: registry.prod.dh.unimaas.nl/docker-dev/help-center
     newTag: latest
-  - name: docker-dev/dh-home
-    newName: registry.prod.dh.unimaas.nl/docker-dev/dh-home
+  - name: registry.prod.dh.unimaas.nl/docker-dev/dh-home
     newTag: latest
-  - name: docker-dev/dh-mdr-home
-    newName: registry.prod.dh.unimaas.nl/docker-dev/dh-mdr-home
+  - name: registry.prod.dh.unimaas.nl/docker-dev/dh-mdr-home
     newTag: latest
-  - name: docker-dev/admin-tools-backend
-    newName: registry.prod.dh.unimaas.nl/docker-dev/admin-tools-backend
+  - name: registry.prod.dh.unimaas.nl/docker-dev/admin-tools-backend
     newTag: latest
-  - name: docker-dev/admin-tools
-    newName: registry.prod.dh.unimaas.nl/docker-dev/admin-tools
+  - name: registry.prod.dh.unimaas.nl/docker-dev/admin-tools
     newTag: latest
   # mirrored external images
   - name: postgres

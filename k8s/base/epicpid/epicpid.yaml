@@ -25,7 +25,7 @@ spec:
       containers:
         - name: epicpid
           # Overlay rewrites this to <registry>/docker-dev/epicpid:<tag>
-          image: docker-dev/epicpid:latest
+          image: registry.prod.dh.unimaas.nl/docker-dev/epicpid:latest
           env:
             - name: TZ
               value: Europe/Amsterdam
