@@ -34,9 +34,7 @@ spec:
             - configMapRef:
                 name: admin-tools-backend-env
             - secretRef:
-                name: dh-secrets
-            - secretRef:
-                name: dh-irods-secrets-cfg
+                name: admin-tools-secrets
           ports:
             - name: http
               containerPort: 8000

@@ -35,7 +35,7 @@ spec:
           command: ["server"]
           envFrom:
             - secretRef:
-                name: dh-secrets
+                name: garage-secrets
           ports:
             - name: s3-api
               containerPort: 3900
@@ -114,7 +114,7 @@ spec:
           command: ["server"]
           envFrom:
             - secretRef:
-                name: dh-secrets
+                name: garage-secrets
           ports:
             - name: s3-api
               containerPort: 3900

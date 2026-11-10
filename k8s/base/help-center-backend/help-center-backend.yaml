@@ -34,9 +34,7 @@ spec:
             - configMapRef:
                 name: help-center-backend-env
             - secretRef:
-                name: dh-secrets
-            - secretRef:
-                name: dh-irods-secrets-cfg
+                name: help-center-secrets
           ports:
             - name: http
               containerPort: 8000

@@ -50,11 +50,12 @@ Status: **A1-A4 and C(dev) are done** in `k8s/base`; **B is done for dev
 and tst** (acc/prd overlays still to write); the remaining work is D
 (external follow-ups).
 
-1. **[done] Force hostname** - `spec.hostname` + `HOSTNAME` env on the three
-   iRODS StatefulSets are now the headless Service FQDNs
-   (`icat.irods.svc.cluster.local`, `ires-hnas-{um,azm}.irods...`).
-   `gen_json_configuration.py` takes `irods_host` / `catalog_provider_hosts`
-   from `socket.gethostname()` -> follows the hostname automatically
+1. **[done] Stable iRODS hostname** - `spec.hostname` is the required
+   DNS label; the `HOSTNAME` env on the three iRODS StatefulSets remains the
+   service FQDN (`icat.irods.svc.cluster.local`,
+   `ires-hnas-{um,azm}.irods...`). `gen_json_configuration.py` resolves
+   `socket.gethostname()` with `getaddrinfo(..., AI_CANONNAME)` to obtain
+   the canonical service FQDN for `irods_host` / `catalog_provider_hosts`
    (verified in
    `externals/dh-irods/irods-base/scripts/lib/gen_json_configuration.py`).
 2. **[done] Re-issued iRODS TLS certs** - `bin/gen-irods-tls.sh` generates

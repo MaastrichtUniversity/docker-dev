@@ -34,7 +34,7 @@ spec:
             - configMapRef:
                 name: keycloak-env
             - secretRef:
-                name: dh-secrets
+                name: keycloak-secrets
           ports:
             - name: http
               containerPort: 8080

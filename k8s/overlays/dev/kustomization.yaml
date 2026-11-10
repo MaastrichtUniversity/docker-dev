@@ -23,12 +23,12 @@ resources:
   - gateway.yaml
 
 # dev runs on a local minikube: Longhorn SCs/sizes don't apply there -
-# retarget all volumes to minikube's local-path class, shrink them, make
+# retarget all volumes to minikube's standard class, shrink them, make
 # the shared zones a hostPath, and reduce CPU/memory (see patches/).
 patches:
   - path: patches/storage-dev.yaml
   - path: patches/resources-dev.yaml
-  # the shared ingest zones (staging-zones PVC is RWX - local-path can't
+  # the shared ingest zones (staging-zones PVC is RWX - standard can't
   # do that) become a hostPath volume: single node, so this is the
   # compose-era host-dir behavior. /staging-data is created in the minikube
   # VM on demand (to share the host folder instead: minikube start --mount
@@ -38,7 +38,7 @@ patches:
       name: ires-hnas-um
     patch: |-
       - op: replace
-        path: /spec/template/spec/volumes/8
+        path: /spec/template/spec/volumes/9
         value:
           name: zones
           hostPath:
@@ -49,7 +49,7 @@ patches:
       name: ires-hnas-azm
     patch: |-
       - op: replace
-        path: /spec/template/spec/volumes/4
+        path: /spec/template/spec/volumes/5
         value:
           name: zones
           hostPath:
@@ -128,41 +128,53 @@ configMapGenerator:
 # Secrets - dev sources them from committed files (no Vault). tst/acc/prd
 # use ExternalSecrets -> Vault instead (k8s/README.md section 7).
 #
-# dh-secrets and dh-irods-secrets-cfg are consumed in every namespace, so
-# they are generated in each (same name, different namespace).
+# Secrets are scoped by namespace/consumer. Never replicate the complete
+# credential sets into namespaces that do not need them.
 secretGenerator:
-  - name: dh-secrets
+  - name: icat-app-secrets
     namespace: irods
-    envs: [secrets/dh.env]
-  - name: dh-secrets
-    namespace: external
-    envs: [secrets/dh.env]
-  - name: dh-secrets
-    namespace: public
-    envs: [secrets/dh.env]
-  - name: dh-secrets
-    namespace: internal
-    envs: [secrets/dh.env]
+    envs: [secrets/icat-app-secrets.env]
+  - name: ires-app-secrets
+    namespace: irods
+    envs: [secrets/ires-app-secrets.env]
+  - name: garage-secrets
+    namespace: irods
+    envs: [secrets/garage-secrets.env]
+  - name: epicpid-app-secrets
+    namespace: irods
+    envs: [secrets/epicpid-app-secrets.env]
+  - name: sram-sync-secrets
+    namespace: irods
+    envs: [secrets/sram-sync-secrets.env]
+  - name: faker-secrets
+    namespace: irods
+    envs: [secrets/faker-secrets.env]
   - name: dh-irods-secrets-cfg
     namespace: irods
     envs: [secrets/irods-secrets-cfg.env]
     files:
       - irods.secrets.cfg=secrets/irods-secrets-cfg.env
-  - name: dh-irods-secrets-cfg
+  - name: elastic-secrets
     namespace: external
-    envs: [secrets/irods-secrets-cfg.env]
-    files:
-      - irods.secrets.cfg=secrets/irods-secrets-cfg.env
-  - name: dh-irods-secrets-cfg
-    namespace: public
-    envs: [secrets/irods-secrets-cfg.env]
-    files:
-      - irods.secrets.cfg=secrets/irods-secrets-cfg.env
-  - name: dh-irods-secrets-cfg
+    envs: [secrets/elastic-secrets.env]
+  - name: mdr-app-secrets
+    namespace: external
+    envs: [secrets/mdr-app-secrets.env]
+  - name: keycloak-secrets
     namespace: internal
-    envs: [secrets/irods-secrets-cfg.env]
-    files:
-      - irods.secrets.cfg=secrets/irods-secrets-cfg.env
+    envs: [secrets/keycloak-secrets.env]
+  - name: ldap-secrets
+    namespace: internal
+    envs: [secrets/ldap-secrets.env]
+  - name: admin-tools-secrets
+    namespace: internal
+    envs: [secrets/admin-tools-secrets.env]
+  - name: help-center-secrets
+    namespace: public
+    envs: [secrets/help-center-secrets.env]
+  - name: frontend-public-config
+    namespace: public
+    envs: [secrets/frontend-public-config.env]
   - name: irods-db-credentials
     namespace: irods
     envs: [secrets/irods-db-credentials.env]

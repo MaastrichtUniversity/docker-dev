@@ -36,7 +36,7 @@ spec:
             - configMapRef:
                 name: sram-sync-env
             - secretRef:
-                name: dh-secrets
+                name: sram-sync-secrets
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:

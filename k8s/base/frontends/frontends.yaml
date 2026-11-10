@@ -35,7 +35,7 @@ spec:
             - configMapRef:
                 name: help-center-env
             - secretRef:
-                name: dh-irods-secrets-cfg # REACT_APP_CAPTCHA_SITE_KEY
+                name: frontend-public-config # REACT_APP_CAPTCHA_SITE_KEY
           ports:
             - name: http
               containerPort: 3000

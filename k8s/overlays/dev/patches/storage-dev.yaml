@@ -1,10 +1,9 @@
 # dev/minikube storage patches: retarget every volume from Longhorn to
-# minikube's local-path StorageClass and shrink sizes (dev data is
+# minikube's standard StorageClass and shrink sizes (dev data is
 # disposable - every bring-up starts clean). Total ~50Gi, so run minikube
-# with at least --disk-size 80 (local-path has no quota: a heavy faker run
+# with at least --disk-size 80 (the standard hostpath provisioner has no quota: a heavy faker run
 # grows into the VM disk).
-# NOTE: adjust `local-path` if `kubectl get sc` on your minikube shows a
-# different name for the default class (older minikube: `standard`).
+# Minikube's `storage-provisioner` addon provides the `standard` class.
 # NOTE: staging-zones is only kept as a valid (bound, unused) claim - the
 # iress pods and faker use the hostPath /staging-data volume instead
 # (see kustomization.yaml patches).
@@ -14,7 +13,7 @@ metadata:
   name: elastic-data
   namespace: external
 spec:
-  storageClassName: local-path
+  storageClassName: standard
   resources:
     requests:
       storage: 5Gi
@@ -25,7 +24,7 @@ metadata:
   name: mdr-static
   namespace: external
 spec:
-  storageClassName: local-path
+  storageClassName: standard
   resources:
     requests:
       storage: 2Gi
@@ -36,7 +35,7 @@ metadata:
   name: garage1-data
   namespace: irods
 spec:
-  storageClassName: local-path
+  storageClassName: standard
   resources:
     requests:
       storage: 5Gi
@@ -47,7 +46,7 @@ metadata:
   name: garage2-data
   namespace: irods
 spec:
-  storageClassName: local-path
+  storageClassName: standard
   resources:
     requests:
       storage: 5Gi
@@ -58,7 +57,7 @@ metadata:
   name: garage1-meta
   namespace: irods
 spec:
-  storageClassName: local-path
+  storageClassName: standard
   resources:
     requests:
       storage: 1Gi
@@ -71,7 +70,7 @@ metadata:
   name: garage2-meta
   namespace: irods
 spec:
-  storageClassName: local-path
+  storageClassName: standard
   resources:
     requests:
       storage: 1Gi
@@ -84,7 +83,7 @@ metadata:
   name: staging-zones
   namespace: irods
 spec:
-  storageClassName: local-path
+  storageClassName: standard
   resources:
     requests:
       storage: 1Gi
@@ -98,9 +97,11 @@ metadata:
   namespace: irods
 spec:
   volumeClaimTemplates:
-    - name: vault
+    - metadata:
+        name: vault
       spec:
-        storageClassName: local-path
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: standard
         resources:
           requests:
             storage: 5Gi
@@ -112,15 +113,19 @@ metadata:
   namespace: irods
 spec:
   volumeClaimTemplates:
-    - name: vault
+    - metadata:
+        name: vault
       spec:
-        storageClassName: local-path
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: standard
         resources:
           requests:
             storage: 5Gi
-    - name: mnt
+    - metadata:
+        name: mnt
       spec:
-        storageClassName: local-path
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: standard
         resources:
           requests:
             storage: 5Gi
@@ -132,15 +137,19 @@ metadata:
   namespace: irods
 spec:
   volumeClaimTemplates:
-    - name: vault
+    - metadata:
+        name: vault
       spec:
-        storageClassName: local-path
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: standard
         resources:
           requests:
             storage: 5Gi
-    - name: mnt
+    - metadata:
+        name: mnt
       spec:
-        storageClassName: local-path
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: standard
         resources:
           requests:
             storage: 5Gi
@@ -152,9 +161,11 @@ metadata:
   namespace: irods
 spec:
   volumeClaimTemplates:
-    - name: data
+    - metadata:
+        name: data
       spec:
-        storageClassName: local-path
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: standard
         resources:
           requests:
             storage: 2Gi
@@ -166,9 +177,11 @@ metadata:
   namespace: external
 spec:
   volumeClaimTemplates:
-    - name: data
+    - metadata:
+        name: data
       spec:
-        storageClassName: local-path
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: standard
         resources:
           requests:
             storage: 2Gi
@@ -180,9 +193,10 @@ metadata:
   namespace: internal
 spec:
   volumeClaimTemplates:
-    - name: data
+    - metadata:
+        name: data
       spec:
-        storageClassName: local-path
+        storageClassName: standard
         resources:
           requests:
             storage: 1Gi

@@ -41,8 +41,9 @@ pods in 4 namespaces:  irods / external / public / internal
   the compose services used, with k8s FQDNs where `.dh.local` used to be.
 - **Secrets:**
   - **dev** — no Vault: kustomize generates the k8s Secrets at build time
-    from committed files in `overlays/dev/secrets/` (same values as the
-    compose `.env` / `irods.secrets.cfg`).
+    from scoped files in `overlays/dev/secrets/` (only each workload's
+    required keys; secret vendor values remain placeholders until copied
+    from local gitignored config).
   - **tst (later acc/prd)** — the **ExternalSecrets operator** creates and
     keeps the same k8s Secrets in sync with Vault
     (`secret/datahub/<env>/...`). See *Deploying*, step 2.
@@ -67,9 +68,9 @@ objects):
 | `monitoring` | pre-existing ELK, reused as filebeat output (`elk.monitoring.svc.cluster.local`); Grafana/Loki later |
 
 Consequences:
-- ConfigMaps/Secrets are namespace-scoped, so every overlay generator is
-  placed in the consuming namespace (`dh-secrets`/`dh-irods-secrets-cfg`
-  exist in several).
+- ConfigMaps/Secrets are namespace-scoped, so every generator/ExternalSecret
+  is placed in the consuming namespace; credentials are split by workload
+  rather than copied as a complete set into every namespace.
 - Gateway API (not Ingress) objects live in the namespace of the Services
   they route to: one Gateway + one HTTPRoute per public host
   (gatewayClassName `traefik`).
@@ -118,7 +119,7 @@ clone — those creds come from Vault.
 ## Local dev on minikube (dev overlay)
 
 The dev overlay targets a **local minikube cluster** (not k3s).
-`overlays/dev/patches/` retargets every volume to minikube's `local-path`
+`overlays/dev/patches/` retargets every volume to minikube's `standard`
 StorageClass, shrinks them (~50Gi total), lowers CPU/memory (sum of all
 pod requests: 2.45 CPU / 6.0Gi), and turns the shared ingest zones into a
 hostPath `/staging-data` volume (single node = the compose-era host-dir
@@ -135,13 +136,14 @@ That is the whole flow:
    (same repo list as the compose repo's `rit.sh`; see the SURF note
    below)
 2. minikube started if not running: `--cpus 4 --memory 8192
-   --disk-size 80` (docker driver; the local-path StorageClass ships
-   with minikube)
-3. `k8s/bin/minikube-traefik.sh`: minikube loadbalancer addon (metallb),
+   --disk-size 80` (docker driver)
+3. the `storage-provisioner` and `default-storageclass` addons are enabled;
+   the script verifies the `standard` StorageClass before applying PVCs
+4. `k8s/bin/minikube-traefik.sh`: minikube loadbalancer addon (metallb),
    Gateway API CRDs (v1.7.0), Traefik v3.7 with the Gateway API provider
    + LoadBalancer Service, and it prints an /etc/hosts block for all 13
    dev public hosts
-4. the dev overlay is applied and the PVCs are checked
+5. the dev overlay is applied and the PVCs are checked
 
 Then add the printed /etc/hosts block:
 
@@ -214,11 +216,14 @@ sed -e 's|^          persistentVolumeClaim:$|          hostPath:|' \
 
 ### dev secrets
 
-`overlays/dev/secrets/irods-secrets-cfg.env` contains `<set-from-local-...>`
-placeholders for the three vendor credentials (Atlassian API token,
-BioPortal key, reCAPTCHA secret) instead of real values. Copy the real
-ones from the local gitignored `irods.secrets.cfg` / `.env` (main tree)
-before relying on those integrations.
+The dev secrets files contain `<set-from-local-...>` placeholders for
+vendor credentials (Atlassian API token, BioPortal key, reCAPTCHA secret)
+instead of real values. They are split by consumer across
+`irods-secrets-cfg.env`, `mdr-app-secrets.env`,
+`admin-tools-secrets.env`, and `help-center-secrets.env`. Copy the real
+values from the local gitignored `irods.secrets.cfg` / `.env` (main tree)
+into each relevant file before relying on those integrations; don't commit
+local credential values.
 
 ## Deploying (step by step)
 
@@ -259,17 +264,21 @@ and pushing under the registry names — including the mirrored base images
 
 ### Step 2 — secrets
 
-**dev:** values are committed in `overlays/dev/secrets/` (same as the
-compose `.env` / `irods.secrets.cfg`), except the three vendor
-credentials in `irods-secrets-cfg.env` are `<set-from-local-irods-secrets.cfg>`
-placeholders — fill them from the local gitignored files (see
-"Local dev on minikube").
+**dev:** scoped values are in `overlays/dev/secrets/`; the vendor API
+credentials are placeholders in the consumer-specific secret files. Fill
+them from the local gitignored `.env`/`irods.secrets.cfg` before relying on
+those integrations (see "Local dev on minikube").
 
 **tst:** provision Vault (KV v2), one path per k8s Secret, one Vault key
 per Secret key (key names = the exact keys in the inventory table below):
 
 ```
-secret/datahub/tst/dh                  25 keys  (see inventory: dh-secrets)
+secret/datahub/tst/icat-app-secrets    iRODS credentials for icat
+secret/datahub/tst/ires-app-secrets    iRODS/S3 credentials for ires
+secret/datahub/tst/garage-secrets      Garage credentials for Garage/ires bootstrap
+secret/datahub/tst/epicpid-app-secrets epicpid application password
+secret/datahub/tst/sram-sync-secrets   LDAP bind password for sram-sync
+secret/datahub/tst/faker-secrets       iRODS client password for faker
 secret/datahub/tst/irods-secrets-cfg   14 keys + irods.secrets.cfg
 secret/datahub/tst/irods-db            2 keys   (POSTGRES_PASSWORD, ENV_IRODS_DB_IRODS_PASSWORD)
 secret/datahub/tst/mdr-db              1 key    (POSTGRES_PASSWORD)
@@ -446,27 +455,47 @@ Two secret backends, same k8s Secret names:
   (`external-secrets.io/v1`). Each overlay ships `external-secrets.yaml`
   (one `ExternalSecret` per k8s Secret) + a `ClusterSecretStore`
   (`dh-vault`) pointing at Vault. The operator creates/refreshes the k8s
-  Secrets with exactly the names the base manifests reference. Do not
+  Secrets with exactly the names the base manifests reference. Credential
+  Secrets are scoped to namespace and consumer; in particular the public
+  Help Center backend receives only its Atlassian/CAPTCHA credentials, not
+  the iRODS, Garage, or database credentials. Do not
   combine both backends for the same Secret name in one env.
   ExternalSecret `data:` mappings in `overlays/<env>/external-secrets.yaml`
   use **placeholder Vault paths** (`secret/datahub/<env>/...`) - adjust to
   your actual Vault layout when you wire it up.
 
 Suggested Vault layout (KV v2, one path per k8s Secret, one key per
-Secret key): `secret/datahub/<env>/{dh,irods-db,mdr-db,admin-tools-db,
-irods-secrets-cfg,epicpid,icat-tls,ires-um-tls,ires-azm-tls,garage1-tls,
-garage2-tls,ingress-tls}`.
+Secret key): `secret/datahub/<env>/{icat-app-secrets,ires-app-secrets,
+garage-secrets,epicpid-app-secrets,sram-sync-secrets,faker-secrets,
+elastic-secrets,mdr-app-secrets,
+keycloak-secrets,ldap-secrets,admin-tools-secrets,help-center-secrets,
+frontend-public-config,irods-db,mdr-db,
+admin-tools-db,irods-secrets-cfg,epicpid,icat-tls,ires-um-tls,
+ires-azm-tls,garage1-tls,garage2-tls,ingress-tls}`. Each application
+path contains only the keys that workload consumes.
 
 **Inventory of every Secret the base manifests reference** (this is the
 list to provision in Vault):
 
 | Secret | Kind | Keys | Consumed by |
 |---|---|---|---|
-| `dh-secrets` | Opaque (env) | `ENV_IRODS_PASSWORD_ADMIN`, `IRODS_PASS`, `ENV_IRODS_KEY_SERVER_ZONE`, `ENV_IRODS_KEY_SERVER_NEGOTIATION`, `ENV_IRODS_KEY_CONTROL_PLANE`, `ENV_IRODS_PASSWORDS_SALT`, `ENV_IRODS_DB_IRODS_PASSWORD`, `ENV_IRODS_DB_POSTGRES_PASSWORD`, `GARAGE_RPC_SECRET`, `GARAGE_ADMIN_TOKEN`, `ENV_S3_ACCESS_KEY_AC`, `ENV_S3_SECRET_KEY_AC`, `ENV_S3_ACCESS_KEY_GL`, `ENV_S3_SECRET_KEY_GL`, `ELASTIC_PASSWORD`, `PASSWORD` (epicpid), `KEYCLOAK_PASSWORD`, `LDAP_ADMIN_PASSWORD`, `LDAP_PASS` (sram-sync), `DB_PASSWORD` (admin-tools-backend), `MDR_POSTGRES_PASSWORD`, `DJANGO_SECRET_KEY`, `SECRET_KEY` (admin-tools-backend), `AIRFLOW_API_KEY`, `OIDC_CLIENT_SECRET` | icat, ires-um, ires-azm (+init ctrs), garage1/2, irods-db, ldap, keycloak, mdr, elastic, epicpid, sram-sync, admin-tools-backend, faker |
+| `icat-app-secrets` | Opaque (env) | iRODS admin/pass/keys/salt + DB password keys | icat + wait-db init container |
+| `ires-app-secrets` | Opaque (env) | iRODS admin/pass/keys/salt + DB irods password + S3 access keys | ires-hnas-um/azm |
+| `garage-secrets` | Opaque (env) | Garage RPC/admin + S3 access keys | Garage workloads + ires-um bootstrap init container |
+| `epicpid-app-secrets` | Opaque (env) | `PASSWORD` | epicpid |
+| `sram-sync-secrets` | Opaque (env) | `LDAP_PASS` | sram-sync |
+| `faker-secrets` | Opaque (env) | `IRODS_PASS` | on-demand faker Job |
+| `elastic-secrets` | Opaque (env) | `ELASTIC_PASSWORD` | elastic |
+| `mdr-app-secrets` | Opaque (env) | `MDR_POSTGRES_PASSWORD`, `DJANGO_SECRET_KEY`, `BIOPORTAL_API_KEY`, `ATLASSIAN_API_USERNAME`, `ATLASSIAN_API_KEY` | mdr |
+| `keycloak-secrets` | Opaque (env) | `KEYCLOAK_PASSWORD` | keycloak |
+| `ldap-secrets` | Opaque (env) | `LDAP_ADMIN_PASSWORD` | ldap |
 | `irods-db-credentials` | Opaque (env) | `POSTGRES_PASSWORD`, `ENV_IRODS_DB_IRODS_PASSWORD` | irods-db |
 | `mdr-db-credentials` | Opaque (env) | `POSTGRES_PASSWORD` | mdr-db |
 | `admin-tools-db-credentials` | Opaque (env) | `POSTGRES_PASSWORD` | admin-tools-db |
-| `dh-irods-secrets-cfg` | Opaque (env + file) | env: `INGEST_PASSWORD`, `INGEST_USER`, `INGEST_MOUNT`, `LDAP_PASSWORD`, `LDAP_USER`, `LDAP_URL`, `LDAP_DOMAIN`, `USE_SAMBA`, `DATAVERSE_TOKEN`, `BIOPORTAL_API_KEY`, `ATLASSIAN_API_USERNAME`, `ATLASSIAN_API_KEY`, `REACT_APP_CAPTCHA_SECRET_KEY`, `REACT_APP_CAPTCHA_SITE_KEY`; file: `irods.secrets.cfg` | mdr, ires-um, ires-azm (env + `/etc/secrets` file), help-center-backend, admin-tools-backend, help-center (env) |
+| `dh-irods-secrets-cfg` (irods namespace) | Opaque (env + file) | Full iRODS cfg env set + `irods.secrets.cfg` file | ires-um, ires-hnas-azm |
+| `admin-tools-secrets` | Opaque (env) | `DB_PASSWORD`, `OIDC_CLIENT_SECRET`, `SECRET_KEY`, `AIRFLOW_API_KEY`, `ATLASSIAN_API_USERNAME`, `ATLASSIAN_API_KEY` | admin-tools-backend |
+| `help-center-secrets` | Opaque (env) | `ATLASSIAN_API_USERNAME`, `ATLASSIAN_API_KEY`, `REACT_APP_CAPTCHA_SECRET_KEY` | help-center-backend only |
+| `frontend-public-config` | Opaque (env) | `REACT_APP_CAPTCHA_SITE_KEY` (public site key, not a credential) | public frontends |
 | `epicpid-credentials` | Opaque (files) | `305_21_T12996_USER01_UM_privkey.pem`, `305_21_T12996_USER01_UM_certificate_only.pem` | epicpid (mounted at `/opt/app/credentials`) |
 | `icat-tls` | Opaque (files) | `icat.dh.local.crt`, `icat.dh.local.key`, `dhparams.pem`, `<ca>.pem` | icat (`/opt/irods_ssl_staging`) |
 | `ires-um-tls` | Opaque (files) | `ires-hnas-um.dh.local.crt`, `ires-hnas-um.dh.local.key`, `dhparams.pem`, `<ca>.pem` | ires-hnas-um (`/opt/irods_ssl_staging`) |

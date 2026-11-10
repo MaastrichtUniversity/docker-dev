@@ -33,9 +33,7 @@ spec:
             - configMapRef:
                 name: mdr-env
             - secretRef:
-                name: dh-secrets
-            - secretRef:
-                name: dh-irods-secrets-cfg
+                name: mdr-app-secrets
           ports:
             - name: http
               containerPort: 8000

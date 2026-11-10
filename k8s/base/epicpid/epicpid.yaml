@@ -33,7 +33,7 @@ spec:
             - configMapRef:
                 name: epicpid-env
             - secretRef:
-                name: dh-secrets
+                name: epicpid-app-secrets
           ports:
             - name: http
               containerPort: 80

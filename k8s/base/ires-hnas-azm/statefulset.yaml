@@ -25,21 +25,21 @@ spec:
         app.kubernetes.io/component: irods
     spec:
       automountServiceAccountToken: false
-      hostname: ires-hnas-azm.irods.svc.cluster.local
+      hostname: ires-hnas-azm
       # compose had shm_size: 500mb (Docker default /dev/shm is 64Mi)
-      shmSize: 512Mi
-      sysctls:
-        - name: net.ipv4.tcp_keepalive_intvl
-          value: "75"
-        - name: net.ipv4.tcp_keepalive_probes
-          value: "9"
-        - name: net.ipv4.tcp_keepalive_time
-          value: "600"
+      subdomain: ires-hnas-azm
       securityContext:
         runAsNonRoot: false
         fsGroup: 999
         seccompProfile:
           type: RuntimeDefault
+        sysctls:
+          - name: net.ipv4.tcp_keepalive_intvl
+            value: "75"
+          - name: net.ipv4.tcp_keepalive_probes
+            value: "9"
+          - name: net.ipv4.tcp_keepalive_time
+            value: "600"
       initContainers:
         - name: wait-icat
           # same image as the main container (kustomize rewrites both)
@@ -71,14 +71,14 @@ spec:
             - configMapRef:
                 name: ires-azm-env
             - secretRef:
-                name: dh-secrets
+                name: ires-app-secrets
             - secretRef:
                 name: dh-irods-secrets-cfg
           ports:
             - name: irods
               containerPort: 1247
               protocol: TCP
-            - name: irods-control-plane
+            - name: irods-ctrl
               containerPort: 1248
               protocol: TCP
             - name: irods-data
@@ -116,6 +116,8 @@ spec:
             timeoutSeconds: 15
             failureThreshold: 6
           volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
             - name: vault
               mountPath: /var/lib/irods
             - name: vault
@@ -141,6 +143,10 @@ spec:
               mountPath: /etc/secrets
               subPath: irods.secrets.cfg
       volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 512Mi
         - name: ires-azm-bootstrap
           configMap:
             name: ires-azm-bootstrap

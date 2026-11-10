@@ -29,21 +29,21 @@ spec:
         app.kubernetes.io/component: irods
     spec:
       automountServiceAccountToken: false
-      hostname: ires-hnas-um.irods.svc.cluster.local
+      hostname: ires-hnas-um
       # compose had shm_size: 500mb (Docker default /dev/shm is 64Mi)
-      shmSize: 512Mi
-      sysctls:
-        - name: net.ipv4.tcp_keepalive_intvl
-          value: "75"
-        - name: net.ipv4.tcp_keepalive_probes
-          value: "9"
-        - name: net.ipv4.tcp_keepalive_time
-          value: "600"
+      subdomain: ires-hnas-um
       securityContext:
         runAsNonRoot: false
         fsGroup: 999
         seccompProfile:
           type: RuntimeDefault
+        sysctls:
+          - name: net.ipv4.tcp_keepalive_intvl
+            value: "75"
+          - name: net.ipv4.tcp_keepalive_probes
+            value: "9"
+          - name: net.ipv4.tcp_keepalive_time
+            value: "600"
       initContainers:
         # iCAT (incl. its dev mock env) must be up before this pod's bootstrap
         # (whose built-in dockerize wait is only 200s). Waits up to an hour.
@@ -72,7 +72,7 @@ spec:
             - configMapRef:
                 name: ires-um-env
             - secretRef:
-                name: dh-secrets
+                name: garage-secrets
           volumeMounts:
             - name: garage-bootstrap
               mountPath: /opt/garage
@@ -105,14 +105,14 @@ spec:
             - configMapRef:
                 name: ires-um-env
             - secretRef:
-                name: dh-secrets
+                name: ires-app-secrets
             - secretRef:
                 name: dh-irods-secrets-cfg
           ports:
             - name: irods
               containerPort: 1247
               protocol: TCP
-            - name: irods-control-plane
+            - name: irods-ctrl
               containerPort: 1248
               protocol: TCP
             - name: irods-data
@@ -150,6 +150,8 @@ spec:
             timeoutSeconds: 15
             failureThreshold: 6
           volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
             - name: vault
               mountPath: /var/lib/irods
             - name: vault
@@ -179,6 +181,10 @@ spec:
               mountPath: /etc/secrets
               subPath: irods.secrets.cfg
       volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 512Mi
         - name: ires-um-bootstrap
           configMap:
             name: ires-um-bootstrap

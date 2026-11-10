@@ -18,7 +18,7 @@ spec:
       port: 1247
       targetPort: 1247
       protocol: TCP
-    - name: irods-control-plane
+    - name: irods-ctrl
       port: 1248
       targetPort: 1248
       protocol: TCP

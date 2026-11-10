@@ -46,7 +46,7 @@ spec:
             - configMapRef:
                 name: elastic-env
             - secretRef:
-                name: dh-secrets
+                name: elastic-secrets
           ports:
             - name: http
               containerPort: 9200

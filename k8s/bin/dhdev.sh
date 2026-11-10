@@ -160,10 +160,32 @@ cmd_dev_up() {
 
   echo "==> minikube"
   check_minikube_size
+  local expected_context=${MINIKUBE_PROFILE:-minikube}
+  local current_context
+  current_context=$(kubectl config current-context 2>/dev/null || true)
+  if [ -n "$current_context" ] && [ "$current_context" != "$expected_context" ]; then
+    echo "kubectl context is '$current_context', expected '$expected_context'; refusing before starting or modifying a cluster." >&2
+    exit 1
+  fi
   if minikube ip >/dev/null 2>&1; then
     echo "    already running"
   else
     minikube start --cpus 4 --memory 8192 --disk-size 80
+  fi
+
+  current_context=$(kubectl config current-context 2>/dev/null || true)
+  if [ "$current_context" != "$expected_context" ]; then
+    echo "kubectl context is '$current_context', expected '$expected_context'; refusing to apply dev resources." >&2
+    exit 1
+  fi
+
+  echo "==> minikube storage provisioner"
+  minikube addons enable storage-provisioner
+  minikube addons enable default-storageclass
+  if ! kubectl get storageclass standard >/dev/null 2>&1; then
+    echo "Minikube storage-provisioner addon did not provide StorageClass 'standard'." >&2
+    kubectl get storageclass >&2 || true
+    exit 1
   fi
 
   echo "==> traefik (Gateway API)"
@@ -185,7 +207,7 @@ cmd_dev_up() {
     printf '%s\n' "$build" | kubectl apply -f -
   fi
 
-  echo "==> waiting for PVCs to bind (local-path)"
+  echo "==> waiting for PVCs to bind (standard)"
   for _ in $(seq 1 30); do
     pending=$(kubectl get pvc -A --no-headers 2>/dev/null | grep -c Pending || true)
     [ "$pending" = 0 ] && break

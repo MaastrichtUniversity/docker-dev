@@ -1,11 +1,10 @@
 # iRODS iCAT (catalog provider).
 #
 # Important k8s specifics (see k8s/README.md):
-#  - spec.hostname + HOSTNAME env are forced to the headless Service FQDN
-#    (icat.irods.svc.cluster.local): gen_json_configuration.py uses
-#    socket.gethostname() for irods_host/catalog_provider_hosts, and iRODS
-#    clients (any namespace) resolve the FQDN to the pod IP via the
-#    headless Service. The SSL cert SAN must match this name
+#  - spec.hostname is a DNS label (Kubernetes PodSpec requirement); the
+#    HOSTNAME env retains the service FQDN (icat.irods.svc.cluster.local).
+#    StatefulSet/headless-Service DNS provides the network name. The SSL
+#    cert SAN must match the service FQDN
 #    (k8s/dh-local-worklist.md A).
 #  - Headless Service: clients reach the pod IP directly, so the iRODS data port
 #    range 20000-20199 works (a ClusterIP Service cannot expose 200 ports).
@@ -36,22 +35,22 @@ spec:
         app.kubernetes.io/component: irods
     spec:
       automountServiceAccountToken: false
-      hostname: icat.irods.svc.cluster.local
+      hostname: icat
       # compose had shm_size: 500mb (Docker default /dev/shm is 64Mi)
-      shmSize: 512Mi
-      # net.* sysctls are in the k8s default-allowed sysctl list
-      sysctls:
-        - name: net.ipv4.tcp_keepalive_intvl
-          value: "75"
-        - name: net.ipv4.tcp_keepalive_probes
-          value: "9"
-        - name: net.ipv4.tcp_keepalive_time
-          value: "600"
+      subdomain: icat
       securityContext:
         runAsNonRoot: false
         fsGroup: 999
         seccompProfile:
           type: RuntimeDefault
+        # net.* sysctls are in the k8s default-allowed sysctl list
+        sysctls:
+          - name: net.ipv4.tcp_keepalive_intvl
+            value: "75"
+          - name: net.ipv4.tcp_keepalive_probes
+            value: "9"
+          - name: net.ipv4.tcp_keepalive_time
+            value: "600"
       initContainers:
         # Make sure irods-db is accepting connections before the pre-hook psql checks
         - name: wait-db
@@ -70,7 +69,7 @@ spec:
             - configMapRef:
                 name: icat-env
             - secretRef:
-                name: dh-secrets
+                name: icat-app-secrets
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -90,12 +89,12 @@ spec:
             - configMapRef:
                 name: icat-env
             - secretRef:
-                name: dh-secrets
+                name: icat-app-secrets
           ports:
             - name: irods
               containerPort: 1247
               protocol: TCP
-            - name: irods-control-plane
+            - name: irods-ctrl
               containerPort: 1248
               protocol: TCP
             # iRODS data port range (documentary; the pod listens on 20000-20199)
@@ -138,6 +137,8 @@ spec:
             timeoutSeconds: 15
             failureThreshold: 6
           volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
             - name: vault
               mountPath: /var/lib/irods
             # Persist the "installed" flag across pod recreations (subPath file on vault PVC)
@@ -165,6 +166,10 @@ spec:
               mountPath: /opt/irods_ssl_staging
               readOnly: true
       volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 512Mi
         - name: icat-bootstrap
           configMap:
             name: icat-bootstrap

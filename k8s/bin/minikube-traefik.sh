@@ -30,8 +30,10 @@ TRAEFIK_IMAGE=traefik:v3.7
 NS=default
 
 ctx=$(kubectl config current-context 2>/dev/null || true)
-if [ "$ctx" != "minikube" ]; then
-  echo "NOTE: kubectl context is '$ctx', not 'minikube' - continuing anyway." >&2
+expected_context=${MINIKUBE_PROFILE:-minikube}
+if [ "$ctx" != "$expected_context" ]; then
+  echo "kubectl context is '$ctx', expected minikube profile context '$expected_context'; refusing to mutate a cluster." >&2
+  exit 1
 fi
 
 echo "==> 1/4 loadbalancer addon (metallb)"
