@@ -1,12 +1,12 @@
 # iRODS iCAT (catalog provider).
 #
 # Important k8s specifics (see k8s/README.md):
-#  - spec.hostname + HOSTNAME env are forced to icat.dh.local for now:
-#    gen_json_configuration.py uses socket.gethostname() for
-#    irods_host/catalog_provider_hosts and the bash hooks derive resource
-#    names from ${HOSTNAME%%.dh.local}. TODO(k8s-rename): all of this moves
-#    to the headless Service FQDN (icat.<ns>.svc.cluster.local) incl. cert
-#    re-issue and hook vendoring - see k8s/dh-local-worklist.md (A).
+#  - spec.hostname + HOSTNAME env are forced to the headless Service FQDN
+#    (icat.irods.svc.cluster.local): gen_json_configuration.py uses
+#    socket.gethostname() for irods_host/catalog_provider_hosts, and iRODS
+#    clients (any namespace) resolve the FQDN to the pod IP via the
+#    headless Service. The SSL cert SAN must match this name
+#    (k8s/dh-local-worklist.md A).
 #  - Headless Service: clients reach the pod IP directly, so the iRODS data port
 #    range 20000-20199 works (a ClusterIP Service cannot expose 200 ports).
 #  - /var/run/irods_installed (iRODS "bootstrap completed" flag) is persisted on the
@@ -36,7 +36,7 @@ spec:
         app.kubernetes.io/component: irods
     spec:
       automountServiceAccountToken: false
-      hostname: icat.dh.local
+      hostname: icat.irods.svc.cluster.local
       # compose had shm_size: 500mb (Docker default /dev/shm is 64Mi)
       shmSize: 512Mi
       # net.* sysctls are in the k8s default-allowed sysctl list
@@ -81,7 +81,7 @@ spec:
           image: docker-dev/icat:latest
           env:
             - name: HOSTNAME
-              value: icat.dh.local
+              value: icat.irods.svc.cluster.local
             - name: TZ
               value: Europe/Amsterdam
           envFrom:

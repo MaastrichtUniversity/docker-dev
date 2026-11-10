@@ -1,5 +1,5 @@
 # Headless Service (required for StatefulSet stable DNS).
-# TODO(k8s-rename): irods-db.dh.local -> irods-db.<ns>.svc.cluster.local (k8s/dh-local-worklist.md B)
+# Clients (all namespaces) use irods-db.irods.svc.cluster.local (k8s/dh-local-worklist.md).
 apiVersion: v1
 kind: Service
 metadata:

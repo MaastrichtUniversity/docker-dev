@@ -46,48 +46,42 @@ uses the FQDNs above.
 
 ## A. iRODS pod identity & hooks (the invasive part)
 
-1. **Force hostname** (`base/{icat,ires-hnas-um,ires-hnas-azm}/statefulset.yaml`):
-   `spec.hostname` + `HOSTNAME` env currently `<name>.dh.local` -> change to
-   the mapped FQDN (namespace known per overlay; add a kustomize patch per
-   overlay or template via the env file + `fieldRef`-free patch).
-   - `gen_json_configuration.py` takes `irods_host` /
-     `catalog_provider_hosts` from `socket.gethostname()` -> follows the
-     hostname automatically (verified in
-     `externals/dh-irods/irods-base/scripts/lib/gen_json_configuration.py`).
-2. **Re-issue iRODS TLS certs** for the new SANs (CN must equal the new
-   hostname; `ENV_IRODS_SSL_*` + cert secret keys).
-   - File *names* can stay (e.g. `icat.dh.local.crt`) - only the SAN/CN
-     matters; keeping the names avoids touching the nginx confs and the
-     `ENV_IRODS_SSL_CERT/KEY/CA` values. `bin/gen-irods-tls.sh` must take
-     the new SANs.
-   - Affected: `icat-tls`, `ires-um-tls`, `ires-azm-tls`, `garage1-tls`,
-     `garage2-tls` Secrets.
-3. **iCAT catalog resource hosts**: `mkresc ... unixfilesystem
-   ${HOSTNAME}:/...` bakes the ires hostname into the catalog; iRODS
-   clients in *other* pods (mdr, sram-sync, faker, admin-tools-backend,
-   davrods) then connect to that host on 20000-20199. The headless Service
-   FQDN resolves to the pod IP -> works. No extra work beyond A1/A2, but
-   **the catalog is built at first bootstrap** - old compose-era PVCs/DBs
-   contain the old hosts and must NOT be reused (reset required).
-4. **Resource-name derivation `${HOSTNAME%%.dh.local}Resource`** breaks
-   with FQDN hostnames. Occurrences (shared hook files, currently
-   ConfigMap-sourced from `irods/*/hooks/`):
-   - `irods/ires-hnas/hooks/bootstrap_irods.sh`: `create_mock_projects_*`
-     (x4 rule calls), `iadmin modresc ... comment`, `imeta add -R`,
-     `iadmin modresc ... path` (~7 places).
-   - `irods/icat/hooks/bootstrap_irods.sh`: same pattern (verify count).
-   - Work: vendor k8s copies of the hooks into `k8s/base/irods/config/`
-     (like the bootstrap scripts) and replace the derivation with an
-     explicit env, e.g. `ENV_IRODS_HOST_RESC_NAME=ires-hnas-umResource`
-     (set per overlay in `ires-*-env`). Check the ruleset/MDR expectations
-     for the physical resource name (`ires-hnas-umResource`) stay identical.
-5. **pre-hook `/etc/hosts` hack** (`irods/ires-hnas/hooks/bootstrap_pre_hook.sh`
-   ~L55-59): pins the *other* ires host (+fictitious ceph hosts) to
-   172.0.0.x so clients fail fast instead of timing out. Work: replace with
-   native k8s `hostAliases:` on both ires StatefulSets (new FQDNs, same
-   fictitious IPs); drop the ceph entries or keep them fictitious under new
-   names. Then the hook change disappears (or the vendored hook copy keeps
-   them with new names - pick one, don't do both).
+Status: **A1-A4 and C(dev) are done** in `k8s/base`; the remaining work is
+B (env values in the overlays - being written) and D (external follow-ups).
+
+1. **[done] Force hostname** - `spec.hostname` + `HOSTNAME` env on the three
+   iRODS StatefulSets are now the headless Service FQDNs
+   (`icat.irods.svc.cluster.local`, `ires-hnas-{um,azm}.irods...`).
+   `gen_json_configuration.py` takes `irods_host` / `catalog_provider_hosts`
+   from `socket.gethostname()` -> follows the hostname automatically
+   (verified in
+   `externals/dh-irods/irods-base/scripts/lib/gen_json_configuration.py`).
+2. **[done] Re-issued iRODS TLS certs** - `bin/gen-irods-tls.sh` generates
+   CA + 5 leaves with the new SANs into `irods/k8s-ssl-certs/` (dev,
+   committed like the compose `test-dev-ssl-certs`). File *names* changed
+   (`icat.crt` ...), but the TLS Secret *keys* keep the old names
+   (`icat.dh.local.crt`) so `ENV_IRODS_SSL_CERT/KEY/CA` and the garage
+   nginx confs are unchanged - only SAN/CN matter.
+3. **[follows] iCAT catalog resource hosts**: `mkresc ... unixfilesystem
+   ${HOSTNAME}:/...` bakes the ires FQDN into the catalog at first
+   bootstrap; iRODS clients in *other* namespaces (mdr, sram-sync, faker,
+   admin-tools-backend, davrods) connect to that host on 20000-20199 -
+   headless Service FQDN resolves to the pod IP. **Compose-era PVCs/DBs
+   contain the old hosts and must NOT be reused.**
+4. **[done] Resource-name derivation** - hooks are now vendored k8s copies
+   (`k8s/base/irods/config/hooks-{icat,ires}/`; the base kustomization
+   points at them, compose keeps the originals). `bootstrap_irods.sh`
+   (ires, 7 places) uses `ENV_IRODS_HOST_RESC_NAME` instead of
+   `${HOSTNAME%%.dh.local}Resource`; overlays set it
+   (`ires-hnas-umResource` / `ires-hnas-azmResource` - identical to the
+   names the compose stack produced, so ruleset/MDR expectations are
+   unchanged). icat hooks: no derivation found, copied verbatim.
+5. **[done, resolved differently] pre-hook `/etc/hosts` hack** - removed
+   from the vendored ires pre-hook instead of ported: on k3s both ires
+   pods are genuinely reachable, so pinning the peer to a dead IP would
+   *break* legitimate UM<->AZM replication. The fictitious
+   `ires-ceph-{ac,gl}` names (pre-ceph->garage leftovers, referenced by
+   nothing current) are gone with it. No `hostAliases` needed.
 
 ## B. Per-env values (overlay `config/*.env` only - no code changes)
 
@@ -111,10 +105,14 @@ uses the FQDNs above.
 Also: `k8s/base/**` comments/`-icat.dh.local` fallbacks in the
 `wait-icat` init containers follow `ENV_IRODS_ICAT_HOST` already.
 
-## C. TLS re-issue (script work)
+## C. TLS re-issue
 
-- `bin/gen-irods-tls.sh`: new SANs per A2 (5 leaf certs + CA + dhparams).
-- `bin/gen-ingress-tls.sh`: unchanged (public `*.<env>.dh.unimaas.nl`).
+- **[done]** `bin/gen-irods-tls.sh`: new SANs per A2 (5 leaf certs + CA +
+  dhparams), run for dev, output committed to `irods/k8s-ssl-certs/`.
+  acc/prd: same script with a per-env SAN suffix if the namespaces ever
+  differ, or real PKI material.
+- `bin/gen-ingress-tls.sh`: still to write (public `*.<env>.dh.unimaas.nl`;
+  dev is HTTP-only for now).
 
 ## D. External repos (real code/config changes needed)
 

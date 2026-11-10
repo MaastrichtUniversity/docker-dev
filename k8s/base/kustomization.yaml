@@ -51,11 +51,17 @@ configMapGenerator:
       - ../../irods/icat/DMFS/dmattr
       - ../../irods/icat/DMFS/dmget
       - ../../irods/icat/DMFS/dmput
+  # Vendored hook copies (k8s/base/irods/config/hooks-*/): the ires
+  # bootstrap_irods.sh derives the physical resource name from
+  # ENV_IRODS_HOST_RESC_NAME instead of ${HOSTNAME%%.dh.local}Resource, and
+  # the ires pre-hook no longer rewrites /etc/hosts (k8s pods reach each
+  # other natively). Keep in sync with irods/{icat,ires-hnas}/hooks/
+  # when those change.
   - name: icat-hooks
     files:
-      - ../../irods/icat/hooks/bootstrap_pre_hook.sh
-      - ../../irods/icat/hooks/bootstrap_irods.sh
-      - ../../irods/icat/hooks/bootstrap_post_hook.sh
+      - ./irods/config/hooks-icat/bootstrap_pre_hook.sh
+      - ./irods/config/hooks-icat/bootstrap_irods.sh
+      - ./irods/config/hooks-icat/bootstrap_post_hook.sh
   - name: ires-um-bootstrap
     files:
       - bootstrap.sh=./irods/config/ires-bootstrap.sh
@@ -64,16 +70,16 @@ configMapGenerator:
       - bootstrap.sh=./irods/config/ires-bootstrap.sh
   - name: ires-um-hooks
     files:
-      - ../../irods/ires-hnas/hooks/bootstrap_pre_hook.sh
-      - ../../irods/ires-hnas/hooks/bootstrap_irods.sh
-      - ../../irods/ires-hnas/hooks/bootstrap_post_hook.sh
-      - ../../irods/ires-hnas/hooks/bootstrap_s3_ires.sh
+      - ./irods/config/hooks-ires/bootstrap_pre_hook.sh
+      - ./irods/config/hooks-ires/bootstrap_irods.sh
+      - ./irods/config/hooks-ires/bootstrap_post_hook.sh
+      - ./irods/config/hooks-ires/bootstrap_s3_ires.sh
   - name: ires-azm-hooks
     files:
-      - ../../irods/ires-hnas/hooks/bootstrap_pre_hook.sh
-      - ../../irods/ires-hnas/hooks/bootstrap_irods.sh
-      - ../../irods/ires-hnas/hooks/bootstrap_post_hook.sh
-      - ../../irods/ires-hnas/hooks/bootstrap_s3_ires.sh
+      - ./irods/config/hooks-ires/bootstrap_pre_hook.sh
+      - ./irods/config/hooks-ires/bootstrap_irods.sh
+      - ./irods/config/hooks-ires/bootstrap_post_hook.sh
+      - ./irods/config/hooks-ires/bootstrap_s3_ires.sh
   - name: garage-config
     files:
       - ../../irods/garage/garage1.toml

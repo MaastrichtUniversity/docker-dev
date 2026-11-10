@@ -1,5 +1,5 @@
 # Headless Service for ires-hnas-um (StatefulSet identity + full iRODS port range).
-# TODO(k8s-rename): ires-hnas-um.dh.local -> ires-hnas-um.<ns>.svc.cluster.local (k8s/dh-local-worklist.md B)
+# iRODS clients (all namespaces) use ires-hnas-um.irods.svc.cluster.local (k8s/dh-local-worklist.md).
 apiVersion: v1
 kind: Service
 metadata:

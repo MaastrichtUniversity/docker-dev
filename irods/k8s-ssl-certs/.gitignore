@@ -1,0 +1,5 @@
+# CA private material stays local (like the compose test-dev-ssl-certs dirs,
+# which only commit the public side). gen-irods-tls.sh reuses it if present,
+# or regenerates the whole set.
+ca.key
+ca.srl

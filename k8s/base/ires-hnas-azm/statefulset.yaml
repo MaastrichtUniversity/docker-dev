@@ -24,7 +24,7 @@ spec:
         app.kubernetes.io/component: irods
     spec:
       automountServiceAccountToken: false
-      hostname: ires-hnas-azm.dh.local
+      hostname: ires-hnas-azm.irods.svc.cluster.local
       # compose had shm_size: 500mb (Docker default /dev/shm is 64Mi)
       shmSize: 512Mi
       sysctls:
@@ -47,7 +47,7 @@ spec:
             - bash
             - -c
             - |
-              dockerize -wait tcp://${ENV_IRODS_ICAT_HOST:-icat.dh.local}:1247 -timeout 3600s
+              dockerize -wait tcp://${ENV_IRODS_ICAT_HOST:-icat.irods.svc.cluster.local}:1247 -timeout 3600s
           envFrom:
             - configMapRef:
                 name: irods-common-env
@@ -61,7 +61,7 @@ spec:
           image: docker-dev/ires-hnas:latest
           env:
             - name: HOSTNAME
-              value: ires-hnas-azm.dh.local
+              value: ires-hnas-azm.irods.svc.cluster.local
             - name: TZ
               value: Europe/Amsterdam
           envFrom:

@@ -89,7 +89,7 @@ spec:
             storage: 10Gi
 ---
 # Headless Service (StatefulSet stable DNS).
-# TODO(k8s-rename): mdr-db.dh.local -> mdr-db.<ns>.svc.cluster.local, see k8s/dh-local-worklist.md (B)
+# Clients use mdr-db.external.svc.cluster.local (k8s/dh-local-worklist.md).
 apiVersion: v1
 kind: Service
 metadata:

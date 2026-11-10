@@ -69,7 +69,7 @@ _main() {
     flight_checks
 
     # Wait for iCAT to become _seemingly_ ready
-    dockerize -wait tcp://${ENV_IRODS_ICAT_HOST:=icat.dh.local}:1247 -timeout 200s
+    dockerize -wait tcp://${ENV_IRODS_ICAT_HOST:=icat.irods.svc.cluster.local}:1247 -timeout 200s
 
     # From Ubuntu 22.04 onward: start rsyslogd
     rsyslogd
