@@ -1,0 +1,239 @@
+# Dev overlay: env-specific values, image tags and the (file-based) secrets.
+#
+# Build with:
+#   kubectl kustomize k8s/overlays/dev --load-restrictor LoadRestrictionsNone
+# (the load-restrictor flag is needed because base/overlay generator files
+# reference the repo's irods/, keycloak/, ldap/ and externals/ trees).
+#
+# NOTE: building this overlay requires an externals/ checkout at the repo
+# root (epicpid SURF credentials); the main tree has one, a worktree does
+# not by default (externals/ is gitignored).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+  - namespaces.yaml
+  - ingress.yaml
+
+# Per-env ConfigMap env files (consumed via envFrom by the base manifests).
+configMapGenerator:
+  - name: irods-common-env
+    namespace: irods
+    envs: [config/irods-common.env]
+  - name: icat-env
+    namespace: irods
+    envs: [config/icat.env]
+  - name: ires-um-env
+    namespace: irods
+    envs: [config/ires-um.env]
+  - name: ires-azm-env
+    namespace: irods
+    envs: [config/ires-azm.env]
+  - name: irods-db-env
+    namespace: irods
+    envs: [config/irods-db.env]
+  - name: epicpid-env
+    namespace: irods
+    envs: [config/epicpid.env]
+  - name: sram-sync-env
+    namespace: irods
+    envs: [config/sram-sync.env]
+  - name: faker-env
+    namespace: irods
+    envs: [config/faker.env]
+  - name: mdr-env
+    namespace: external
+    envs: [config/mdr.env]
+  - name: mdr-db-env
+    namespace: external
+    envs: [config/mdr-db.env]
+  - name: elastic-env
+    namespace: external
+    envs: [config/elastic.env]
+  - name: davrods-env
+    namespace: external
+    envs: [config/davrods.env]
+  - name: davrods-upload-env
+    namespace: external
+    envs: [config/davrods-upload.env]
+  - name: mdr-home-env
+    namespace: external
+    envs: [config/mdr-home.env]
+  - name: help-center-backend-env
+    namespace: public
+    envs: [config/help-center-backend.env]
+  - name: help-center-env
+    namespace: public
+    envs: [config/help-center.env]
+  - name: dh-home-env
+    namespace: public
+    envs: [config/dh-home.env]
+  - name: admin-tools-backend-env
+    namespace: internal
+    envs: [config/admin-tools-backend.env]
+  - name: admin-tools-db-env
+    namespace: internal
+    envs: [config/admin-tools-db.env]
+  - name: admin-tools-env
+    namespace: internal
+    envs: [config/admin-tools.env]
+  - name: ldap-env
+    namespace: internal
+    envs: [config/ldap.env]
+  - name: keycloak-env
+    namespace: internal
+    envs: [config/keycloak.env]
+
+# Secrets - dev sources them from committed files (no Vault). tst/acc/prd
+# use ExternalSecrets -> Vault instead (k8s/README.md section 7).
+#
+# dh-secrets and dh-irods-secrets-cfg are consumed in every namespace, so
+# they are generated in each (same name, different namespace).
+secretGenerator:
+  - name: dh-secrets
+    namespace: irods
+    envs: [secrets/dh.env]
+  - name: dh-secrets
+    namespace: external
+    envs: [secrets/dh.env]
+  - name: dh-secrets
+    namespace: public
+    envs: [secrets/dh.env]
+  - name: dh-secrets
+    namespace: internal
+    envs: [secrets/dh.env]
+  - name: dh-irods-secrets-cfg
+    namespace: irods
+    envs: [secrets/irods-secrets-cfg.env]
+    files:
+      - irods.secrets.cfg=secrets/irods-secrets-cfg.env
+  - name: dh-irods-secrets-cfg
+    namespace: external
+    envs: [secrets/irods-secrets-cfg.env]
+    files:
+      - irods.secrets.cfg=secrets/irods-secrets-cfg.env
+  - name: dh-irods-secrets-cfg
+    namespace: public
+    envs: [secrets/irods-secrets-cfg.env]
+    files:
+      - irods.secrets.cfg=secrets/irods-secrets-cfg.env
+  - name: dh-irods-secrets-cfg
+    namespace: internal
+    envs: [secrets/irods-secrets-cfg.env]
+    files:
+      - irods.secrets.cfg=secrets/irods-secrets-cfg.env
+  - name: irods-db-credentials
+    namespace: irods
+    envs: [secrets/irods-db-credentials.env]
+  - name: mdr-db-credentials
+    namespace: external
+    envs: [secrets/mdr-db-credentials.env]
+  - name: admin-tools-db-credentials
+    namespace: internal
+    envs: [secrets/admin-tools-db-credentials.env]
+  # SURF handle-server client credentials (committed in epicpid-microservice)
+  - name: epicpid-credentials
+    namespace: irods
+    files:
+      - 305_21_T12996_USER01_UM_privkey.pem=../../../externals/epicpid-microservice/credentials/305_21_T12996_USER01_UM_privkey.pem
+      - 305_21_T12996_USER01_UM_certificate_only.pem=../../../externals/epicpid-microservice/credentials/305_21_T12996_USER01_UM_certificate_only.pem
+  # iRODS + garage TLS. Secret KEYS keep the historical file names
+  # (ENV_IRODS_SSL_* / nginx confs reference them); the CONTENT is the
+  # k8s material with Service-FQDN SANs (bin/gen-irods-tls.sh).
+  - name: icat-tls
+    namespace: irods
+    files:
+      - icat.dh.local.crt=../../../irods/k8s-ssl-certs/icat.crt
+      - icat.dh.local.key=../../../irods/k8s-ssl-certs/icat.key
+      - dhparams.pem=../../../irods/k8s-ssl-certs/dhparams.pem
+      - test_only_dev_irods_dh_ca_cert.pem=../../../irods/k8s-ssl-certs/ca.pem
+  - name: ires-um-tls
+    namespace: irods
+    files:
+      - ires-hnas-um.dh.local.crt=../../../irods/k8s-ssl-certs/ires-hnas-um.crt
+      - ires-hnas-um.dh.local.key=../../../irods/k8s-ssl-certs/ires-hnas-um.key
+      - dhparams.pem=../../../irods/k8s-ssl-certs/dhparams.pem
+      - test_only_dev_irods_dh_ca_cert.pem=../../../irods/k8s-ssl-certs/ca.pem
+  - name: ires-azm-tls
+    namespace: irods
+    files:
+      - ires-hnas-azm.dh.local.crt=../../../irods/k8s-ssl-certs/ires-hnas-azm.crt
+      - ires-hnas-azm.dh.local.key=../../../irods/k8s-ssl-certs/ires-hnas-azm.key
+      - dhparams.pem=../../../irods/k8s-ssl-certs/dhparams.pem
+      - test_only_dev_irods_dh_ca_cert.pem=../../../irods/k8s-ssl-certs/ca.pem
+  - name: garage1-tls
+    namespace: irods
+    files:
+      - garage1.dh.local.crt=../../../irods/k8s-ssl-certs/garage1.crt
+      - garage1.dh.local.key=../../../irods/k8s-ssl-certs/garage1.key
+  - name: garage2-tls
+    namespace: irods
+    files:
+      - garage2.dh.local.crt=../../../irods/k8s-ssl-certs/garage2.crt
+      - garage2.dh.local.key=../../../irods/k8s-ssl-certs/garage2.key
+
+# All images from the own registry (Jenkinsfile.build pushes them;
+# postgres/openldap/garage/nginx are mirrored there too).
+images:
+  - name: docker-dev/icat
+    newName: registry.prod.dh.unimaas.nl/docker-dev/icat
+    newTag: latest
+  - name: docker-dev/ires-hnas
+    newName: registry.prod.dh.unimaas.nl/docker-dev/ires-hnas
+    newTag: latest
+  - name: docker-dev/mdr
+    newName: registry.prod.dh.unimaas.nl/docker-dev/mdr
+    newTag: latest
+  - name: docker-dev/keycloak
+    newName: registry.prod.dh.unimaas.nl/docker-dev/keycloak
+    newTag: latest
+  - name: docker-dev/elastic
+    newName: registry.prod.dh.unimaas.nl/docker-dev/elastic
+    newTag: latest
+  - name: docker-dev/faker
+    newName: registry.prod.dh.unimaas.nl/docker-dev/faker
+    newTag: latest
+  - name: docker-dev/davrods
+    newName: registry.prod.dh.unimaas.nl/docker-dev/davrods
+    newTag: latest
+  - name: docker-dev/davrods-upload
+    newName: registry.prod.dh.unimaas.nl/docker-dev/davrods-upload
+    newTag: latest
+  - name: docker-dev/epicpid
+    newName: registry.prod.dh.unimaas.nl/docker-dev/epicpid
+    newTag: latest
+  - name: docker-dev/sram-sync
+    newName: registry.prod.dh.unimaas.nl/docker-dev/sram-sync
+    newTag: latest
+  - name: docker-dev/help-center-backend
+    newName: registry.prod.dh.unimaas.nl/docker-dev/help-center-backend
+    newTag: latest
+  - name: docker-dev/help-center
+    newName: registry.prod.dh.unimaas.nl/docker-dev/help-center
+    newTag: latest
+  - name: docker-dev/dh-home
+    newName: registry.prod.dh.unimaas.nl/docker-dev/dh-home
+    newTag: latest
+  - name: docker-dev/dh-mdr-home
+    newName: registry.prod.dh.unimaas.nl/docker-dev/dh-mdr-home
+    newTag: latest
+  - name: docker-dev/admin-tools-backend
+    newName: registry.prod.dh.unimaas.nl/docker-dev/admin-tools-backend
+    newTag: latest
+  - name: docker-dev/admin-tools
+    newName: registry.prod.dh.unimaas.nl/docker-dev/admin-tools
+    newTag: latest
+  # mirrored external images
+  - name: postgres
+    newName: registry.prod.dh.unimaas.nl/postgres
+    newTag: 17.10-alpine
+  - name: dxflrs/garage
+    newName: registry.prod.dh.unimaas.nl/garage
+    newTag: v2.3.0
+  - name: osixia/openldap
+    newName: registry.prod.dh.unimaas.nl/openldap
+    newTag: 1.3.0
+  - name: nginx
+    newName: registry.prod.dh.unimaas.nl/nginx
+    newTag: alpine

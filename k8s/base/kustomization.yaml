@@ -1,8 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-# NOTE: no `namespace:` here - each overlay sets it (dh-dev / dh-tst / ...).
-# The Namespace object itself ships in each overlay.
+# NOTE: namespaces are fixed per cluster (irods/external/public/internal,
+# see k8s/README.md) and set explicitly on every resource + generator.
+# The Namespace objects themselves ship in each overlay.
 resources:
   - longhorn/storageclasses.yaml
   - irods-db/service.yaml
@@ -39,14 +40,17 @@ resources:
 # Per-environment env files + credentials live in the overlays' generators.
 configMapGenerator:
   - name: irods-db-init
+    namespace: irods
     files:
       - ../../irods/irods-db/create_icat_db.sh
   - name: icat-bootstrap
+    namespace: irods
     files:
       - bootstrap.sh=./irods/config/icat-bootstrap.sh
       - ../../irods/icat/dh_is_ready.sh
       - ../../keycloak/users.json
   - name: icat-dmfs
+    namespace: irods
     files:
       - ../../irods/icat/DMFS/dmattr
       - ../../irods/icat/DMFS/dmget
@@ -58,42 +62,52 @@ configMapGenerator:
   # other natively). Keep in sync with irods/{icat,ires-hnas}/hooks/
   # when those change.
   - name: icat-hooks
+    namespace: irods
     files:
       - ./irods/config/hooks-icat/bootstrap_pre_hook.sh
       - ./irods/config/hooks-icat/bootstrap_irods.sh
       - ./irods/config/hooks-icat/bootstrap_post_hook.sh
   - name: ires-um-bootstrap
+    namespace: irods
     files:
       - bootstrap.sh=./irods/config/ires-bootstrap.sh
   - name: ires-azm-bootstrap
+    namespace: irods
     files:
       - bootstrap.sh=./irods/config/ires-bootstrap.sh
   - name: ires-um-hooks
+    namespace: irods
     files:
       - ./irods/config/hooks-ires/bootstrap_pre_hook.sh
       - ./irods/config/hooks-ires/bootstrap_irods.sh
       - ./irods/config/hooks-ires/bootstrap_post_hook.sh
       - ./irods/config/hooks-ires/bootstrap_s3_ires.sh
   - name: ires-azm-hooks
+    namespace: irods
     files:
       - ./irods/config/hooks-ires/bootstrap_pre_hook.sh
       - ./irods/config/hooks-ires/bootstrap_irods.sh
       - ./irods/config/hooks-ires/bootstrap_post_hook.sh
       - ./irods/config/hooks-ires/bootstrap_s3_ires.sh
   - name: garage-config
+    namespace: irods
     files:
       - ../../irods/garage/garage1.toml
       - ../../irods/garage/garage2.toml
   - name: garage-bootstrap
+    namespace: irods
     files:
       - ../../irods/garage/bootstrap.sh
   - name: nginx-garage1-conf
+    namespace: irods
     files:
       - ../../irods/garage/nginx-garage1.conf
   - name: nginx-garage2-conf
+    namespace: irods
     files:
       - ../../irods/garage/nginx-garage2.conf
   - name: ldap-ldif
+    namespace: internal
     files:
       - ../../ldap/ldif_custom/01_eduMember.ldif
       - ../../ldap/ldif_custom/02_openLdapEduperson-201602DV.ldif
