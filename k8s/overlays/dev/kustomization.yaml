@@ -6,8 +6,9 @@
 # reference the repo's irods/, keycloak/, ldap/ and externals/ trees).
 #
 # NOTE: building this overlay requires an externals/ checkout at the repo
-# root (epicpid SURF credentials); the main tree has one, a worktree does
-# not by default (externals/ is gitignored).
+# root (epicpid SURF credentials): run `k8s/bin/dhdev.sh externals`
+# (externals/ is gitignored; the SURF .pem files are NOT in the public
+# epicpid-microservice repo - the script says where to get them).
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 

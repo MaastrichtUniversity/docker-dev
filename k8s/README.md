@@ -111,8 +111,9 @@ kubectl kustomize k8s/overlays/dev --load-restrictor LoadRestrictionsNone
 ```
 
 The **dev** overlay additionally needs an `externals/` checkout at the repo
-root (epicpid SURF credentials are sourced from it; it is gitignored).
-tst/acc/prd build in a clean clone — those creds come from Vault.
+root (epicpid SURF credentials are sourced from it; it is gitignored):
+`k8s/bin/dhdev.sh externals` creates it. tst/acc/prd build in a clean
+clone — those creds come from Vault.
 
 ## Local dev on minikube (dev overlay)
 
@@ -123,39 +124,49 @@ pod requests: 2.45 CPU / 6.0Gi), and turns the shared ingest zones into a
 hostPath `/staging-data` volume (single node = the compose-era host-dir
 behavior). It is for validation and feature development, not load.
 
-### One-time cluster setup
+### Spin up
 
 ```
-minikube start --cpus 4 --memory 8192 --disk-size 80
-# (docker driver; the local-path StorageClass ships with minikube)
+k8s/bin/dhdev.sh dev-up
+```
 
-k8s/bin/minikube-traefik.sh
-# enables the minikube loadbalancer addon (metallb), installs the
-# Gateway API CRDs (v1.7.0) + Traefik v3.7 with the Gateway API provider
-# + a LoadBalancer Service, then prints an /etc/hosts block for all 13
-# dev public hosts. Re-runnable.
+That is the whole flow:
+1. `externals/` at the repo root — created/cloned/pulled if needed
+   (same repo list as the compose repo's `rit.sh`; see the SURF note
+   below)
+2. minikube started if not running: `--cpus 4 --memory 8192
+   --disk-size 80` (docker driver; the local-path StorageClass ships
+   with minikube)
+3. `k8s/bin/minikube-traefik.sh`: minikube loadbalancer addon (metallb),
+   Gateway API CRDs (v1.7.0), Traefik v3.7 with the Gateway API provider
+   + LoadBalancer Service, and it prints an /etc/hosts block for all 13
+   dev public hosts
+4. the dev overlay is applied and the PVCs are checked
 
+Then add the printed /etc/hosts block:
+
+```
 sudo tee -a /etc/hosts <<'EOF'
 <LB-IP> app.mdr.dev.dh.unimaas.nl
 ... (the 13 hosts, printed by the script)
 EOF
 ```
 
+Steps 4-5 of "Deploying (step by step)" then apply (iRODS bootstrap,
+verify). Re-run `dev-up` after a `git pull` to roll out changes.
+
+`k8s/bin/dhdev.sh externals` alone just (re)creates `externals/`. Note:
+the epicpid SURF credentials
+(`externals/epicpid-microservice/credentials/*.pem`) are **not in the
+public epicpid-microservice repo** — the script detects when they are
+missing and tells you to copy them from an existing checkout (e.g. your
+compose tree).
+
 Alternative to the LB IP: `minikube tunnel` (needs sudo, docker driver)
 serves cluster LoadBalancer traffic on `127.0.0.1` — then use
 `127.0.0.1` in /etc/hosts. Note the Vite frontends enforce
 `allowedHosts` = the public host name, so always access them through the
 /etc/hosts names (a `localhost` Host header is rejected).
-
-### Apply
-
-```
-kubectl kustomize k8s/overlays/dev --load-restrictor LoadRestrictionsNone | kubectl apply -f -
-```
-
-(Building dev requires an `externals/` checkout at the repo root — the
-main tree has a symlink, a worktree does not by default.) Then Steps 4-5
-of "Deploying (step by step)" apply (iRODS bootstrap, verify).
 
 ### Staging data (zones)
 
