@@ -7,6 +7,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: garage1
+  namespace: irods
   labels:
     app.kubernetes.io/name: garage1
     app.kubernetes.io/part-of: datahub
@@ -85,6 +86,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: garage2
+  namespace: irods
   labels:
     app.kubernetes.io/name: garage2
     app.kubernetes.io/part-of: datahub

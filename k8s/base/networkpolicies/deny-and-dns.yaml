@@ -1,5 +1,9 @@
 # NetworkPolicies for the datahub namespace.
 #
+# TODO(namespaces): written assuming a single namespace. The stack now spans
+# irods/external/public/internal, so these need to be reworked (per-namespace
+# default-deny + explicit cross-namespace flows) before they can be applied.
+#
 # NOT applied by default: k3s does not enforce NetworkPolicies unless started
 # with `--network-policy`. To enable, add `networkpolicies/` to an overlay's
 # resources and restart k3s with the flag. Default-deny is applied first, so

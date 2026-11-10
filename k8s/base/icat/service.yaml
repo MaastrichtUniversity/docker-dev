@@ -4,6 +4,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: icat
+  namespace: irods
   labels:
     app.kubernetes.io/name: icat
     app.kubernetes.io/part-of: datahub

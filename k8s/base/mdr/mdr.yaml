@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mdr
+  namespace: external
   labels:
     app.kubernetes.io/name: mdr
     app.kubernetes.io/part-of: datahub
@@ -79,6 +80,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mdr-static
+  namespace: external
   labels:
     app.kubernetes.io/name: mdr
     app.kubernetes.io/part-of: datahub
@@ -93,6 +95,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mdr
+  namespace: external
   labels:
     app.kubernetes.io/name: mdr
     app.kubernetes.io/part-of: datahub

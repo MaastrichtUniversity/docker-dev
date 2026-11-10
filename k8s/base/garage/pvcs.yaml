@@ -9,6 +9,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: garage1-data
+  namespace: irods
   labels:
     app.kubernetes.io/name: garage1
     app.kubernetes.io/part-of: datahub
@@ -23,6 +24,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: garage2-data
+  namespace: irods
   labels:
     app.kubernetes.io/name: garage2
     app.kubernetes.io/part-of: datahub
@@ -37,6 +39,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: garage1-meta
+  namespace: irods
   labels:
     app.kubernetes.io/name: garage1
     app.kubernetes.io/part-of: datahub
@@ -51,6 +54,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: garage2-meta
+  namespace: irods
   labels:
     app.kubernetes.io/name: garage2
     app.kubernetes.io/part-of: datahub
@@ -67,6 +71,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: staging-zones
+  namespace: irods
   labels:
     app.kubernetes.io/part-of: datahub
 spec:

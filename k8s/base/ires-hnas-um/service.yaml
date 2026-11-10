@@ -4,6 +4,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ires-hnas-um
+  namespace: irods
   labels:
     app.kubernetes.io/name: ires-hnas-um
     app.kubernetes.io/part-of: datahub

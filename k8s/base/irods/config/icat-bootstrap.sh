@@ -27,6 +27,9 @@ _main() {
     # Replace TAGS entry in filebeat.yml and start filebeat if present.
     if [[ -f /etc/filebeat/filebeat.yml ]]; then
         sed -i "s/\"FILEBEAT_PRIMARY_TAG\", \"FILEBEAT_SECONDARY_TAG\"/\"$ENV_FILEBEAT_PRIMARY_TAG\"/g" /etc/filebeat/filebeat.yml
+        # k8s: point filebeat at the ELK reused from the monitoring namespace
+        # (baked default is elk.dh.local, unresolvable on k8s)
+        sed -i "s|elk.dh.local|${ENV_FILEBEAT_HOST:-elk.dh.local}|g" /etc/filebeat/filebeat.yml
     else
         echo "WARNING: /etc/filebeat/filebeat.yml not found, skipping filebeat tag configuration"
     fi

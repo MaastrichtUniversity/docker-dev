@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: irods-db
+  namespace: irods
   labels:
     app.kubernetes.io/name: irods-db
     app.kubernetes.io/part-of: datahub

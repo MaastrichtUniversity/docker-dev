@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: help-center-backend
+  namespace: public
   labels:
     app.kubernetes.io/name: help-center-backend
     app.kubernetes.io/part-of: datahub
@@ -71,6 +72,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: help-center-backend
+  namespace: public
   labels:
     app.kubernetes.io/name: help-center-backend
     app.kubernetes.io/part-of: datahub

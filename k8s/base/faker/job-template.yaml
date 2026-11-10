@@ -4,6 +4,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: __NAME__
+  namespace: irods
   labels:
     app.kubernetes.io/name: dh-faker
     app.kubernetes.io/part-of: datahub

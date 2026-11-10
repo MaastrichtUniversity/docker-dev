@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: elastic
+  namespace: external
   labels:
     app.kubernetes.io/name: elastic
     app.kubernetes.io/part-of: datahub
@@ -90,6 +91,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: elastic-data
+  namespace: external
   labels:
     app.kubernetes.io/name: elastic
     app.kubernetes.io/part-of: datahub
@@ -104,6 +106,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: elastic
+  namespace: external
   labels:
     app.kubernetes.io/name: elastic
     app.kubernetes.io/part-of: datahub

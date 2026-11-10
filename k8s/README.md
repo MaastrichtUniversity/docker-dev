@@ -4,6 +4,28 @@ Kubernetes deployment for the stack previously run with `docker compose`
 (`docker-compose.yml` + `docker-compose-irods.yml`). Target: a 3-node **k3s**
 cluster with **Traefik** (in `traefik`) and **Longhorn** storage.
 
+## Namespaces
+
+Workloads live in logical namespaces (same layout for every env; base
+manifests carry the namespace explicitly, overlays add the Namespace
+objects):
+
+| namespace    | workloads |
+|--------------|-----------|
+| `irods`      | irods-db, icat, ires-hnas-um/azm, garage1/2, garage1/2-s3-tls, epicpid, sram-sync, faker jobs |
+| `external`   | mdr, mdr-db, mdr-home, elastic, davrods, davrods-upload |
+| `public`     | dh-home, help-center, help-center-backend |
+| `internal`   | keycloak, ldap, admin-tools, admin-tools-backend, admin-tools-db |
+| `monitoring` | pre-existing ELK, reused as filebeat output (`elk.monitoring.svc.cluster.local`); Grafana/Loki later |
+
+Consequences:
+- ConfigMaps/Secrets are namespace-scoped, so every overlay generator is
+  placed in the consuming namespace (`dh-secrets`/`dh-irods-secrets-cfg`
+  exist in several).
+- Ingress objects live in the namespace of the Services they route to
+  (one Ingress per namespace; Traefik watches all namespaces).
+- Cross-namespace calls use Service FQDNs (see `dh-local-worklist.md`).
+
 ## Layout
 
 ```

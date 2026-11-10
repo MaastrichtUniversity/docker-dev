@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: garage1
+  namespace: irods
   labels:
     app.kubernetes.io/name: garage1
     app.kubernetes.io/part-of: datahub
@@ -27,6 +28,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: garage2
+  namespace: irods
   labels:
     app.kubernetes.io/name: garage2
     app.kubernetes.io/part-of: datahub
@@ -52,6 +54,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: garage1-s3-tls
+  namespace: irods
   labels:
     app.kubernetes.io/name: garage1-s3-tls
     app.kubernetes.io/part-of: datahub
@@ -69,6 +72,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: garage2-s3-tls
+  namespace: irods
   labels:
     app.kubernetes.io/name: garage2-s3-tls
     app.kubernetes.io/part-of: datahub

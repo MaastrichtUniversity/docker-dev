@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ldap
+  namespace: internal
   labels:
     app.kubernetes.io/name: ldap
     app.kubernetes.io/part-of: datahub
@@ -93,6 +94,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ldap
+  namespace: internal
   labels:
     app.kubernetes.io/name: ldap
     app.kubernetes.io/part-of: datahub

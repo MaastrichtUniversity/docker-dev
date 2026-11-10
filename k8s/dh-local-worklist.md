@@ -7,31 +7,42 @@ this repo + `externals/` checkouts + image-baked config) with the concrete
 work per item. Execute **after the namespaces are finalized**, since the
 target FQDN embeds the namespace.
 
-Namespace per env: `dh-dev`, `dh-tst`, `dh-acc`, `dh-prd`.
+Workloads live in logical namespaces (finalized, same for every env):
+
+| namespace    | workloads |
+|--------------|-----------|
+| `irods`      | irods-db, icat, ires-hnas-um/azm, garage1/2, garage1/2-s3-tls, epicpid, sram-sync, faker jobs |
+| `external`   | mdr, mdr-db, mdr-home, elastic, davrods, davrods-upload |
+| `public`     | dh-home, help-center, help-center-backend |
+| `internal`   | keycloak, ldap, admin-tools, admin-tools-backend, admin-tools-db |
+| `monitoring` | pre-existing ELK (not deployed by us; filebeat targets `elk.monitoring.svc.cluster.local`) |
+
 Cluster domain: `cluster.local` (k3s default).
 
 ## Name mapping
 
 | compose name              | k8s replacement                          | Service type |
 |---------------------------|------------------------------------------|--------------|
-| `icat.dh.local`           | `icat.<ns>.svc.cluster.local`            | headless (pod IP, 20000-20199) |
-| `ires-hnas-um.dh.local`   | `ires-hnas-um.<ns>.svc.cluster.local`    | headless (pod IP, 20000-20199) |
-| `ires-hnas-azm.dh.local`  | `ires-hnas-azm.<ns>.svc.cluster.local`   | headless (pod IP, 20000-20199) |
-| `irods-db.dh.local`       | `irods-db.<ns>.svc.cluster.local`        | headless     |
-| `mdr-db.dh.local`         | `mdr-db.<ns>.svc.cluster.local`          | headless     |
-| `admin-tools-db.dh.local` | `admin-tools-db.<ns>.svc.cluster.local`  | headless     |
-| `ldap.dh.local`           | `ldap.<ns>.svc.cluster.local`            | ClusterIP    |
-| `elastic.dh.local`        | `elastic.<ns>.svc.cluster.local`         | ClusterIP    |
-| `keycloak.dh.local`       | `keycloak.<ns>.svc.cluster.local`        | ClusterIP    |
-| `epicpid.dh.local`        | `epicpid.<ns>.svc.cluster.local`         | ClusterIP    |
-| `admin-tools-backend.dh.local` | `admin-tools-backend.<ns>.svc.cluster.local` | ClusterIP |
-| `garage1.dh.local`        | `garage1-s3-tls.<ns>.svc.cluster.local`  | ClusterIP (:9000 TLS) |
-| `garage2.dh.local`        | `garage2-s3-tls.<ns>.svc.cluster.local`  | ClusterIP (:9000 TLS) |
+| `icat.dh.local`           | `icat.irods.svc.cluster.local`           | headless (pod IP, 20000-20199) |
+| `ires-hnas-um.dh.local`   | `ires-hnas-um.irods.svc.cluster.local`   | headless (pod IP, 20000-20199) |
+| `ires-hnas-azm.dh.local`  | `ires-hnas-azm.irods.svc.cluster.local`  | headless (pod IP, 20000-20199) |
+| `irods-db.dh.local`       | `irods-db.irods.svc.cluster.local`       | headless     |
+| `mdr-db.dh.local`         | `mdr-db.external.svc.cluster.local`      | headless     |
+| `admin-tools-db.dh.local` | `admin-tools-db.internal.svc.cluster.local` | headless  |
+| `ldap.dh.local`           | `ldap.internal.svc.cluster.local`        | ClusterIP    |
+| `elastic.dh.local`        | `elastic.external.svc.cluster.local`     | ClusterIP    |
+| `keycloak.dh.local`       | `keycloak.internal.svc.cluster.local`    | ClusterIP    |
+| `epicpid.dh.local`        | `epicpid.irods.svc.cluster.local`        | ClusterIP    |
+| `admin-tools-backend.dh.local` | `admin-tools-backend.internal.svc.cluster.local` | ClusterIP |
+| `garage1.dh.local`        | `garage1-s3-tls.irods.svc.cluster.local` | ClusterIP (:9000 TLS) |
+| `garage2.dh.local`        | `garage2-s3-tls.irods.svc.cluster.local` | ClusterIP (:9000 TLS) |
+| `elk.dh.local`            | `elk.monitoring.svc.cluster.local`       | (pre-existing) |
 | `ires-ceph-ac.dh.local` / `ires-ceph-gl.dh.local` | fictitious (hosts-hack only, see A5) | - |
 
 Single-label names (`ldap`, `garage1`, `mdr-db`, ...) already resolve
 natively **within the same namespace** via CoreDNS search domains - those
-usages need no change (section F).
+usages need no change (section F). All remaining cross-namespace traffic
+uses the FQDNs above.
 
 ## A. iRODS pod identity & hooks (the invasive part)
 
@@ -82,18 +93,19 @@ usages need no change (section F).
 
 | env key | compose value | k8s value |
 |---|---|---|
-| `ENV_IRODS_ICAT_HOST` | `icat.dh.local` | `icat.<ns>.svc.cluster.local` |
-| `IRODS_HOST` (mdr, sram-sync, admin-tools-backend, faker) | `icat.dh.local` | `icat.<ns>.svc.cluster.local` |
-| `IRODS_SERVER` (davrods, davrods-upload) | `icat.dh.local` | `icat.<ns>.svc.cluster.local` |
-| `ENV_IRODS_DB_HOSTNAME` | `irods-db.dh.local` | `irods-db.<ns>.svc.cluster.local` |
-| `MDR_POSTGRES_HOST` | `mdr-db.dh.local` | `mdr-db.<ns>.svc.cluster.local` |
-| `DB_HOST` (admin-tools-backend) | `admin-tools-db.dh.local` | `admin-tools-db.<ns>.svc.cluster.local` |
-| `ELASTIC_HOST` / `ENV_ELASTIC_HOST` (mdr, elastic, iRODS json) | `elastic.dh.local` | `elastic.<ns>.svc.cluster.local` |
-| `LDAP_HOST` (sram-sync) | `ldap://ldap.dh.local` | `ldap://ldap.<ns>.svc.cluster.local` |
-| `ENV_S3_HOST_AC` | `garage1.dh.local:9000` | `garage1-s3-tls.<ns>.svc.cluster.local:9000` |
-| `ENV_S3_HOST_GL` | `garage2.dh.local:9000` | `garage2-s3-tls.<ns>.svc.cluster.local:9000` |
-| `ENV_EPICPID_URL` | `http://epicpid.dh.local/epic/21.T12996/` | `http://epicpid.<ns>.svc.cluster.local/epic/21.T12996/` |
-| faker job `remoteResource` arg | `ires-hnas-um.dh.local` | `ires-hnas-um.<ns>.svc.cluster.local` |
+| `ENV_IRODS_ICAT_HOST` | `icat.dh.local` | `icat.irods.svc.cluster.local` |
+| `IRODS_HOST` (mdr, sram-sync, admin-tools-backend, faker) | `icat.dh.local` | `icat.irods.svc.cluster.local` |
+| `IRODS_SERVER` (davrods, davrods-upload) | `icat.dh.local` | `icat.irods.svc.cluster.local` |
+| `ENV_IRODS_DB_HOSTNAME` | `irods-db.dh.local` | `irods-db.irods.svc.cluster.local` |
+| `MDR_POSTGRES_HOST` | `mdr-db.dh.local` | `mdr-db.external.svc.cluster.local` |
+| `DB_HOST` (admin-tools-backend) | `admin-tools-db.dh.local` | `admin-tools-db.internal.svc.cluster.local` |
+| `ELASTIC_HOST` / `ENV_ELASTIC_HOST` (mdr, elastic, iRODS json) | `elastic.dh.local` | `elastic.external.svc.cluster.local` |
+| `LDAP_HOST` (sram-sync) | `ldap://ldap.dh.local` | `ldap://ldap.internal.svc.cluster.local` |
+| `ENV_S3_HOST_AC` | `garage1.dh.local:9000` | `garage1-s3-tls.irods.svc.cluster.local:9000` |
+| `ENV_S3_HOST_GL` | `garage2.dh.local:9000` | `garage2-s3-tls.irods.svc.cluster.local:9000` |
+| `ENV_EPICPID_URL` | `http://epicpid.dh.local/epic/21.T12996/` | `http://epicpid.irods.svc.cluster.local/epic/21.T12996/` |
+| `ENV_FILEBEAT_HOST` (new; iRODS + any filebeat output) | `elk.dh.local` (hardcoded in filebeat.yml) | `elk.monitoring.svc.cluster.local` |
+| faker job `remoteResource` arg | `ires-hnas-um.dh.local` | `ires-hnas-um.irods.svc.cluster.local` |
 | ires bootstrap dockerize wait default | `icat.dh.local` (default only) | covered by `ENV_IRODS_ICAT_HOST` |
 
 Also: `k8s/base/**` comments/`-icat.dh.local` fallbacks in the
@@ -114,10 +126,15 @@ Also: `k8s/base/**` comments/`-icat.dh.local` fallbacks in the
    - Proper fix (follow-up): template the upstream FQDN + cluster DNS IP at
      build time (per-env build arg) or change the repo to read them.
 2. **filebeat outputs `elk.dh.local:5044`** (dh-irods base, dh-mdr,
-   rit-davrods x2, dh-admin-tools x2, dh-help-center frontend): no ELK in
-   the k8s env; filebeat will keep retrying (same as compose dev). Decide:
-   leave (harmless), point at a real destination, or disable filebeat
-   start in the bootstraps.
+   rit-davrods x2, dh-admin-tools x2, dh-help-center frontend): the ELK
+   stack is reused from the **monitoring** namespace
+   (`elk.monitoring.svc.cluster.local:5044`; to be replaced by
+   Grafana/Loki later).
+   - iRODS (done): vendored bootstraps sed the host from
+     `ENV_FILEBEAT_HOST` (set in `irods-common-env` per overlay).
+   - remaining (follow-up, needs image/externals change): dh-mdr,
+     rit-davrods, dh-admin-tools, dh-help-center frontends - until then
+     their filebeat keeps retrying against `elk.dh.local` (harmless).
 3. **irods-ruleset `utils/createFakeFiles.r` / `createFakeTapeFile.r`**:
    `remoteResource="ires-hnas-um.dh.local"` is a *caller argument*, not a
    default -> no repo change; `bin/faker.sh`/`faker-env` must pass the new

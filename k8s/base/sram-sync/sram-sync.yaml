@@ -4,6 +4,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: sram-sync
+  namespace: irods
   labels:
     app.kubernetes.io/name: sram-sync
     app.kubernetes.io/part-of: datahub
