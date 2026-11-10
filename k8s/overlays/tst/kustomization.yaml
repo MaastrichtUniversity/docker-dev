@@ -1,0 +1,163 @@
+# tst overlay: env-specific values + all secrets from Vault via the
+# ExternalSecrets Operator (external-secrets.yaml; placeholder Vault paths,
+# see its header + k8s/README.md section 7).
+#
+# Build with:
+#   kubectl kustomize k8s/overlays/tst --load-restrictor LoadRestrictionsNone
+# (the load-restrictor flag is needed because base generator files
+# reference the repo's irods/, keycloak/ and ldap/ trees).
+# Unlike the dev overlay this builds in a clean clone - no externals/
+# checkout needed (epicpid SURF creds come from Vault).
+#
+# Image tags: `latest` here is the fallback; the deploy pipeline overrides
+# per-service tags with kustomize --image (see Jenkinsfile.deploy).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Stable generator names (no hash suffix); see base/kustomization.yaml for
+# the restart-on-change trade-off.
+generatorOptions:
+  disableNameSuffixHash: true
+
+resources:
+  - ../../base
+  - namespaces.yaml
+  - ingress.yaml
+  - external-secrets.yaml
+
+# Per-env ConfigMap env files (consumed via envFrom by the base manifests).
+configMapGenerator:
+  - name: irods-common-env
+    namespace: irods
+    envs: [config/irods-common.env]
+  - name: icat-env
+    namespace: irods
+    envs: [config/icat.env]
+  - name: ires-um-env
+    namespace: irods
+    envs: [config/ires-um.env]
+  - name: ires-azm-env
+    namespace: irods
+    envs: [config/ires-azm.env]
+  - name: irods-db-env
+    namespace: irods
+    envs: [config/irods-db.env]
+  - name: epicpid-env
+    namespace: irods
+    envs: [config/epicpid.env]
+  - name: sram-sync-env
+    namespace: irods
+    envs: [config/sram-sync.env]
+  - name: faker-env
+    namespace: irods
+    envs: [config/faker.env]
+  - name: mdr-env
+    namespace: external
+    envs: [config/mdr.env]
+  - name: mdr-db-env
+    namespace: external
+    envs: [config/mdr-db.env]
+  - name: elastic-env
+    namespace: external
+    envs: [config/elastic.env]
+  - name: davrods-env
+    namespace: external
+    envs: [config/davrods.env]
+  - name: davrods-upload-env
+    namespace: external
+    envs: [config/davrods-upload.env]
+  - name: mdr-home-env
+    namespace: external
+    envs: [config/mdr-home.env]
+  - name: help-center-backend-env
+    namespace: public
+    envs: [config/help-center-backend.env]
+  - name: help-center-env
+    namespace: public
+    envs: [config/help-center.env]
+  - name: dh-home-env
+    namespace: public
+    envs: [config/dh-home.env]
+  - name: admin-tools-backend-env
+    namespace: internal
+    envs: [config/admin-tools-backend.env]
+  - name: admin-tools-env
+    namespace: internal
+    envs: [config/admin-tools.env]
+  - name: admin-tools-db-env
+    namespace: internal
+    envs: [config/admin-tools-db.env]
+  - name: ldap-env
+    namespace: internal
+    envs: [config/ldap.env]
+  - name: keycloak-env
+    namespace: internal
+    envs: [config/keycloak.env]
+
+# All Secrets are created by the ExternalSecrets Operator from Vault
+# (external-secrets.yaml) - no secretGenerator here.
+
+# All images from the own registry (Jenkinsfile.build pushes them;
+# postgres/openldap/garage/nginx are mirrored there).
+images:
+  - name: docker-dev/icat
+    newName: registry.prod.dh.unimaas.nl/docker-dev/icat
+    newTag: latest
+  - name: docker-dev/ires-hnas
+    newName: registry.prod.dh.unimaas.nl/docker-dev/ires-hnas
+    newTag: latest
+  - name: docker-dev/mdr
+    newName: registry.prod.dh.unimaas.nl/docker-dev/mdr
+    newTag: latest
+  - name: docker-dev/keycloak
+    newName: registry.prod.dh.unimaas.nl/docker-dev/keycloak
+    newTag: latest
+  - name: docker-dev/elastic
+    newName: registry.prod.dh.unimaas.nl/docker-dev/elastic
+    newTag: latest
+  - name: docker-dev/faker
+    newName: registry.prod.dh.unimaas.nl/docker-dev/faker
+    newTag: latest
+  - name: docker-dev/davrods
+    newName: registry.prod.dh.unimaas.nl/docker-dev/davrods
+    newTag: latest
+  - name: docker-dev/davrods-upload
+    newName: registry.prod.dh.unimaas.nl/docker-dev/davrods-upload
+    newTag: latest
+  - name: docker-dev/epicpid
+    newName: registry.prod.dh.unimaas.nl/docker-dev/epicpid
+    newTag: latest
+  - name: docker-dev/sram-sync
+    newName: registry.prod.dh.unimaas.nl/docker-dev/sram-sync
+    newTag: latest
+  - name: docker-dev/help-center-backend
+    newName: registry.prod.dh.unimaas.nl/docker-dev/help-center-backend
+    newTag: latest
+  - name: docker-dev/help-center
+    newName: registry.prod.dh.unimaas.nl/docker-dev/help-center
+    newTag: latest
+  - name: docker-dev/dh-home
+    newName: registry.prod.dh.unimaas.nl/docker-dev/dh-home
+    newTag: latest
+  - name: docker-dev/dh-mdr-home
+    newName: registry.prod.dh.unimaas.nl/docker-dev/dh-mdr-home
+    newTag: latest
+  - name: docker-dev/admin-tools-backend
+    newName: registry.prod.dh.unimaas.nl/docker-dev/admin-tools-backend
+    newTag: latest
+  - name: docker-dev/admin-tools
+    newName: registry.prod.dh.unimaas.nl/docker-dev/admin-tools
+    newTag: latest
+  # mirrored external images
+  - name: postgres
+    newName: registry.prod.dh.unimaas.nl/postgres
+    newTag: 17.10-alpine
+  - name: dxflrs/garage
+    newName: registry.prod.dh.unimaas.nl/garage
+    newTag: v2.3.0
+  - name: osixia/openldap
+    newName: registry.prod.dh.unimaas.nl/openldap
+    newTag: 1.3.0
+  - name: nginx
+    newName: registry.prod.dh.unimaas.nl/nginx
+    newTag: alpine

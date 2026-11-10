@@ -1,0 +1,200 @@
+# Traefik ingress for the tst environment (replaces the docker-common
+# nginx-virtual-proxy + VIRTUAL_HOST labels). One Ingress per namespace:
+# the k8s Ingress API can only route to Services in its own namespace, and
+# all hosts of a group live in one namespace.
+#
+# tst is HTTP-only (as the compose stack was). For acc/prd add per-Ingress
+# `tls:` blocks (hosts + a secret created in the Ingress' namespace by
+# bin/gen-ingress-tls.sh) and the
+# traefik.ingress.kubernetes.io/router.entrypoints=web,websecure annotation.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: datahub-external
+  namespace: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: app.tst.dh.unimaas.nl
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mdr
+                port:
+                  number: 8000
+    - host: elastic.tst.dh.unimaas.nl
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: elastic
+                port:
+                  number: 9200
+    - host: download.tst.dh.unimaas.nl
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: davrods
+                port:
+                  number: 80
+    - host: upload.tst.dh.unimaas.nl
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: davrods-upload
+                port:
+                  number: 80
+    - host: mdr.tst.dh.unimaas.nl
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mdr-home
+                port:
+                  number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: datahub-irods
+  namespace: irods
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: epicpid.tst.dh.unimaas.nl
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: epicpid
+                port:
+                  number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: datahub-public
+  namespace: public
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: helpbackend.tst.dh.unimaas.nl
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: help-center-backend
+                port:
+                  number: 8000
+    # /help_backend routes already carry the prefix in the FastAPI paths,
+    # so no path rewrite is needed.
+    - host: help.mdr.tst.dh.unimaas.nl
+      http:
+        paths:
+          - path: /help_backend
+            pathType: Prefix
+            backend:
+              service:
+                name: help-center-backend
+                port:
+                  number: 8000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: help-center
+                port:
+                  number: 3000
+    - host: tst.dh.unimaas.nl
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dh-home
+                port:
+                  number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: datahub-internal
+  namespace: internal
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: keycloak.tst.dh.unimaas.nl
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 8080
+    # OIDC/SAML alias used by admin-tools-backend (OIDC_DOMAIN)
+    - host: auth.tst.dh.unimaas.nl
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 8080
+    # /api keeps its prefix in the FastAPI routes, so no rewrite is needed.
+    - host: admin.tst.dh.unimaas.nl
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: admin-tools-backend
+                port:
+                  number: 8000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: admin-tools
+                port:
+                  number: 3000
+    - host: admintoolsbackend.tst.dh.unimaas.nl
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: admin-tools-backend
+                port:
+                  number: 8000

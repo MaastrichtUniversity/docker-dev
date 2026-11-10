@@ -46,8 +46,9 @@ uses the FQDNs above.
 
 ## A. iRODS pod identity & hooks (the invasive part)
 
-Status: **A1-A4 and C(dev) are done** in `k8s/base`; the remaining work is
-B (env values in the overlays - being written) and D (external follow-ups).
+Status: **A1-A4 and C(dev) are done** in `k8s/base`; **B is done for dev
+and tst** (acc/prd overlays still to write); the remaining work is D
+(external follow-ups).
 
 1. **[done] Force hostname** - `spec.hostname` + `HOSTNAME` env on the three
    iRODS StatefulSets are now the headless Service FQDNs
@@ -84,6 +85,15 @@ B (env values in the overlays - being written) and D (external follow-ups).
    nothing current) are gone with it. No `hostAliases` needed.
 
 ## B. Per-env values (overlay `config/*.env` only - no code changes)
+
+Status: **[done for dev + tst]** `k8s/overlays/dev/config/` (file-based
+secrets) and `k8s/overlays/tst/config/` (derived: `.tst.dh.unimaas.nl`
+hosts, `ENV=RIT_ENV=ENV_ENVIRONMENT=tst`, `DJANGO_DEV_MODE=False`,
+`GARAGE_BUCKET=dh-irods-bucket-tst`, CA key name
+`test_only_tst_irods_dh_ca_cert.pem`, SMB ingest zones `/tst`; all other
+values = dev values as placeholders - verify per-service against the real
+tst stack when wiring up). tst secrets come from Vault via
+`k8s/overlays/tst/external-secrets.yaml` (placeholder paths).
 
 | env key | compose value | k8s value |
 |---|---|---|
