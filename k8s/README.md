@@ -161,9 +161,14 @@ Notes:
 - iRODS TLS: dev uses the committed test certs; `bin/gen-irods-tls.sh`
   generates per-env certs (needed to populate Vault for tst/acc/prd; the
   `<ca>.pem` key name must match `ENV_IRODS_SSL_CA_CERTIFICATE`).
-- Ingress TLS: wildcard `*.<env>.dh.unimaas.nl` self-signed via
-  `bin/gen-ingress-tls.sh` (trust the CA in browsers; internal traffic
-  stays HTTP, as today).
+- Ingress TLS: dev is HTTP-only (as the compose stack was). tst uses the
+  real multi-SAN `*.tst.dh.unimaas.nl` cert, stored in Vault under
+  `ingress-tls` and materialized per Ingress namespace by the
+  `ingress-tls` ExternalSecrets (type `kubernetes.io/tls`; the Ingress
+  `tls:` blocks list only the SANs the cert covers - see
+  `overlays/tst/ingress.yaml`). acc/prd: same pattern with their certs
+  (a self-signed fallback would be `bin/gen-ingress-tls.sh`, still to
+  write).
 
 ### 8. Storage (Longhorn)
 Two StorageClasses: `longhorn-rwo` (default) and `longhorn-rwx`

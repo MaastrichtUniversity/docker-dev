@@ -3,10 +3,23 @@
 # the k8s Ingress API can only route to Services in its own namespace, and
 # all hosts of a group live in one namespace.
 #
-# tst is HTTP-only (as the compose stack was). For acc/prd add per-Ingress
-# `tls:` blocks (hosts + a secret created in the Ingress' namespace by
-# bin/gen-ingress-tls.sh) and the
-# traefik.ingress.kubernetes.io/router.entrypoints=web,websecure annotation.
+# TLS: the Ingresses that carry a `tls:` block are served on both web
+# (80) and websecure (443) - the cert is the multi-SAN tst cert for
+# *.tst.dh.unimaas.nl, stored in Vault (path `ingress-tls`) and created in
+# each Ingress namespace by the ExternalSecret `ingress-tls`
+# (external-secrets.yaml; an Ingress TLS secret must live in the same
+# namespace as the Ingress).
+#
+# Public host names follow the cert's SANs (which define the published
+# tst names): the MDR app is `app.mdr.tst...` and the elastic UI
+# `elk.tst...` - not the dev-derived `app.tst`/`elastic.tst`.
+#
+# Hosts NOT in the cert (HTTP-only until it is re-issued with them):
+# epicpid.tst, helpbackend.tst, auth.tst, admintoolsbackend.tst.
+#
+# Follow-up: once the public hosts are reached over https, flip the
+# app-level URLs in config/*.env (DATAHUB_HOME_URL, SAML_DJANGO_BASE_URL,
+# WEBDAV_*_URL, ...) from http:// to https:// to avoid mixed content.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -14,10 +27,20 @@ metadata:
   namespace: external
   labels:
     app.kubernetes.io/part-of: datahub
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
 spec:
   ingressClassName: traefik
+  tls:
+    - hosts:
+        - mdr.tst.dh.unimaas.nl
+        - app.mdr.tst.dh.unimaas.nl
+        - download.tst.dh.unimaas.nl
+        - upload.tst.dh.unimaas.nl
+        - elk.tst.dh.unimaas.nl
+      secretName: ingress-tls
   rules:
-    - host: app.tst.dh.unimaas.nl
+    - host: app.mdr.tst.dh.unimaas.nl
       http:
         paths:
           - path: /
@@ -27,7 +50,7 @@ spec:
                 name: mdr
                 port:
                   number: 8000
-    - host: elastic.tst.dh.unimaas.nl
+    - host: elk.tst.dh.unimaas.nl
       http:
         paths:
           - path: /
@@ -96,8 +119,15 @@ metadata:
   namespace: public
   labels:
     app.kubernetes.io/part-of: datahub
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
 spec:
   ingressClassName: traefik
+  tls:
+    - hosts:
+        - help.mdr.tst.dh.unimaas.nl
+        - tst.dh.unimaas.nl
+      secretName: ingress-tls
   rules:
     - host: helpbackend.tst.dh.unimaas.nl
       http:
@@ -146,8 +176,15 @@ metadata:
   namespace: internal
   labels:
     app.kubernetes.io/part-of: datahub
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
 spec:
   ingressClassName: traefik
+  tls:
+    - hosts:
+        - keycloak.tst.dh.unimaas.nl
+        - admin.tst.dh.unimaas.nl
+      secretName: ingress-tls
   rules:
     - host: keycloak.tst.dh.unimaas.nl
       http:
