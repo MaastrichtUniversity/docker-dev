@@ -46,11 +46,19 @@ spec:
           env:
             - name: TZ
               value: Europe/Amsterdam
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_DB_POSTGRES_PASSWORD
+            - name: ENV_IRODS_DB_IRODS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_DB_IRODS_PASSWORD
           envFrom:
             - configMapRef:
                 name: irods-db-env
-            - secretRef:
-                name: irods-db-credentials
           ports:
             - name: postgres
               containerPort: 5432

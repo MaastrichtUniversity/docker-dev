@@ -122,7 +122,7 @@ Also: `k8s/base/**` comments/`-icat.dh.local` fallbacks in the
   dhparams), run for dev, output committed to `irods/k8s-ssl-certs/`.
   acc/prd: same script with a per-env SAN suffix if the namespaces ever
   differ, or real PKI material.
-- `bin/gen-ingress-tls.sh`: still to write (public `*.<env>.dh.unimaas.nl`;
+- `bin/gen-gateway-tls.sh`: still to write (public `*.<env>.dh.unimaas.nl`;
   dev is HTTP-only for now).
 
 ## D. External repos (real code/config changes needed)

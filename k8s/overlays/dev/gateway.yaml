@@ -23,7 +23,7 @@ spec:
     - name: http
       port: 80
       protocol: HTTP
-      hostname: app.mdr.dev.dh.unimaas.nl
+      hostname: app.mdr.local.dh.unimaas.nl
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -36,7 +36,7 @@ spec:
   parentRefs:
     - name: app-mdr-gateway
   hostnames:
-    - app.mdr.dev.dh.unimaas.nl
+    - app.mdr.local.dh.unimaas.nl
   rules:
     - matches:
         - path:
@@ -59,7 +59,7 @@ spec:
     - name: http
       port: 80
       protocol: HTTP
-      hostname: elastic.dev.dh.unimaas.nl
+      hostname: elastic.local.dh.unimaas.nl
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -72,7 +72,7 @@ spec:
   parentRefs:
     - name: elastic-gateway
   hostnames:
-    - elastic.dev.dh.unimaas.nl
+    - elastic.local.dh.unimaas.nl
   rules:
     - matches:
         - path:
@@ -95,7 +95,7 @@ spec:
     - name: http
       port: 80
       protocol: HTTP
-      hostname: download.dev.dh.unimaas.nl
+      hostname: download.local.dh.unimaas.nl
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -108,7 +108,7 @@ spec:
   parentRefs:
     - name: download-gateway
   hostnames:
-    - download.dev.dh.unimaas.nl
+    - download.local.dh.unimaas.nl
   rules:
     - matches:
         - path:
@@ -131,7 +131,7 @@ spec:
     - name: http
       port: 80
       protocol: HTTP
-      hostname: upload.dev.dh.unimaas.nl
+      hostname: upload.local.dh.unimaas.nl
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -144,7 +144,7 @@ spec:
   parentRefs:
     - name: upload-gateway
   hostnames:
-    - upload.dev.dh.unimaas.nl
+    - upload.local.dh.unimaas.nl
   rules:
     - matches:
         - path:
@@ -167,7 +167,7 @@ spec:
     - name: http
       port: 80
       protocol: HTTP
-      hostname: mdr.dev.dh.unimaas.nl
+      hostname: mdr.local.dh.unimaas.nl
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -180,7 +180,7 @@ spec:
   parentRefs:
     - name: mdr-gateway
   hostnames:
-    - mdr.dev.dh.unimaas.nl
+    - mdr.local.dh.unimaas.nl
   rules:
     - matches:
         - path:
@@ -203,7 +203,7 @@ spec:
     - name: http
       port: 80
       protocol: HTTP
-      hostname: epicpid.dev.dh.unimaas.nl
+      hostname: epicpid.local.dh.unimaas.nl
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -216,7 +216,7 @@ spec:
   parentRefs:
     - name: epicpid-gateway
   hostnames:
-    - epicpid.dev.dh.unimaas.nl
+    - epicpid.local.dh.unimaas.nl
   rules:
     - matches:
         - path:
@@ -239,7 +239,7 @@ spec:
     - name: http
       port: 80
       protocol: HTTP
-      hostname: help.mdr.dev.dh.unimaas.nl
+      hostname: help.mdr.local.dh.unimaas.nl
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -252,7 +252,7 @@ spec:
   parentRefs:
     - name: help-gateway
   hostnames:
-    - help.mdr.dev.dh.unimaas.nl
+    - help.mdr.local.dh.unimaas.nl
   rules:
     # /help_backend routes already carry the prefix in the FastAPI paths,
     # so no path rewrite is needed.
@@ -284,7 +284,7 @@ spec:
     - name: http
       port: 80
       protocol: HTTP
-      hostname: helpbackend.dev.dh.unimaas.nl
+      hostname: helpbackend.local.dh.unimaas.nl
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -297,7 +297,7 @@ spec:
   parentRefs:
     - name: helpbackend-gateway
   hostnames:
-    - helpbackend.dev.dh.unimaas.nl
+    - helpbackend.local.dh.unimaas.nl
   rules:
     - matches:
         - path:
@@ -320,7 +320,7 @@ spec:
     - name: http
       port: 80
       protocol: HTTP
-      hostname: dev.dh.unimaas.nl
+      hostname: local.dh.unimaas.nl
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -333,7 +333,7 @@ spec:
   parentRefs:
     - name: dh-home-gateway
   hostnames:
-    - dev.dh.unimaas.nl
+    - local.dh.unimaas.nl
   rules:
     - matches:
         - path:
@@ -356,7 +356,7 @@ spec:
     - name: http
       port: 80
       protocol: HTTP
-      hostname: keycloak.dev.dh.unimaas.nl
+      hostname: keycloak.local.dh.unimaas.nl
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -369,7 +369,7 @@ spec:
   parentRefs:
     - name: keycloak-gateway
   hostnames:
-    - keycloak.dev.dh.unimaas.nl
+    - keycloak.local.dh.unimaas.nl
   rules:
     - matches:
         - path:
@@ -392,7 +392,7 @@ spec:
     - name: http
       port: 80
       protocol: HTTP
-      hostname: auth.dev.dh.unimaas.nl
+      hostname: auth.local.dh.unimaas.nl
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -405,7 +405,7 @@ spec:
   parentRefs:
     - name: auth-gateway
   hostnames:
-    - auth.dev.dh.unimaas.nl
+    - auth.local.dh.unimaas.nl
   rules:
     - matches:
         - path:
@@ -428,7 +428,7 @@ spec:
     - name: http
       port: 80
       protocol: HTTP
-      hostname: admin.dev.dh.unimaas.nl
+      hostname: admin.local.dh.unimaas.nl
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -441,7 +441,7 @@ spec:
   parentRefs:
     - name: admin-gateway
   hostnames:
-    - admin.dev.dh.unimaas.nl
+    - admin.local.dh.unimaas.nl
   rules:
     # /api keeps its prefix in the FastAPI routes, so no rewrite is needed.
     - matches:
@@ -472,7 +472,7 @@ spec:
     - name: http
       port: 80
       protocol: HTTP
-      hostname: admintoolsbackend.dev.dh.unimaas.nl
+      hostname: admintoolsbackend.local.dh.unimaas.nl
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -485,7 +485,7 @@ spec:
   parentRefs:
     - name: admintoolsbackend-gateway
   hostnames:
-    - admintoolsbackend.dev.dh.unimaas.nl
+    - admintoolsbackend.local.dh.unimaas.nl
   rules:
     - matches:
         - path:

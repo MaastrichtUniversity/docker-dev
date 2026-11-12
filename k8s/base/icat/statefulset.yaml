@@ -63,13 +63,17 @@ spec:
               until PGPASSWORD="${ENV_IRODS_DB_POSTGRES_PASSWORD}" psql -h "${ENV_IRODS_DB_HOSTNAME}" -U postgres -c '\l' >/dev/null 2>&1; do
                 echo "INFO: waiting for irods-db at ${ENV_IRODS_DB_HOSTNAME}"; sleep 5
               done
+          env:
+            - name: ENV_IRODS_DB_POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_DB_POSTGRES_PASSWORD
           envFrom:
             - configMapRef:
                 name: irods-common-env
             - configMapRef:
                 name: icat-env
-            - secretRef:
-                name: icat-app-secrets
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -83,13 +87,51 @@ spec:
               value: icat.irods.svc.cluster.local
             - name: TZ
               value: Europe/Amsterdam
+            - name: ENV_IRODS_PASSWORD_ADMIN
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_PASSWORD_ADMIN
+            - name: IRODS_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_PASS
+            - name: ENV_IRODS_KEY_SERVER_ZONE
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_KEY_SERVER_ZONE
+            - name: ENV_IRODS_KEY_SERVER_NEGOTIATION
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_KEY_SERVER_NEGOTIATION
+            - name: ENV_IRODS_KEY_CONTROL_PLANE
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_KEY_CONTROL_PLANE
+            - name: ENV_IRODS_PASSWORDS_SALT
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_PASSWORDS_SALT
+            - name: ENV_IRODS_DB_IRODS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_DB_IRODS_PASSWORD
+            - name: ENV_IRODS_DB_POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_DB_POSTGRES_PASSWORD
           envFrom:
             - configMapRef:
                 name: irods-common-env
             - configMapRef:
                 name: icat-env
-            - secretRef:
-                name: icat-app-secrets
           ports:
             - name: irods
               containerPort: 1247

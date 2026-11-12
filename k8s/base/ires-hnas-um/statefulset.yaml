@@ -68,11 +68,40 @@ spec:
           # Overlay rewrites this to the mirrored registry image
           image: dxflrs/garage:v2.3.0
           command: ["/bin/sh", "/opt/garage/bootstrap.sh"]
+          env:
+            - name: GARAGE_RPC_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: GARAGE_RPC_SECRET
+            - name: GARAGE_ADMIN_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: GARAGE_ADMIN_TOKEN
+            - name: ENV_S3_ACCESS_KEY_AC
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: S3_ACCESS_KEY_AC
+            - name: ENV_S3_SECRET_KEY_AC
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: S3_SECRET_KEY_AC
+            - name: ENV_S3_ACCESS_KEY_GL
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: S3_ACCESS_KEY_GL
+            - name: ENV_S3_SECRET_KEY_GL
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: S3_SECRET_KEY_GL
           envFrom:
             - configMapRef:
                 name: ires-um-env
-            - secretRef:
-                name: garage-secrets
           volumeMounts:
             - name: garage-bootstrap
               mountPath: /opt/garage
@@ -99,13 +128,66 @@ spec:
               value: ires-hnas-um.irods.svc.cluster.local
             - name: TZ
               value: Europe/Amsterdam
+            - name: ENV_IRODS_PASSWORD_ADMIN
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_PASSWORD_ADMIN
+            - name: IRODS_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_PASS
+            - name: ENV_IRODS_KEY_SERVER_ZONE
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_KEY_SERVER_ZONE
+            - name: ENV_IRODS_KEY_SERVER_NEGOTIATION
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_KEY_SERVER_NEGOTIATION
+            - name: ENV_IRODS_KEY_CONTROL_PLANE
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_KEY_CONTROL_PLANE
+            - name: ENV_IRODS_PASSWORDS_SALT
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_PASSWORDS_SALT
+            - name: ENV_IRODS_DB_IRODS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_DB_IRODS_PASSWORD
+            - name: ENV_S3_ACCESS_KEY_AC
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: S3_ACCESS_KEY_AC
+            - name: ENV_S3_SECRET_KEY_AC
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: S3_SECRET_KEY_AC
+            - name: ENV_S3_ACCESS_KEY_GL
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: S3_ACCESS_KEY_GL
+            - name: ENV_S3_SECRET_KEY_GL
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: S3_SECRET_KEY_GL
           envFrom:
             - configMapRef:
                 name: irods-common-env
             - configMapRef:
                 name: ires-um-env
-            - secretRef:
-                name: ires-app-secrets
             - secretRef:
                 name: dh-irods-secrets-cfg
           ports:

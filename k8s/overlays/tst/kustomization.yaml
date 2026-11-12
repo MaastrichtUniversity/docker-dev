@@ -23,6 +23,7 @@ resources:
   - ../../base
   - namespaces.yaml
   - gateway.yaml
+  - vault-auth.yaml
   - external-secrets.yaml
 
 # Per-env ConfigMap env files (consumed via envFrom by the base manifests).
@@ -132,16 +133,4 @@ images:
     newTag: latest
   - name: registry.prod.dh.unimaas.nl/docker-dev/admin-tools
     newTag: latest
-  # mirrored external images
-  - name: postgres
-    newName: registry.prod.dh.unimaas.nl/postgres
-    newTag: 17.10-alpine
-  - name: dxflrs/garage
-    newName: registry.prod.dh.unimaas.nl/garage
-    newTag: v2.3.0
-  - name: osixia/openldap
-    newName: registry.prod.dh.unimaas.nl/openldap
-    newTag: 1.3.0
-  - name: nginx
-    newName: registry.prod.dh.unimaas.nl/nginx
-    newTag: alpine
+

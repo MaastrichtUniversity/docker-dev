@@ -6,15 +6,15 @@
 # Listeners: hosts covered by the multi-SAN tst cert get both an https
 # (443, Terminate) and an http (80) listener, so both schemes work. Hosts
 # NOT in the cert are HTTP-only until it is re-issued with them:
-# epicpid.tst, helpbackend.tst, auth.tst, admintoolsbackend.tst.
+# epicpid.tst, helpbackend.tst, admintoolsbackend.tst.
 #
 # Public host names follow the cert's SANs (the published tst names): the
 # MDR app is `app.mdr.tst...` and the elastic UI `elk.tst...`.
 #
-# TLS: certificateRefs point at the `ingress-tls` Secret
+# TLS: certificateRefs point at the `gateway-tls` Secret
 # (kubernetes.io/tls), created by the ExternalSecret of the same name in
 # each of these namespaces (external-secrets.yaml, Vault path
-# `ingress-tls`: tls.crt/tls.key).
+# `gateway-tls`: tls.crt/tls.key).
 #
 # Follow-up: once the public hosts are reached over https, flip the
 # app-level URLs in config/*.env (DATAHUB_HOME_URL, SAML_DJANGO_BASE_URL,
@@ -38,7 +38,7 @@ spec:
       tls:
         mode: Terminate
         certificateRefs:
-          - name: ingress-tls
+          - name: gateway-tls
     - name: http
       port: 80
       protocol: HTTP
@@ -83,7 +83,7 @@ spec:
       tls:
         mode: Terminate
         certificateRefs:
-          - name: ingress-tls
+          - name: gateway-tls
     - name: http
       port: 80
       protocol: HTTP
@@ -128,7 +128,7 @@ spec:
       tls:
         mode: Terminate
         certificateRefs:
-          - name: ingress-tls
+          - name: gateway-tls
     - name: http
       port: 80
       protocol: HTTP
@@ -173,7 +173,7 @@ spec:
       tls:
         mode: Terminate
         certificateRefs:
-          - name: ingress-tls
+          - name: gateway-tls
     - name: http
       port: 80
       protocol: HTTP
@@ -218,7 +218,7 @@ spec:
       tls:
         mode: Terminate
         certificateRefs:
-          - name: ingress-tls
+          - name: gateway-tls
     - name: http
       port: 80
       protocol: HTTP
@@ -300,7 +300,7 @@ spec:
       tls:
         mode: Terminate
         certificateRefs:
-          - name: ingress-tls
+          - name: gateway-tls
     - name: http
       port: 80
       protocol: HTTP
@@ -391,7 +391,7 @@ spec:
       tls:
         mode: Terminate
         certificateRefs:
-          - name: ingress-tls
+          - name: gateway-tls
     - name: http
       port: 80
       protocol: HTTP
@@ -436,7 +436,7 @@ spec:
       tls:
         mode: Terminate
         certificateRefs:
-          - name: ingress-tls
+          - name: gateway-tls
     - name: http
       port: 80
       protocol: HTTP
@@ -462,43 +462,7 @@ spec:
       backendRefs:
         - name: keycloak
           port: 8080
----
-# ============ internal: auth.tst (Keycloak OIDC alias, HTTP-only, not in the cert) ============
-apiVersion: gateway.networking.k8s.io/v1
-kind: Gateway
-metadata:
-  name: auth-gateway
-  namespace: internal
-  labels:
-    app.kubernetes.io/part-of: datahub
-spec:
-  gatewayClassName: traefik
-  listeners:
-    - name: http
-      port: 80
-      protocol: HTTP
-      hostname: auth.tst.dh.unimaas.nl
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: auth-route
-  namespace: internal
-  labels:
-    app.kubernetes.io/part-of: datahub
-spec:
-  parentRefs:
-    - name: auth-gateway
-  hostnames:
-    - auth.tst.dh.unimaas.nl
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - name: keycloak
-          port: 8080
+
 ---
 # ============ internal: admin.tst (admin-tools + /api backend) ============
 apiVersion: gateway.networking.k8s.io/v1
@@ -518,7 +482,7 @@ spec:
       tls:
         mode: Terminate
         certificateRefs:
-          - name: ingress-tls
+          - name: gateway-tls
     - name: http
       port: 80
       protocol: HTTP

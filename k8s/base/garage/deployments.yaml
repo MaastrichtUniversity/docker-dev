@@ -33,9 +33,17 @@ spec:
           image: dxflrs/garage:v2.3.0
           entrypoint: ["/garage"]
           command: ["server"]
-          envFrom:
-            - secretRef:
-                name: garage-secrets
+          env:
+            - name: GARAGE_RPC_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: GARAGE_RPC_SECRET
+            - name: GARAGE_ADMIN_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: GARAGE_ADMIN_TOKEN
           ports:
             - name: s3-api
               containerPort: 3900
@@ -112,9 +120,17 @@ spec:
           image: dxflrs/garage:v2.3.0
           entrypoint: ["/garage"]
           command: ["server"]
-          envFrom:
-            - secretRef:
-                name: garage-secrets
+          env:
+            - name: GARAGE_RPC_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: GARAGE_RPC_SECRET
+            - name: GARAGE_ADMIN_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: GARAGE_ADMIN_TOKEN
           ports:
             - name: s3-api
               containerPort: 3900

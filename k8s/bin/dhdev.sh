@@ -215,11 +215,11 @@ cmd_dev_up() {
   done
   [ "$pending" = 0 ] || echo "    WARNING: some PVCs still Pending" >&2
 
-  if getent hosts mdr.dev.dh.unimaas.nl >/dev/null 2>&1; then
+  if getent hosts mdr.local.dh.unimaas.nl >/dev/null 2>&1; then
     echo "    /etc/hosts OK"
   else
     cat >&2 <<'EOF'
-    WARNING: mdr.dev.dh.unimaas.nl does not resolve yet - add the
+    WARNING: mdr.local.dh.unimaas.nl does not resolve yet - add the
     /etc/hosts block printed by the traefik step above first.
 EOF
   fi
@@ -233,7 +233,7 @@ bootstrap; watch it with:
   kubectl -n irods logs icat-0 --all-containers   (when it is up)
 
 Then verify, e.g.:
-  curl -s http://mdr.dev.dh.unimaas.nl/ | head
+  curl -s http://mdr.local.dh.unimaas.nl/ | head
   kubectl -n irods exec icat-0 -- iadmin whoami
 EOF
 }

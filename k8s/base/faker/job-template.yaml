@@ -34,11 +34,14 @@ spec:
           env:
             - name: TZ
               value: Europe/Amsterdam
+            - name: IRODS_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_PASS
           envFrom:
             - configMapRef:
                 name: faker-env
-            - secretRef:
-                name: faker-secrets
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:

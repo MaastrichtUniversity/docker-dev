@@ -43,11 +43,14 @@ spec:
           env:
             - name: TZ
               value: Europe/Amsterdam
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mdr-app-secrets
+                  key: MDR_POSTGRES_PASSWORD
           envFrom:
             - configMapRef:
                 name: mdr-db-env
-            - secretRef:
-                name: mdr-db-credentials
           ports:
             - name: postgres
               containerPort: 5432

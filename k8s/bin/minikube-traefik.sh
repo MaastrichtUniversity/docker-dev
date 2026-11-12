@@ -146,22 +146,22 @@ echo
 echo "    sudo tee -a /etc/hosts <<'EOF'"
 # Keep in sync with the listener hostnames in k8s/overlays/dev/gateway.yaml
 for host in \
-  app.mdr.dev.dh.unimaas.nl \
-  elastic.dev.dh.unimaas.nl \
-  download.dev.dh.unimaas.nl \
-  upload.dev.dh.unimaas.nl \
-  mdr.dev.dh.unimaas.nl \
-  epicpid.dev.dh.unimaas.nl \
-  help.mdr.dev.dh.unimaas.nl \
-  helpbackend.dev.dh.unimaas.nl \
-  dev.dh.unimaas.nl \
-  keycloak.dev.dh.unimaas.nl \
-  auth.dev.dh.unimaas.nl \
-  admin.dev.dh.unimaas.nl \
-  admintoolsbackend.dev.dh.unimaas.nl
+  app.mdr.local.dh.unimaas.nl \
+  elastic.local.dh.unimaas.nl \
+  download.local.dh.unimaas.nl \
+  upload.local.dh.unimaas.nl \
+  mdr.local.dh.unimaas.nl \
+  epicpid.local.dh.unimaas.nl \
+  help.mdr.local.dh.unimaas.nl \
+  helpbackend.local.dh.unimaas.nl \
+  local.dh.unimaas.nl \
+  keycloak.local.dh.unimaas.nl \
+  auth.local.dh.unimaas.nl \
+  admin.local.dh.unimaas.nl \
+  admintoolsbackend.local.dh.unimaas.nl
 do
   echo "    ${LB_IP} ${host}"
 done
 echo "    EOF"
 echo
-echo "Then verify, e.g.:  curl -s http://mdr.dev.dh.unimaas.nl/ | head"
+echo "Then verify, e.g.:  curl -s http://mdr.local.dh.unimaas.nl/ | head"

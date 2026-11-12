@@ -134,9 +134,6 @@ secretGenerator:
   - name: icat-app-secrets
     namespace: irods
     envs: [secrets/icat-app-secrets.env]
-  - name: ires-app-secrets
-    namespace: irods
-    envs: [secrets/ires-app-secrets.env]
   - name: garage-secrets
     namespace: irods
     envs: [secrets/garage-secrets.env]
@@ -146,9 +143,6 @@ secretGenerator:
   - name: sram-sync-secrets
     namespace: irods
     envs: [secrets/sram-sync-secrets.env]
-  - name: faker-secrets
-    namespace: irods
-    envs: [secrets/faker-secrets.env]
   - name: dh-irods-secrets-cfg
     namespace: irods
     envs: [secrets/irods-secrets-cfg.env]
@@ -175,15 +169,6 @@ secretGenerator:
   - name: frontend-public-config
     namespace: public
     envs: [secrets/frontend-public-config.env]
-  - name: irods-db-credentials
-    namespace: irods
-    envs: [secrets/irods-db-credentials.env]
-  - name: mdr-db-credentials
-    namespace: external
-    envs: [secrets/mdr-db-credentials.env]
-  - name: admin-tools-db-credentials
-    namespace: internal
-    envs: [secrets/admin-tools-db-credentials.env]
   # SURF handle-server client credentials (committed in epicpid-microservice)
   - name: epicpid-credentials
     namespace: irods

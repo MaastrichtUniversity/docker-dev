@@ -44,11 +44,14 @@ spec:
           env:
             - name: TZ
               value: Europe/Amsterdam
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: admin-tools-secrets
+                  key: DB_PASSWORD
           envFrom:
             - configMapRef:
                 name: admin-tools-db-env
-            - secretRef:
-                name: admin-tools-db-credentials
           ports:
             - name: postgres
               containerPort: 5432
