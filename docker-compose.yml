@@ -80,6 +80,7 @@ services:
       VIRTUAL_PORT: 8080
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
+      DEMO_KEYCLOAK_PASSWORD: ${DEMO_KEYCLOAK_PASSWORD:-}
       RIT_ENV: ${RIT_ENV}
       LDAP_ADMIN_PASSWORD: "admin"
     volumes:
@@ -88,6 +89,7 @@ services:
       - ./keycloak/users.json:/tmp/users.json
       - ./keycloak/import.sh:/tmp/import.sh
       - ./keycloak/startup.sh:/opt/jboss/startup-scripts/startup.sh
+      - ./keycloak/dh_is_ready.sh:/dh_is_ready.sh:ro
       - ./keycloak/datahub-keycloak-theme:/opt/jboss/keycloak/themes/datahub
     ports:
       # TODO: Find a better way to support both mdr->keycloak container traffic and browser->keycloak client traffic

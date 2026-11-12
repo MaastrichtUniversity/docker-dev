@@ -1,79 +1,82 @@
 #!/bin/bash
-set -e
+set -euo pipefail
+umask 077
 
-function retry {
-  local retries=$1
-  shift
-
-  local count=0
-  until "$@"; do
-    exit=$?
-    wait=$((2 ** $count))
-    count=$(($count + 1))
-    if [ $count -lt $retries ]; then
-      echo "Retry $count/$retries exited $exit, retrying in $wait seconds..."
-      sleep $wait
-    else
-      echo "Retry $count/$retries exited $exit, no more retries left."
-      return $exit
-    fi
-  done
-  return 0
+state_file=/var/run/dh_import_state
+work_dir=""
+finish() {
+  local status=$?
+  [[ -z "$work_dir" ]] || rm -rf "$work_dir"
+  if (( status != 0 )); then
+    echo failed > "$state_file"
+    echo "ERROR: Keycloak initialization failed (exit $status)." >&2
+  fi
 }
+trap finish EXIT
+trap 'exit 143' TERM
+trap 'exit 130' INT
 
-echo "Starting import"
-echo "starting" > /var/run/dh_import_state
-
-echo $RIT_ENV
+echo starting > "$state_file"
+echo "Starting Keycloak initialization"
+work_dir=$(mktemp -d)
+base_url=http://localhost:8080/auth
+deadline=$((SECONDS + 180))
+until curl -fsS --noproxy '*' --connect-timeout 1 --max-time 2 "$base_url/realms/master" > /dev/null 2>&1; do
+  if (( SECONDS >= deadline )); then
+    echo "ERROR: Keycloak HTTP endpoint did not become ready within 180 seconds." >&2
+    exit 1
+  fi
+  sleep 1
+done
 
 echo "Login"
+curl -fsS --noproxy '*' --connect-timeout 2 --max-time 30 \
+  --data-urlencode grant_type=password --data-urlencode client_id=admin-cli \
+  --data-urlencode "username=$KEYCLOAK_USER" --data-urlencode "password=$KEYCLOAK_PASSWORD" \
+  "$base_url/realms/master/protocol/openid-connect/token" > "$work_dir/token.json"
+token=$(jq -er '.access_token' "$work_dir/token.json")
+kc() {
+  local path=$1
+  shift
+  curl -fsS --noproxy '*' --connect-timeout 2 --max-time 30 \
+    -H "Authorization: Bearer $token" -H 'Content-Type: application/json' \
+    "$base_url/admin/$path" "$@"
+}
 
-retry 10 /opt/jboss/keycloak/bin/kcadm.sh config credentials --server http://localhost:8080/auth --realm master --user "$KEYCLOAK_USER" --password "$KEYCLOAK_PASSWORD"
-
-echo "Disable SSL"
-# Disable SSL for DEV
-/opt/jboss/keycloak/bin/kcadm.sh update realms/master -s sslRequired=NONE
-
-echo "Set the correct DEV envonment"
-# Set the correct DEV envonment
-sed 's/RIT_ENV/'"$RIT_ENV"'/g' /tmp/realm-export.json > /tmp/realm-export_env.json
-
-echo "Set the correct ldap admin password envonment"
-# Set the correct ldap admin password envonment
-sed 's/\*\*\*\*\*\*\*\*\*\*/'"$LDAP_ADMIN_PASSWORD"'/g'  /tmp/realm-export_env.json >  /tmp/realm-export_env_pw.json
-
-
-# If django realm does not yet exist load it from config
-if ! $(/opt/jboss/keycloak/bin/kcadm.sh get realms | grep -q "django");
-then
+kc realms/master -X PUT --data '{"sslRequired":"NONE"}'
+kc realms > "$work_dir/realms.json"
+if ! jq -e 'any(.[]; .realm == "django")' "$work_dir/realms.json" > /dev/null; then
   echo "Import Django realm"
-  /opt/jboss/keycloak/bin/kcadm.sh create realms -f /tmp/realm-export_env_pw.json
+  jq --arg environment "$RIT_ENV" --arg password "$LDAP_ADMIN_PASSWORD" '
+    walk(if type == "string" then gsub("RIT_ENV"; $environment) else . end)
+    | (.components["org.keycloak.storage.UserStorageProvider"][]
+       | select(.providerId == "ldap") | .config.bindCredential) = [$password]
+  ' /tmp/realm-export.json > "$work_dir/realm.json"
+  kc realms -X POST --data-binary "@$work_dir/realm.json"
 fi
 
 echo "Full Sync LDAP"
-/opt/jboss/keycloak/bin/kcadm.sh create user-storage/10d55377-d139-4865-bd3e-1375ea079925/sync?action=triggerFullSync -r django
+kc 'realms/django/user-storage/10d55377-d139-4865-bd3e-1375ea079925/sync?action=triggerFullSync' \
+  -X POST > "$work_dir/sync.json"
+jq -e '(.failed // 0) == 0' "$work_dir/sync.json" > /dev/null
 
-echo "Setting password for Users"
-usersJSON=$(cat /tmp/users.json | jq -c '.')
+# Keep the default here so existing Jenkins substitution remains compatible.
+fixture_password=${DEMO_KEYCLOAK_PASSWORD:-foobar}
+jq -n --arg value "$fixture_password" '{type: "password", value: $value, temporary: false}' \
+  > "$work_dir/password.json"
+# With LDAP import disabled, an explicit wildcard query is needed to enumerate users.
+kc 'realms/django/users?username=*&max=1000' > "$work_dir/users.json"
+jq -r --slurpfile users "$work_dir/users.json" '
+  .[] | .userName as $name
+  | [$users[0][] | select(.username == $name) | .id]
+  | if length != 1 then error("Expected exactly one LDAP user: " + $name)
+    else .[0] | @uri end
+' /tmp/users.json > "$work_dir/user_ids"
 
+echo "Setting fixture user passwords"
+while IFS= read -r user_id; do
+  kc "realms/django/users/$user_id/reset-password" -X PUT --data-binary "@$work_dir/password.json"
+done < "$work_dir/user_ids"
 
-echo $usersJSON | jq  -r -c '.[]'  | while read userJSON; do
-  userID=$(echo $userJSON | jq -r -c '.userName' )
-  if (/opt/jboss/keycloak/bin/kcadm.sh get users -r django -q username="${userID}" | grep -q "id");
-  then
-     echo "Setting password for ${userID}"
-     /opt/jboss/keycloak/bin/kcadm.sh set-password -r django --username ${userID} --new-password 'foobar'
-  else
-      echo "User not found, check make sure ldap and users.json match"
-      exit 1
-  fi
-done
-
-echo "Full Sync LDAP"
-/opt/jboss/keycloak/bin/kcadm.sh create user-storage/10d55377-d139-4865-bd3e-1375ea079925/sync?action=triggerFullSync -r django
-
-echo "Done syncing LDAP"
-
-# We use this as a quick way of doing (poor man's) orchestration
-# See dh_is_ready.sh
-echo "completed" > /var/run/dh_import_state
+echo "Keycloak initialization completed"
+echo completed > "$state_file"

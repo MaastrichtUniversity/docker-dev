@@ -1,37 +1,16 @@
 #!/bin/bash
-
 set -euo pipefail
 
-STATE_FILE="/var/run/dh_import_state"
-
-state="READY"
-
-
-# file must exist
-if [[ ! -f "${STATE_FILE}" ]]; then
-    state="NOT READY"
-elif [[ "$(< ${STATE_FILE})" != "completed" ]]; then
-    # file must hold value "completed"
-    state="NOT READY"
+state_file=/var/run/dh_import_state
+if [[ -f "$state_file" && "$(< "$state_file")" == failed ]]; then
+  echo FAILED
+  exit 2
 fi
-
-# TODO: We could also do something like this here. Although it's expensive and increases dependency on custom mock env..
-#
-#  id=$(/opt/jboss/keycloak/bin/kcadm.sh get users -r django -q username=auser | jq -r '.[].id')
-#  auser_group_check=$(/opt/jboss/keycloak/bin/kcadm.sh get "users/${id}/groups" -r django | jq '[.[] | select(.name | contains("mumc.m4i-nanoscopy.@all"))] | length')
-#
-#  if [[ "$auser_group_check" -ne 1 ]]; then
-#    state="NOT READY"
-#  fi
-#
-
-
-# return value (print)
-echo "$state"
-
-# return value (0 means success: it is ready)
-if [[ "$state" == "NOT READY" ]]; then
-    exit 1
+if [[ -f "$state_file" && "$(< "$state_file")" == completed ]] && \
+    curl -fsS --noproxy '*' --connect-timeout 1 --max-time 2 \
+      http://localhost:8080/auth/realms/django/.well-known/openid-configuration > /dev/null 2>&1; then
+  echo READY
 else
-    exit 0
+  echo "NOT READY"
+  exit 1
 fi

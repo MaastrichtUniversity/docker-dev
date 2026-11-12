@@ -23,6 +23,28 @@ COMPOSE_PROJECT_NAME="dev"
 export COMPOSE_PROJECT_NAME
 
 set -e
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+wait_for_keycloak(){
+    local deadline=$((SECONDS + 300)) status
+    echo "Waiting for Keycloak initialization"
+    while (( SECONDS < deadline )); do
+      if timeout --foreground --kill-after=2s 5s docker compose -f docker-compose.yml -f docker-compose-irods.yml exec -T --interactive=false keycloak /dh_is_ready.sh < /dev/null; then
+        return 0
+      else
+        status=$?
+      fi
+      case "$status" in 130|143) return "$status" ;; esac
+      if [[ "$status" == 2 ]] || [[ "$(timeout --foreground --kill-after=2s 5s docker compose -f docker-compose.yml -f docker-compose-irods.yml ps -a --format '{{.State}}' keycloak < /dev/null)" == exited ]]; then
+        break
+      fi
+      sleep 2
+    done
+    echo "ERROR: Keycloak initialization failed or did not finish within 300 seconds." >&2
+    timeout --foreground --kill-after=2s 5s docker compose -f docker-compose.yml -f docker-compose-irods.yml logs --tail 40 keycloak < /dev/null >&2 || true
+    return 1
+}
 
 run_minimal(){
     docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile minimal up -d
@@ -39,11 +61,7 @@ run_minimal(){
     echo "Upping ires-hnas-um now.."
     ./rit.sh up -d ires-hnas-um
 
-    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec keycloak /dh_is_ready.sh;
-    do
-      echo "Waiting for keycloak"
-      sleep 20
-    done
+    wait_for_keycloak
 
     echo "Keycloak is Done"
 
@@ -73,11 +91,7 @@ run_backend(){
     done
     echo "iCAT is Done."
 
-    until docker compose -f docker-compose.yml -f docker-compose-irods.yml exec keycloak /dh_is_ready.sh;
-    do
-      echo "Waiting for keycloak, sleeping 20"
-      sleep 20
-    done
+    wait_for_keycloak
 
     echo "Keycloak is Done"
 
