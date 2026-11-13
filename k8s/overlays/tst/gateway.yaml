@@ -13,7 +13,7 @@
 #
 # TLS: certificateRefs point at the `gateway-tls` Secret
 # (kubernetes.io/tls), created by the ExternalSecret of the same name in
-# each of these namespaces (external-secrets.yaml, Vault path
+# each of these namespaces (secrets/gateway-tls.yaml, Vault path
 # `gateway-tls`: tls.crt/tls.key).
 #
 # Follow-up: once the public hosts are reached over https, flip the
@@ -102,6 +102,15 @@ spec:
   hostnames:
     - mdr.tst.dh.unimaas.nl
   rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /hdl
+      filters:
+        - type: RequestRedirect
+          requestRedirect:
+            hostname: app.mdr.tst.dh.unimaas.nl
+            statusCode: 301
     - matches:
         - path:
             type: PathPrefix
@@ -501,11 +510,14 @@ spec:
   hostnames:
     - admin.tst.dh.unimaas.nl
   rules:
-    # /api keeps its prefix in the FastAPI routes, so no rewrite is needed.
+    # /api and /auth keep their prefixes in the FastAPI routes, so no rewrite is needed.
     - matches:
         - path:
             type: PathPrefix
             value: /api
+        - path:
+            type: PathPrefix
+            value: /auth
       backendRefs:
         - name: admin-tools-backend
           port: 8000

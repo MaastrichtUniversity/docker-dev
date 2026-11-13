@@ -1,5 +1,5 @@
 # tst overlay: env-specific values + all secrets from Vault via the
-# ExternalSecrets Operator (external-secrets.yaml; placeholder Vault paths,
+# ExternalSecrets Operator (secrets/*.yaml; placeholder Vault paths,
 # see its header + k8s/README.md section 7).
 #
 # Build with:
@@ -24,7 +24,26 @@ resources:
   - namespaces.yaml
   - gateway.yaml
   - vault-auth.yaml
-  - external-secrets.yaml
+  - secrets/icat-app-secrets.yaml
+  - secrets/garage-secrets.yaml
+  - secrets/epicpid-app-secrets.yaml
+  - secrets/sram-sync-secrets.yaml
+  - secrets/irods-secrets-cfg.yaml
+  - secrets/elastic-secrets.yaml
+  - secrets/mdr-app-secrets.yaml
+  - secrets/keycloak-secrets.yaml
+  - secrets/ldap-secrets.yaml
+  - secrets/admin-tools-secrets.yaml
+  - secrets/help-center-secrets.yaml
+  - secrets/frontend-public-config.yaml
+  - secrets/epicpid-credentials.yaml
+  - secrets/icat-tls.yaml
+  - secrets/ires-um-tls.yaml
+  - secrets/ires-azm-tls.yaml
+  - secrets/garage1-tls.yaml
+  - secrets/garage2-tls.yaml
+  - secrets/gateway-tls.yaml
+  - secrets/registry-credentials.yaml
 
 # Per-env ConfigMap env files (consumed via envFrom by the base manifests).
 configMapGenerator:
@@ -96,7 +115,7 @@ configMapGenerator:
     envs: [config/keycloak.env]
 
 # All Secrets are created by the ExternalSecrets Operator from Vault
-# (external-secrets.yaml) - no secretGenerator here.
+# (secrets/*.yaml) - no secretGenerator here.
 
 # All images from the own registry (Jenkinsfile.build pushes them;
 # postgres/openldap/garage/nginx are mirrored there).

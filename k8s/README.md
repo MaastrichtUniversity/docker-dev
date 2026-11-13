@@ -95,7 +95,7 @@ k8s/
       namespaces.yaml
       kustomization.yaml     # generators, image registry + tags
     tst/                     # same shape, plus:
-      external-secrets.yaml  # Vault -> k8s Secrets (ExternalSecrets operator)
+      secrets/*.yaml         # Vault -> k8s Secrets (ExternalSecrets operator)
       gateway.yaml           # + https listeners (multi-SAN cert via Vault)
     acc/ prd/                # TODO: thin variants of tst
   irods/k8s-ssl-certs/       # iRODS test certs (dev/tst), from bin/gen-irods-tls.sh
@@ -143,9 +143,19 @@ That is the whole flow:
    the script verifies the `standard` StorageClass before applying PVCs
 4. `k8s/bin/minikube-traefik.sh`: minikube loadbalancer addon (metallb),
    Gateway API CRDs (v1.7.0), Traefik v3.7 with the Gateway API provider
-   - LoadBalancer Service, and it prints an /etc/hosts block for all 13
-     dev public hosts
-5. the dev overlay is applied and the PVCs are checked
+   - LoadBalancer Service, CoreDNS rewrite for `*.local.dh.unimaas.nl`,
+   and it prints an `/etc/hosts` block for all 13 dev public hosts
+5. `k8s/bin/dhdev.sh pull-external` and `k8s/bin/dhdev.sh build`: `pull-external`
+   pre-pulls upstream external images (`postgres`, `garage`, `openldap`, `nginx`,
+   `traefik`) into minikube's Docker daemon, and `build` builds all compose
+   images directly inside minikube's Docker daemon using
+   `registry.prod.dh.unimaas.nl/docker-dev/*:latest` tags (matching `rit.sh`), so
+   images can be pushed when needed without pulling from the remote registry
+   (`patches/images-dev.yaml` sets `imagePullPolicy: Never` across all workloads
+   and removes `imagePullSecrets`). Pass `--no-build` to `dev-up` to skip
+   building, or run `k8s/bin/dhdev.sh build [service...]` to rebuild individual
+   images.
+6. the dev overlay is applied and the PVCs are checked
 
 Then add the printed /etc/hosts block:
 
@@ -504,8 +514,9 @@ Two secret backends, same k8s Secret names:
 - **dev** (no Vault): `secretGenerator` from committed files in
   `overlays/dev/secrets/` (iRODS TLS material from `irods/k8s-ssl-certs/`).
 - **tst/acc/prd** (Vault): **ExternalSecrets Operator**
-  (`external-secrets.io/v1`). Each overlay ships `external-secrets.yaml`
-  (one `ExternalSecret` per k8s Secret) and `vault-auth.yaml` which defines the
+  (`external-secrets.io/v1`). Each overlay ships `secrets/*.yaml`
+  (one `ExternalSecret` per k8s Secret, mirroring `overlays/dev/secrets/`)
+  and `vault-auth.yaml` which defines the
   `ClusterSecretStore` (`dh-vault`), the central `vault-auth` ServiceAccount in
   namespace `external-secrets`, and the TokenReview RBAC. The operator
   creates/refreshes the k8s Secrets across all namespaces with exactly the names
@@ -541,6 +552,7 @@ list to provision in Vault):
 | `help-center-secrets` (public)            | Opaque (env)                | `ATLASSIAN_API_USERNAME`, `ATLASSIAN_API_KEY`, `REACT_APP_CAPTCHA_SECRET_KEY` (all from `irods-secrets-cfg`)        | help-center-backend only                             |
 | `frontend-public-config` (public)         | Opaque (env)                | `REACT_APP_CAPTCHA_SITE_KEY` (from `irods-secrets-cfg`, public site key)                                            | public frontends                                     |
 | `gateway-tls` (external, public, internal)| kubernetes.io/tls (Gateway) | `tls.crt`, `tls.key`                                                                                                | Gateway https listeners (tst), via `certificateRefs` |
+| `registry-credentials` (irods, external, public, internal) | kubernetes.io/dockerconfigjson (`ClusterExternalSecret`) | `.dockerconfigjson` (extracted from `tst-k3s/registry-credentials`) | Cluster-wide registry pull secret (`imagePullSecrets`) |
 
 Notes:
 
@@ -551,7 +563,7 @@ Notes:
   scripts (e.g. `gen_json_configuration.py`, `create_icat_db.sh`).
 - `PASSWORD`, `DB_PASSWORD`, `SECRET_KEY`, `POSTGRES_PASSWORD` are
   _container-expected_ key names; in Vault they live under distinct secret paths,
-  and `external-secrets.yaml` references each path.
+  and `secrets/*.yaml` references each path.
 - iRODS TLS: dev uses the committed test certs; `bin/gen-irods-tls.sh`
   generates the material (SANs = the k8s FQDNs, valid for every env; the
   `<ca>.pem` key name must match `ENV_IRODS_SSL_CA_CERTIFICATE`). prd:

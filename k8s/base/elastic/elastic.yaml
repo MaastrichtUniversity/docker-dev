@@ -18,6 +18,8 @@ spec:
         app.kubernetes.io/part-of: datahub
     spec:
       automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: registry-credentials
       securityContext:
         runAsNonRoot: false
         seccompProfile:
@@ -100,7 +102,7 @@ spec:
   storageClassName: longhorn-rwo
   resources:
     requests:
-      storage: 20Gi
+      storage: 5Gi
 ---
 apiVersion: v1
 kind: Service

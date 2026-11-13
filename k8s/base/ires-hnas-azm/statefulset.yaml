@@ -25,6 +25,8 @@ spec:
         app.kubernetes.io/component: irods
     spec:
       automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: registry-credentials
       hostname: ires-hnas-azm
       # compose had shm_size: 500mb (Docker default /dev/shm is 64Mi)
       subdomain: ires-hnas-azm
@@ -227,7 +229,7 @@ spec:
         storageClassName: longhorn-rwo
         resources:
           requests:
-            storage: 20Gi
+            storage: 2Gi
     - metadata:
         name: mnt
       spec:
@@ -235,4 +237,4 @@ spec:
         storageClassName: longhorn-rwo
         resources:
           requests:
-            storage: 100Gi
+            storage: 5Gi

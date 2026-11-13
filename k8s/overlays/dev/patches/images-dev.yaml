@@ -1,0 +1,366 @@
+# dev/minikube image patches: keep the registry.prod.dh.unimaas.nl/docker-dev/*:latest
+# names/tags (so locally built images can be pushed when needed), strip
+# imagePullSecrets, and set imagePullPolicy: Never across all containers and
+# initContainers so minikube uses the locally built and pre-pulled images.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: icat
+  namespace: irods
+spec:
+  selector: {}
+  template:
+    spec:
+      imagePullSecrets:
+        - $patch: delete
+      initContainers:
+        - name: wait-db
+          imagePullPolicy: Never
+      containers:
+        - name: icat
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ires-hnas-um
+  namespace: irods
+spec:
+  selector: {}
+  template:
+    spec:
+      imagePullSecrets:
+        - $patch: delete
+      initContainers:
+        - name: wait-icat
+          imagePullPolicy: Never
+        - name: garage-setup
+          imagePullPolicy: Never
+      containers:
+        - name: ires
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ires-hnas-azm
+  namespace: irods
+spec:
+  selector: {}
+  template:
+    spec:
+      imagePullSecrets:
+        - $patch: delete
+      initContainers:
+        - name: wait-icat
+          imagePullPolicy: Never
+      containers:
+        - name: ires
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: epicpid
+  namespace: irods
+spec:
+  selector: {}
+  template:
+    spec:
+      imagePullSecrets:
+        - $patch: delete
+      containers:
+        - name: epicpid
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sram-sync
+  namespace: irods
+spec:
+  selector: {}
+  template:
+    spec:
+      imagePullSecrets:
+        - $patch: delete
+      containers:
+        - name: sram-sync
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elastic
+  namespace: external
+spec:
+  selector: {}
+  template:
+    spec:
+      imagePullSecrets:
+        - $patch: delete
+      initContainers:
+        - name: chown-data
+          imagePullPolicy: Never
+      containers:
+        - name: elastic
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mdr
+  namespace: external
+spec:
+  selector: {}
+  template:
+    spec:
+      imagePullSecrets:
+        - $patch: delete
+      containers:
+        - name: mdr
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: davrods
+  namespace: external
+spec:
+  selector: {}
+  template:
+    spec:
+      imagePullSecrets:
+        - $patch: delete
+      containers:
+        - name: davrods
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: davrods-upload
+  namespace: external
+spec:
+  selector: {}
+  template:
+    spec:
+      imagePullSecrets:
+        - $patch: delete
+      containers:
+        - name: davrods-upload
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mdr-home
+  namespace: external
+spec:
+  selector: {}
+  template:
+    spec:
+      imagePullSecrets:
+        - $patch: delete
+      containers:
+        - name: mdr-home
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: help-center-backend
+  namespace: public
+spec:
+  selector: {}
+  template:
+    spec:
+      imagePullSecrets:
+        - $patch: delete
+      containers:
+        - name: help-center-backend
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: help-center
+  namespace: public
+spec:
+  selector: {}
+  template:
+    spec:
+      imagePullSecrets:
+        - $patch: delete
+      containers:
+        - name: help-center
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dh-home
+  namespace: public
+spec:
+  selector: {}
+  template:
+    spec:
+      imagePullSecrets:
+        - $patch: delete
+      containers:
+        - name: dh-home
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: internal
+spec:
+  selector: {}
+  template:
+    spec:
+      imagePullSecrets:
+        - $patch: delete
+      containers:
+        - name: keycloak
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-tools-backend
+  namespace: internal
+spec:
+  selector: {}
+  template:
+    spec:
+      imagePullSecrets:
+        - $patch: delete
+      containers:
+        - name: admin-tools-backend
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-tools
+  namespace: internal
+spec:
+  selector: {}
+  template:
+    spec:
+      imagePullSecrets:
+        - $patch: delete
+      containers:
+        - name: admin-tools
+          imagePullPolicy: Never
+---
+# External images pre-pulled into minikube's Docker daemon via
+# k8s/bin/dhdev.sh pull-external
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: irods-db
+  namespace: irods
+spec:
+  selector: {}
+  template:
+    spec:
+      containers:
+        - name: postgres
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: garage1
+  namespace: irods
+spec:
+  selector: {}
+  template:
+    spec:
+      containers:
+        - name: garage
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: garage2
+  namespace: irods
+spec:
+  selector: {}
+  template:
+    spec:
+      containers:
+        - name: garage
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: garage1-s3-tls
+  namespace: irods
+spec:
+  selector: {}
+  template:
+    spec:
+      containers:
+        - name: nginx
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: garage2-s3-tls
+  namespace: irods
+spec:
+  selector: {}
+  template:
+    spec:
+      containers:
+        - name: nginx
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mdr-db
+  namespace: external
+spec:
+  selector: {}
+  template:
+    spec:
+      containers:
+        - name: postgres
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ldap
+  namespace: internal
+spec:
+  selector: {}
+  template:
+    spec:
+      initContainers:
+        - name: chown-data
+          imagePullPolicy: Never
+      containers:
+        - name: ldap
+          imagePullPolicy: Never
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: admin-tools-db
+  namespace: internal
+spec:
+  selector: {}
+  template:
+    spec:
+      containers:
+        - name: postgres
+          imagePullPolicy: Never

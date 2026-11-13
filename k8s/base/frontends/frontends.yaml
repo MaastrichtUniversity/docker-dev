@@ -20,6 +20,8 @@ spec:
         app.kubernetes.io/part-of: datahub
     spec:
       automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: registry-credentials
       securityContext:
         runAsNonRoot: false
         seccompProfile:
@@ -108,6 +110,8 @@ spec:
         app.kubernetes.io/part-of: datahub
     spec:
       automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: registry-credentials
       securityContext:
         runAsNonRoot: false
         seccompProfile:
@@ -194,6 +198,8 @@ spec:
         app.kubernetes.io/part-of: datahub
     spec:
       automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: registry-credentials
       securityContext:
         runAsNonRoot: false
         seccompProfile:
@@ -280,6 +286,8 @@ spec:
         app.kubernetes.io/part-of: datahub
     spec:
       automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: registry-credentials
       securityContext:
         runAsNonRoot: false
         seccompProfile:

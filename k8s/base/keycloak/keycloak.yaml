@@ -18,6 +18,8 @@ spec:
         app.kubernetes.io/part-of: datahub
     spec:
       automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: registry-credentials
       securityContext:
         runAsNonRoot: false
         seccompProfile:
@@ -30,6 +32,11 @@ spec:
           env:
             - name: TZ
               value: Europe/Amsterdam
+            - name: LDAP_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ldap-secrets
+                  key: LDAP_ADMIN_PASSWORD
           envFrom:
             - configMapRef:
                 name: keycloak-env

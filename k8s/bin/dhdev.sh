@@ -10,11 +10,25 @@
 #                                epicpid-microservice repo and must be
 #                                placed manually (the script says where).
 #
+#   k8s/bin/dhdev.sh pull-external
+#                                pull the upstream external images (postgres,
+#                                garage, openldap, nginx, traefik) into
+#                                minikube's Docker daemon so imagePullPolicy:
+#                                Never works for every pod.
+#
+#   k8s/bin/dhdev.sh build       build all compose images directly inside
+#                                minikube's Docker daemon, keeping the
+#                                registry.prod.dh.unimaas.nl/docker-dev/*:latest
+#                                tags (so they can be pushed when needed) without
+#                                pulling from the remote registry. Supports
+#                                --profile <full|minimal> [service...].
+#
 #   k8s/bin/dhdev.sh dev-up      spin up / refresh the dev overlay on
 #                                local minikube: externals check, minikube
-#                                (4 CPU / 8Gi / 80Gi), loadbalancer addon,
-#                                Traefik with Gateway API (minikube-
-#                                traefik.sh), apply of the dev overlay,
+#                                (4 CPU / 8Gi / 80Gi), external image pulls +
+#                                local image build (skip with --no-build),
+#                                loadbalancer addon, Traefik with Gateway API
+#                                (minikube-traefik.sh), apply of the dev overlay,
 #                                readiness checks. Idempotent - re-run
 #                                after a git pull to roll out changes.
 #
@@ -28,7 +42,7 @@
 #                                never deletes workloads of a bigger
 #                                previous profile.
 #
-# Usage:  k8s/bin/dhdev.sh <externals|dev-up [--profile full|minimal]|help>
+# Usage:  k8s/bin/dhdev.sh <externals|pull-external|build [--profile full|minimal] [svc...]|dev-up [--profile full|minimal] [--no-build]|help>
 set -euo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
@@ -129,13 +143,191 @@ EOF
   fi
 }
 
-cmd_dev_up() {
+cmd_pull_external() {
+  command -v minikube >/dev/null || {
+    echo "minikube not found in PATH - install it first: https://minikube.sigs.k8s.io/docs/start/" >&2
+    exit 1; }
+  command -v docker >/dev/null || {
+    echo "docker not found in PATH - install Docker CLI first" >&2
+    exit 1; }
+
+  local profile=${MINIKUBE_PROFILE:-minikube}
+  if ! minikube -p "$profile" ip >/dev/null 2>&1; then
+    echo "minikube profile '$profile' is not running; start it or run '$0 dev-up' first." >&2
+    exit 1
+  fi
+
+  (
+    eval "$(minikube -p "$profile" docker-env)"
+
+    # Make sure we're using Minikube's Docker daemon
+    if ! docker info 2>/dev/null | grep -q "minikube"; then
+      echo "Error: Not connected to Minikube's Docker daemon!" >&2
+      echo "Please run: eval \$(minikube -p $profile docker-env)" >&2
+      exit 1
+    fi
+
+    echo "==> pulling external images into minikube's Docker daemon..."
+
+    echo "Pulling PostgreSQL image (irods-db, mdr-db, admin-tools-db)..."
+    docker pull postgres:17.10-alpine
+
+    echo "Pulling Garage image (garage1, garage2, garage-setup)..."
+    docker pull dxflrs/garage:v2.3.0
+
+    echo "Pulling OpenLDAP image (ldap)..."
+    docker pull osixia/openldap:1.3.0
+
+    echo "Pulling Nginx image (garage1-s3-tls, garage2-s3-tls)..."
+    docker pull nginx:alpine
+
+    echo "Pulling Traefik image (Gateway API controller)..."
+    docker pull traefik:v3.7
+
+    echo "All external images have been pulled into Minikube's Docker daemon."
+  )
+}
+
+bake_k8s_sources() {
+  local reg=$1 tag=$2
+  shift 2
+  local -a only=("$@")
+
+  _wants_bake() {
+    local target=$1 s
+    [ "${#only[@]}" -eq 0 ] && return 0
+    for s in "${only[@]}"; do
+      case "$target:$s" in
+        epicpid:epicpid|sram-sync:sram-sync|faker:faker|icat:icat|ires-hnas:ires-hnas*) return 0 ;;
+      esac
+    done
+    return 1
+  }
+
+  if _wants_bake epicpid; then
+    echo "==> baking source into $reg/docker-dev/epicpid:$tag"
+    docker build -t "$reg/docker-dev/epicpid:$tag" -f - "$REPO_ROOT/externals/epicpid-microservice" <<EOF
+FROM $reg/docker-dev/epicpid:$tag
+COPY EPICMicroservice.py /opt/app/EPICMicroservice.py
+COPY pid /opt/app/pid
+EOF
+  fi
+
+  if _wants_bake sram-sync; then
+    echo "==> baking source into $reg/docker-dev/sram-sync:$tag"
+    docker build -t "$reg/docker-dev/sram-sync:$tag" -f - "$REPO_ROOT/externals/sram-sync" <<EOF
+FROM $reg/docker-dev/sram-sync:$tag
+COPY *.py /opt/app/
+EOF
+  fi
+
+  if _wants_bake faker; then
+    echo "==> baking source into $reg/docker-dev/faker:$tag"
+    docker build -t "$reg/docker-dev/faker:$tag" -f - "$REPO_ROOT/externals/dh-faker" <<EOF
+FROM $reg/docker-dev/faker:$tag
+COPY *.py *.ini /opt/
+COPY assets /opt/assets
+EOF
+  fi
+
+  local need_irods=0
+  _wants_bake icat && need_irods=1
+  _wants_bake ires-hnas && need_irods=1
+  if [ "$need_irods" -eq 1 ]; then
+    local stage
+    stage=$(mktemp -d)
+    mkdir -p "$stage/rules" "$stage/helpers"
+    cp -a "$REPO_ROOT/externals/irods-ruleset/." "$stage/rules/"
+    cp -a "$REPO_ROOT/externals/irods-helper-cmd/." "$stage/helpers/"
+    rm -rf "$stage/rules/.git" "$stage/helpers/.git"
+    local img
+    for img in icat ires-hnas; do
+      if _wants_bake "$img"; then
+        echo "==> baking /rules and /helpers into $reg/docker-dev/$img:$tag"
+        docker build -t "$reg/docker-dev/$img:$tag" -f - "$stage" <<EOF
+FROM $reg/docker-dev/$img:$tag
+COPY --chown=irods:irods rules/ /rules/
+COPY --chmod=0755 helpers/ /helpers/
+EOF
+      fi
+    done
+    rm -rf "$stage"
+  fi
+}
+
+cmd_build() {
   local deploy_profile=full
+  local -a services=()
   local -a args=("$@")
   local i=0
   while [ "$i" -lt "${#args[@]}" ]; do
     case "${args[$i]}" in
       --profile) deploy_profile=${args[$((i+1))]:-}; i=$((i+2)) ;;
+      *) services+=("${args[$i]}"); i=$((i+1)) ;;
+    esac
+  done
+  case "$deploy_profile" in
+    full|minimal) ;;
+    *) echo "unknown profile: '$deploy_profile' (use: full|minimal)" >&2; exit 1 ;;
+  esac
+
+  command -v minikube >/dev/null || {
+    echo "minikube not found in PATH - install it first: https://minikube.sigs.k8s.io/docs/start/" >&2
+    exit 1; }
+  command -v docker >/dev/null || {
+    echo "docker not found in PATH - install Docker CLI first" >&2
+    exit 1; }
+
+  local profile=${MINIKUBE_PROFILE:-minikube}
+  if ! minikube -p "$profile" ip >/dev/null 2>&1; then
+    echo "minikube profile '$profile' is not running; start it or run '$0 dev-up' first." >&2
+    exit 1
+  fi
+
+  local -a profile_flags=(--profile full --profile faker)
+  if [ "$deploy_profile" = minimal ]; then
+    profile_flags=(--profile minimal --profile minimal-after-icat)
+  fi
+
+  local secrets_src=$REPO_ROOT/irods.secrets.cfg
+  if [ ! -f "$secrets_src" ]; then
+    secrets_src=$REPO_ROOT/k8s/overlays/dev/secrets/irods-secrets-cfg.env
+  fi
+
+  local tmp_env
+  tmp_env=$(mktemp)
+  trap 'rm -f "$tmp_env"' RETURN
+  cat "$REPO_ROOT/.env" > "$tmp_env"
+  printf '\n' >> "$tmp_env"
+  cat "$secrets_src" >> "$tmp_env"
+
+  local reg tag
+  reg=$(awk -F= '/^ENV_REGISTRY_HOST=/{print $2}' "$REPO_ROOT/.env" | tail -n1 | tr -d '"\r')
+  tag=$(awk -F= '/^ENV_TAG=/{print $2}' "$REPO_ROOT/.env" | tail -n1 | tr -d '"\r')
+  reg=${ENV_REGISTRY_HOST:-${reg:-registry.prod.dh.unimaas.nl}}
+  tag=${ENV_TAG:-${tag:-latest}}
+
+  echo "==> building dev images in minikube Docker daemon (profile: $deploy_profile)"
+  (
+    export RIT_ENV=${RIT_ENV:-local}
+    eval "$(minikube -p "$profile" docker-env)"
+    cd "$REPO_ROOT"
+    docker compose --env-file "$tmp_env" \
+      -f docker-compose.yml -f docker-compose-irods.yml \
+      "${profile_flags[@]}" build "${services[@]}"
+    bake_k8s_sources "$reg" "$tag" "${services[@]}"
+  )
+}
+
+cmd_dev_up() {
+  local deploy_profile=full
+  local do_build=1
+  local -a args=("$@")
+  local i=0
+  while [ "$i" -lt "${#args[@]}" ]; do
+    case "${args[$i]}" in
+      --profile) deploy_profile=${args[$((i+1))]:-}; i=$((i+2)) ;;
+      --no-build) do_build=0; i=$((i+1)) ;;
       *) echo "unknown option: ${args[$i]}" >&2; exit 1 ;;
     esac
   done
@@ -188,8 +380,16 @@ cmd_dev_up() {
     exit 1
   fi
 
+  if [ "$do_build" = 1 ]; then
+    cmd_pull_external
+  fi
+
   echo "==> traefik (Gateway API)"
   "$SCRIPT_DIR/minikube-traefik.sh"
+
+  if [ "$do_build" = 1 ]; then
+    cmd_build --profile "$deploy_profile"
+  fi
 
   echo "==> applying dev overlay (profile: $deploy_profile)"
   local build
@@ -239,10 +439,12 @@ EOF
 }
 
 case "${1:-help}" in
-  externals) cmd_externals ;;
-  dev-up)    shift; cmd_dev_up "$@" ;;
+  externals)     cmd_externals ;;
+  pull-external) cmd_pull_external ;;
+  build)         shift; cmd_build "$@" ;;
+  dev-up)        shift; cmd_dev_up "$@" ;;
   help|-h|--help)
-    sed -n '2,31p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '2,45p' "$0" | sed 's/^# \{0,1\}//'
     ;;
-  *) echo "unknown command: $1 (try: externals, dev-up, help)" >&2; exit 1 ;;
+  *) echo "unknown command: $1 (try: externals, pull-external, build, dev-up, help)" >&2; exit 1 ;;
 esac

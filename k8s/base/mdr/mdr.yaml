@@ -18,6 +18,8 @@ spec:
         app.kubernetes.io/part-of: datahub
     spec:
       automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: registry-credentials
       securityContext:
         runAsNonRoot: false
         seccompProfile:
@@ -29,6 +31,11 @@ spec:
           env:
             - name: TZ
               value: Europe/Amsterdam
+            - name: ELASTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: elastic-secrets
+                  key: ELASTIC_PASSWORD
           envFrom:
             - configMapRef:
                 name: mdr-env
@@ -87,7 +94,7 @@ spec:
   storageClassName: longhorn-rwo
   resources:
     requests:
-      storage: 10Gi
+      storage: 2Gi
 ---
 apiVersion: v1
 kind: Service

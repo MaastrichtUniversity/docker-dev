@@ -28,6 +28,7 @@ resources:
 patches:
   - path: patches/storage-dev.yaml
   - path: patches/resources-dev.yaml
+  - path: patches/images-dev.yaml
   # the shared ingest zones (staging-zones PVC is RWX - standard can't
   # do that) become a hostPath volume: single node, so this is the
   # compose-era host-dir behavior. /staging-data is created in the minikube
@@ -210,8 +211,10 @@ secretGenerator:
       - garage2.dh.local.crt=../../../irods/k8s-ssl-certs/garage2.crt
       - garage2.dh.local.key=../../../irods/k8s-ssl-certs/garage2.key
 
-# All images from the own registry (Jenkinsfile.build pushes them;
-# postgres/openldap/garage/nginx are mirrored there too).
+# Keep the registry.prod.dh.unimaas.nl/docker-dev/<svc>:latest names/tags so
+# images built locally in minikube can be pushed when needed; patches/images-dev.yaml
+# strips imagePullSecrets and sets imagePullPolicy: Never across all workloads
+# so minikube uses the locally built and pre-pulled images.
 images:
   - name: registry.prod.dh.unimaas.nl/docker-dev/icat
     newTag: latest

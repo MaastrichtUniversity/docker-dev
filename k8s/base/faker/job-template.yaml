@@ -21,6 +21,8 @@ spec:
     spec:
       restartPolicy: Never
       automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: registry-credentials
       securityContext:
         runAsNonRoot: false
         seccompProfile:

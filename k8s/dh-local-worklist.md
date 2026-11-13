@@ -94,7 +94,7 @@ hosts, `ENV=RIT_ENV=ENV_ENVIRONMENT=tst`, `DJANGO_DEV_MODE=False`,
 `test_only_tst_irods_dh_ca_cert.pem`, SMB ingest zones `/tst`; all other
 values = dev values as placeholders - verify per-service against the real
 tst stack when wiring up). tst secrets come from Vault via
-`k8s/overlays/tst/external-secrets.yaml` (placeholder paths).
+`k8s/overlays/tst/secrets/*.yaml` (placeholder paths).
 
 | env key | compose value | k8s value |
 |---|---|---|

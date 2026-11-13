@@ -18,7 +18,7 @@ spec:
   storageClassName: longhorn-rwo
   resources:
     requests:
-      storage: 100Gi
+      storage: 5Gi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -33,7 +33,7 @@ spec:
   storageClassName: longhorn-rwo
   resources:
     requests:
-      storage: 100Gi
+      storage: 5Gi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -48,7 +48,7 @@ spec:
   storageClassName: longhorn-rwx
   resources:
     requests:
-      storage: 10Gi
+      storage: 1Gi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -63,7 +63,7 @@ spec:
   storageClassName: longhorn-rwx
   resources:
     requests:
-      storage: 10Gi
+      storage: 1Gi
 ---
 # Ingest zones, shared by ires-hnas-um, ires-hnas-azm and the dh-faker job
 # (was ./staging-data/zones bind-mounted in docker compose).
@@ -79,4 +79,4 @@ spec:
   storageClassName: longhorn-rwx
   resources:
     requests:
-      storage: 50Gi
+      storage: 5Gi

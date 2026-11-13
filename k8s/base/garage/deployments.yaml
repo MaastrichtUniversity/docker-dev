@@ -31,8 +31,8 @@ spec:
         - name: garage
           # Overlay rewrites this to the mirrored registry image
           image: dxflrs/garage:v2.3.0
-          entrypoint: ["/garage"]
-          command: ["server"]
+          command: ["/garage"]
+          args: ["server"]
           env:
             - name: GARAGE_RPC_SECRET
               valueFrom:
@@ -81,7 +81,9 @@ spec:
               subPath: garage1.toml
               readOnly: true
             - name: garage1-data
-              mountPath: /var/lib/garage1
+              mountPath: /var/lib/garage1/data
+            - name: garage1-meta
+              mountPath: /var/lib/garage1/meta
       volumes:
         - name: config
           configMap:
@@ -89,6 +91,9 @@ spec:
         - name: garage1-data
           persistentVolumeClaim:
             claimName: garage1-data
+        - name: garage1-meta
+          persistentVolumeClaim:
+            claimName: garage1-meta
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -118,8 +123,8 @@ spec:
         - name: garage
           # Overlay rewrites this to the mirrored registry image
           image: dxflrs/garage:v2.3.0
-          entrypoint: ["/garage"]
-          command: ["server"]
+          command: ["/garage"]
+          args: ["server"]
           env:
             - name: GARAGE_RPC_SECRET
               valueFrom:
@@ -168,7 +173,9 @@ spec:
               subPath: garage2.toml
               readOnly: true
             - name: garage2-data
-              mountPath: /var/lib/garage2
+              mountPath: /var/lib/garage2/data
+            - name: garage2-meta
+              mountPath: /var/lib/garage2/meta
       volumes:
         - name: config
           configMap:
@@ -176,3 +183,6 @@ spec:
         - name: garage2-data
           persistentVolumeClaim:
             claimName: garage2-data
+        - name: garage2-meta
+          persistentVolumeClaim:
+            claimName: garage2-meta

@@ -19,7 +19,7 @@ spec:
     spec:
       automountServiceAccountToken: false
       securityContext:
-        runAsNonRoot: true
+        runAsNonRoot: false
         seccompProfile:
           type: RuntimeDefault
       initContainers:
@@ -89,6 +89,24 @@ spec:
         - name: ldif
           configMap:
             name: ldap-ldif
+        - name: data
+          persistentVolumeClaim:
+            claimName: ldap-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ldap-data
+  namespace: internal
+  labels:
+    app.kubernetes.io/name: ldap
+    app.kubernetes.io/part-of: datahub
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: longhorn-rwo
+  resources:
+    requests:
+      storage: 1Gi
 ---
 apiVersion: v1
 kind: Service

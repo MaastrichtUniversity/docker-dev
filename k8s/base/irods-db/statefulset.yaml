@@ -21,29 +21,22 @@ spec:
       automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
-        fsGroup: 999
+        runAsUser: 70
+        runAsGroup: 70
+        fsGroup: 70
+        appArmorProfile:
+          type: Unconfined
         seccompProfile:
           type: RuntimeDefault
-      # Official postgres image needs the data dir owned by the postgres user on a fresh PVC
-      initContainers:
-        - name: chown-data
-          image: postgres:17.10-alpine
-          command: ["sh", "-c", "chown -R 999:999 /var/lib/postgresql/data"]
-          securityContext:
-            runAsUser: 0
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-          volumeMounts:
-            - name: data
-              mountPath: /var/lib/postgresql/data
       containers:
         - name: postgres
           # Overlay rewrites this to the mirrored registry image
           image: postgres:17.10-alpine
           # Same command override as docker-compose-irods.yml
-          command: ["postgres", "-c", "standard_conforming_strings=off"]
+          args: ["postgres", "-c", "standard_conforming_strings=off"]
           env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
             - name: TZ
               value: Europe/Amsterdam
             - name: POSTGRES_PASSWORD
@@ -106,4 +99,4 @@ spec:
         storageClassName: longhorn-rwo
         resources:
           requests:
-            storage: 20Gi
+            storage: 2Gi

@@ -35,6 +35,8 @@ spec:
         app.kubernetes.io/component: irods
     spec:
       automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: registry-credentials
       hostname: icat
       # compose had shm_size: 500mb (Docker default /dev/shm is 64Mi)
       subdomain: icat
@@ -236,4 +238,4 @@ spec:
         storageClassName: longhorn-rwo
         resources:
           requests:
-            storage: 50Gi
+            storage: 5Gi

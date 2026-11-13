@@ -20,6 +20,8 @@ spec:
         app.kubernetes.io/part-of: datahub
     spec:
       automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: registry-credentials
       securityContext:
         runAsNonRoot: false
         seccompProfile:
@@ -32,6 +34,11 @@ spec:
           env:
             - name: TZ
               value: Europe/Amsterdam
+            - name: IRODS_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_PASS
           envFrom:
             - configMapRef:
                 name: sram-sync-env

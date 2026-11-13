@@ -73,6 +73,15 @@ spec:
         - {port: 1247, protocol: TCP}
         - {port: 1248, protocol: TCP}
         - {port: 20000, endPort: 20199, protocol: TCP}
+    # help-center-backend notifications
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: public
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: help-center-backend
+      ports: [{port: 8000, protocol: TCP}]
     # ingest rules talk to external LDAP/https
     - to:
         - ipBlock:
@@ -131,6 +140,14 @@ spec:
         - {port: 3901, protocol: TCP}
         - {port: 3903, protocol: TCP}
     - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: public
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: help-center-backend
+      ports: [{port: 8000, protocol: TCP}]
+    - to:
         - ipBlock:
             cidr: 0.0.0.0/0
             except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16]
@@ -166,6 +183,14 @@ spec:
         - {port: 1247, protocol: TCP}
         - {port: 1248, protocol: TCP}
         - {port: 20000, endPort: 20199, protocol: TCP}
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: public
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: help-center-backend
+      ports: [{port: 8000, protocol: TCP}]
     - to:
         - ipBlock:
             cidr: 0.0.0.0/0
