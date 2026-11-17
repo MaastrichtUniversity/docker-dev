@@ -1,0 +1,19 @@
+# The MDR pod fetches its SAML IdP metadata server-side
+# (SAML_IDP_METADATA_URL in config/mdr.env) under the public name
+# keycloak.tst.dh.unimaas.nl, which does not resolve inside the cluster
+# (it only exists in workstation /etc/hosts). Map it to the control-plane
+# node here: the request goes node:80 -> traefik (hostPort) -> keycloak,
+# and Keycloak keeps the public hostname in the SSO Location, which the
+# user's browser can then reach to complete the login.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mdr
+  namespace: external
+spec:
+  template:
+    spec:
+      hostAliases:
+        - ip: 137.120.31.75
+          hostnames:
+            - keycloak.tst.dh.unimaas.nl

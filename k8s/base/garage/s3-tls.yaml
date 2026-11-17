@@ -24,6 +24,8 @@ spec:
       automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: false
+        appArmorProfile:
+          type: Unconfined
         seccompProfile:
           type: RuntimeDefault
       containers:
@@ -34,10 +36,6 @@ spec:
             - name: s3-tls
               containerPort: 9000
               protocol: TCP
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
           resources:
             requests:
               cpu: 50m
@@ -94,6 +92,8 @@ spec:
       automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: false
+        appArmorProfile:
+          type: Unconfined
         seccompProfile:
           type: RuntimeDefault
       containers:
@@ -104,10 +104,6 @@ spec:
             - name: s3-tls
               containerPort: 9000
               protocol: TCP
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
           resources:
             requests:
               cpu: 50m

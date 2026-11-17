@@ -43,7 +43,9 @@ fi
 
 # k8s: this script may re-run (init container) with the marker file lost, so
 # guard the (not idempotent) layout steps: only assign/apply if none is deployed.
-if $garage --rpc-host "$garage1_id" layout current >/dev/null 2>&1; then
+$garage --rpc-host "$garage1_id" layout revert --yes 2>/dev/null || true
+
+if $garage --rpc-host "$garage1_id" layout show 2>/dev/null | grep -qi "version: [1-9]"; then
     echo "INFO: Garage layout already deployed, skipping layout assign/apply"
 else
     echo "INFO: Creating Garage layout"

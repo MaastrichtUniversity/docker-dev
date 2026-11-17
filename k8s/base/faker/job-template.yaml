@@ -25,6 +25,8 @@ spec:
         - name: registry-credentials
       securityContext:
         runAsNonRoot: false
+        appArmorProfile:
+          type: Unconfined
         seccompProfile:
           type: RuntimeDefault
       containers:
@@ -44,10 +46,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: faker-env
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
           resources:
             requests:
               cpu: 100m

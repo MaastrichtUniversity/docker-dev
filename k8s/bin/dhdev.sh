@@ -198,7 +198,7 @@ bake_k8s_sources() {
     [ "${#only[@]}" -eq 0 ] && return 0
     for s in "${only[@]}"; do
       case "$target:$s" in
-        epicpid:epicpid|sram-sync:sram-sync|faker:faker|icat:icat|ires-hnas:ires-hnas*) return 0 ;;
+        epicpid:epicpid|sram-sync:sram-sync|faker:faker|mdr:mdr|admin-tools-backend:admin-tools-backend|davrods:davrods|davrods-upload:davrods-upload|icat:icat|ires-hnas:ires-hnas*) return 0 ;;
       esac
     done
     return 1
@@ -230,24 +230,81 @@ COPY assets /opt/assets
 EOF
   fi
 
+  if _wants_bake mdr; then
+    echo "==> baking irods-rule-wrapper and dhpythonirodsutils into $reg/docker-dev/mdr:$tag"
+    local mdr_stage
+    mdr_stage=$(mktemp -d)
+    mkdir -p "$mdr_stage/irods-rule-wrapper" "$mdr_stage/dhpythonirodsutils"
+    cp -a "$REPO_ROOT/externals/irods-rule-wrapper/." "$mdr_stage/irods-rule-wrapper/"
+    cp -a "$REPO_ROOT/externals/dh-python-irods-utils/dhpythonirodsutils/." "$mdr_stage/dhpythonirodsutils/"
+    rm -rf "$mdr_stage/irods-rule-wrapper/.git"
+    docker build -t "$reg/docker-dev/mdr:$tag" -f - "$mdr_stage" <<EOF
+FROM $reg/docker-dev/mdr:$tag
+COPY irods-rule-wrapper/ /opt/src/irods-rule-wrapper/
+COPY dhpythonirodsutils/ /usr/local/lib/python3.11/site-packages/dhpythonirodsutils/
+EOF
+    rm -rf "$mdr_stage"
+  fi
+
+  local ca_file=$REPO_ROOT/irods/k8s-ssl-certs/ca.pem
+  if [ -f "$ca_file" ]; then
+    local client_img
+    for client_img in sram-sync faker mdr admin-tools-backend davrods davrods-upload; do
+      if _wants_bake "$client_img"; then
+        echo "==> baking k8s iRODS CA into $reg/docker-dev/$client_img:$tag"
+        docker build -t "$reg/docker-dev/$client_img:$tag" -f - "$REPO_ROOT/irods/k8s-ssl-certs" <<EOF
+FROM $reg/docker-dev/$client_img:$tag
+USER root
+COPY ca.pem /usr/local/share/ca-certificates/k8s_irods_ca.crt
+RUN update-ca-certificates
+EOF
+      fi
+    done
+  fi
+
   local need_irods=0
   _wants_bake icat && need_irods=1
   _wants_bake ires-hnas && need_irods=1
   if [ "$need_irods" -eq 1 ]; then
     local stage
     stage=$(mktemp -d)
-    mkdir -p "$stage/rules" "$stage/helpers"
+    mkdir -p "$stage/rules" "$stage/helpers" "$stage/dh-python-irods-utils"
     cp -a "$REPO_ROOT/externals/irods-ruleset/." "$stage/rules/"
     cp -a "$REPO_ROOT/externals/irods-helper-cmd/." "$stage/helpers/"
-    rm -rf "$stage/rules/.git" "$stage/helpers/.git"
+    cp -a "$REPO_ROOT/externals/dh-python-irods-utils/." "$stage/dh-python-irods-utils/"
+    rm -rf "$stage/rules/.git" "$stage/helpers/.git" "$stage/dh-python-irods-utils/.git"
+    python3 - "$stage/rules/setup.py" "$stage/rules/Makefile" <<'PY'
+import re, sys
+setup_p, make_p = sys.argv[1], sys.argv[2]
+s = open(setup_p).read()
+s = re.sub(r'"dh-python-irods-utils[^"]*"', '"dh-python-irods-utils"', s)
+open(setup_p, "w").write(s)
+
+m = open(make_p).read()
+new_target = (
+    "pip-install:\n"
+    "\techo \"from datahubirodsruleset import *\\n\" > /etc/irods/core.py\n"
+    "\tset -e; tmpdir=\"$$(mktemp -d /tmp/datahub-irods-ruleset.XXXXXX)\"; \\\n"
+    "\ttrap 'rm -rf \"$$tmpdir\"' EXIT; \\\n"
+    "\tcp -a . \"$$tmpdir/src\"; \\\n"
+    "\trm -rf \"$$tmpdir/src/build\" \"$$tmpdir/src/datahub_irods_ruleset.egg-info\"; \\\n"
+    "\tpip3 install --user --no-index --find-links=/opt/rules-wheels --no-deps --force-reinstall /opt/rules-wheels/dh_python_irods_utils-*.whl $(PIP_BREAK_FLAG) --no-warn-script-location; \\\n"
+    "\tpip3 install --user --no-build-isolation --no-index --find-links=/opt/rules-wheels \"$$tmpdir/src\" $(PIP_BREAK_FLAG) --no-warn-script-location\n"
+)
+m = re.sub(r"pip-install:.*?(?=\n\.PHONY:|\Z)", lambda _: new_target, m, flags=re.S)
+open(make_p, "w").write(m)
+PY
     local img
     for img in icat ires-hnas; do
       if _wants_bake "$img"; then
-        echo "==> baking /rules and /helpers into $reg/docker-dev/$img:$tag"
+        echo "==> baking /rules, /helpers, and offline /opt/rules-wheels into $reg/docker-dev/$img:$tag"
         docker build -t "$reg/docker-dev/$img:$tag" -f - "$stage" <<EOF
 FROM $reg/docker-dev/$img:$tag
 COPY --chown=irods:irods rules/ /rules/
 COPY --chmod=0755 helpers/ /helpers/
+COPY dh-python-irods-utils/ /tmp/dh-python-irods-utils/
+RUN pip3 wheel --wheel-dir=/opt/rules-wheels setuptools wheel /tmp/dh-python-irods-utils /rules \
+ && rm -rf /tmp/dh-python-irods-utils
 EOF
       fi
     done

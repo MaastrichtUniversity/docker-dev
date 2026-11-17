@@ -24,13 +24,15 @@ spec:
         - name: registry-credentials
       securityContext:
         runAsNonRoot: false
+        appArmorProfile:
+          type: Unconfined
         seccompProfile:
           type: RuntimeDefault
       containers:
         - name: sram-sync
           # Overlay rewrites this to <registry>/docker-dev/sram-sync:<tag>
           image: registry.prod.dh.unimaas.nl/docker-dev/sram-sync:latest
-          command: ["sram-sync.py", "--commit", "--scheduled"]
+          args: ["sram-sync.py", "--commit", "--scheduled"]
           env:
             - name: TZ
               value: Europe/Amsterdam
@@ -44,10 +46,6 @@ spec:
                 name: sram-sync-env
             - secretRef:
                 name: sram-sync-secrets
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
           resources:
             requests:
               cpu: 100m

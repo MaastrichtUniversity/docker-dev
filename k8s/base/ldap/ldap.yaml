@@ -8,6 +8,8 @@ metadata:
     app.kubernetes.io/part-of: datahub
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: ldap
@@ -20,6 +22,8 @@ spec:
       automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: false
+        appArmorProfile:
+          type: Unconfined
         seccompProfile:
           type: RuntimeDefault
       initContainers:
@@ -28,20 +32,22 @@ spec:
           command:
             - /bin/sh
             - -c
-            - chown -R "$(id -u openldap):$(id -g openldap)" /container/service/data
+            - rm -rf /container/service/data/lost+found && chown -R "$(id -u openldap):$(id -g openldap)" /container/service/data && cp -L /container/ldif-cm/*.ldif /custom-ldif/
           securityContext:
             runAsUser: 0
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
           volumeMounts:
             - name: data
               mountPath: /container/service/data
+            - name: ldif
+              mountPath: /container/ldif-cm
+              readOnly: true
+            - name: custom-ldif
+              mountPath: /custom-ldif
       containers:
         - name: ldap
           # Overlay rewrites this to the mirrored registry image
           image: osixia/openldap:1.3.0
-          command: ["--copy-service"]
+          args: ["--copy-service"]
           env:
             - name: TZ
               value: Europe/Amsterdam
@@ -54,10 +60,6 @@ spec:
             - name: ldap
               containerPort: 389
               protocol: TCP
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
           resources:
             requests:
               cpu: 100m
@@ -80,15 +82,16 @@ spec:
             periodSeconds: 30
             failureThreshold: 4
           volumeMounts:
-            - name: ldif
+            - name: custom-ldif
               mountPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
-              readOnly: true
             - name: data
               mountPath: /container/service/data
       volumes:
         - name: ldif
           configMap:
             name: ldap-ldif
+        - name: custom-ldif
+          emptyDir: {}
         - name: data
           persistentVolumeClaim:
             claimName: ldap-data

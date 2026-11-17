@@ -13,6 +13,8 @@ metadata:
     app.kubernetes.io/part-of: datahub
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: garage1
@@ -25,6 +27,8 @@ spec:
       automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: false
+        appArmorProfile:
+          type: Unconfined
         seccompProfile:
           type: RuntimeDefault
       containers:
@@ -54,10 +58,6 @@ spec:
             - name: admin
               containerPort: 3903
               protocol: TCP
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
           resources:
             requests:
               cpu: 200m
@@ -105,6 +105,8 @@ metadata:
     app.kubernetes.io/part-of: datahub
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: garage2
@@ -117,6 +119,8 @@ spec:
       automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: false
+        appArmorProfile:
+          type: Unconfined
         seccompProfile:
           type: RuntimeDefault
       containers:
@@ -146,10 +150,6 @@ spec:
             - name: admin
               containerPort: 3903
               protocol: TCP
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
           resources:
             requests:
               cpu: 200m

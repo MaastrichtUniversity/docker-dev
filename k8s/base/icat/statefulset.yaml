@@ -43,6 +43,8 @@ spec:
       securityContext:
         runAsNonRoot: false
         fsGroup: 999
+        appArmorProfile:
+          type: Unconfined
         seccompProfile:
           type: RuntimeDefault
         # net.* sysctls are in the k8s default-allowed sysctl list
@@ -54,6 +56,24 @@ spec:
           - name: net.ipv4.tcp_keepalive_time
             value: "600"
       initContainers:
+        # iRODS leaks its named shared-memory segments in /dev/shm whenever
+        # irodsServer is killed (e.g. by a failing liveness probe) instead of
+        # shutting down gracefully. Over repeated in-pod restarts the stale
+        # segments fill the 512Mi dshm emptyDir and the next irodsServer start
+        # aborts with "boost::interprocess::interprocess_exception: No space
+        # left on device". Wipe them before every container start.
+        - name: clean-shm
+          # same image as the main container (kustomize rewrites both)
+          image: registry.prod.dh.unimaas.nl/docker-dev/icat:latest
+          command:
+            - bash
+            - -c
+            - |
+              rm -f /dev/shm/irods_* /dev/shm/sem.irods_stdout_ipc_sink
+              echo "INFO: cleaned stale iRODS segments from /dev/shm"
+          volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
         # Make sure irods-db is accepting connections before the pre-hook psql checks
         - name: wait-db
           # same image as the main container (kustomize rewrites both)
@@ -65,25 +85,55 @@ spec:
               until PGPASSWORD="${ENV_IRODS_DB_POSTGRES_PASSWORD}" psql -h "${ENV_IRODS_DB_HOSTNAME}" -U postgres -c '\l' >/dev/null 2>&1; do
                 echo "INFO: waiting for irods-db at ${ENV_IRODS_DB_HOSTNAME}"; sleep 5
               done
+              num_tables=$(PGPASSWORD="${ENV_IRODS_DB_IRODS_PASSWORD}" psql -h "${ENV_IRODS_DB_HOSTNAME}" -U "${ENV_IRODS_DB_USERNAME}" -d "${ENV_IRODS_DB_NAME}" -XAtc "SELECT count(*) FROM information_schema.tables WHERE table_schema='public'" 2>/dev/null || echo 0)
+              if [ ! -e /vault-pvc/.irods_installed ] || [ ! -e /vault-pvc/.etc-irods/server_config.json ] || [ "${num_tables:-0}" -le 20 ]; then
+                echo "INFO: initializing /var/lib/irods and /etc/irods on vault PVC (num_tables=${num_tables:-0})..."
+                rm -rf /vault-pvc/.irods_installed /vault-pvc/version.json /vault-pvc/.etc-irods /vault-pvc/.irods
+                mkdir -p /vault-pvc/.etc-irods
+                cp -a /etc/irods/. /vault-pvc/.etc-irods/
+                cp -a /var/lib/irods/. /vault-pvc/
+                cp -a /var/lib/irods/scripts/setup_irods.py /vault-pvc/scripts/setup_irods.py.orig
+                chown -R 999:999 /vault-pvc
+              fi
           env:
             - name: ENV_IRODS_DB_POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: icat-app-secrets
                   key: IRODS_DB_POSTGRES_PASSWORD
+            - name: ENV_IRODS_DB_IRODS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_DB_IRODS_PASSWORD
+            - name: ENV_EPICPID_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: epicpid-app-secrets
+                  key: PASSWORD
+            - name: ENV_ELASTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: ELASTIC_PASSWORD
           envFrom:
             - configMapRef:
                 name: irods-common-env
             - configMapRef:
                 name: icat-env
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
+            - secretRef:
+                name: dh-irods-secrets-cfg
+          volumeMounts:
+            - name: vault
+              mountPath: /vault-pvc
       containers:
         - name: icat
           # Overlay rewrites this to <registry>/docker-dev/icat:<tag>
           image: registry.prod.dh.unimaas.nl/docker-dev/icat:latest
+          command:
+            - /bin/bash
+            - -c
+            - rm -rf /var/lib/irods/irods_installed /var/run/irods_installed /etc/irods && ln -s /var/lib/irods/.irods_installed /var/run/irods_installed && ln -s /var/lib/irods/.etc-irods /etc/irods && mkdir -p /mnt/SURF-Archive && chown 999:999 /mnt/SURF-Archive && (awk -v h="${HOSTNAME}" '{for(i=2;i<=NF;i++) if($i==h) f=1} END{exit !f}' /etc/hosts || { sed "s/$(hostname)/${HOSTNAME} $(hostname)/" /etc/hosts > /tmp/hosts && cp /tmp/hosts /etc/hosts && rm -f /tmp/hosts; }) && if [ ! -e /var/lib/irods/.irods_installed ] && [ -e /var/lib/irods/scripts/setup_irods.py.orig ]; then rm -f /var/lib/irods/version.json && cp -a /var/lib/irods/scripts/setup_irods.py.orig /var/lib/irods/scripts/setup_irods.py; fi && exec /opt/irods/init.sh
           env:
             - name: HOSTNAME
               value: icat.irods.svc.cluster.local
@@ -129,11 +179,23 @@ spec:
                 secretKeyRef:
                   name: icat-app-secrets
                   key: IRODS_DB_POSTGRES_PASSWORD
+            - name: ENV_EPICPID_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: epicpid-app-secrets
+                  key: PASSWORD
+            - name: ENV_ELASTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: ELASTIC_PASSWORD
           envFrom:
             - configMapRef:
                 name: irods-common-env
             - configMapRef:
                 name: icat-env
+            - secretRef:
+                name: dh-irods-secrets-cfg
           ports:
             - name: irods
               containerPort: 1247
@@ -145,11 +207,6 @@ spec:
             - name: irods-data
               containerPort: 20000
               protocol: TCP
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-              add: ["NET_BIND_SERVICE"] # rsyslogd binds :514
           resources:
             requests:
               cpu: "1"
@@ -176,7 +233,7 @@ spec:
           # would crashloop icat if e.g. its own irodsServer blips during a DB restart)
           livenessProbe:
             exec:
-              command: ["/bin/bash", "-c", "su irods -c 'iadmin whoami'"]
+              command: ["/bin/bash", "-c", "su irods -c 'ils >/dev/null'"]
             periodSeconds: 30
             timeoutSeconds: 15
             failureThreshold: 6
@@ -185,10 +242,6 @@ spec:
               mountPath: /dev/shm
             - name: vault
               mountPath: /var/lib/irods
-            # Persist the "installed" flag across pod recreations (subPath file on vault PVC)
-            - name: vault
-              mountPath: /var/run/irods_installed
-              subPath: irods_installed
             # Overrides that docker-compose bind-mounted
             - name: icat-bootstrap
               mountPath: /opt/irods/bootstrap.sh

@@ -22,6 +22,8 @@ spec:
         - name: registry-credentials
       securityContext:
         runAsNonRoot: false
+        appArmorProfile:
+          type: Unconfined
         seccompProfile:
           type: RuntimeDefault
       containers:
@@ -46,10 +48,6 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
           resources:
             requests:
               cpu: 500m
@@ -77,6 +75,17 @@ spec:
               port: http
             periodSeconds: 30
             failureThreshold: 4
+          volumeMounts:
+            # Per-overlay realm export (configMapGenerator in each overlay),
+            # shadowing the RIT_ENV-templated file baked into the image.
+            # import.sh reads exactly this path.
+            - name: realm-export
+              mountPath: /tmp/realm-export.json
+              subPath: keycloak-realm-export.json
+      volumes:
+        - name: realm-export
+          configMap:
+            name: keycloak-realm-export
 ---
 apiVersion: v1
 kind: Service

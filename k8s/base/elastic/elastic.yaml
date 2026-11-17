@@ -8,6 +8,8 @@ metadata:
     app.kubernetes.io/part-of: datahub
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: elastic
@@ -22,18 +24,17 @@ spec:
         - name: registry-credentials
       securityContext:
         runAsNonRoot: false
+        appArmorProfile:
+          type: Unconfined
         seccompProfile:
           type: RuntimeDefault
       initContainers:
         - name: chown-data
           # same image as the main container (kustomize rewrites both)
           image: registry.prod.dh.unimaas.nl/docker-dev/elastic:latest
-          command: ["sh", "-c", "chown -R 1000:1000 /usr/share/elasticsearch/data"]
+          command: ["sh", "-c", "rm -rf /usr/share/elasticsearch/data/lost+found && chown -R 1000:1000 /usr/share/elasticsearch/data"]
           securityContext:
             runAsUser: 0
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
           volumeMounts:
             - name: data
               mountPath: /usr/share/elasticsearch/data
@@ -53,10 +54,6 @@ spec:
             - name: http
               containerPort: 9200
               protocol: TCP
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
           resources:
             requests:
               cpu: 500m

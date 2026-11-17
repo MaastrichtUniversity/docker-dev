@@ -125,6 +125,11 @@ configMapGenerator:
   - name: keycloak-env
     namespace: internal
     envs: [config/keycloak.env]
+  # Concrete realm export for this overlay (replaces the RIT_ENV sed in
+  # import.sh, which becomes a no-op); mounted over the baked-in file.
+  - name: keycloak-realm-export
+    namespace: internal
+    files: [keycloak-realm-export.json]
 
 # Secrets - dev sources them from committed files (no Vault). tst/acc/prd
 # use ExternalSecrets -> Vault instead (k8s/README.md section 7).

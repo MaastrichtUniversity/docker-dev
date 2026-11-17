@@ -45,6 +45,9 @@ resources:
   - secrets/gateway-tls.yaml
   - secrets/registry-credentials.yaml
 
+patches:
+  - path: patches/mdr-hostaliases.yaml
+
 # Per-env ConfigMap env files (consumed via envFrom by the base manifests).
 configMapGenerator:
   - name: irods-common-env
@@ -113,6 +116,11 @@ configMapGenerator:
   - name: keycloak-env
     namespace: internal
     envs: [config/keycloak.env]
+  # Concrete realm export for this overlay (replaces the RIT_ENV sed in
+  # import.sh, which becomes a no-op); mounted over the baked-in file.
+  - name: keycloak-realm-export
+    namespace: internal
+    files: [keycloak-realm-export.json]
 
 # All Secrets are created by the ExternalSecrets Operator from Vault
 # (secrets/*.yaml) - no secretGenerator here.
@@ -137,6 +145,8 @@ images:
   - name: registry.prod.dh.unimaas.nl/docker-dev/davrods-upload
     newTag: latest
   - name: registry.prod.dh.unimaas.nl/docker-dev/epicpid
+    newTag: latest
+  - name: registry.prod.dh.unimaas.nl/docker-dev/garage-init
     newTag: latest
   - name: registry.prod.dh.unimaas.nl/docker-dev/sram-sync
     newTag: latest
