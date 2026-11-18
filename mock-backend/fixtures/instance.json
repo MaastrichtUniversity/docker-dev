@@ -1,0 +1,307 @@
+{
+  "@context": {
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "pav": "http://purl.org/pav/",
+    "schema": "http://schema.org/",
+    "oslc": "http://open-services.net/ns/core#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "rdfs:label": {
+      "@type": "xsd:string"
+    },
+    "schema:isBasedOn": {
+      "@type": "@id"
+    },
+    "schema:name": {
+      "@type": "xsd:string"
+    },
+    "schema:description": {
+      "@type": "xsd:string"
+    },
+    "pav:derivedFrom": {
+      "@type": "@id"
+    },
+    "pav:createdOn": {
+      "@type": "xsd:dateTime"
+    },
+    "pav:createdBy": {
+      "@type": "@id"
+    },
+    "pav:lastUpdatedOn": {
+      "@type": "xsd:dateTime"
+    },
+    "oslc:modifiedBy": {
+      "@type": "@id"
+    },
+    "skos:notation": {
+      "@type": "xsd:string"
+    },
+    "4_Publisher": "https://schema.metadatacenter.org/properties/68a521c1-69af-49e5-95a0-9890642da26d",
+    "8_Date": "https://schema.metadatacenter.org/properties/29cd27ea-b7b6-47b7-a82d-ab48ae34396d",
+    "2_Creator": "https://schema.metadatacenter.org/properties/6297f721-5a92-4014-9a7d-2eeb9afbe11b",
+    "12_RelatedIdentifier": "https://schema.metadatacenter.org/properties/65f55a39-f020-45d6-a071-c8388a12a25f",
+    "7_Contributor": "https://schema.metadatacenter.org/properties/45bffde9-fe61-4479-a70d-953e3aa4a9c9",
+    "3_Title": "http://purl.org/dc/terms/title",
+    "1_Identifier": "https://schema.metadatacenter.org/properties/b260286d-3da0-4f53-a40d-eb769c24da8f",
+    "17_Description": "https://schema.metadatacenter.org/properties/28d418d7-bfe7-44fb-968f-6e3ae9b68501",
+    "6_Subject": "https://schema.metadatacenter.org/properties/d8dc1860-b3a5-4547-ad22-0e003dc2e5fc",
+    "10_ResourceType": "https://schema.metadatacenter.org/properties/8f154e9c-501a-4b80-b148-a74f250edc69",
+    "7_ContactPerson": "https://schema.metadatacenter.org/properties/9ae72767-4449-4018-9cf0-6da73604d0cc"
+  },
+  "@id": "https://example.org/mock/dataset",
+  "@type": "https://example.org/mock/@type",
+  "schema:isBasedOn": "https://repo.metadatacenter.org/templates/145bd07d-b7be-42f4-94d8-a29cdd1f663d",
+  "schema:name": "Example dataset",
+  "schema:description": "Fixed microscopy dataset for development.",
+  "pav:derivedFrom": "https://example.org/mock/pav-derivedFrom",
+  "pav:createdOn": "2026-01-01T12:00:00Z",
+  "pav:createdBy": "https://example.org/mock/pav-createdBy",
+  "pav:lastUpdatedOn": "2026-01-01T12:00:00Z",
+  "oslc:modifiedBy": "https://example.org/mock/oslc-modifiedBy",
+  "4_Publisher": {
+    "@context": {
+      "Publisher": "https://schema.metadatacenter.org/properties/2c80f739-e2c4-425e-9bf0-fa20fffe29ba"
+    },
+    "@id": "https://example.org/mock/@id",
+    "@type": "https://example.org/mock/@type",
+    "Publisher": {
+      "@value": "DataHub"
+    }
+  },
+  "8_Date": {
+    "@context": {
+      "datasetDateType": "http://vocab.fairdatacollective.org/gdmt/hasDatasetDateType",
+      "datasetDate": "http://vocab.fairdatacollective.org/gdmt/hasDatasetDate"
+    },
+    "@id": "https://example.org/mock/@id",
+    "@type": "https://example.org/mock/@type",
+    "datasetDateType": {
+      "@id": "http://example.org/mock/datasetDateType",
+      "rdfs:label": "Mock datasetDateType"
+    },
+    "datasetDate": {
+      "@value": "2026-01-01"
+    }
+  },
+  "2_Creator": {
+    "@context": {
+      "creatorIdentifier": "https://schema.metadatacenter.org/properties/18e308f9-0286-4d53-9acf-45b64cf13409",
+      "creatorIdentifierScheme": "https://schema.metadatacenter.org/properties/2a4230e0-9dc4-4477-bea8-a718e32106af",
+      "creatorIdentifierSchemeIRI": "https://schema.metadatacenter.org/properties/47dbf3ad-a626-47f9-814c-df36df9959bc",
+      "creatorGivenName": "https://schema.metadatacenter.org/properties/70630a4c-d76f-46b2-902c-916203a981a1",
+      "creatorFamilyName": "https://schema.metadatacenter.org/properties/356309ef-b052-41ad-97b6-a30f76ba6df4",
+      "creatorFullName": "https://schema.metadatacenter.org/properties/34cd0986-098c-4c76-830c-300966ad422a",
+      "creatorAffiliation": "https://schema.metadatacenter.org/properties/11ea34dd-138e-4901-8565-c56e8cf980ca"
+    },
+    "@id": "https://example.org/mock/@id",
+    "@type": "https://example.org/mock/@type",
+    "creatorIdentifier": {
+      "@value": "0000-0000-0000-0000"
+    },
+    "creatorIdentifierScheme": {
+      "@id": "http://example.org/mock/creatorIdentifierScheme",
+      "rdfs:label": "Mock creatorIdentifierScheme"
+    },
+    "creatorIdentifierSchemeIRI": {
+      "@id": "http://example.org/mock/creatorIdentifierSchemeIRI",
+      "rdfs:label": "Mock creatorIdentifierSchemeIRI"
+    },
+    "creatorGivenName": {
+      "@value": "Dean"
+    },
+    "creatorFamilyName": {
+      "@value": "Linssen"
+    },
+    "creatorFullName": {
+      "@value": "Dean Linssen"
+    },
+    "creatorAffiliation": {
+      "@id": "http://example.org/mock/creatorAffiliation",
+      "rdfs:label": "Mock creatorAffiliation"
+    }
+  },
+  "12_RelatedIdentifier": [
+    {
+      "@context": {
+        "relatedResourceIdentifier": "http://purl.org/dc/terms/identifier",
+        "relatedResourceIdentifierType": "http://schema.org/propertyID",
+        "relationType": "http://rs.tdwg.org/dwc/terms/relationshipOfResource"
+      },
+      "@id": "https://example.org/mock/@id",
+      "@type": "https://example.org/mock/@type",
+      "relatedResourceIdentifier": {
+        "@value": "Mock dataset"
+      },
+      "relatedResourceIdentifierType": {
+        "@id": "http://example.org/mock/relatedResourceIdentifierType",
+        "rdfs:label": "Mock relatedResourceIdentifierType"
+      },
+      "relationType": {
+        "@id": "http://example.org/mock/relationType",
+        "rdfs:label": "Mock relationType"
+      }
+    }
+  ],
+  "7_Contributor": [
+    {
+      "@context": {
+        "contributorIdentifier": "https://schema.metadatacenter.org/properties/4636604a-6a42-4257-8a34-b8c68627cf32",
+        "contributorIdentifierScheme": "https://schema.metadatacenter.org/properties/264bff35-9c7e-4a84-a722-712217dfa232",
+        "contributorType": "https://schema.metadatacenter.org/properties/4d0bd488-6d4a-4388-bfa9-3cbb1d941afb",
+        "contributorGivenName": "https://schema.metadatacenter.org/properties/1b2e719d-c7cc-4db0-b6f8-22ccdf43a387",
+        "contributorFamilyName": "https://schema.metadatacenter.org/properties/510d9317-3658-429b-b773-8f9c0d288668",
+        "contributorEmail": "https://schema.metadatacenter.org/properties/72eb0553-76b7-4ef2-898f-694aa015cdd4",
+        "contributorFullName": "https://schema.metadatacenter.org/properties/272d6c5e-467c-4c01-a513-23b8df92585d",
+        "contributorAffiliation": "https://schema.metadatacenter.org/properties/73214405-3002-4fde-8f6c-b012faf907ec"
+      },
+      "@id": "https://example.org/mock/@id",
+      "@type": "https://example.org/mock/@type",
+      "contributorIdentifier": {
+        "@value": "Mock dataset"
+      },
+      "contributorIdentifierScheme": {
+        "@id": "http://example.org/mock/contributorIdentifierScheme",
+        "rdfs:label": "Mock contributorIdentifierScheme"
+      },
+      "contributorType": {
+        "@id": "http://example.org/mock/contributorType",
+        "rdfs:label": "Mock contributorType"
+      },
+      "contributorGivenName": {
+        "@value": "Dean"
+      },
+      "contributorFamilyName": {
+        "@value": "Linssen"
+      },
+      "contributorEmail": {
+        "@value": "dlinssen@example.org"
+      },
+      "contributorFullName": {
+        "@value": "Dean Linssen"
+      },
+      "contributorAffiliation": {
+        "@id": "http://example.org/mock/contributorAffiliation",
+        "rdfs:label": "Mock contributorAffiliation"
+      }
+    }
+  ],
+  "datasetPagebreak": {},
+  "3_Title": {
+    "@context": {
+      "title": "https://schema.metadatacenter.org/properties/4ffd7c46-1df8-4885-ade4-50d542d5b81e"
+    },
+    "@id": "https://example.org/mock/@id",
+    "@type": "https://example.org/mock/@type",
+    "title": {
+      "@value": "Example dataset"
+    }
+  },
+  "1_Identifier": {
+    "@context": {
+      "datasetIdentifier": "http://purl.org/dc/terms/identifier",
+      "datasetIdentifierType": "http://purl.org/spar/datacite/usesIdentifierScheme"
+    },
+    "@id": "https://example.org/mock/@id",
+    "@type": "https://example.org/mock/@type",
+    "datasetIdentifier": {
+      "@value": "Mock dataset"
+    },
+    "datasetIdentifierType": {
+      "@id": "http://example.org/mock/datasetIdentifierType",
+      "rdfs:label": "Mock datasetIdentifierType"
+    }
+  },
+  "17_Description": {
+    "@context": {
+      "descriptionType": "http://purl.org/spar/datacite/hasDescriptionType",
+      "Description": "http://purl.org/dc/terms/description"
+    },
+    "@id": "https://example.org/mock/@id",
+    "@type": "https://example.org/mock/@type",
+    "descriptionType": {
+      "@value": "Abstract"
+    },
+    "Description": {
+      "@value": "Mock dataset"
+    }
+  },
+  "6_Subject": [
+    {
+      "@context": {
+        "subjectSchemeIRI": "http://vocab.fairdatacollective.org/gdmt/hasSubjectSchemeIRI",
+        "Subject": "https://schema.metadatacenter.org/properties/71f1a80c-d59e-4d92-a084-4f22f219cb6e",
+        "valueURI": "https://schema.metadatacenter.org/properties/af9c45ec-d971-4056-a6c2-5ce930b9b181"
+      },
+      "@id": "https://example.org/mock/@id",
+      "@type": "https://example.org/mock/@type",
+      "subjectSchemeIRI": {
+        "@value": "Mock dataset"
+      },
+      "Subject": {
+        "@value": "Mock dataset"
+      },
+      "valueURI": {
+        "@id": "http://example.org/mock/valueURI",
+        "rdfs:label": "Mock valueURI"
+      }
+    }
+  ],
+  "10_ResourceType": {
+    "@context": {
+      "resourceTypeDetail": "https://schema.metadatacenter.org/properties/26faf602-2fd3-4e22-818b-32949c82b746",
+      "resourceTypeGeneral": "https://schema.metadatacenter.org/properties/42039c05-9fe3-4e8a-b9f6-f97affc62d3c"
+    },
+    "@id": "https://example.org/mock/@id",
+    "@type": "https://example.org/mock/@type",
+    "resourceTypeDetail": {
+      "@value": "Mock dataset"
+    },
+    "resourceTypeGeneral": {
+      "@id": "http://example.org/mock/resourceTypeGeneral",
+      "rdfs:label": "Mock resourceTypeGeneral"
+    }
+  },
+  "7_ContactPerson": [
+    {
+      "@context": {
+        "contactEmail": "https://schema.metadatacenter.org/properties/72eb0553-76b7-4ef2-898f-694aa015cdd4",
+        "contactGivenName": "https://schema.metadatacenter.org/properties/1b2e719d-c7cc-4db0-b6f8-22ccdf43a387",
+        "contactFamilyName": "https://schema.metadatacenter.org/properties/510d9317-3658-429b-b773-8f9c0d288668",
+        "contactType": "https://schema.metadatacenter.org/properties/4d0bd488-6d4a-4388-bfa9-3cbb1d941afb",
+        "contactFullName": "https://schema.metadatacenter.org/properties/9cc96e17-345e-43c1-955d-9777ef8136aa",
+        "contactAffiliation": "https://schema.metadatacenter.org/properties/488e6114-b24f-4bf6-83b0-45a33abdabf6",
+        "contactNameIdentifier": "https://schema.metadatacenter.org/properties/953598f5-f9f7-4276-899f-09851b9501d1",
+        "contactNameIdentifierScheme": "https://schema.metadatacenter.org/properties/d680d7f5-ac6d-4fac-a245-37ca8e41a2f9"
+      },
+      "@id": "https://example.org/mock/@id",
+      "@type": "https://example.org/mock/@type",
+      "contactEmail": {
+        "@value": "dlinssen@example.org"
+      },
+      "contactGivenName": {
+        "@value": "Dean"
+      },
+      "contactFamilyName": {
+        "@value": "Linssen"
+      },
+      "contactType": {
+        "@id": "http://example.org/mock/contactType",
+        "rdfs:label": "Mock contactType"
+      },
+      "contactFullName": {
+        "@value": "Dean Linssen"
+      },
+      "contactAffiliation": {
+        "@id": "http://example.org/mock/contactAffiliation",
+        "rdfs:label": "Mock contactAffiliation"
+      },
+      "contactNameIdentifier": {
+        "@value": "Mock dataset"
+      },
+      "contactNameIdentifierScheme": {
+        "@id": "http://example.org/mock/contactNameIdentifierScheme",
+        "rdfs:label": "Mock contactNameIdentifierScheme"
+      }
+    }
+  ]
+}

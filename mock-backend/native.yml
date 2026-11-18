@@ -1,0 +1,8 @@
+# Restore the native web server without running migrations/session resets.
+# The original database and collected static assets must already exist.
+services:
+  mdr:
+    command:
+      - /bin/sh
+      - -c
+      - gunicorn --config /opt/gunicorn-cfg.py core.wsgi && exec tail -F /var/log/gunicorn/access.log /var/log/gunicorn/error.log

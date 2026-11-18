@@ -1,0 +1,4695 @@
+[
+  {
+    "user": "admin",
+    "rule": "get_users",
+    "params": {
+      "*arg2": "\"false\""
+    },
+    "result": [
+      {
+        "userName": "auser",
+        "userId": "10084",
+        "displayName": "Additional User newly created in LDAP"
+      },
+      {
+        "userName": "dlinssen",
+        "userId": "10044",
+        "displayName": "Dean Linssen"
+      },
+      {
+        "userName": "dlinssen2",
+        "userId": "10049",
+        "displayName": "Dean Linssen (MUMC+)"
+      },
+      {
+        "userName": "dtheuniss",
+        "userId": "10034",
+        "displayName": "Dani\u00ebl Theunissen"
+      },
+      {
+        "userName": "jmelius",
+        "userId": "10039",
+        "displayName": "Jonathan M\u00e9lius"
+      },
+      {
+        "userName": "kgusta",
+        "userId": "10064",
+        "displayName": "Kristine Gusta"
+      },
+      {
+        "userName": "minimalist",
+        "userId": "10074",
+        "displayName": "minimalist"
+      },
+      {
+        "userName": "opalmen",
+        "userId": "10069",
+        "displayName": "Olav Palmen"
+      },
+      {
+        "userName": "psuppers",
+        "userId": "10059",
+        "displayName": "Pascal Suppers"
+      },
+      {
+        "userName": "pvanschay2",
+        "userId": "10054",
+        "displayName": "Paul van Schayck"
+      },
+      {
+        "userName": "rjuhasz",
+        "userId": "10029",
+        "displayName": "Ricardo Juhasz"
+      },
+      {
+        "userName": "rvoncken",
+        "userId": "10079",
+        "displayName": "Rickest Rick"
+      }
+    ]
+  },
+  {
+    "user": "admin",
+    "rule": "get_groups",
+    "params": {
+      "*arg2": "\"false\""
+    },
+    "result": [
+      {
+        "name": "datahub",
+        "groupId": "10108",
+        "displayName": "DataHub",
+        "description": "It's DataHub! The place to store your data."
+      },
+      {
+        "name": "m4i-massspec",
+        "groupId": "10260",
+        "displayName": "m4i-massspec",
+        "description": ""
+      },
+      {
+        "name": "m4i-nanoscopy",
+        "groupId": "10105",
+        "displayName": "Nanoscopy",
+        "description": "CO for all of nanoscopy"
+      },
+      {
+        "name": "m4i-nanoscopy-phd0815",
+        "groupId": "10267",
+        "displayName": "Novel approach for smashing ions",
+        "description": "CO for PhD project of P7000815"
+      },
+      {
+        "name": "scannexus",
+        "groupId": "10114",
+        "displayName": "SCANNEXUS",
+        "description": "UM-SCANNEXUS"
+      }
+    ]
+  },
+  {
+    "user": "admin",
+    "rule": "get_data_stewards",
+    "params": {},
+    "result": [
+      {
+        "userName": "opalmen",
+        "userId": "10069",
+        "displayName": "Olav Palmen"
+      },
+      {
+        "userName": "pvanschay2",
+        "userId": "10054",
+        "displayName": "Paul van Schayck"
+      }
+    ]
+  },
+  {
+    "user": "admin",
+    "rule": "getIngestResources",
+    "params": {},
+    "result": [
+      {
+        "name": "ires-hnas-azmResource",
+        "comment": "AZM-UBUNTU-INGEST-RESOURCE"
+      },
+      {
+        "name": "ires-hnas-umResource",
+        "comment": "UM-UBUNTU-INGEST-RESOURCE"
+      }
+    ]
+  },
+  {
+    "user": "admin",
+    "rule": "getDestinationResources",
+    "params": {},
+    "result": [
+      {
+        "name": "passRescUM01",
+        "comment": "Passthru-resource-for-UM"
+      },
+      {
+        "name": "replRescAZM02",
+        "comment": "Replicated-resource-for-AZM"
+      },
+      {
+        "name": "replRescUMCeph01",
+        "comment": "Replicated-Ceph-resource-for-UM"
+      }
+    ]
+  },
+  {
+    "user": "admin",
+    "rule": "optimized_list_projects",
+    "params": {},
+    "result": [
+      {
+        "managers": [
+          "10059",
+          "10069"
+        ],
+        "contributors": [
+          "10108"
+        ],
+        "viewers": [],
+        "path": "P000000001",
+        "dataSizeGiB": 0.0,
+        "title": "(UM) Test project #01",
+        "responsibleCostCenter": "UM-01234567890X",
+        "storageQuotaGb": "10",
+        "collectionMetadataSchemas": "DataHub_general_schema,DataHub_extended_schema",
+        "latestProjectCollectionNumber": "0",
+        "enableArchive": "true",
+        "authorizationPeriodEndDate": "1-1-2018",
+        "enableDropzoneSharing": "true",
+        "resource": "passRescUM01",
+        "ingestResource": "ires-hnas-umResource",
+        "OBI:0000103": "psuppers",
+        "enableUnarchive": "true",
+        "archiveDestinationResource": "arcRescSURF01",
+        "dataSteward": "opalmen",
+        "enableContributorEditMetadata": "false",
+        "dataRetentionPeriodEndDate": "1-1-2018"
+      },
+      {
+        "managers": [
+          "10059",
+          "10069"
+        ],
+        "contributors": [
+          "10108"
+        ],
+        "viewers": [],
+        "path": "P000000002",
+        "dataSizeGiB": 0.0,
+        "enableContributorEditMetadata": "false",
+        "responsibleCostCenter": "UM-01234567890X",
+        "latestProjectCollectionNumber": "0",
+        "enableArchive": "true",
+        "resource": "passRescUM01",
+        "authorizationPeriodEndDate": "1-1-2018",
+        "enableDropzoneSharing": "true",
+        "dataSteward": "opalmen",
+        "archiveDestinationResource": "arcRescSURF01",
+        "dataRetentionPeriodEndDate": "1-1-2018",
+        "storageQuotaGb": "10",
+        "collectionMetadataSchemas": "DataHub_general_schema",
+        "ingestResource": "ires-hnas-umResource",
+        "enableUnarchive": "true",
+        "OBI:0000103": "psuppers",
+        "title": "(UM) Test project #02"
+      },
+      {
+        "managers": [
+          "10054"
+        ],
+        "contributors": [
+          "10105"
+        ],
+        "viewers": [],
+        "path": "P000000003",
+        "dataSizeGiB": 0.0,
+        "dataSteward": "pvanschay2",
+        "enableUnarchive": "true",
+        "enableDropzoneSharing": "true",
+        "dataRetentionPeriodEndDate": "1-1-2018",
+        "latestProjectCollectionNumber": "0",
+        "title": "(M4I) Test project #01",
+        "authorizationPeriodEndDate": "1-1-2018",
+        "responsibleCostCenter": "UM-12345678901B",
+        "ingestResource": "ires-hnas-umResource",
+        "enableContributorEditMetadata": "false",
+        "resource": "passRescUM01",
+        "enableArchive": "true",
+        "OBI:0000103": "pvanschay2",
+        "collectionMetadataSchemas": "DataHub_general_schema,DataHub_extended_schema",
+        "storageQuotaGb": "10",
+        "archiveDestinationResource": "arcRescSURF01"
+      },
+      {
+        "managers": [
+          "10054"
+        ],
+        "contributors": [
+          "10105"
+        ],
+        "viewers": [],
+        "path": "P000000004",
+        "dataSizeGiB": 0.0,
+        "enableUnarchive": "true",
+        "latestProjectCollectionNumber": "0",
+        "enableContributorEditMetadata": "false",
+        "collectionMetadataSchemas": "DataHub_general_schema",
+        "OBI:0000103": "pvanschay2",
+        "storageQuotaGb": "10",
+        "title": "(M4I) Test project #02",
+        "archiveDestinationResource": "arcRescSURF01",
+        "authorizationPeriodEndDate": "1-1-2018",
+        "ingestResource": "ires-hnas-umResource",
+        "dataRetentionPeriodEndDate": "1-1-2018",
+        "resource": "passRescUM01",
+        "enableArchive": "true",
+        "enableDropzoneSharing": "true",
+        "responsibleCostCenter": "UM-12345678901B",
+        "dataSteward": "pvanschay2"
+      },
+      {
+        "managers": [
+          "10044",
+          "10069"
+        ],
+        "contributors": [
+          "10114"
+        ],
+        "viewers": [
+          "10108"
+        ],
+        "path": "P000000005",
+        "dataSizeGiB": 0.0,
+        "enableArchive": "true",
+        "enableDropzoneSharing": "true",
+        "enableUnarchive": "true",
+        "authorizationPeriodEndDate": "1-1-2018",
+        "responsibleCostCenter": "UM-01234567890X",
+        "OBI:0000103": "dlinssen",
+        "dataSteward": "opalmen",
+        "ingestResource": "ires-hnas-umResource",
+        "title": "(ScanNexus) Test project #01",
+        "collectionMetadataSchemas": "DataHub_general_schema",
+        "enableContributorEditMetadata": "false",
+        "dataRetentionPeriodEndDate": "1-1-2018",
+        "resource": "passRescUM01",
+        "storageQuotaGb": "10",
+        "latestProjectCollectionNumber": "0",
+        "archiveDestinationResource": "arcRescSURF01"
+      },
+      {
+        "managers": [
+          "10054",
+          "10059"
+        ],
+        "contributors": [
+          "10108"
+        ],
+        "viewers": [],
+        "path": "P000000006",
+        "dataSizeGiB": 0.0,
+        "dataRetentionPeriodEndDate": "1-1-2018",
+        "latestProjectCollectionNumber": "0",
+        "storageQuotaGb": "10",
+        "authorizationPeriodEndDate": "1-1-2018",
+        "enableUnarchive": "true",
+        "resource": "replRescUMCeph01",
+        "OBI:0000103": "psuppers",
+        "title": "(S3) Test project #01",
+        "archiveDestinationResource": "arcRescSURF01",
+        "ingestResource": "ires-hnas-umResource",
+        "responsibleCostCenter": "UM-01234567890R",
+        "enableArchive": "true",
+        "enableDropzoneSharing": "true",
+        "dataSteward": "pvanschay2",
+        "collectionMetadataSchemas": "DataHub_general_schema,DataHub_extended_schema",
+        "enableContributorEditMetadata": "false"
+      },
+      {
+        "managers": [
+          "10054",
+          "10059"
+        ],
+        "contributors": [
+          "10108"
+        ],
+        "viewers": [],
+        "path": "P000000007",
+        "dataSizeGiB": 0.0,
+        "archiveDestinationResource": "arcRescSURF01",
+        "storageQuotaGb": "10",
+        "responsibleCostCenter": "UM-01234567890R",
+        "resource": "replRescUMCeph01",
+        "collectionMetadataSchemas": "DataHub_general_schema",
+        "enableArchive": "true",
+        "enableContributorEditMetadata": "false",
+        "latestProjectCollectionNumber": "0",
+        "enableDropzoneSharing": "true",
+        "authorizationPeriodEndDate": "1-1-2018",
+        "dataSteward": "pvanschay2",
+        "enableUnarchive": "true",
+        "title": "(S3) Test project #02",
+        "dataRetentionPeriodEndDate": "1-1-2018",
+        "ingestResource": "ires-hnas-umResource",
+        "OBI:0000103": "psuppers"
+      },
+      {
+        "managers": [
+          "10044",
+          "10059",
+          "10069"
+        ],
+        "contributors": [
+          "10108"
+        ],
+        "viewers": [],
+        "path": "P000000008",
+        "dataSizeGiB": 0.0,
+        "enableDropzoneSharing": "true",
+        "enableUnarchive": "true",
+        "collectionMetadataSchemas": "DataHub_general_schema,DataHub_extended_schema",
+        "enableArchive": "true",
+        "title": "(azM) Test project #01",
+        "OBI:0000103": "psuppers",
+        "authorizationPeriodEndDate": "1-1-2018",
+        "dataSteward": "opalmen",
+        "archiveDestinationResource": "arcRescSURF01",
+        "ingestResource": "ires-hnas-azmResource",
+        "latestProjectCollectionNumber": "0",
+        "resource": "replRescAZM02",
+        "storageQuotaGb": "10",
+        "enableContributorEditMetadata": "false",
+        "dataRetentionPeriodEndDate": "1-1-2018",
+        "responsibleCostCenter": "AZM-123456"
+      },
+      {
+        "managers": [
+          "10044",
+          "10059",
+          "10069"
+        ],
+        "contributors": [
+          "10108"
+        ],
+        "viewers": [],
+        "path": "P000000009",
+        "dataSizeGiB": 0.0,
+        "enableDropzoneSharing": "true",
+        "dataRetentionPeriodEndDate": "1-1-2018",
+        "OBI:0000103": "psuppers",
+        "latestProjectCollectionNumber": "0",
+        "enableContributorEditMetadata": "false",
+        "resource": "replRescAZM02",
+        "title": "(azM) Test project #02",
+        "responsibleCostCenter": "AZM-123456",
+        "authorizationPeriodEndDate": "1-1-2018",
+        "enableUnarchive": "true",
+        "enableArchive": "true",
+        "storageQuotaGb": "10",
+        "archiveDestinationResource": "arcRescSURF01",
+        "dataSteward": "opalmen",
+        "ingestResource": "ires-hnas-azmResource",
+        "collectionMetadataSchemas": "DataHub_general_schema"
+      }
+    ]
+  },
+  {
+    "user": "admin",
+    "rule": "get_user_or_group_by_id",
+    "params": {
+      "*arg2": "\"10059\""
+    },
+    "result": {
+      "userName": "psuppers",
+      "userId": "10059",
+      "displayName": "Pascal Suppers",
+      "account_type": "rodsuser"
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_user_or_group_by_id",
+    "params": {
+      "*arg2": "\"10069\""
+    },
+    "result": {
+      "userName": "opalmen",
+      "userId": "10069",
+      "displayName": "Olav Palmen",
+      "account_type": "rodsuser"
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_user_or_group_by_id",
+    "params": {
+      "*arg2": "\"10108\""
+    },
+    "result": {
+      "groupName": "datahub",
+      "groupId": "10108",
+      "displayName": "DataHub",
+      "description": "It's DataHub! The place to store your data.",
+      "account_type": "rodsgroup"
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_user_or_group_by_id",
+    "params": {
+      "*arg2": "\"10054\""
+    },
+    "result": {
+      "userName": "pvanschay2",
+      "userId": "10054",
+      "displayName": "Paul van Schayck",
+      "account_type": "rodsuser"
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_user_or_group_by_id",
+    "params": {
+      "*arg2": "\"10105\""
+    },
+    "result": {
+      "groupName": "m4i-nanoscopy",
+      "groupId": "10105",
+      "displayName": "Nanoscopy",
+      "description": "CO for all of nanoscopy",
+      "account_type": "rodsgroup"
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_user_or_group_by_id",
+    "params": {
+      "*arg2": "\"10044\""
+    },
+    "result": {
+      "userName": "dlinssen",
+      "userId": "10044",
+      "displayName": "Dean Linssen",
+      "account_type": "rodsuser"
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_user_or_group_by_id",
+    "params": {
+      "*arg2": "\"10114\""
+    },
+    "result": {
+      "groupName": "scannexus",
+      "groupId": "10114",
+      "displayName": "SCANNEXUS",
+      "description": "UM-SCANNEXUS",
+      "account_type": "rodsgroup"
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "list_projects_minimal",
+    "params": {},
+    "result": [
+      {
+        "id": "P000000001",
+        "title": "(UM) Test project #01"
+      },
+      {
+        "id": "P000000002",
+        "title": "(UM) Test project #02"
+      },
+      {
+        "id": "P000000003",
+        "title": "(M4I) Test project #01"
+      },
+      {
+        "id": "P000000004",
+        "title": "(M4I) Test project #02"
+      },
+      {
+        "id": "P000000005",
+        "title": "(ScanNexus) Test project #01"
+      },
+      {
+        "id": "P000000006",
+        "title": "(S3) Test project #01"
+      },
+      {
+        "id": "P000000007",
+        "title": "(S3) Test project #02"
+      },
+      {
+        "id": "P000000008",
+        "title": "(azM) Test project #01"
+      },
+      {
+        "id": "P000000009",
+        "title": "(azM) Test project #02"
+      }
+    ]
+  },
+  {
+    "user": "admin",
+    "rule": "list_contributing_projects",
+    "params": {
+      "*arg2": "\"false\""
+    },
+    "result": [
+      {
+        "id": "P000000001",
+        "contributors": {
+          "users": [],
+          "groups": [
+            "datahub"
+          ],
+          "groupObjects": [
+            {
+              "groupName": "datahub",
+              "groupId": "10108",
+              "displayName": "DataHub",
+              "description": "It's DataHub! The place to store your data."
+            }
+          ],
+          "userObjects": []
+        },
+        "managers": {
+          "users": [
+            "psuppers",
+            "opalmen"
+          ],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": [
+            {
+              "userName": "psuppers",
+              "userId": "10059",
+              "displayName": "Pascal Suppers"
+            },
+            {
+              "userName": "opalmen",
+              "userId": "10069",
+              "displayName": "Olav Palmen"
+            }
+          ]
+        },
+        "viewers": {
+          "users": [],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": []
+        },
+        "collectionMetadataSchemas": "DataHub_general_schema,DataHub_extended_schema",
+        "resource": "passRescUM01",
+        "title": "(UM) Test project #01"
+      },
+      {
+        "id": "P000000002",
+        "contributors": {
+          "users": [],
+          "groups": [
+            "datahub"
+          ],
+          "groupObjects": [
+            {
+              "groupName": "datahub",
+              "groupId": "10108",
+              "displayName": "DataHub",
+              "description": "It's DataHub! The place to store your data."
+            }
+          ],
+          "userObjects": []
+        },
+        "managers": {
+          "users": [
+            "psuppers",
+            "opalmen"
+          ],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": [
+            {
+              "userName": "psuppers",
+              "userId": "10059",
+              "displayName": "Pascal Suppers"
+            },
+            {
+              "userName": "opalmen",
+              "userId": "10069",
+              "displayName": "Olav Palmen"
+            }
+          ]
+        },
+        "viewers": {
+          "users": [],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": []
+        },
+        "collectionMetadataSchemas": "DataHub_general_schema",
+        "resource": "passRescUM01",
+        "title": "(UM) Test project #02"
+      },
+      {
+        "id": "P000000003",
+        "contributors": {
+          "users": [],
+          "groups": [
+            "m4i-nanoscopy"
+          ],
+          "groupObjects": [
+            {
+              "groupName": "m4i-nanoscopy",
+              "groupId": "10105",
+              "displayName": "Nanoscopy",
+              "description": "CO for all of nanoscopy"
+            }
+          ],
+          "userObjects": []
+        },
+        "managers": {
+          "users": [
+            "pvanschay2"
+          ],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": [
+            {
+              "userName": "pvanschay2",
+              "userId": "10054",
+              "displayName": "Paul van Schayck"
+            }
+          ]
+        },
+        "viewers": {
+          "users": [],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": []
+        },
+        "collectionMetadataSchemas": "DataHub_general_schema,DataHub_extended_schema",
+        "resource": "passRescUM01",
+        "title": "(M4I) Test project #01"
+      },
+      {
+        "id": "P000000004",
+        "contributors": {
+          "users": [],
+          "groups": [
+            "m4i-nanoscopy"
+          ],
+          "groupObjects": [
+            {
+              "groupName": "m4i-nanoscopy",
+              "groupId": "10105",
+              "displayName": "Nanoscopy",
+              "description": "CO for all of nanoscopy"
+            }
+          ],
+          "userObjects": []
+        },
+        "managers": {
+          "users": [
+            "pvanschay2"
+          ],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": [
+            {
+              "userName": "pvanschay2",
+              "userId": "10054",
+              "displayName": "Paul van Schayck"
+            }
+          ]
+        },
+        "viewers": {
+          "users": [],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": []
+        },
+        "collectionMetadataSchemas": "DataHub_general_schema",
+        "resource": "passRescUM01",
+        "title": "(M4I) Test project #02"
+      },
+      {
+        "id": "P000000005",
+        "contributors": {
+          "users": [],
+          "groups": [
+            "scannexus"
+          ],
+          "groupObjects": [
+            {
+              "groupName": "scannexus",
+              "groupId": "10114",
+              "displayName": "SCANNEXUS",
+              "description": "UM-SCANNEXUS"
+            }
+          ],
+          "userObjects": []
+        },
+        "managers": {
+          "users": [
+            "dlinssen",
+            "opalmen"
+          ],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": [
+            {
+              "userName": "dlinssen",
+              "userId": "10044",
+              "displayName": "Dean Linssen"
+            },
+            {
+              "userName": "opalmen",
+              "userId": "10069",
+              "displayName": "Olav Palmen"
+            }
+          ]
+        },
+        "viewers": {
+          "users": [],
+          "groups": [
+            "datahub"
+          ],
+          "groupObjects": [
+            {
+              "groupName": "datahub",
+              "groupId": "10108",
+              "displayName": "DataHub",
+              "description": "It's DataHub! The place to store your data."
+            }
+          ],
+          "userObjects": []
+        },
+        "collectionMetadataSchemas": "DataHub_general_schema",
+        "resource": "passRescUM01",
+        "title": "(ScanNexus) Test project #01"
+      },
+      {
+        "id": "P000000006",
+        "contributors": {
+          "users": [],
+          "groups": [
+            "datahub"
+          ],
+          "groupObjects": [
+            {
+              "groupName": "datahub",
+              "groupId": "10108",
+              "displayName": "DataHub",
+              "description": "It's DataHub! The place to store your data."
+            }
+          ],
+          "userObjects": []
+        },
+        "managers": {
+          "users": [
+            "pvanschay2",
+            "psuppers"
+          ],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": [
+            {
+              "userName": "pvanschay2",
+              "userId": "10054",
+              "displayName": "Paul van Schayck"
+            },
+            {
+              "userName": "psuppers",
+              "userId": "10059",
+              "displayName": "Pascal Suppers"
+            }
+          ]
+        },
+        "viewers": {
+          "users": [],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": []
+        },
+        "collectionMetadataSchemas": "DataHub_general_schema,DataHub_extended_schema",
+        "resource": "replRescUMCeph01",
+        "title": "(S3) Test project #01"
+      },
+      {
+        "id": "P000000007",
+        "contributors": {
+          "users": [],
+          "groups": [
+            "datahub"
+          ],
+          "groupObjects": [
+            {
+              "groupName": "datahub",
+              "groupId": "10108",
+              "displayName": "DataHub",
+              "description": "It's DataHub! The place to store your data."
+            }
+          ],
+          "userObjects": []
+        },
+        "managers": {
+          "users": [
+            "pvanschay2",
+            "psuppers"
+          ],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": [
+            {
+              "userName": "pvanschay2",
+              "userId": "10054",
+              "displayName": "Paul van Schayck"
+            },
+            {
+              "userName": "psuppers",
+              "userId": "10059",
+              "displayName": "Pascal Suppers"
+            }
+          ]
+        },
+        "viewers": {
+          "users": [],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": []
+        },
+        "collectionMetadataSchemas": "DataHub_general_schema",
+        "resource": "replRescUMCeph01",
+        "title": "(S3) Test project #02"
+      },
+      {
+        "id": "P000000008",
+        "contributors": {
+          "users": [],
+          "groups": [
+            "datahub"
+          ],
+          "groupObjects": [
+            {
+              "groupName": "datahub",
+              "groupId": "10108",
+              "displayName": "DataHub",
+              "description": "It's DataHub! The place to store your data."
+            }
+          ],
+          "userObjects": []
+        },
+        "managers": {
+          "users": [
+            "dlinssen",
+            "psuppers",
+            "opalmen"
+          ],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": [
+            {
+              "userName": "dlinssen",
+              "userId": "10044",
+              "displayName": "Dean Linssen"
+            },
+            {
+              "userName": "psuppers",
+              "userId": "10059",
+              "displayName": "Pascal Suppers"
+            },
+            {
+              "userName": "opalmen",
+              "userId": "10069",
+              "displayName": "Olav Palmen"
+            }
+          ]
+        },
+        "viewers": {
+          "users": [],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": []
+        },
+        "collectionMetadataSchemas": "DataHub_general_schema,DataHub_extended_schema",
+        "resource": "replRescAZM02",
+        "title": "(azM) Test project #01"
+      },
+      {
+        "id": "P000000009",
+        "contributors": {
+          "users": [],
+          "groups": [
+            "datahub"
+          ],
+          "groupObjects": [
+            {
+              "groupName": "datahub",
+              "groupId": "10108",
+              "displayName": "DataHub",
+              "description": "It's DataHub! The place to store your data."
+            }
+          ],
+          "userObjects": []
+        },
+        "managers": {
+          "users": [
+            "dlinssen",
+            "psuppers",
+            "opalmen"
+          ],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": [
+            {
+              "userName": "dlinssen",
+              "userId": "10044",
+              "displayName": "Dean Linssen"
+            },
+            {
+              "userName": "psuppers",
+              "userId": "10059",
+              "displayName": "Pascal Suppers"
+            },
+            {
+              "userName": "opalmen",
+              "userId": "10069",
+              "displayName": "Olav Palmen"
+            }
+          ]
+        },
+        "viewers": {
+          "users": [],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": []
+        },
+        "collectionMetadataSchemas": "DataHub_general_schema",
+        "resource": "replRescAZM02",
+        "title": "(azM) Test project #02"
+      }
+    ]
+  },
+  {
+    "user": "admin",
+    "rule": "get_projects_finance",
+    "params": {},
+    "result": []
+  },
+  {
+    "user": "admin",
+    "rule": "get_user_active_processes",
+    "params": {
+      "*arg2": "\"true\"",
+      "*arg3": "\"true\"",
+      "*arg4": "\"true\""
+    },
+    "result": {
+      "completed": [],
+      "error": [],
+      "in_progress": [],
+      "open": []
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_temporary_password_lifetime",
+    "params": {},
+    "result": 7776000
+  },
+  {
+    "user": "admin",
+    "rule": "get_user_group_memberships",
+    "params": {
+      "*arg2": "\"true\"",
+      "*arg3": "\"dlinssen\""
+    },
+    "result": [
+      {
+        "groupId": "10026",
+        "name": "DH-ingest",
+        "displayName": "DH-ingest",
+        "description": ""
+      },
+      {
+        "groupId": "10111",
+        "name": "DH-project-admins",
+        "displayName": "DH-project-admins",
+        "description": ""
+      },
+      {
+        "groupId": "10108",
+        "name": "datahub",
+        "displayName": "DataHub",
+        "description": "It's DataHub! The place to store your data."
+      },
+      {
+        "groupId": "10001",
+        "name": "public",
+        "displayName": "public",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "user": "admin",
+    "rule": "get_user_internal_affiliation_status",
+    "params": {
+      "*arg2": "\"dlinssen\""
+    },
+    "result": true
+  },
+  {
+    "user": "admin",
+    "rule": "get_user_attribute_value",
+    "params": {
+      "*arg2": "\"dlinssen\"",
+      "*arg3": "\"lastToSAcceptedTimestamp\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "value": "1618476699"
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_user_attribute_value",
+    "params": {
+      "*arg2": "\"dlinssen\"",
+      "*arg3": "\"displayName\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "value": "Dean Linssen"
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_user_attribute_value",
+    "params": {
+      "*arg2": "\"dlinssen\"",
+      "*arg3": "\"email\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "value": "d.linssen@maastrichtuniversity.nl"
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_user_group_memberships",
+    "params": {
+      "*arg2": "\"true\"",
+      "*arg3": "\"minimalist\""
+    },
+    "result": [
+      {
+        "groupId": "10026",
+        "name": "DH-ingest",
+        "displayName": "DH-ingest",
+        "description": ""
+      },
+      {
+        "groupId": "10001",
+        "name": "public",
+        "displayName": "public",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "user": "admin",
+    "rule": "get_user_internal_affiliation_status",
+    "params": {
+      "*arg2": "\"minimalist\""
+    },
+    "result": false
+  },
+  {
+    "user": "admin",
+    "rule": "get_user_attribute_value",
+    "params": {
+      "*arg2": "\"minimalist\"",
+      "*arg3": "\"lastToSAcceptedTimestamp\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_user_attribute_value",
+    "params": {
+      "*arg2": "\"minimalist\"",
+      "*arg3": "\"displayName\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_user_attribute_value",
+    "params": {
+      "*arg2": "\"minimalist\"",
+      "*arg3": "\"email\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_project_details",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001\"",
+      "*arg3": "\"false\""
+    },
+    "result": {
+      "path": "/nlmumc/projects/P000000001",
+      "project": "P000000001",
+      "contributors": {
+        "users": [],
+        "groups": [
+          "datahub"
+        ],
+        "groupObjects": [
+          {
+            "groupName": "datahub",
+            "groupId": "10108",
+            "displayName": "DataHub",
+            "description": "It's DataHub! The place to store your data."
+          }
+        ],
+        "userObjects": []
+      },
+      "managers": {
+        "users": [
+          "psuppers",
+          "opalmen"
+        ],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": [
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          }
+        ]
+      },
+      "viewers": {
+        "users": [],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": []
+      },
+      "title": "(UM) Test project #01",
+      "enableArchive": "true",
+      "enableUnarchive": "true",
+      "enableContributorEditMetadata": "false",
+      "description": "",
+      "respCostCenter": "UM-01234567890X",
+      "storageQuotaGiB": "10",
+      "collectionMetadataSchemas": "DataHub_general_schema,DataHub_extended_schema",
+      "enableDropzoneSharing": "true",
+      "principalInvestigatorDisplayName": "Pascal Suppers",
+      "dataStewardDisplayName": "Olav Palmen",
+      "has_financial_view_access": false,
+      "dataSizeGiB": 0.0
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_project_acl_for_manager",
+    "params": {
+      "*arg2": "\"P000000001\"",
+      "*arg3": "\"false\""
+    },
+    "result": []
+  },
+  {
+    "user": "admin",
+    "rule": "get_contributing_project",
+    "params": {
+      "*arg2": "\"P000000001\"",
+      "*arg3": "\"false\""
+    },
+    "result": {
+      "id": "P000000001",
+      "managers": {
+        "users": [
+          "psuppers",
+          "opalmen"
+        ],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": [
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          }
+        ]
+      },
+      "contributors": {
+        "users": [],
+        "groups": [
+          "datahub"
+        ],
+        "groupObjects": [
+          {
+            "groupName": "datahub",
+            "groupId": "10108",
+            "displayName": "DataHub",
+            "description": "It's DataHub! The place to store your data."
+          }
+        ],
+        "userObjects": []
+      },
+      "viewers": {
+        "users": [],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": []
+      },
+      "title": "(UM) Test project #01",
+      "resource": "passRescUM01",
+      "collectionMetadataSchemas": "DataHub_general_schema,DataHub_extended_schema"
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "list_project_contributors",
+    "params": {
+      "*arg2": "\"P000000001\"",
+      "*arg3": "\"true\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "users": [
+        "psuppers",
+        "opalmen"
+      ],
+      "groups": [
+        "datahub"
+      ],
+      "groupObjects": [
+        {
+          "groupName": "datahub",
+          "groupId": "10108",
+          "displayName": "DataHub",
+          "description": "It's DataHub! The place to store your data."
+        }
+      ],
+      "userObjects": [
+        {
+          "userName": "psuppers",
+          "userId": "10059",
+          "displayName": "Pascal Suppers"
+        },
+        {
+          "userName": "opalmen",
+          "userId": "10069",
+          "displayName": "Olav Palmen"
+        }
+      ]
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_project_contributors_metadata",
+    "params": {
+      "*arg2": "\"P000000001\""
+    },
+    "result": {
+      "principalInvestigator": {
+        "username": "psuppers",
+        "email": "p.suppers@maastrichtuniversity.nl",
+        "displayName": "Pascal Suppers",
+        "givenName": "Pascal",
+        "familyName": "Suppers"
+      },
+      "dataSteward": {
+        "username": "opalmen",
+        "email": "o.palmen@maastrichtuniversity.nl",
+        "displayName": "Olav Palmen",
+        "givenName": "Olav",
+        "familyName": "Palmen"
+      }
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_project_process_activity",
+    "params": {
+      "*arg2": "\"P000000001\""
+    },
+    "result": {
+      "has_process_activity": false,
+      "has_active_collection": false
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_project_resource_availability",
+    "params": {
+      "*arg2": "\"P000000001\"",
+      "*arg3": "\"true\"",
+      "*arg4": "\"true\"",
+      "*arg5": "\"true\""
+    },
+    "result": true
+  },
+  {
+    "user": "admin",
+    "rule": "list_collections",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001\""
+    },
+    "result": []
+  },
+  {
+    "user": "admin",
+    "rule": "get_collection_size_per_resource",
+    "params": {
+      "*arg2": "\"P000000001\""
+    },
+    "result": {}
+  },
+  {
+    "user": "admin",
+    "rule": "detailsProjectCollection",
+    "params": {
+      "*arg2": "\"P000000001\"",
+      "*arg3": "\"C000000001\"",
+      "*arg4": "\"true\""
+    },
+    "result": {
+      "project": "P000000001",
+      "collection": "C000000001",
+      "enableArchive": "true",
+      "enableUnarchive": "true",
+      "creator": "N/A",
+      "numFiles": "N/A",
+      "PID": "no-PID-set",
+      "byteSize": 0,
+      "managers": {
+        "users": [
+          "psuppers",
+          "opalmen"
+        ],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": [
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          }
+        ]
+      },
+      "contributors": {
+        "users": [
+          "psuppers",
+          "opalmen",
+          "service-pid"
+        ],
+        "groups": [
+          "datahub"
+        ],
+        "groupObjects": [
+          {
+            "groupName": "datahub",
+            "groupId": "10108",
+            "displayName": "DataHub",
+            "description": "It's DataHub! The place to store your data."
+          }
+        ],
+        "userObjects": [
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          },
+          {
+            "userName": "service-pid",
+            "userId": "10093",
+            "displayName": "service-pid"
+          }
+        ]
+      },
+      "viewers": {
+        "users": [
+          "psuppers",
+          "opalmen",
+          "service-pid",
+          "service-disqover"
+        ],
+        "groups": [
+          "datahub"
+        ],
+        "groupObjects": [
+          {
+            "groupName": "datahub",
+            "groupId": "10108",
+            "displayName": "DataHub",
+            "description": "It's DataHub! The place to store your data."
+          }
+        ],
+        "userObjects": [
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          },
+          {
+            "userName": "service-pid",
+            "userId": "10093",
+            "displayName": "service-pid"
+          },
+          {
+            "userName": "service-disqover",
+            "userId": "10096",
+            "displayName": "service-disqover"
+          }
+        ]
+      },
+      "title": "N/A",
+      "externals": "no-externalPID-set"
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_project_collection_process_activity",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\""
+    },
+    "result": false
+  },
+  {
+    "user": "admin",
+    "rule": "get_collection_tree",
+    "params": {
+      "*arg2": "\"P000000001/C000000001\""
+    },
+    "result": []
+  },
+  {
+    "user": "admin",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"latest_version_number\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"title\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"accessRestriction\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"dataDeletionState\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"enableArchive\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"enableUnarchive\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"schemaName\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"schemaVersion\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_project_details",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002\"",
+      "*arg3": "\"false\""
+    },
+    "result": {
+      "path": "/nlmumc/projects/P000000002",
+      "project": "P000000002",
+      "contributors": {
+        "users": [],
+        "groups": [
+          "datahub"
+        ],
+        "groupObjects": [
+          {
+            "groupName": "datahub",
+            "groupId": "10108",
+            "displayName": "DataHub",
+            "description": "It's DataHub! The place to store your data."
+          }
+        ],
+        "userObjects": []
+      },
+      "managers": {
+        "users": [
+          "psuppers",
+          "opalmen"
+        ],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": [
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          }
+        ]
+      },
+      "viewers": {
+        "users": [],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": []
+      },
+      "title": "(UM) Test project #02",
+      "enableArchive": "true",
+      "enableUnarchive": "true",
+      "enableContributorEditMetadata": "false",
+      "description": "",
+      "respCostCenter": "UM-01234567890X",
+      "storageQuotaGiB": "10",
+      "collectionMetadataSchemas": "DataHub_general_schema",
+      "enableDropzoneSharing": "true",
+      "principalInvestigatorDisplayName": "Pascal Suppers",
+      "dataStewardDisplayName": "Olav Palmen",
+      "has_financial_view_access": false,
+      "dataSizeGiB": 0.0
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_project_acl_for_manager",
+    "params": {
+      "*arg2": "\"P000000002\"",
+      "*arg3": "\"false\""
+    },
+    "result": []
+  },
+  {
+    "user": "admin",
+    "rule": "get_contributing_project",
+    "params": {
+      "*arg2": "\"P000000002\"",
+      "*arg3": "\"false\""
+    },
+    "result": {
+      "id": "P000000002",
+      "managers": {
+        "users": [
+          "psuppers",
+          "opalmen"
+        ],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": [
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          }
+        ]
+      },
+      "contributors": {
+        "users": [],
+        "groups": [
+          "datahub"
+        ],
+        "groupObjects": [
+          {
+            "groupName": "datahub",
+            "groupId": "10108",
+            "displayName": "DataHub",
+            "description": "It's DataHub! The place to store your data."
+          }
+        ],
+        "userObjects": []
+      },
+      "viewers": {
+        "users": [],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": []
+      },
+      "title": "(UM) Test project #02",
+      "resource": "passRescUM01",
+      "collectionMetadataSchemas": "DataHub_general_schema"
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "list_project_contributors",
+    "params": {
+      "*arg2": "\"P000000002\"",
+      "*arg3": "\"true\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "users": [
+        "psuppers",
+        "opalmen"
+      ],
+      "groups": [
+        "datahub"
+      ],
+      "groupObjects": [
+        {
+          "groupName": "datahub",
+          "groupId": "10108",
+          "displayName": "DataHub",
+          "description": "It's DataHub! The place to store your data."
+        }
+      ],
+      "userObjects": [
+        {
+          "userName": "psuppers",
+          "userId": "10059",
+          "displayName": "Pascal Suppers"
+        },
+        {
+          "userName": "opalmen",
+          "userId": "10069",
+          "displayName": "Olav Palmen"
+        }
+      ]
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_project_contributors_metadata",
+    "params": {
+      "*arg2": "\"P000000002\""
+    },
+    "result": {
+      "principalInvestigator": {
+        "username": "psuppers",
+        "email": "p.suppers@maastrichtuniversity.nl",
+        "displayName": "Pascal Suppers",
+        "givenName": "Pascal",
+        "familyName": "Suppers"
+      },
+      "dataSteward": {
+        "username": "opalmen",
+        "email": "o.palmen@maastrichtuniversity.nl",
+        "displayName": "Olav Palmen",
+        "givenName": "Olav",
+        "familyName": "Palmen"
+      }
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_project_process_activity",
+    "params": {
+      "*arg2": "\"P000000002\""
+    },
+    "result": {
+      "has_process_activity": false,
+      "has_active_collection": false
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_project_resource_availability",
+    "params": {
+      "*arg2": "\"P000000002\"",
+      "*arg3": "\"true\"",
+      "*arg4": "\"true\"",
+      "*arg5": "\"true\""
+    },
+    "result": true
+  },
+  {
+    "user": "admin",
+    "rule": "list_collections",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002\""
+    },
+    "result": []
+  },
+  {
+    "user": "admin",
+    "rule": "get_collection_size_per_resource",
+    "params": {
+      "*arg2": "\"P000000002\""
+    },
+    "result": {}
+  },
+  {
+    "user": "admin",
+    "rule": "detailsProjectCollection",
+    "params": {
+      "*arg2": "\"P000000002\"",
+      "*arg3": "\"C000000001\"",
+      "*arg4": "\"true\""
+    },
+    "result": {
+      "project": "P000000002",
+      "collection": "C000000001",
+      "enableArchive": "true",
+      "enableUnarchive": "true",
+      "creator": "N/A",
+      "numFiles": "N/A",
+      "PID": "no-PID-set",
+      "byteSize": 0,
+      "managers": {
+        "users": [
+          "psuppers",
+          "opalmen"
+        ],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": [
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          }
+        ]
+      },
+      "contributors": {
+        "users": [
+          "psuppers",
+          "opalmen",
+          "service-pid"
+        ],
+        "groups": [
+          "datahub"
+        ],
+        "groupObjects": [
+          {
+            "groupName": "datahub",
+            "groupId": "10108",
+            "displayName": "DataHub",
+            "description": "It's DataHub! The place to store your data."
+          }
+        ],
+        "userObjects": [
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          },
+          {
+            "userName": "service-pid",
+            "userId": "10093",
+            "displayName": "service-pid"
+          }
+        ]
+      },
+      "viewers": {
+        "users": [
+          "psuppers",
+          "opalmen",
+          "service-pid",
+          "service-disqover"
+        ],
+        "groups": [
+          "datahub"
+        ],
+        "groupObjects": [
+          {
+            "groupName": "datahub",
+            "groupId": "10108",
+            "displayName": "DataHub",
+            "description": "It's DataHub! The place to store your data."
+          }
+        ],
+        "userObjects": [
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          },
+          {
+            "userName": "service-pid",
+            "userId": "10093",
+            "displayName": "service-pid"
+          },
+          {
+            "userName": "service-disqover",
+            "userId": "10096",
+            "displayName": "service-disqover"
+          }
+        ]
+      },
+      "title": "N/A",
+      "externals": "no-externalPID-set"
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_project_collection_process_activity",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\""
+    },
+    "result": false
+  },
+  {
+    "user": "admin",
+    "rule": "get_collection_tree",
+    "params": {
+      "*arg2": "\"P000000002/C000000001\""
+    },
+    "result": []
+  },
+  {
+    "user": "admin",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"latest_version_number\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"title\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"accessRestriction\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"dataDeletionState\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"enableArchive\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"enableUnarchive\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"schemaName\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "admin",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"schemaVersion\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_users",
+    "params": {
+      "*arg2": "\"false\""
+    },
+    "result": [
+      {
+        "userName": "auser",
+        "userId": "10084",
+        "displayName": "Additional User newly created in LDAP"
+      },
+      {
+        "userName": "dlinssen",
+        "userId": "10044",
+        "displayName": "Dean Linssen"
+      },
+      {
+        "userName": "dlinssen2",
+        "userId": "10049",
+        "displayName": "Dean Linssen (MUMC+)"
+      },
+      {
+        "userName": "dtheuniss",
+        "userId": "10034",
+        "displayName": "Dani\u00ebl Theunissen"
+      },
+      {
+        "userName": "jmelius",
+        "userId": "10039",
+        "displayName": "Jonathan M\u00e9lius"
+      },
+      {
+        "userName": "kgusta",
+        "userId": "10064",
+        "displayName": "Kristine Gusta"
+      },
+      {
+        "userName": "minimalist",
+        "userId": "10074",
+        "displayName": "minimalist"
+      },
+      {
+        "userName": "opalmen",
+        "userId": "10069",
+        "displayName": "Olav Palmen"
+      },
+      {
+        "userName": "psuppers",
+        "userId": "10059",
+        "displayName": "Pascal Suppers"
+      },
+      {
+        "userName": "pvanschay2",
+        "userId": "10054",
+        "displayName": "Paul van Schayck"
+      },
+      {
+        "userName": "rjuhasz",
+        "userId": "10029",
+        "displayName": "Ricardo Juhasz"
+      },
+      {
+        "userName": "rvoncken",
+        "userId": "10079",
+        "displayName": "Rickest Rick"
+      }
+    ]
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_groups",
+    "params": {
+      "*arg2": "\"false\""
+    },
+    "result": [
+      {
+        "name": "datahub",
+        "groupId": "10108",
+        "displayName": "DataHub",
+        "description": "It's DataHub! The place to store your data."
+      },
+      {
+        "name": "m4i-massspec",
+        "groupId": "10260",
+        "displayName": "m4i-massspec",
+        "description": ""
+      },
+      {
+        "name": "m4i-nanoscopy",
+        "groupId": "10105",
+        "displayName": "Nanoscopy",
+        "description": "CO for all of nanoscopy"
+      },
+      {
+        "name": "m4i-nanoscopy-phd0815",
+        "groupId": "10267",
+        "displayName": "Novel approach for smashing ions",
+        "description": "CO for PhD project of P7000815"
+      },
+      {
+        "name": "scannexus",
+        "groupId": "10114",
+        "displayName": "SCANNEXUS",
+        "description": "UM-SCANNEXUS"
+      }
+    ]
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_data_stewards",
+    "params": {},
+    "result": [
+      {
+        "userName": "opalmen",
+        "userId": "10069",
+        "displayName": "Olav Palmen"
+      },
+      {
+        "userName": "pvanschay2",
+        "userId": "10054",
+        "displayName": "Paul van Schayck"
+      }
+    ]
+  },
+  {
+    "user": "dlinssen",
+    "rule": "getIngestResources",
+    "params": {},
+    "result": [
+      {
+        "name": "ires-hnas-azmResource",
+        "comment": "AZM-UBUNTU-INGEST-RESOURCE"
+      },
+      {
+        "name": "ires-hnas-umResource",
+        "comment": "UM-UBUNTU-INGEST-RESOURCE"
+      }
+    ]
+  },
+  {
+    "user": "dlinssen",
+    "rule": "getDestinationResources",
+    "params": {},
+    "result": [
+      {
+        "name": "passRescUM01",
+        "comment": "Passthru-resource-for-UM"
+      },
+      {
+        "name": "replRescAZM02",
+        "comment": "Replicated-resource-for-AZM"
+      },
+      {
+        "name": "replRescUMCeph01",
+        "comment": "Replicated-Ceph-resource-for-UM"
+      }
+    ]
+  },
+  {
+    "user": "dlinssen",
+    "rule": "optimized_list_projects",
+    "params": {},
+    "result": [
+      {
+        "managers": [
+          "10059",
+          "10069"
+        ],
+        "contributors": [
+          "10108"
+        ],
+        "viewers": [],
+        "path": "P000000001",
+        "dataSizeGiB": 0.0,
+        "OBI:0000103": "psuppers",
+        "archiveDestinationResource": "arcRescSURF01",
+        "authorizationPeriodEndDate": "1-1-2018",
+        "collectionMetadataSchemas": "DataHub_general_schema,DataHub_extended_schema",
+        "dataRetentionPeriodEndDate": "1-1-2018",
+        "dataSteward": "opalmen",
+        "enableArchive": "true",
+        "enableContributorEditMetadata": "false",
+        "enableDropzoneSharing": "true",
+        "enableUnarchive": "true",
+        "ingestResource": "ires-hnas-umResource",
+        "latestProjectCollectionNumber": "0",
+        "resource": "passRescUM01",
+        "responsibleCostCenter": "UM-01234567890X",
+        "storageQuotaGb": "10",
+        "title": "(UM) Test project #01"
+      },
+      {
+        "managers": [
+          "10059",
+          "10069"
+        ],
+        "contributors": [
+          "10108"
+        ],
+        "viewers": [],
+        "path": "P000000002",
+        "dataSizeGiB": 0.0,
+        "OBI:0000103": "psuppers",
+        "archiveDestinationResource": "arcRescSURF01",
+        "authorizationPeriodEndDate": "1-1-2018",
+        "collectionMetadataSchemas": "DataHub_general_schema",
+        "dataRetentionPeriodEndDate": "1-1-2018",
+        "dataSteward": "opalmen",
+        "enableArchive": "true",
+        "enableContributorEditMetadata": "false",
+        "enableDropzoneSharing": "true",
+        "enableUnarchive": "true",
+        "ingestResource": "ires-hnas-umResource",
+        "latestProjectCollectionNumber": "0",
+        "resource": "passRescUM01",
+        "responsibleCostCenter": "UM-01234567890X",
+        "storageQuotaGb": "10",
+        "title": "(UM) Test project #02"
+      },
+      {
+        "managers": [
+          "10044",
+          "10069"
+        ],
+        "contributors": [
+          "10114"
+        ],
+        "viewers": [
+          "10108"
+        ],
+        "path": "P000000005",
+        "dataSizeGiB": 0.0,
+        "OBI:0000103": "dlinssen",
+        "archiveDestinationResource": "arcRescSURF01",
+        "authorizationPeriodEndDate": "1-1-2018",
+        "collectionMetadataSchemas": "DataHub_general_schema",
+        "dataRetentionPeriodEndDate": "1-1-2018",
+        "dataSteward": "opalmen",
+        "enableArchive": "true",
+        "enableContributorEditMetadata": "false",
+        "enableDropzoneSharing": "true",
+        "enableUnarchive": "true",
+        "ingestResource": "ires-hnas-umResource",
+        "latestProjectCollectionNumber": "0",
+        "resource": "passRescUM01",
+        "responsibleCostCenter": "UM-01234567890X",
+        "storageQuotaGb": "10",
+        "title": "(ScanNexus) Test project #01"
+      },
+      {
+        "managers": [
+          "10054",
+          "10059"
+        ],
+        "contributors": [
+          "10108"
+        ],
+        "viewers": [],
+        "path": "P000000006",
+        "dataSizeGiB": 0.0,
+        "OBI:0000103": "psuppers",
+        "archiveDestinationResource": "arcRescSURF01",
+        "authorizationPeriodEndDate": "1-1-2018",
+        "collectionMetadataSchemas": "DataHub_general_schema,DataHub_extended_schema",
+        "dataRetentionPeriodEndDate": "1-1-2018",
+        "dataSteward": "pvanschay2",
+        "enableArchive": "true",
+        "enableContributorEditMetadata": "false",
+        "enableDropzoneSharing": "true",
+        "enableUnarchive": "true",
+        "ingestResource": "ires-hnas-umResource",
+        "latestProjectCollectionNumber": "0",
+        "resource": "replRescUMCeph01",
+        "responsibleCostCenter": "UM-01234567890R",
+        "storageQuotaGb": "10",
+        "title": "(S3) Test project #01"
+      },
+      {
+        "managers": [
+          "10054",
+          "10059"
+        ],
+        "contributors": [
+          "10108"
+        ],
+        "viewers": [],
+        "path": "P000000007",
+        "dataSizeGiB": 0.0,
+        "OBI:0000103": "psuppers",
+        "archiveDestinationResource": "arcRescSURF01",
+        "authorizationPeriodEndDate": "1-1-2018",
+        "collectionMetadataSchemas": "DataHub_general_schema",
+        "dataRetentionPeriodEndDate": "1-1-2018",
+        "dataSteward": "pvanschay2",
+        "enableArchive": "true",
+        "enableContributorEditMetadata": "false",
+        "enableDropzoneSharing": "true",
+        "enableUnarchive": "true",
+        "ingestResource": "ires-hnas-umResource",
+        "latestProjectCollectionNumber": "0",
+        "resource": "replRescUMCeph01",
+        "responsibleCostCenter": "UM-01234567890R",
+        "storageQuotaGb": "10",
+        "title": "(S3) Test project #02"
+      },
+      {
+        "managers": [
+          "10044",
+          "10059",
+          "10069"
+        ],
+        "contributors": [
+          "10108"
+        ],
+        "viewers": [],
+        "path": "P000000008",
+        "dataSizeGiB": 0.0,
+        "OBI:0000103": "psuppers",
+        "archiveDestinationResource": "arcRescSURF01",
+        "authorizationPeriodEndDate": "1-1-2018",
+        "collectionMetadataSchemas": "DataHub_general_schema,DataHub_extended_schema",
+        "dataRetentionPeriodEndDate": "1-1-2018",
+        "dataSteward": "opalmen",
+        "enableArchive": "true",
+        "enableContributorEditMetadata": "false",
+        "enableDropzoneSharing": "true",
+        "enableUnarchive": "true",
+        "ingestResource": "ires-hnas-azmResource",
+        "latestProjectCollectionNumber": "0",
+        "resource": "replRescAZM02",
+        "responsibleCostCenter": "AZM-123456",
+        "storageQuotaGb": "10",
+        "title": "(azM) Test project #01"
+      },
+      {
+        "managers": [
+          "10044",
+          "10059",
+          "10069"
+        ],
+        "contributors": [
+          "10108"
+        ],
+        "viewers": [],
+        "path": "P000000009",
+        "dataSizeGiB": 0.0,
+        "OBI:0000103": "psuppers",
+        "archiveDestinationResource": "arcRescSURF01",
+        "authorizationPeriodEndDate": "1-1-2018",
+        "collectionMetadataSchemas": "DataHub_general_schema",
+        "dataRetentionPeriodEndDate": "1-1-2018",
+        "dataSteward": "opalmen",
+        "enableArchive": "true",
+        "enableContributorEditMetadata": "false",
+        "enableDropzoneSharing": "true",
+        "enableUnarchive": "true",
+        "ingestResource": "ires-hnas-azmResource",
+        "latestProjectCollectionNumber": "0",
+        "resource": "replRescAZM02",
+        "responsibleCostCenter": "AZM-123456",
+        "storageQuotaGb": "10",
+        "title": "(azM) Test project #02"
+      }
+    ]
+  },
+  {
+    "user": "dlinssen",
+    "rule": "list_projects_minimal",
+    "params": {},
+    "result": [
+      {
+        "id": "P000000001",
+        "title": "(UM) Test project #01"
+      },
+      {
+        "id": "P000000002",
+        "title": "(UM) Test project #02"
+      },
+      {
+        "id": "P000000005",
+        "title": "(ScanNexus) Test project #01"
+      },
+      {
+        "id": "P000000006",
+        "title": "(S3) Test project #01"
+      },
+      {
+        "id": "P000000007",
+        "title": "(S3) Test project #02"
+      },
+      {
+        "id": "P000000008",
+        "title": "(azM) Test project #01"
+      },
+      {
+        "id": "P000000009",
+        "title": "(azM) Test project #02"
+      }
+    ]
+  },
+  {
+    "user": "dlinssen",
+    "rule": "list_contributing_projects",
+    "params": {
+      "*arg2": "\"false\""
+    },
+    "result": [
+      {
+        "id": "P000000001",
+        "contributors": {
+          "users": [],
+          "groups": [
+            "datahub"
+          ],
+          "groupObjects": [
+            {
+              "groupName": "datahub",
+              "groupId": "10108",
+              "displayName": "DataHub",
+              "description": "It's DataHub! The place to store your data."
+            }
+          ],
+          "userObjects": []
+        },
+        "managers": {
+          "users": [
+            "psuppers",
+            "opalmen"
+          ],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": [
+            {
+              "userName": "psuppers",
+              "userId": "10059",
+              "displayName": "Pascal Suppers"
+            },
+            {
+              "userName": "opalmen",
+              "userId": "10069",
+              "displayName": "Olav Palmen"
+            }
+          ]
+        },
+        "viewers": {
+          "users": [],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": []
+        },
+        "collectionMetadataSchemas": "DataHub_general_schema,DataHub_extended_schema",
+        "resource": "passRescUM01",
+        "title": "(UM) Test project #01"
+      },
+      {
+        "id": "P000000002",
+        "contributors": {
+          "users": [],
+          "groups": [
+            "datahub"
+          ],
+          "groupObjects": [
+            {
+              "groupName": "datahub",
+              "groupId": "10108",
+              "displayName": "DataHub",
+              "description": "It's DataHub! The place to store your data."
+            }
+          ],
+          "userObjects": []
+        },
+        "managers": {
+          "users": [
+            "psuppers",
+            "opalmen"
+          ],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": [
+            {
+              "userName": "psuppers",
+              "userId": "10059",
+              "displayName": "Pascal Suppers"
+            },
+            {
+              "userName": "opalmen",
+              "userId": "10069",
+              "displayName": "Olav Palmen"
+            }
+          ]
+        },
+        "viewers": {
+          "users": [],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": []
+        },
+        "collectionMetadataSchemas": "DataHub_general_schema",
+        "resource": "passRescUM01",
+        "title": "(UM) Test project #02"
+      },
+      {
+        "id": "P000000005",
+        "contributors": {
+          "users": [],
+          "groups": [
+            "scannexus"
+          ],
+          "groupObjects": [
+            {
+              "groupName": "scannexus",
+              "groupId": "10114",
+              "displayName": "SCANNEXUS",
+              "description": "UM-SCANNEXUS"
+            }
+          ],
+          "userObjects": []
+        },
+        "managers": {
+          "users": [
+            "dlinssen",
+            "opalmen"
+          ],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": [
+            {
+              "userName": "dlinssen",
+              "userId": "10044",
+              "displayName": "Dean Linssen"
+            },
+            {
+              "userName": "opalmen",
+              "userId": "10069",
+              "displayName": "Olav Palmen"
+            }
+          ]
+        },
+        "viewers": {
+          "users": [],
+          "groups": [
+            "datahub"
+          ],
+          "groupObjects": [
+            {
+              "groupName": "datahub",
+              "groupId": "10108",
+              "displayName": "DataHub",
+              "description": "It's DataHub! The place to store your data."
+            }
+          ],
+          "userObjects": []
+        },
+        "collectionMetadataSchemas": "DataHub_general_schema",
+        "resource": "passRescUM01",
+        "title": "(ScanNexus) Test project #01"
+      },
+      {
+        "id": "P000000006",
+        "contributors": {
+          "users": [],
+          "groups": [
+            "datahub"
+          ],
+          "groupObjects": [
+            {
+              "groupName": "datahub",
+              "groupId": "10108",
+              "displayName": "DataHub",
+              "description": "It's DataHub! The place to store your data."
+            }
+          ],
+          "userObjects": []
+        },
+        "managers": {
+          "users": [
+            "pvanschay2",
+            "psuppers"
+          ],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": [
+            {
+              "userName": "pvanschay2",
+              "userId": "10054",
+              "displayName": "Paul van Schayck"
+            },
+            {
+              "userName": "psuppers",
+              "userId": "10059",
+              "displayName": "Pascal Suppers"
+            }
+          ]
+        },
+        "viewers": {
+          "users": [],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": []
+        },
+        "collectionMetadataSchemas": "DataHub_general_schema,DataHub_extended_schema",
+        "resource": "replRescUMCeph01",
+        "title": "(S3) Test project #01"
+      },
+      {
+        "id": "P000000007",
+        "contributors": {
+          "users": [],
+          "groups": [
+            "datahub"
+          ],
+          "groupObjects": [
+            {
+              "groupName": "datahub",
+              "groupId": "10108",
+              "displayName": "DataHub",
+              "description": "It's DataHub! The place to store your data."
+            }
+          ],
+          "userObjects": []
+        },
+        "managers": {
+          "users": [
+            "pvanschay2",
+            "psuppers"
+          ],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": [
+            {
+              "userName": "pvanschay2",
+              "userId": "10054",
+              "displayName": "Paul van Schayck"
+            },
+            {
+              "userName": "psuppers",
+              "userId": "10059",
+              "displayName": "Pascal Suppers"
+            }
+          ]
+        },
+        "viewers": {
+          "users": [],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": []
+        },
+        "collectionMetadataSchemas": "DataHub_general_schema",
+        "resource": "replRescUMCeph01",
+        "title": "(S3) Test project #02"
+      },
+      {
+        "id": "P000000008",
+        "contributors": {
+          "users": [],
+          "groups": [
+            "datahub"
+          ],
+          "groupObjects": [
+            {
+              "groupName": "datahub",
+              "groupId": "10108",
+              "displayName": "DataHub",
+              "description": "It's DataHub! The place to store your data."
+            }
+          ],
+          "userObjects": []
+        },
+        "managers": {
+          "users": [
+            "dlinssen",
+            "psuppers",
+            "opalmen"
+          ],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": [
+            {
+              "userName": "dlinssen",
+              "userId": "10044",
+              "displayName": "Dean Linssen"
+            },
+            {
+              "userName": "psuppers",
+              "userId": "10059",
+              "displayName": "Pascal Suppers"
+            },
+            {
+              "userName": "opalmen",
+              "userId": "10069",
+              "displayName": "Olav Palmen"
+            }
+          ]
+        },
+        "viewers": {
+          "users": [],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": []
+        },
+        "collectionMetadataSchemas": "DataHub_general_schema,DataHub_extended_schema",
+        "resource": "replRescAZM02",
+        "title": "(azM) Test project #01"
+      },
+      {
+        "id": "P000000009",
+        "contributors": {
+          "users": [],
+          "groups": [
+            "datahub"
+          ],
+          "groupObjects": [
+            {
+              "groupName": "datahub",
+              "groupId": "10108",
+              "displayName": "DataHub",
+              "description": "It's DataHub! The place to store your data."
+            }
+          ],
+          "userObjects": []
+        },
+        "managers": {
+          "users": [
+            "dlinssen",
+            "psuppers",
+            "opalmen"
+          ],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": [
+            {
+              "userName": "dlinssen",
+              "userId": "10044",
+              "displayName": "Dean Linssen"
+            },
+            {
+              "userName": "psuppers",
+              "userId": "10059",
+              "displayName": "Pascal Suppers"
+            },
+            {
+              "userName": "opalmen",
+              "userId": "10069",
+              "displayName": "Olav Palmen"
+            }
+          ]
+        },
+        "viewers": {
+          "users": [],
+          "groups": [],
+          "groupObjects": [],
+          "userObjects": []
+        },
+        "collectionMetadataSchemas": "DataHub_general_schema",
+        "resource": "replRescAZM02",
+        "title": "(azM) Test project #02"
+      }
+    ]
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_projects_finance",
+    "params": {},
+    "result": [
+      {
+        "project_cost_yearly": 0,
+        "project_cost_monthly": 0.0,
+        "collections": [],
+        "project_size_gib": 0,
+        "project_size_gb": 0.0,
+        "project_id": "P000000005",
+        "budget_number": "UM-01234567890X",
+        "title": "(ScanNexus) Test project #01"
+      }
+    ]
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_user_active_processes",
+    "params": {
+      "*arg2": "\"true\"",
+      "*arg3": "\"true\"",
+      "*arg4": "\"true\""
+    },
+    "result": {
+      "completed": [],
+      "error": [],
+      "in_progress": [],
+      "open": []
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_temporary_password_lifetime",
+    "params": {},
+    "result": 7776000
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_user_group_memberships",
+    "params": {
+      "*arg2": "\"true\"",
+      "*arg3": "\"dlinssen\""
+    },
+    "result": [
+      {
+        "groupId": "10026",
+        "name": "DH-ingest",
+        "displayName": "DH-ingest",
+        "description": ""
+      },
+      {
+        "groupId": "10111",
+        "name": "DH-project-admins",
+        "displayName": "DH-project-admins",
+        "description": ""
+      },
+      {
+        "groupId": "10108",
+        "name": "datahub",
+        "displayName": "DataHub",
+        "description": "It's DataHub! The place to store your data."
+      },
+      {
+        "groupId": "10001",
+        "name": "public",
+        "displayName": "public",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_user_internal_affiliation_status",
+    "params": {
+      "*arg2": "\"dlinssen\""
+    },
+    "result": true
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_user_attribute_value",
+    "params": {
+      "*arg2": "\"dlinssen\"",
+      "*arg3": "\"lastToSAcceptedTimestamp\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "value": "1618476699"
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_user_attribute_value",
+    "params": {
+      "*arg2": "\"dlinssen\"",
+      "*arg3": "\"displayName\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "value": "Dean Linssen"
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_user_attribute_value",
+    "params": {
+      "*arg2": "\"dlinssen\"",
+      "*arg3": "\"email\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "value": "d.linssen@maastrichtuniversity.nl"
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_user_group_memberships",
+    "params": {
+      "*arg2": "\"true\"",
+      "*arg3": "\"minimalist\""
+    },
+    "result": [
+      {
+        "groupId": "10026",
+        "name": "DH-ingest",
+        "displayName": "DH-ingest",
+        "description": ""
+      },
+      {
+        "groupId": "10001",
+        "name": "public",
+        "displayName": "public",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_user_internal_affiliation_status",
+    "params": {
+      "*arg2": "\"minimalist\""
+    },
+    "result": false
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_user_attribute_value",
+    "params": {
+      "*arg2": "\"minimalist\"",
+      "*arg3": "\"lastToSAcceptedTimestamp\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_user_attribute_value",
+    "params": {
+      "*arg2": "\"minimalist\"",
+      "*arg3": "\"displayName\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_user_attribute_value",
+    "params": {
+      "*arg2": "\"minimalist\"",
+      "*arg3": "\"email\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_project_details",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001\"",
+      "*arg3": "\"false\""
+    },
+    "result": {
+      "path": "/nlmumc/projects/P000000001",
+      "project": "P000000001",
+      "contributors": {
+        "users": [],
+        "groups": [
+          "datahub"
+        ],
+        "groupObjects": [
+          {
+            "groupName": "datahub",
+            "groupId": "10108",
+            "displayName": "DataHub",
+            "description": "It's DataHub! The place to store your data."
+          }
+        ],
+        "userObjects": []
+      },
+      "managers": {
+        "users": [
+          "psuppers",
+          "opalmen"
+        ],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": [
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          }
+        ]
+      },
+      "viewers": {
+        "users": [],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": []
+      },
+      "title": "(UM) Test project #01",
+      "enableArchive": "true",
+      "enableUnarchive": "true",
+      "enableContributorEditMetadata": "false",
+      "description": "",
+      "respCostCenter": "UM-01234567890X",
+      "storageQuotaGiB": "10",
+      "collectionMetadataSchemas": "DataHub_general_schema,DataHub_extended_schema",
+      "enableDropzoneSharing": "true",
+      "principalInvestigatorDisplayName": "Pascal Suppers",
+      "dataStewardDisplayName": "Olav Palmen",
+      "has_financial_view_access": false,
+      "dataSizeGiB": 0.0
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_project_acl_for_manager",
+    "params": {
+      "*arg2": "\"P000000001\"",
+      "*arg3": "\"false\""
+    },
+    "result": []
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_contributing_project",
+    "params": {
+      "*arg2": "\"P000000001\"",
+      "*arg3": "\"false\""
+    },
+    "result": {
+      "id": "P000000001",
+      "managers": {
+        "users": [
+          "psuppers",
+          "opalmen"
+        ],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": [
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          }
+        ]
+      },
+      "contributors": {
+        "users": [],
+        "groups": [
+          "datahub"
+        ],
+        "groupObjects": [
+          {
+            "groupName": "datahub",
+            "groupId": "10108",
+            "displayName": "DataHub",
+            "description": "It's DataHub! The place to store your data."
+          }
+        ],
+        "userObjects": []
+      },
+      "viewers": {
+        "users": [],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": []
+      },
+      "title": "(UM) Test project #01",
+      "resource": "passRescUM01",
+      "collectionMetadataSchemas": "DataHub_general_schema,DataHub_extended_schema"
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "list_project_contributors",
+    "params": {
+      "*arg2": "\"P000000001\"",
+      "*arg3": "\"true\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "users": [
+        "psuppers",
+        "opalmen"
+      ],
+      "groups": [
+        "datahub"
+      ],
+      "groupObjects": [
+        {
+          "groupName": "datahub",
+          "groupId": "10108",
+          "displayName": "DataHub",
+          "description": "It's DataHub! The place to store your data."
+        }
+      ],
+      "userObjects": [
+        {
+          "userName": "psuppers",
+          "userId": "10059",
+          "displayName": "Pascal Suppers"
+        },
+        {
+          "userName": "opalmen",
+          "userId": "10069",
+          "displayName": "Olav Palmen"
+        }
+      ]
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_project_contributors_metadata",
+    "params": {
+      "*arg2": "\"P000000001\""
+    },
+    "result": {
+      "principalInvestigator": {
+        "username": "psuppers",
+        "email": "p.suppers@maastrichtuniversity.nl",
+        "displayName": "Pascal Suppers",
+        "givenName": "Pascal",
+        "familyName": "Suppers"
+      },
+      "dataSteward": {
+        "username": "opalmen",
+        "email": "o.palmen@maastrichtuniversity.nl",
+        "displayName": "Olav Palmen",
+        "givenName": "Olav",
+        "familyName": "Palmen"
+      }
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_project_process_activity",
+    "params": {
+      "*arg2": "\"P000000001\""
+    },
+    "result": {
+      "has_process_activity": false,
+      "has_active_collection": false
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_project_resource_availability",
+    "params": {
+      "*arg2": "\"P000000001\"",
+      "*arg3": "\"true\"",
+      "*arg4": "\"true\"",
+      "*arg5": "\"true\""
+    },
+    "result": true
+  },
+  {
+    "user": "dlinssen",
+    "rule": "list_collections",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001\""
+    },
+    "result": []
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_collection_size_per_resource",
+    "params": {
+      "*arg2": "\"P000000001\""
+    },
+    "result": {}
+  },
+  {
+    "user": "dlinssen",
+    "rule": "detailsProjectCollection",
+    "params": {
+      "*arg2": "\"P000000001\"",
+      "*arg3": "\"C000000001\"",
+      "*arg4": "\"true\""
+    },
+    "result": {
+      "project": "P000000001",
+      "collection": "C000000001",
+      "enableArchive": "true",
+      "enableUnarchive": "true",
+      "creator": "N/A",
+      "numFiles": "N/A",
+      "PID": "no-PID-set",
+      "byteSize": 0,
+      "managers": {
+        "users": [
+          "psuppers",
+          "opalmen"
+        ],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": [
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          }
+        ]
+      },
+      "contributors": {
+        "users": [
+          "psuppers",
+          "opalmen",
+          "service-pid"
+        ],
+        "groups": [
+          "datahub"
+        ],
+        "groupObjects": [
+          {
+            "groupName": "datahub",
+            "groupId": "10108",
+            "displayName": "DataHub",
+            "description": "It's DataHub! The place to store your data."
+          }
+        ],
+        "userObjects": [
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          },
+          {
+            "userName": "service-pid",
+            "userId": "10093",
+            "displayName": "service-pid"
+          }
+        ]
+      },
+      "viewers": {
+        "users": [
+          "psuppers",
+          "opalmen",
+          "service-pid",
+          "service-disqover"
+        ],
+        "groups": [
+          "datahub"
+        ],
+        "groupObjects": [
+          {
+            "groupName": "datahub",
+            "groupId": "10108",
+            "displayName": "DataHub",
+            "description": "It's DataHub! The place to store your data."
+          }
+        ],
+        "userObjects": [
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          },
+          {
+            "userName": "service-pid",
+            "userId": "10093",
+            "displayName": "service-pid"
+          },
+          {
+            "userName": "service-disqover",
+            "userId": "10096",
+            "displayName": "service-disqover"
+          }
+        ]
+      },
+      "title": "N/A",
+      "externals": "no-externalPID-set"
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_project_collection_process_activity",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\""
+    },
+    "result": false
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_collection_tree",
+    "params": {
+      "*arg2": "\"P000000001/C000000001\""
+    },
+    "result": []
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"latest_version_number\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"title\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"accessRestriction\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"dataDeletionState\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"enableArchive\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"enableUnarchive\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"schemaName\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"schemaVersion\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_project_details",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002\"",
+      "*arg3": "\"false\""
+    },
+    "result": {
+      "path": "/nlmumc/projects/P000000002",
+      "project": "P000000002",
+      "contributors": {
+        "users": [],
+        "groups": [
+          "datahub"
+        ],
+        "groupObjects": [
+          {
+            "groupName": "datahub",
+            "groupId": "10108",
+            "displayName": "DataHub",
+            "description": "It's DataHub! The place to store your data."
+          }
+        ],
+        "userObjects": []
+      },
+      "managers": {
+        "users": [
+          "psuppers",
+          "opalmen"
+        ],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": [
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          }
+        ]
+      },
+      "viewers": {
+        "users": [],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": []
+      },
+      "title": "(UM) Test project #02",
+      "enableArchive": "true",
+      "enableUnarchive": "true",
+      "enableContributorEditMetadata": "false",
+      "description": "",
+      "respCostCenter": "UM-01234567890X",
+      "storageQuotaGiB": "10",
+      "collectionMetadataSchemas": "DataHub_general_schema",
+      "enableDropzoneSharing": "true",
+      "principalInvestigatorDisplayName": "Pascal Suppers",
+      "dataStewardDisplayName": "Olav Palmen",
+      "has_financial_view_access": false,
+      "dataSizeGiB": 0.0
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_project_acl_for_manager",
+    "params": {
+      "*arg2": "\"P000000002\"",
+      "*arg3": "\"false\""
+    },
+    "result": []
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_contributing_project",
+    "params": {
+      "*arg2": "\"P000000002\"",
+      "*arg3": "\"false\""
+    },
+    "result": {
+      "id": "P000000002",
+      "managers": {
+        "users": [
+          "psuppers",
+          "opalmen"
+        ],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": [
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          }
+        ]
+      },
+      "contributors": {
+        "users": [],
+        "groups": [
+          "datahub"
+        ],
+        "groupObjects": [
+          {
+            "groupName": "datahub",
+            "groupId": "10108",
+            "displayName": "DataHub",
+            "description": "It's DataHub! The place to store your data."
+          }
+        ],
+        "userObjects": []
+      },
+      "viewers": {
+        "users": [],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": []
+      },
+      "title": "(UM) Test project #02",
+      "resource": "passRescUM01",
+      "collectionMetadataSchemas": "DataHub_general_schema"
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "list_project_contributors",
+    "params": {
+      "*arg2": "\"P000000002\"",
+      "*arg3": "\"true\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "users": [
+        "psuppers",
+        "opalmen"
+      ],
+      "groups": [
+        "datahub"
+      ],
+      "groupObjects": [
+        {
+          "groupName": "datahub",
+          "groupId": "10108",
+          "displayName": "DataHub",
+          "description": "It's DataHub! The place to store your data."
+        }
+      ],
+      "userObjects": [
+        {
+          "userName": "psuppers",
+          "userId": "10059",
+          "displayName": "Pascal Suppers"
+        },
+        {
+          "userName": "opalmen",
+          "userId": "10069",
+          "displayName": "Olav Palmen"
+        }
+      ]
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_project_contributors_metadata",
+    "params": {
+      "*arg2": "\"P000000002\""
+    },
+    "result": {
+      "principalInvestigator": {
+        "username": "psuppers",
+        "email": "p.suppers@maastrichtuniversity.nl",
+        "displayName": "Pascal Suppers",
+        "givenName": "Pascal",
+        "familyName": "Suppers"
+      },
+      "dataSteward": {
+        "username": "opalmen",
+        "email": "o.palmen@maastrichtuniversity.nl",
+        "displayName": "Olav Palmen",
+        "givenName": "Olav",
+        "familyName": "Palmen"
+      }
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_project_process_activity",
+    "params": {
+      "*arg2": "\"P000000002\""
+    },
+    "result": {
+      "has_process_activity": false,
+      "has_active_collection": false
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_project_resource_availability",
+    "params": {
+      "*arg2": "\"P000000002\"",
+      "*arg3": "\"true\"",
+      "*arg4": "\"true\"",
+      "*arg5": "\"true\""
+    },
+    "result": true
+  },
+  {
+    "user": "dlinssen",
+    "rule": "list_collections",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002\""
+    },
+    "result": []
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_collection_size_per_resource",
+    "params": {
+      "*arg2": "\"P000000002\""
+    },
+    "result": {}
+  },
+  {
+    "user": "dlinssen",
+    "rule": "detailsProjectCollection",
+    "params": {
+      "*arg2": "\"P000000002\"",
+      "*arg3": "\"C000000001\"",
+      "*arg4": "\"true\""
+    },
+    "result": {
+      "project": "P000000002",
+      "collection": "C000000001",
+      "enableArchive": "true",
+      "enableUnarchive": "true",
+      "creator": "N/A",
+      "numFiles": "N/A",
+      "PID": "no-PID-set",
+      "byteSize": 0,
+      "managers": {
+        "users": [
+          "psuppers",
+          "opalmen"
+        ],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": [
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          }
+        ]
+      },
+      "contributors": {
+        "users": [
+          "psuppers",
+          "opalmen",
+          "service-pid"
+        ],
+        "groups": [
+          "datahub"
+        ],
+        "groupObjects": [
+          {
+            "groupName": "datahub",
+            "groupId": "10108",
+            "displayName": "DataHub",
+            "description": "It's DataHub! The place to store your data."
+          }
+        ],
+        "userObjects": [
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          },
+          {
+            "userName": "service-pid",
+            "userId": "10093",
+            "displayName": "service-pid"
+          }
+        ]
+      },
+      "viewers": {
+        "users": [
+          "psuppers",
+          "opalmen",
+          "service-pid",
+          "service-disqover"
+        ],
+        "groups": [
+          "datahub"
+        ],
+        "groupObjects": [
+          {
+            "groupName": "datahub",
+            "groupId": "10108",
+            "displayName": "DataHub",
+            "description": "It's DataHub! The place to store your data."
+          }
+        ],
+        "userObjects": [
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          },
+          {
+            "userName": "service-pid",
+            "userId": "10093",
+            "displayName": "service-pid"
+          },
+          {
+            "userName": "service-disqover",
+            "userId": "10096",
+            "displayName": "service-disqover"
+          }
+        ]
+      },
+      "title": "N/A",
+      "externals": "no-externalPID-set"
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_project_collection_process_activity",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\""
+    },
+    "result": false
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_collection_tree",
+    "params": {
+      "*arg2": "\"P000000002/C000000001\""
+    },
+    "result": []
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"latest_version_number\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"title\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"accessRestriction\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"dataDeletionState\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"enableArchive\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"enableUnarchive\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"schemaName\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "dlinssen",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"schemaVersion\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_users",
+    "params": {
+      "*arg2": "\"false\""
+    },
+    "result": [
+      {
+        "userName": "auser",
+        "userId": "10084",
+        "displayName": "Additional User newly created in LDAP"
+      },
+      {
+        "userName": "dlinssen",
+        "userId": "10044",
+        "displayName": "Dean Linssen"
+      },
+      {
+        "userName": "dlinssen2",
+        "userId": "10049",
+        "displayName": "Dean Linssen (MUMC+)"
+      },
+      {
+        "userName": "dtheuniss",
+        "userId": "10034",
+        "displayName": "Dani\u00ebl Theunissen"
+      },
+      {
+        "userName": "jmelius",
+        "userId": "10039",
+        "displayName": "Jonathan M\u00e9lius"
+      },
+      {
+        "userName": "kgusta",
+        "userId": "10064",
+        "displayName": "Kristine Gusta"
+      },
+      {
+        "userName": "minimalist",
+        "userId": "10074",
+        "displayName": "minimalist"
+      },
+      {
+        "userName": "opalmen",
+        "userId": "10069",
+        "displayName": "Olav Palmen"
+      },
+      {
+        "userName": "psuppers",
+        "userId": "10059",
+        "displayName": "Pascal Suppers"
+      },
+      {
+        "userName": "pvanschay2",
+        "userId": "10054",
+        "displayName": "Paul van Schayck"
+      },
+      {
+        "userName": "rjuhasz",
+        "userId": "10029",
+        "displayName": "Ricardo Juhasz"
+      },
+      {
+        "userName": "rvoncken",
+        "userId": "10079",
+        "displayName": "Rickest Rick"
+      }
+    ]
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_groups",
+    "params": {
+      "*arg2": "\"false\""
+    },
+    "result": [
+      {
+        "name": "datahub",
+        "groupId": "10108",
+        "displayName": "DataHub",
+        "description": "It's DataHub! The place to store your data."
+      },
+      {
+        "name": "m4i-massspec",
+        "groupId": "10260",
+        "displayName": "m4i-massspec",
+        "description": ""
+      },
+      {
+        "name": "m4i-nanoscopy",
+        "groupId": "10105",
+        "displayName": "Nanoscopy",
+        "description": "CO for all of nanoscopy"
+      },
+      {
+        "name": "m4i-nanoscopy-phd0815",
+        "groupId": "10267",
+        "displayName": "Novel approach for smashing ions",
+        "description": "CO for PhD project of P7000815"
+      },
+      {
+        "name": "scannexus",
+        "groupId": "10114",
+        "displayName": "SCANNEXUS",
+        "description": "UM-SCANNEXUS"
+      }
+    ]
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_data_stewards",
+    "params": {},
+    "result": [
+      {
+        "userName": "opalmen",
+        "userId": "10069",
+        "displayName": "Olav Palmen"
+      },
+      {
+        "userName": "pvanschay2",
+        "userId": "10054",
+        "displayName": "Paul van Schayck"
+      }
+    ]
+  },
+  {
+    "user": "minimalist",
+    "rule": "getIngestResources",
+    "params": {},
+    "result": [
+      {
+        "name": "ires-hnas-azmResource",
+        "comment": "AZM-UBUNTU-INGEST-RESOURCE"
+      },
+      {
+        "name": "ires-hnas-umResource",
+        "comment": "UM-UBUNTU-INGEST-RESOURCE"
+      }
+    ]
+  },
+  {
+    "user": "minimalist",
+    "rule": "getDestinationResources",
+    "params": {},
+    "result": [
+      {
+        "name": "passRescUM01",
+        "comment": "Passthru-resource-for-UM"
+      },
+      {
+        "name": "replRescAZM02",
+        "comment": "Replicated-resource-for-AZM"
+      },
+      {
+        "name": "replRescUMCeph01",
+        "comment": "Replicated-Ceph-resource-for-UM"
+      }
+    ]
+  },
+  {
+    "user": "minimalist",
+    "rule": "optimized_list_projects",
+    "params": {},
+    "result": []
+  },
+  {
+    "user": "minimalist",
+    "rule": "list_projects_minimal",
+    "params": {},
+    "result": []
+  },
+  {
+    "user": "minimalist",
+    "rule": "list_contributing_projects",
+    "params": {
+      "*arg2": "\"false\""
+    },
+    "result": []
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_projects_finance",
+    "params": {},
+    "result": []
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_user_active_processes",
+    "params": {
+      "*arg2": "\"true\"",
+      "*arg3": "\"true\"",
+      "*arg4": "\"true\""
+    },
+    "result": {
+      "completed": [],
+      "error": [],
+      "in_progress": [],
+      "open": []
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_temporary_password_lifetime",
+    "params": {},
+    "result": 7776000
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_user_group_memberships",
+    "params": {
+      "*arg2": "\"true\"",
+      "*arg3": "\"dlinssen\""
+    },
+    "result": [
+      {
+        "groupId": "10026",
+        "name": "DH-ingest",
+        "displayName": "DH-ingest",
+        "description": ""
+      },
+      {
+        "groupId": "10111",
+        "name": "DH-project-admins",
+        "displayName": "DH-project-admins",
+        "description": ""
+      },
+      {
+        "groupId": "10108",
+        "name": "datahub",
+        "displayName": "DataHub",
+        "description": "It's DataHub! The place to store your data."
+      },
+      {
+        "groupId": "10001",
+        "name": "public",
+        "displayName": "public",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_user_internal_affiliation_status",
+    "params": {
+      "*arg2": "\"dlinssen\""
+    },
+    "result": true
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_user_attribute_value",
+    "params": {
+      "*arg2": "\"dlinssen\"",
+      "*arg3": "\"lastToSAcceptedTimestamp\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "value": "1618476699"
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_user_attribute_value",
+    "params": {
+      "*arg2": "\"dlinssen\"",
+      "*arg3": "\"displayName\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "value": "Dean Linssen"
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_user_attribute_value",
+    "params": {
+      "*arg2": "\"dlinssen\"",
+      "*arg3": "\"email\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "value": "d.linssen@maastrichtuniversity.nl"
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_user_group_memberships",
+    "params": {
+      "*arg2": "\"true\"",
+      "*arg3": "\"minimalist\""
+    },
+    "result": [
+      {
+        "groupId": "10026",
+        "name": "DH-ingest",
+        "displayName": "DH-ingest",
+        "description": ""
+      },
+      {
+        "groupId": "10001",
+        "name": "public",
+        "displayName": "public",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_user_internal_affiliation_status",
+    "params": {
+      "*arg2": "\"minimalist\""
+    },
+    "result": false
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_user_attribute_value",
+    "params": {
+      "*arg2": "\"minimalist\"",
+      "*arg3": "\"lastToSAcceptedTimestamp\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_user_attribute_value",
+    "params": {
+      "*arg2": "\"minimalist\"",
+      "*arg3": "\"displayName\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_user_attribute_value",
+    "params": {
+      "*arg2": "\"minimalist\"",
+      "*arg3": "\"email\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_project_acl_for_manager",
+    "params": {
+      "*arg2": "\"P000000001\"",
+      "*arg3": "\"false\""
+    },
+    "result": []
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_contributing_project",
+    "params": {
+      "*arg2": "\"P000000001\"",
+      "*arg3": "\"false\""
+    },
+    "result": {}
+  },
+  {
+    "user": "minimalist",
+    "rule": "list_project_contributors",
+    "params": {
+      "*arg2": "\"P000000001\"",
+      "*arg3": "\"true\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "users": [],
+      "groups": [],
+      "groupObjects": [],
+      "userObjects": []
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_project_process_activity",
+    "params": {
+      "*arg2": "\"P000000001\""
+    },
+    "result": {
+      "has_process_activity": false,
+      "has_active_collection": false
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "list_collections",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001\""
+    },
+    "result": []
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_collection_size_per_resource",
+    "params": {
+      "*arg2": "\"P000000001\""
+    },
+    "result": {}
+  },
+  {
+    "user": "minimalist",
+    "rule": "detailsProjectCollection",
+    "params": {
+      "*arg2": "\"P000000001\"",
+      "*arg3": "\"C000000001\"",
+      "*arg4": "\"true\""
+    },
+    "result": {
+      "project": "P000000001",
+      "collection": "C000000001",
+      "enableArchive": "false",
+      "enableUnarchive": "false",
+      "creator": "N/A",
+      "numFiles": "N/A",
+      "PID": "no-PID-set",
+      "byteSize": 0,
+      "managers": {
+        "users": [],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": []
+      },
+      "contributors": {
+        "users": [],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": []
+      },
+      "viewers": {
+        "users": [],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": []
+      },
+      "title": "N/A",
+      "externals": "no-externalPID-set"
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_project_collection_process_activity",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\""
+    },
+    "result": false
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_collection_tree",
+    "params": {
+      "*arg2": "\"P000000001/C000000001\""
+    },
+    "result": []
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"latest_version_number\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"title\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"accessRestriction\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"dataDeletionState\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"enableArchive\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"enableUnarchive\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"schemaName\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000001/C000000001\"",
+      "*arg3": "\"schemaVersion\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_project_acl_for_manager",
+    "params": {
+      "*arg2": "\"P000000002\"",
+      "*arg3": "\"false\""
+    },
+    "result": []
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_contributing_project",
+    "params": {
+      "*arg2": "\"P000000002\"",
+      "*arg3": "\"false\""
+    },
+    "result": {}
+  },
+  {
+    "user": "minimalist",
+    "rule": "list_project_contributors",
+    "params": {
+      "*arg2": "\"P000000002\"",
+      "*arg3": "\"true\"",
+      "*arg4": "\"false\""
+    },
+    "result": {
+      "users": [],
+      "groups": [],
+      "groupObjects": [],
+      "userObjects": []
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_project_process_activity",
+    "params": {
+      "*arg2": "\"P000000002\""
+    },
+    "result": {
+      "has_process_activity": false,
+      "has_active_collection": false
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "list_collections",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002\""
+    },
+    "result": []
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_collection_size_per_resource",
+    "params": {
+      "*arg2": "\"P000000002\""
+    },
+    "result": {}
+  },
+  {
+    "user": "minimalist",
+    "rule": "detailsProjectCollection",
+    "params": {
+      "*arg2": "\"P000000002\"",
+      "*arg3": "\"C000000001\"",
+      "*arg4": "\"true\""
+    },
+    "result": {
+      "project": "P000000002",
+      "collection": "C000000001",
+      "enableArchive": "false",
+      "enableUnarchive": "false",
+      "creator": "N/A",
+      "numFiles": "N/A",
+      "PID": "no-PID-set",
+      "byteSize": 0,
+      "managers": {
+        "users": [],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": []
+      },
+      "contributors": {
+        "users": [],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": []
+      },
+      "viewers": {
+        "users": [],
+        "groups": [],
+        "groupObjects": [],
+        "userObjects": []
+      },
+      "title": "N/A",
+      "externals": "no-externalPID-set"
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_project_collection_process_activity",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\""
+    },
+    "result": false
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_collection_tree",
+    "params": {
+      "*arg2": "\"P000000002/C000000001\""
+    },
+    "result": []
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"latest_version_number\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"title\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"accessRestriction\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"dataDeletionState\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"enableArchive\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"enableUnarchive\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"schemaName\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "minimalist",
+    "rule": "get_collection_attribute_value",
+    "params": {
+      "*arg2": "\"/nlmumc/projects/P000000002/C000000001\"",
+      "*arg3": "\"schemaVersion\""
+    },
+    "result": {
+      "value": ""
+    }
+  },
+  {
+    "user": "service-disqover",
+    "rule": "get_user_or_group_by_id",
+    "params": {
+      "*arg2": "\"10044\""
+    },
+    "result": {
+      "userName": "dlinssen",
+      "userId": "10044",
+      "displayName": "Dean Linssen",
+      "account_type": "rodsuser"
+    }
+  },
+  {
+    "user": "service-disqover",
+    "rule": "get_user_or_group_by_id",
+    "params": {
+      "*arg2": "\"10074\""
+    },
+    "result": {
+      "userName": "minimalist",
+      "userId": "10074",
+      "displayName": "minimalist",
+      "account_type": "rodsuser"
+    }
+  }
+]

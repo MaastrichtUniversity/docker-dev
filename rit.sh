@@ -112,6 +112,49 @@ run_backend(){
 }
 
 
+run_mock(){
+    local action=${1:-up} proxy_state
+    if [[ $# -gt 1 ]]; then
+      echo "Usage: ./rit.sh mock [backend|off]" >&2
+      return 2
+    fi
+    local -a compose=(docker compose -f docker-compose.yml -f docker-compose-irods.yml -f docker-compose-mock.yml)
+    case "$action" in
+      up)
+        proxy_state=$(docker inspect --format '{{.State.Running}}' common-proxy-1 2>/dev/null || true)
+        if [[ "$proxy_state" != true ]]; then
+          (cd ../docker-common && ./rit.sh up -d proxy) || return $?
+        fi
+        # Shared authentication is retained; no live catalog or MDR DB is recreated.
+        "${compose[@]}" up -d --wait --wait-timeout 300 keycloak ldap mock-mdr-db || {
+          "${compose[@]}" logs --tail 40 keycloak >&2
+          return 1
+        }
+        "${compose[@]}" up -d --build --wait --wait-timeout 300 mock-backend || return $?
+        "${compose[@]}" up -d --wait --wait-timeout 300 mdr || {
+          "${compose[@]}" logs --tail 40 mdr >&2
+          return 1
+        }
+        echo "Mock MDR: http://app.mdr.${RIT_ENV}.dh.unimaas.nl"
+        echo "Users: dlinssen (administrator), minimalist (contributor)"
+        echo "Password: existing Keycloak fixture password (default foobar). Writes are discarded."
+        ;;
+      backend)
+        "${compose[@]}" up -d --build --wait --wait-timeout 300 mock-backend || return $?
+        echo "Mock iRODS: localhost:${MOCK_IRODS_PORT:-1247} (zone nlmumc)"
+        ;;
+      off)
+        # Match rit.sh's normal environment interpolation when restoring MDR.
+        cat .env > .env_with_secrets || return $?
+        cat irods.secrets.cfg >> .env_with_secrets || return $?
+        docker compose --env-file .env_with_secrets -f docker-compose.yml -f docker-compose-irods.yml -f mock-backend/native.yml up -d --no-deps --force-recreate mdr || return $?
+        "${compose[@]}" stop mock-backend mock-mdr-db || return $?
+        echo "MDR restored to its native iRODS configuration and original database."
+        ;;
+      *) echo "Usage: ./rit.sh mock [backend|off]" >&2; return 2 ;;
+    esac
+}
+
 # specify externals for this project
 externals="externals/irods-helper-cmd https://github.com/MaastrichtUniversity/irods-helper-cmd.git
 externals/irods-ruleset https://github.com/MaastrichtUniversity/irods-ruleset.git
@@ -241,6 +284,11 @@ if [ ! $(docker network ls --filter name=dh_default --format="true") ] ;
       then
        echo "Creating network dh_default"
        docker network create dh_default --subnet "172.21.1.0/24" --label "com.docker.compose.project"="common" --label "com.docker.compose.network"="default"
+fi
+
+if [[ "$1" == "mock" ]]; then
+    run_mock "${@:2}"
+    exit $?
 fi
 
 if [[ $1 == "stack" ]]; then

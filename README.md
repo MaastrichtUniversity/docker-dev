@@ -184,3 +184,16 @@ dhdev stack public logs
 dhdev test help-center-backend test_process_html.py
 dhdev externals status
 ```
+
+## Native iRODS mock
+
+Run `./rit.sh mock backend` to start the standalone Python iRODS server.
+Other containers on `dh_default` can connect to `mock-backend:1247` using
+the native protocol. Run `./rit.sh mock` to start it with MDR, an isolated
+MDR database, and Keycloak/LDAP. MDR and the iRODS wrapper use their regular
+startup and source. Sign in as `dlinssen` or `minimalist`.
+
+The server uses static fixtures and discards writes. Run `./rit.sh mock off`
+to restore MDR's normal configuration. See
+[mock-backend/README.md](mock-backend/README.md) for client settings, TLS,
+supported operations, and tests.

@@ -1,0 +1,16 @@
+{
+  "excerpts": [
+    {
+      "id": "mock-help",
+      "title": "Using the MDR mock environment",
+      "labels": [],
+      "excerpt": "Explore the two fixture users. Saved changes are discarded."
+    }
+  ],
+  "document": {
+    "id": "mock-help",
+    "title": "Using the MDR mock environment",
+    "html_output": "<p>Sign in as dlinssen for administration or minimalist for contributor access. Writes return success and leave the fixed dataset unchanged.</p>",
+    "related_documents": []
+  }
+}

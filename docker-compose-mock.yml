@@ -1,0 +1,84 @@
+# Use through ./rit.sh mock, together with the existing Compose files.
+services:
+  mdr:
+    depends_on: !override
+      mock-mdr-db:
+        condition: service_healthy
+      mock-backend:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    env_file: !override
+      - mdr.env
+      - mock-backend/mdr.env
+    environment:
+      NO_PROXY: localhost,127.0.0.1,mock-backend,keycloak,ldap,.dh.local,.dh.unimaas.nl
+      no_proxy: localhost,127.0.0.1,mock-backend,keycloak,ldap,.dh.local,.dh.unimaas.nl
+      GUNICORN_CMD_ARGS: --workers 2
+      IRODS_HOST: mock-backend
+      IRODS_PASS: ${MOCK_IRODS_PASSWORD:-mock}
+      SSL_CERT_FILE: /mock-ca/ca.pem
+      HELP_CENTER_HOST: http://mock-backend:5000
+      BIOPORTAL_URL: http://mock-backend:5000
+      JIRA_URL: http://mock-backend:5000
+      ELASTIC_HOST: mock-backend
+      ELASTIC_PORT: 5000
+      MDR_POSTGRES_HOST: mock-mdr-db
+    extra_hosts:
+      - "keycloak.${RIT_ENV}.dh.unimaas.nl=172.21.1.100"
+    volumes:
+      - mock_irods_ca:/mock-ca:ro
+      - ./externals/dh-mdr/app:/opt/app
+      - ./externals/dh-mdr/core:/opt/core
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/', timeout=5)"]
+      interval: 5s
+      timeout: 10s
+      retries: 60
+      start_period: 15s
+  keycloak:
+    volumes:
+      - ./keycloak/dh_is_ready.sh:/dh_is_ready.sh:ro
+    healthcheck:
+      test: ["CMD", "/dh_is_ready.sh"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+  mock-mdr-db:
+    image: postgres:${ENV_POSTGRES_VERSION}
+    environment:
+      POSTGRES_DB: mdr
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: foobar
+    volumes:
+      - mock_mdr_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d mdr"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    networks:
+      - dh_default
+  mock-backend:
+    build: mock-backend
+    environment:
+      MOCK_IRODS_PASSWORD: ${MOCK_IRODS_PASSWORD:-mock}
+      MOCK_SERVER_CERT: /mock-tls/server.pem
+      MOCK_SERVER_KEY: /mock-tls/server-key.pem
+    ports:
+      - "127.0.0.1:${MOCK_IRODS_PORT:-1247}:1247"
+    volumes:
+      - mock_irods_tls:/mock-tls
+      - mock_irods_ca:/mock-ca
+      - ./mock-backend/fixtures:/app/fixtures:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health', timeout=2)"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    networks:
+      - dh_default
+volumes:
+  mock_mdr_db_data:
+  mock_irods_tls:
+  mock_irods_ca:
