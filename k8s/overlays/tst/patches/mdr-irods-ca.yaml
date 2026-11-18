@@ -1,0 +1,31 @@
+# MDR (python-irodsclient) trusts only the compose dev CA baked into its
+# image. The k8s icat presents a cert signed by the k8s test CA (Vault
+# tst-k3s/icat-tls -> irods-client-ca here), so mount the CA read-only and add
+# it to the system trust store before bootstrap (python-irodsclient 3.x falls
+# back to the default SSL context / system CA bundle).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mdr
+  namespace: external
+spec:
+  template:
+    spec:
+      containers:
+        - name: mdr
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              cp /opt/irods-ca/test_only_tst_irods_dh_ca_cert.pem \
+                 /usr/local/share/ca-certificates/irods-k8s-ca.crt
+              update-ca-certificates
+              exec /opt/bootstrap.sh
+          volumeMounts:
+            - name: irods-ca
+              mountPath: /opt/irods-ca
+              readOnly: true
+      volumes:
+        - name: irods-ca
+          secret:
+            secretName: irods-client-ca

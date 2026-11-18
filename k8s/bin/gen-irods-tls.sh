@@ -26,8 +26,14 @@ CA_SUBJ="/O=DataHub Maastricht/OU=k8s-dev/CN=DataHub k8s dev test CA"
 if [[ ! -f "$OUT/ca.key" ]]; then
     echo "INFO: generating CA"
     openssl genrsa -out "$OUT/ca.key" 2048
+    # keyUsage is REQUIRED: Python >= 3.10 default SSL contexts enable
+    # X509_STRICT, which rejects CA certs without keyCertSign (python-irodsclient
+    # clients die with 'CA cert does not include key usage extension').
     openssl req -x509 -new -nodes -key "$OUT/ca.key" -sha256 -days 3650 \
-        -subj "$CA_SUBJ" -out "$OUT/ca.pem"
+        -subj "$CA_SUBJ" \
+        -addext "basicConstraints=critical,CA:TRUE" \
+        -addext "keyUsage=critical,keyCertSign,cRLSign" \
+        -out "$OUT/ca.pem"
 else
     echo "INFO: reusing existing CA ($OUT/ca.key)"
 fi

@@ -323,8 +323,12 @@ metadata:
   labels:
     app.kubernetes.io/part-of: datahub
 spec:
+  # https listener only: the http listener is dedicated to help-http-redirect
+  # (Traefik drops a second router serving the same host/path rule on the
+  # same entrypoint, so both routes can't share the http listener).
   parentRefs:
     - name: help-gateway
+      sectionName: https
   hostnames:
     - help.mdr.tst.dh.unimaas.nl
   rules:
@@ -344,6 +348,37 @@ spec:
       backendRefs:
         - name: help-center
           port: 3000
+---
+# http -> https for the help-center host (mirrors the docker-common nginx
+# proxy redirect). Bound to the `http` listener only, so the https listener
+# keeps serving normally.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: help-http-redirect
+  namespace: public
+  labels:
+    app.kubernetes.io/part-of: datahub
+spec:
+  parentRefs:
+    - name: help-gateway
+      sectionName: http
+  hostnames:
+    - help.mdr.tst.dh.unimaas.nl
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+        - path:
+            type: PathPrefix
+            value: /help_backend
+      filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https
+            port: 443
+            statusCode: 301
 ---
 # ============ public: helpbackend.tst (HTTP-only, not in the cert) ============
 apiVersion: gateway.networking.k8s.io/v1

@@ -43,10 +43,14 @@ resources:
   - secrets/garage1-tls.yaml
   - secrets/garage2-tls.yaml
   - secrets/gateway-tls.yaml
+  - secrets/irods-client-ca.yaml
   - secrets/registry-credentials.yaml
 
 patches:
   - path: patches/mdr-hostaliases.yaml
+  - path: patches/admin-tools-backend-irods-ca.yaml
+  - path: patches/mdr-irods-ca.yaml
+  - path: patches/sram-sync-irods-ca.yaml
 
 # Per-env ConfigMap env files (consumed via envFrom by the base manifests).
 configMapGenerator:
