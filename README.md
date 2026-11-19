@@ -50,6 +50,29 @@ ENV_FILEBEAT_VERSION=5.2.0
 > **NOTE:** Please be aware that these containers depend on a running ``proxy`` container from [docker-common](https://github.com/MaastrichtUniversity/docker-common) in order to be accessible on their ``VIRTUAL_HOST`` address.
 
 
+## Tab completion for ./rit.sh
+
+Load the existing completion script once per terminal, from this directory.
+For Bash:
+
+```bash
+source ./dhdev-completion.bash
+```
+
+For zsh, enable its Bash completion compatibility first (skip `compinit` if
+your shell configuration already runs it):
+
+```zsh
+autoload -Uz compinit bashcompinit
+compinit
+bashcompinit
+source ./dhdev-completion.bash
+```
+
+Then `./rit.sh ext<Tab>` completes to `./rit.sh externals`.
+No installation or shell startup file changes are needed. Completion is loaded
+into the current shell, so running `./rit.sh` alone cannot enable it.
+
 ## Advanced usage
 
 ### How to add a new version variable 'FOO' to the project?
