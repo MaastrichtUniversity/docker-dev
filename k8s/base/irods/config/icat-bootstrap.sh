@@ -14,12 +14,20 @@ _main() {
         sleep 1
     done
 
+    # iRODS sends server logs to this rsyslog file; ensure the syslog user can
+    # create it before rsyslog drops privileges.
+    install -d -o syslog -g adm /var/log/irods
+
     # From Ubuntu 22.04 onward: start rsyslogd
     rsyslogd
 
     # iCAT: Remove ODBC iRODS log spam in the /tmp file [DHDO-1472]
     # See iRODS issue https://docs.irods.org/4.3.3/system_overview/troubleshooting/#large-number-of-postgresql-odbc-log-files-being-created-in-tmp
     sed -i 's/CommLog=1/CommLog=0/g' /etc/odbcinst.ini
+
+    # Rebuild the installed rules on every pod start so updates in the
+    # ConfigMap-backed /rules volume take effect without reinstalling iRODS.
+    make -B -C /rules/native_irods_ruleset
 
     # install iRODS iCAT with our DH settings (if not already installed) & start service
     install_and_start_irods "icat"

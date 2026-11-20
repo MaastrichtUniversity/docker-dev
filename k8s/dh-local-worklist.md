@@ -70,16 +70,15 @@ and tst** (acc/prd overlays still to write); the remaining work is D
    admin-tools-backend, davrods) connect to that host on 20000-20199 -
    headless Service FQDN resolves to the pod IP. **Compose-era PVCs/DBs
    contain the old hosts and must NOT be reused.**
-4. **[done] Resource-name derivation** - hooks are now vendored k8s copies
-   (`k8s/base/irods/config/hooks-{icat,ires}/`; the base kustomization
-   points at them, compose keeps the originals). `bootstrap_irods.sh`
-   (ires, 7 places) uses `ENV_IRODS_HOST_RESC_NAME` instead of
-   `${HOSTNAME%%.dh.local}Resource`; overlays set it
-   (`ires-hnas-umResource` / `ires-hnas-azmResource` - identical to the
-   names the compose stack produced, so ruleset/MDR expectations are
-   unchanged). icat hooks: no derivation found, copied verbatim.
-5. **[done, resolved differently] pre-hook `/etc/hosts` hack** - removed
-   from the vendored ires pre-hook instead of ported: on k3s both ires
+4. **[done] Resource-name derivation** - hooks in `irods/{icat,ires-hnas}/hooks/`
+   are unified as the single source of truth for both compose and k8s
+   (the base kustomization points directly at them). `bootstrap_irods.sh`
+   (ires) uses `ENV_IRODS_HOST_RESC_NAME` (with fallback to `${HOSTNAME%%.dh.local}Resource`);
+   k8s overlays set it (`ires-hnas-umResource` / `ires-hnas-azmResource` -
+   identical to the names the compose stack produced, so ruleset/MDR expectations
+   are unchanged). icat hooks: shared directly.
+5. **[done, resolved differently] pre-hook `/etc/hosts` hack** - gated
+   on non-k8s compose dev environments in the shared hooks: on k3s both ires
    pods are genuinely reachable, so pinning the peer to a dead IP would
    *break* legitimate UM<->AZM replication. The fictitious
    `ires-ceph-{ac,gl}` names (pre-ceph->garage leftovers, referenced by

@@ -22,10 +22,14 @@ fi
 
 source /opt/irods/lib/helpers.sh
 
+# Physical resource name: allow explicit ENV_IRODS_HOST_RESC_NAME (k8s),
+# falling back to ${HOSTNAME%%.dh.local}Resource (docker-compose)
+ENV_IRODS_HOST_RESC_NAME="${ENV_IRODS_HOST_RESC_NAME:-${HOSTNAME%%.dh.local}Resource}"
+
 
 create_mock_projects_azm() {
     for i in {01..2}; do
-        project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"${HOSTNAME%%.dh.local}Resource,${ENV_IRODS_COOR_RESC_NAME},(azM) Test project #${i},psuppers,opalmen,AZM-123456,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
+        project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"${ENV_IRODS_HOST_RESC_NAME},${ENV_IRODS_COOR_RESC_NAME},(azM) Test project #${i},psuppers,opalmen,AZM-123456,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
 
         imeta set -C ${project} authorizationPeriodEndDate '1-1-2018'
         imeta set -C ${project} dataRetentionPeriodEndDate '1-1-2018'
@@ -58,7 +62,7 @@ create_mock_projects_azm() {
 
 create_mock_projects_um() {
     for i in {01..2}; do
-        project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"${HOSTNAME%%.dh.local}Resource,${ENV_IRODS_COOR_RESC_NAME},(UM) Test project #${i},psuppers,opalmen,UM-01234567890X,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
+        project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"${ENV_IRODS_HOST_RESC_NAME},${ENV_IRODS_COOR_RESC_NAME},(UM) Test project #${i},psuppers,opalmen,UM-01234567890X,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
 
         imeta set -C ${project} authorizationPeriodEndDate '1-1-2018'
         imeta set -C ${project} dataRetentionPeriodEndDate '1-1-2018'
@@ -92,7 +96,7 @@ create_mock_projects_um() {
     done
 
     for i in {01..2}; do
-        project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"${HOSTNAME%%.dh.local}Resource,${ENV_IRODS_COOR_RESC_NAME},(M4I) Test project #${i},pvanschay2,pvanschay2,UM-12345678901B,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
+        project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"${ENV_IRODS_HOST_RESC_NAME},${ENV_IRODS_COOR_RESC_NAME},(M4I) Test project #${i},pvanschay2,pvanschay2,UM-12345678901B,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
 
         imeta set -C ${project} authorizationPeriodEndDate '1-1-2018'
         imeta set -C ${project} dataRetentionPeriodEndDate '1-1-2018'
@@ -121,7 +125,7 @@ create_mock_projects_um() {
     done
 
     for i in {01..1}; do
-        project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"${HOSTNAME%%.dh.local}Resource,${ENV_IRODS_COOR_RESC_NAME},(ScanNexus) Test project #${i},dlinssen,opalmen,UM-01234567890X,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
+        project=$(irule -r irods_rule_engine_plugin-irods_rule_language-instance "test_rule_output(\"create_new_project\", \"${ENV_IRODS_HOST_RESC_NAME},${ENV_IRODS_COOR_RESC_NAME},(ScanNexus) Test project #${i},dlinssen,opalmen,UM-01234567890X,{'enableDropzoneSharing':'true'}\")" null ruleExecOut  |  jq -r '.project_path')
 
         imeta set -C ${project} authorizationPeriodEndDate '1-1-2018'
         imeta set -C ${project} dataRetentionPeriodEndDate '1-1-2018'
@@ -219,11 +223,11 @@ if [[ "$ENV_DIRECT_INGEST_RESOURCE" == "true" ]]; then
 fi
 
 # Add comment to resource for better identification in MDR's createProject dropdown
-iadmin modresc ${HOSTNAME%%.dh.local}Resource comment "${ENV_IRODS_HOST_RESC_COMMENT}"
+iadmin modresc ${ENV_IRODS_HOST_RESC_NAME} comment "${ENV_IRODS_HOST_RESC_COMMENT}"
 iadmin modresc ${ENV_IRODS_COOR_RESC_NAME} comment "${ENV_IRODS_COOR_RESC_COMMENT}"
 
 # Add storage pricing to resources
-imeta add -R ${HOSTNAME%%.dh.local}Resource NCIT:C88193 999
+imeta add -R ${ENV_IRODS_HOST_RESC_NAME} NCIT:C88193 999
 imeta add -R ${ENV_IRODS_COOR_RESC_NAME} NCIT:C88193 ${ENV_IRODS_COOR_RESC_PRICING}
 
 ###########
@@ -245,8 +249,7 @@ fi
 ##########
 ## Special
 # TODO Update in 4.3.0
-# While doing the iRODS unattended installation, default_general_json_configuration.json is pass to setup_irods.py
-# But the value of 'default_resource_directory' is not picked up correctly
-iadmin modresc ${HOSTNAME%%.dh.local}Resource path /srv/irods/vault
+# iRODS 5.1 protects paths under /var/lib/irods from data registration.
+iadmin modresc ${ENV_IRODS_HOST_RESC_NAME} path /srv/irods/vault
 
 imeta set -R ${ENV_IRODS_COOR_RESC_NAME} bootstrap_irods_dev_mockup "complete"

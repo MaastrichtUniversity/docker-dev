@@ -62,18 +62,28 @@ configMapGenerator:
       - ../../irods/icat/DMFS/dmattr
       - ../../irods/icat/DMFS/dmget
       - ../../irods/icat/DMFS/dmput
-  # Vendored hook copies (k8s/base/irods/config/hooks-*/): the ires
-  # bootstrap_irods.sh derives the physical resource name from
-  # ENV_IRODS_HOST_RESC_NAME instead of ${HOSTNAME%%.dh.local}Resource, and
-  # the ires pre-hook no longer rewrites /etc/hosts (k8s pods reach each
-  # other natively). Keep in sync with irods/{icat,ires-hnas}/hooks/
-  # when those change.
+  # iRODS hook scripts (shared with compose under irods/{icat,ires-hnas}/hooks/)
   - name: icat-hooks
     namespace: irods
     files:
-      - ./irods/config/hooks-icat/bootstrap_pre_hook.sh
-      - ./irods/config/hooks-icat/bootstrap_irods.sh
-      - ./irods/config/hooks-icat/bootstrap_post_hook.sh
+      - ../../irods/icat/hooks/bootstrap_pre_hook.sh
+      - ../../irods/icat/hooks/bootstrap_irods.sh
+      - ../../irods/icat/hooks/bootstrap_post_hook.sh
+  # Compressed source snapshot for ICAT's /rules mount. Keep in sync with
+  # externals/irods-ruleset; see irods/ruleset/README.md.
+  - name: irods-ruleset-source
+    namespace: irods
+    files:
+      - ruleset.tar.gz.b64=./irods/ruleset/irods-ruleset.tar.gz.b64
+  # Helper commands installed by the iRES bootstrap into msiExecCmd_bin (from externals/irods-helper-cmd).
+  - name: irods-helpers
+    namespace: irods
+    files:
+      - ../../externals/irods-helper-cmd/add-ingest-zone-access.sh
+      - ../../externals/irods-helper-cmd/disable-ingest-zone.sh
+      - ../../externals/irods-helper-cmd/enable-ingest-zone.sh
+      - ../../externals/irods-helper-cmd/name-to-sid.py
+      - ../../externals/irods-helper-cmd/remove-ingest-zone-access.sh
   - name: ires-um-bootstrap
     namespace: irods
     files:
@@ -85,17 +95,17 @@ configMapGenerator:
   - name: ires-um-hooks
     namespace: irods
     files:
-      - ./irods/config/hooks-ires/bootstrap_pre_hook.sh
-      - ./irods/config/hooks-ires/bootstrap_irods.sh
-      - ./irods/config/hooks-ires/bootstrap_post_hook.sh
-      - ./irods/config/hooks-ires/bootstrap_s3_ires.sh
+      - ../../irods/ires-hnas/hooks/bootstrap_pre_hook.sh
+      - ../../irods/ires-hnas/hooks/bootstrap_irods.sh
+      - ../../irods/ires-hnas/hooks/bootstrap_post_hook.sh
+      - ../../irods/ires-hnas/hooks/bootstrap_s3_ires.sh
   - name: ires-azm-hooks
     namespace: irods
     files:
-      - ./irods/config/hooks-ires/bootstrap_pre_hook.sh
-      - ./irods/config/hooks-ires/bootstrap_irods.sh
-      - ./irods/config/hooks-ires/bootstrap_post_hook.sh
-      - ./irods/config/hooks-ires/bootstrap_s3_ires.sh
+      - ../../irods/ires-hnas/hooks/bootstrap_pre_hook.sh
+      - ../../irods/ires-hnas/hooks/bootstrap_irods.sh
+      - ../../irods/ires-hnas/hooks/bootstrap_post_hook.sh
+      - ../../irods/ires-hnas/hooks/bootstrap_s3_ires.sh
   - name: garage-config
     namespace: irods
     files:

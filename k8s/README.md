@@ -83,7 +83,7 @@ Consequences:
 k8s/
   base/                      # env-agnostic manifests
     <service>/               # one directory per service
-    irods/config/            # vendored iRODS bootstrap + hooks (k8s variants)
+    irods/config/            # iRODS bootstrap scripts (k8s variants)
     longhorn/                # StorageClasses
     faker/job-template.yaml  # on-demand faker Job template
     networkpolicies/         # optional segmentation (NOT applied by default)
@@ -438,8 +438,8 @@ On k8s we do **not** customize CoreDNS: every usage is a native Service
 FQDN (`<svc>.<ns>.svc.cluster.local`, e.g. `icat.dh.local` ->
 `icat.irods.svc.cluster.local`). Pod `hostname`/`HOSTNAME` on the iRODS
 StatefulSets are the FQDNs (the bootstrap code reads
-`socket.gethostname()`), the vendored hooks derive the physical resource
-name from `ENV_IRODS_HOST_RESC_NAME`, and the iRODS TLS certs carry the
+`socket.gethostname()`), the hooks derive the physical resource
+name from `ENV_IRODS_HOST_RESC_NAME` (with fallback to Compose naming), and the iRODS TLS certs carry the
 FQDN SANs. Full census: **`k8s/dh-local-worklist.md`** (sections A-C done).
 
 ### 2. iRODS data-port range (20000-20199)
