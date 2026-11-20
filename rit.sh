@@ -80,6 +80,28 @@ run_minimal(){
 }
 
 run_backend(){
+    set -e
+    local seed_mode=snapshot reset=false option service
+    for option in "$@"; do
+      case "$option" in
+        --fresh) seed_mode=fresh ;;
+        --reset) reset=true ;;
+        *) echo "Unknown backend option: $option" >&2; return 2 ;;
+      esac
+    done
+    if [[ "$reset" == true ]]; then
+      if [[ "$seed_mode" == snapshot ]]; then
+        bash ./irods/irods-db/seed.sh check-seed
+      fi
+      bash ./irods/irods-db/seed.sh reset
+    fi
+    bash ./irods/irods-db/seed.sh prepare "$seed_mode"
+
+    # Registered resource hosts must resolve while iCAT opens the seeded catalog.
+    # Start their containers now, but release their bootstrap only after iCAT is ready.
+    export ENV_IRODS_WAIT_FOR_CATALOG=true
+    docker compose -f docker-compose.yml -f docker-compose-irods.yml up -d ires-hnas-um ires-hnas-azm
+
       # Quick PoC: FIXME! Refactor me! This code below is more of a functional "note" than code.
     # Modifications to the docker-compose profiles are completely not thought out! Just trying thing out here.
     #
@@ -91,12 +113,20 @@ run_backend(){
     done
     echo "iCAT is Done."
 
+    for service in ires-hnas-um ires-hnas-azm; do
+      echo "Releasing $service startup"
+      if ! timeout --foreground --kill-after=2s 10s docker compose -f docker-compose.yml -f docker-compose-irods.yml exec -T --interactive=false "$service" touch /var/run/irods_catalog_ready < /dev/null; then
+        echo "ERROR: Could not release $service startup." >&2
+        return 1
+      fi
+    done
+
     wait_for_keycloak
 
     echo "Keycloak is Done"
 
-    echo "Starting backend-after-icat (SRAM & iRES's)"
-    # we bring up all ires's (or anything that depends on iCAT being up)
+    echo "Starting backend-after-icat (SRAM synchronization)"
+    # Resource servers are already running; start the remaining dependent services.
     docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend-after-icat up -d
 
     echo "Running single run of SRAM-SYNC"
@@ -121,6 +151,8 @@ run_backend(){
       echo "Waiting for ires-hnas-azm, sleeping 5"
       sleep 5
     done
+
+    bash ./irods/irods-db/seed.sh complete
 
     exit 0
 }
@@ -304,6 +336,15 @@ fi
 # set RIT_ENV if not set already
 env_selector
 
+if [[ "$1" == "seed" ]]; then
+    if [[ "${2:-}" != "rebuild" || $# -ne 2 ]]; then
+        echo "Usage: ./rit.sh seed rebuild" >&2
+        exit 2
+    fi
+    bash ./irods/irods-db/seed.sh rebuild
+    exit $?
+fi
+
 # faker actions
 if [[ $1 == "faker" ]]; then
     shift 1
@@ -338,7 +379,7 @@ if [[ $1 == "stack" ]]; then
    fi
    if [[ $2 == "backend" ]]; then
       if [[ $3 == "up" ]]; then
-        run_backend
+        run_backend "${@:4}"
      fi
      if [[ $3 == "down" ]]; then
         docker compose -f docker-compose.yml -f docker-compose-irods.yml --profile backend --profile backend-after-icat stop
@@ -401,7 +442,7 @@ fi
 
 # for now same style as minimal, although this all could use a proper refactor!
 if [[ "$1" == "backend" ]]; then
-  run_backend
+  run_backend "${@:2}"
 fi
 
 if [[ $1 == "login" ]]; then

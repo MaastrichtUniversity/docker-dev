@@ -34,11 +34,17 @@ sram-sync"
   case ${COMP_CWORD} in
     1)
       # Base-level completion: show subcommands
-      COMPREPLY=($(compgen -W "make test stack up down build externals exec logs ps" -- ${cur}))
+      COMPREPLY=($(compgen -W "make test stack backend seed up down build externals exec logs ps" -- ${cur}))
       ;;
     2)
       # Inner completion
       case ${level1} in
+        backend)
+          COMPREPLY=($(compgen -W "--fresh --reset" -- ${cur}))
+          ;;
+        seed)
+          COMPREPLY=($(compgen -W "rebuild" -- ${cur}))
+          ;;
         make)
           # 'make' subcommand completion
           COMPREPLY=($(compgen -W "rules" -- ${cur}))

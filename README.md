@@ -49,6 +49,100 @@ ENV_FILEBEAT_VERSION=5.2.0
 ```
 > **NOTE:** Please be aware that these containers depend on a running ``proxy`` container from [docker-common](https://github.com/MaastrichtUniversity/docker-common) in order to be accessible on their ``VIRTUAL_HOST`` address.
 
+### Backend catalog seed
+
+These commands require Python 3 on the host, using only its standard library.
+
+```sh
+./rit.sh backend
+./rit.sh backend --fresh
+./rit.sh backend --reset --fresh
+./rit.sh seed rebuild
+```
+
+`backend` preserves an existing catalog. For an empty catalog, it restores the
+default snapshot before starting iCAT and the resource servers. Local container
+configuration, rules checks, Garage setup and SRAM synchronization still run.
+Resource containers join the network early so iCAT can resolve the resource hosts
+already in the snapshot; their entrypoint waits for `rit.sh` to release bootstrap
+after iCAT is ready.
+
+Fixed local proxy and mock resource hostname mappings are declared with
+`extra_hosts` in the Compose files, so Docker maintains them across restarts.
+Changes to these mappings require recreating the affected containers; restarting
+an existing container keeps its previous Compose configuration. No catalog reset
+or seed rebuild is needed for hostname-mapping changes.
+
+Development iRODS images install the local `externals/irods-ruleset` checkout at
+build time, using a named build context (Compose 2.17+ with BuildKit). Rebuild them
+with `./rit.sh build icat ires-hnas-um`. Before starting iRODS, new and reused
+containers compare the mounted `/rules` sources with the last successful rules
+installation. Matching contents skip `make`; changed contents run a full rebuild,
+including dependencies. Failed installations stop startup and leave no valid
+fingerprint. Fingerprints cover Python/native sources, Makefiles and packaging
+inputs, excluding generated rules, caches, tests and Git metadata.
+`./rit.sh make rules` still forces installation and updates the fingerprint.
+The shared `dh-irods` optimization can also be enabled for acc/prod builds using
+`IRODS_BASE_STAGE=irods-rules` and a `ruleset` build context. It does not depend on
+`ENV_ENVIRONMENT`; builds without preinstalled rules retain their existing behavior.
+
+`--fresh` skips the snapshot and runs the normal bootstrap scripts to populate
+an empty catalog. It refuses a populated catalog. `--reset` explicitly removes
+the iRODS containers, catalog and Garage anonymous volumes before startup; it
+also removes files in the containers' vaults. Other application databases and
+host-mounted ingest directories are preserved. Use `backend --reset` to return
+to the default snapshot, or add `--fresh` to regenerate fixtures through bootstrap.
+
+`seed rebuild` generates a replacement snapshot using the normal bootstrap
+scripts in a temporary Docker project. It uses separate networks, publishes no
+ports and replaces host ingest mounts with temporary volumes. The temporary
+containers and volumes are removed on exit. It requires the current iRODS and
+Garage images to be built, and a recent Docker Compose supporting `!reset`.
+
+The generated files live under `irods/irods-db/seed/`. The baseline contains nine
+empty projects, users, groups, resources, metadata and permissions; it contains
+development credentials and no stored data files. Rebuild it after changing
+fixtures, users, configured versions or project/resource settings. The dump has a
+checksum; `config.json` records the configuration used to generate it. A missing,
+incompatible or damaged snapshot is an error on an empty catalog; use `--fresh`
+or rebuild it. A populated catalog does not need a matching snapshot, but its own
+creation configuration must match startup.
+
+Every `backend` start checks the creation record stored alongside PostgreSQL's
+data, including when the database container is stopped. The check runs before
+Compose can replace the PostgreSQL image. It compares:
+
+- Configured PostgreSQL, iRODS, Python/S3 plugin and Garage versions.
+- User fixtures in `keycloak/users.json` and the development LDAP LDIF files.
+- iRODS host/resource settings and the project/resource bootstrap recipes,
+  configuration template and project creation rules.
+
+Compose's resolved values are used, including environment overrides. Credentials
+are hashed, and errors list the changed inputs without displaying their values.
+Unrelated application settings and startup-only switches do not invalidate the
+catalog. This checks initialization inputs; normal development changes made
+inside iRODS do not invalidate the record.
+
+A mismatch stops startup without deleting data. Either run `./rit.sh seed rebuild`
+followed by `./rit.sh backend --reset`, or use `./rit.sh backend --reset --fresh`.
+Seed compatibility is checked before `--reset` deletes anything. Legacy catalogs
+without a creation record need one explicit reset. Interrupted fresh bootstrap
+remains marked incomplete and also requires reset if it populated the catalog.
+
+These checks and creation records apply only when iCAT's effective
+`ENV_ENVIRONMENT` is `dev`. Acceptance and production startup in `dh-irods` is
+unchanged; running the helper outside `dev` skips development checks and seeding.
+
+The seed captures the bootstrap fixtures before SRAM synchronization. SRAM still
+synchronizes against the development LDAP when `backend` starts. Direct Compose
+commands and `./rit.sh minimal` retain their existing startup behavior.
+
+Run the host-side seed regression tests without Docker:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s irods/irods-db -p 'test_*.py'
+```
+
 
 ## Tab completion for ./rit.sh
 

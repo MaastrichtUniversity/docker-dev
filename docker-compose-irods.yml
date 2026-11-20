@@ -113,6 +113,7 @@ services:
           - icat.dh.local
 
   ires-hnas-um:
+    entrypoint: ["/bin/bash", "/opt/irods/hooks/wait_for_catalog.sh"]
     build:
       context: externals/dh-irods/irods-base/
       dockerfile: Dockerfile
@@ -165,6 +166,7 @@ services:
       ENV_FILEBEAT_PRIMARY_TAG: IRES
       ENV_FILEBEAT_SECONDARY_TAG: IRES_UM03
       ENV_DIRECT_INGEST_RESOURCE: "true"
+      ENV_IRODS_WAIT_FOR_CATALOG: ${ENV_IRODS_WAIT_FOR_CATALOG:-false}
       # Name for 'coordinating' resource of type replication.
       # In bootstrap_irods.sh we expect find substring 'UM' or 'AZM'
       ENV_IRODS_COOR_RESC_NAME: "passRescUM01"
@@ -207,6 +209,7 @@ services:
           - ires-hnas-um.dh.local
 
   ires-hnas-azm:
+    entrypoint: ["/bin/bash", "/opt/irods/hooks/wait_for_catalog.sh"]
     build:
       context:  externals/dh-irods/irods-base/
       dockerfile: Dockerfile
@@ -253,6 +256,7 @@ services:
       ENV_FILEBEAT_PRIMARY_TAG: IRES
       ENV_FILEBEAT_SECONDARY_TAG: IRES_AZM
       ENV_DIRECT_INGEST_RESOURCE: "false"
+      ENV_IRODS_WAIT_FOR_CATALOG: ${ENV_IRODS_WAIT_FOR_CATALOG:-false}
       # Name for 'coordinating' resource of type replication
       # In bootstrap_irods.sh we expect find substring 'UM' or 'AZM'
       ENV_IRODS_COOR_RESC_NAME: "replRescAZM02"

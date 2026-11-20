@@ -13,3 +13,6 @@ staging-data/direct-ingest
 *.crt
 .DS_STORE
 .env_with_secrets
+__pycache__/
+*.py[cod]
+/irods/irods-db/seed/
