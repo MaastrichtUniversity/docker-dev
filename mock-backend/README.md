@@ -74,6 +74,23 @@ reads, collection and file operations, and the password queries MDR uses.
 Collection listings overlap the same project and file fixtures used by the
 rules. Missing objects and unsupported requests return native iRODS errors.
 
+The rule fixtures cover the Python rules labeled public in `irods-ruleset`,
+the legacy native rules with an `irule_dummy` entry point, and the existing
+MDR calls. Use `python-irodsclient` to execute them by name, as the
+rule-wrapper does. This example uses an open SDK session.
+
+```python
+from irods.rule import Rule
+
+reply = Rule(
+    session,
+    body='getCollectionAVU(*path, "title", *value, "", "false"); writeLine("stdout", *value);',
+    params={"*path": '"/nlmumc/projects/P000000001"'},
+    output="ruleExecOut",
+).execute()
+print(reply.MsParam_PI[0].inOutStruct.stdoutBuf.buf.rstrip(b"\0").decode().strip())
+```
+
 The mock is deterministic and has no catalog database. Writes acknowledge
 success and discard data. Some SDK methods immediately stat the thing they
 just created, so the mock supplies that response on the same connection.
@@ -89,8 +106,10 @@ protocols. The mock stack supplies local HTTP fixtures for MDR's help-center
 and ontology requests.
 
 `fixtures/responses.json` holds the rule responses, users, paths and file
-mapping. Rule selectors match on identity and decoded arguments. The most
-specific selector wins. The other JSON and text files hold the sample
+mapping. Read selectors match on identity and decoded arguments. The most
+specific selector wins. Write rules return a preset success for every
+authenticated fixture user, including on missing objects or invalid input
+values. The other JSON and text files hold the sample
 metadata and file contents. `fixtures/captured.json` contains read-only
 reference output from a native development instance.
 
@@ -105,6 +124,13 @@ docker exec -i dev-mdr-1 python < mock-backend/capture.py > /tmp/irods-capture.j
 
 ```sh
 docker exec dev-mock-backend-1 python -m unittest test_backend test_native
+
+# With the ruleset source available, also verify coverage and rule files:
+docker run --rm --network dh_default \
+  -e MOCK_HOST=mock-backend -e RULESET_ROOT=/rules \
+  -v "$PWD/externals/irods-ruleset:/rules:ro" \
+  -v dev_mock_irods_ca:/mock-ca:ro \
+  dev-mock-backend python -m unittest test_backend test_native
 
 # With mock MDR running:
 docker cp mock-backend/. dev-mdr-1:/tmp/mdr-mock-tests/

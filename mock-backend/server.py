@@ -20,13 +20,21 @@ from irods.api_number import api_number
 from irods import message as m
 from werkzeug.serving import make_server
 
-from app import DATA, MANIFEST, FixtureError, app, check_path, decode_params, file_bytes, select
+from app import DATA, MANIFEST, FixtureError, app, check_path, decode_params, file_bytes, rule_name, select
 from catalog import Catalog, ZONE, collection_row, result
 
 LOGGER = logging.getLogger(__name__)
 API_NAMES = {number: name for name, number in api_number.items()}
 VERSION = "rods4.3.3"
-RULE_CALL = re.compile(r'\b(\w+)\s*\(([^();]*)\)|\b(editIngest)\s*;')
+QUOTED = r'"(?:\\.|[^"\\])*"' r"|'(?:\\.|[^'\\])*'"
+RULE_COMMENT = re.compile(rf"{QUOTED}|(?P<comment>\#[^\n]*)")
+RULE_ENTRY = re.compile(r"\s*(?:@external\s+)?(?P<entry>\w+)(?:\s*\(\s*\))?\s*\{")
+RULE_TOKEN = re.compile(
+    rf"""{QUOTED}|\b(?P<name>\w+)\s*\((?P<args>(?:{QUOTED}|[^(){{}}'"])*)\)"""
+    r"|\b(?P<bare>editIngest)\s*;|(?P<end>\})"
+)
+RULE_ARGUMENT = re.compile(rf"""(?:{QUOTED}|[^,'"])+""")
+RULE_VARIABLE = re.compile(r"\*\w+")
 TEMP_SALT = "mock-irods-temporary-password"
 MAX_BODY = 32 * 1024 * 1024
 WRITE_REQUESTS = {
@@ -76,6 +84,22 @@ def error_reply(error, message=None):
     error_item = m.ErrorMessage(status=code, msg=error_text or type(error).__name__)
     stack = m.Error(count=1, RErrMsg_PI=[error_item])
     return m.iRODSMessage("RODS_API_REPLY", error=stack.pack(), int_info=code)
+
+
+def rule_text(value):
+    return value if isinstance(value, str) else json.dumps(value)
+
+
+def rule_arguments(source):
+    return [part.strip() for part in RULE_ARGUMENT.findall(source)]
+
+
+def rule_stdout(text):
+    output = text.encode() + b"\0"
+    return m.MsParam(label="ruleExecOut", type="ExecCmdOut_PI", inOutStruct=m.ExecCmdOut_PI(
+        stdoutBuf=m.BinBytesBuf(buflen=len(output), buf=output),
+        stderrBuf=m.BinBytesBuf(buflen=1, buf=b"\0"), status=0,
+    ))
 
 
 class FileHandle:
@@ -254,30 +278,60 @@ class Connection(BaseRequestHandler):
         raise ex.SYS_NOT_SUPPORTED(f"Mock iRODS API not implemented: {name or request.int_info}")
 
     def execute_rule(self, request):
-        params = {
+        params = decode_params({
             node.findtext("label"): node.findtext("STR_PI/myStr", default="")
             for node in request.findall("MsParamArray_PI/MsParam_PI")
-        }
-        rule = request.findtext("myRule", default="")
-        matched = [(name or custom, args) for name, args, custom in RULE_CALL.findall(rule)
-                   if (name or custom) in MANIFEST["rules"]]
-        if len(matched) != 1:
+        })
+        source = request.findtext("myRule", default="")
+        source = RULE_COMMENT.sub(lambda token: "" if token["comment"] else token[0], source)
+        # SDK rule files can include definitions after the entry point.
+        entry = RULE_ENTRY.match(source)
+        calls = []
+        stdout_labels = []
+        for token in RULE_TOKEN.finditer(source, entry.end() if entry else 0):
+            if token["end"] and entry:
+                break
+            name = rule_name(token["name"] or token["bare"] or "")
+            if name in MANIFEST["rules"]:
+                calls.append((name, rule_arguments(token["args"] or "")))
+            elif name == "writeLine":
+                arguments = rule_arguments(token["args"])
+                if len(arguments) == 2 and arguments[0] in ("'stdout'", '"stdout"'):
+                    stdout_labels.append(arguments[1].strip("'\""))
+        if len(calls) != 1:
             raise ex.SYS_NOT_SUPPORTED("Expected one named fixture rule")
-        name, arguments = matched[0]
-        # Wrapper callers normally send numbered parameters. Also support a
-        # named iRODS parameter used by standalone python-irodsclient scripts.
-        for index, argument in enumerate(arguments.split(","), start=2):
-            argument = argument.strip()
+
+        name, arguments = calls[0]
+        # Fixtures use the wrapper's positional keys for arbitrary SDK labels too.
+        selectors = params.copy()
+        for index, argument in enumerate(arguments, start=2):
             if argument in params:
-                params.setdefault(f"*arg{index}", params[argument])
-            elif not argument.startswith("*") and argument:
-                params.setdefault(f"*arg{index}", argument)
-        output = json.dumps(select(name, decode_params(params), self.identity)).encode() + b"\n\0"
-        param = m.MsParam(label="ruleExecOut", type="ExecCmdOut_PI", inOutStruct=m.ExecCmdOut_PI(
-            stdoutBuf=m.BinBytesBuf(buflen=len(output), buf=output),
-            stderrBuf=m.BinBytesBuf(buflen=1, buf=b"\0"), status=0,
-        ))
-        return reply(m.MsParamArray(paramLen=1, oprType=0, MsParam_PI=[param]))
+                selectors[f"*arg{index}"] = params[argument]
+            elif not argument.startswith("*"):
+                selectors[f"*arg{index}"] = decode_params({index: argument})[index]
+
+        contract = MANIFEST["rules"][name]
+        response = select(name, selectors, self.identity)
+        positions = contract.get("outputs", [])
+        values = response if len(positions) > 1 else [response]
+        outputs = {
+            arguments[position]: rule_text(value)
+            for position, value in zip(positions, values)
+            if position < len(arguments) and RULE_VARIABLE.fullmatch(arguments[position])
+        }
+        stdout = "".join(outputs[label] + "\n" for label in stdout_labels if label in outputs)
+        if entry and entry["entry"] == "execute_rule" and contract.get("returns_result"):
+            # The MDR wrapper consumes JSON stdout even for string results.
+            stdout = json.dumps(response) + "\n"
+        result_params = []
+        for label in request.findtext("outParamDesc", "").split("%"):
+            if label == "ruleExecOut":
+                result_params.append(rule_stdout(stdout))
+            elif label in outputs:
+                result_params.append(m.MsParam(
+                    label=label, type="STR_PI", inOutStruct=m.STR_PI(myStr=outputs[label]),
+                ))
+        return reply(m.MsParamArray(paramLen=len(result_params), oprType=0, MsParam_PI=result_params))
 
     def specific_query(self, query):
         if query.sql not in ("delete_password", "count_password", "get_create_ts_password"):

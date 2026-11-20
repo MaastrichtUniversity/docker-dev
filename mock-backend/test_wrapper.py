@@ -29,7 +29,7 @@ class WrapperTests(unittest.TestCase):
 
     def test_all_fixture_dto_factories(self):
         for name, contract in MANIFEST["rules"].items():
-            if contract["dto"] == "None":
+            if contract.get("dto", "None") == "None":
                 continue
             module = importlib.import_module("irodsrulewrapper.rule_managers." + Path(contract["file"]).stem)
             factory = getattr(module, contract["dto"])
@@ -46,7 +46,8 @@ class WrapperTests(unittest.TestCase):
             for node in ast.walk(ast.parse(source.read_text())):
                 if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "RuleInfo":
                     names.add(next(ast.literal_eval(k.value) for k in node.keywords if k.arg == "name"))
-        self.assertEqual(names, set(MANIFEST["rules"]))
+        wrapper_contracts = {name for name, contract in MANIFEST["rules"].items() if "file" in contract}
+        self.assertEqual(names, wrapper_contracts)
 
     def test_native_pool_reuses_mock_connection(self):
         pool = IRODSSessionPool()

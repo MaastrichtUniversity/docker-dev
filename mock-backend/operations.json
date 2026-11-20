@@ -3,312 +3,559 @@
     "get_project_details": {
       "returns_result": true,
       "dto": "Project",
-      "file": "projects.py"
+      "file": "projects.py",
+      "outputs": [2]
     },
     "get_project_acl_for_manager": {
       "returns_result": true,
       "dto": "ManagingProjects",
-      "file": "projects.py"
+      "file": "projects.py",
+      "outputs": [2]
     },
     "list_contributing_projects": {
       "returns_result": true,
       "dto": "ContributingProjects",
-      "file": "projects.py"
+      "file": "projects.py",
+      "outputs": [1]
     },
     "changeProjectPermissions": {
       "returns_result": false,
       "dto": "None",
-      "file": "projects.py"
+      "file": "projects.py",
+      "native": true,
+      "write": true
     },
     "set_acl": {
       "returns_result": false,
       "dto": "None",
-      "file": "projects.py"
+      "file": "projects.py",
+      "write": true
     },
     "check_edit_metadata_permission": {
       "returns_result": true,
       "dto": "Boolean",
-      "file": "projects.py"
+      "file": "projects.py",
+      "outputs": [1]
     },
     "get_projects_finance": {
       "returns_result": true,
       "dto": "ProjectsCost",
-      "file": "projects.py"
+      "file": "projects.py",
+      "outputs": [0]
     },
     "list_projects_minimal": {
       "returns_result": true,
       "dto": "ProjectsMinimal",
-      "file": "projects.py"
+      "file": "projects.py",
+      "outputs": [0]
     },
     "create_new_project": {
       "returns_result": true,
       "dto": "CreateProject",
-      "file": "projects.py"
+      "file": "projects.py",
+      "outputs": [7],
+      "write": true
     },
     "list_project_contributors": {
       "returns_result": true,
       "dto": "ProjectContributors",
-      "file": "projects.py"
+      "file": "projects.py",
+      "outputs": [3]
     },
     "get_contributing_project": {
       "returns_result": true,
       "dto": "ContributingProject",
-      "file": "projects.py"
+      "file": "projects.py",
+      "outputs": [2]
     },
     "optimized_list_projects": {
       "returns_result": true,
       "dto": "ProjectsOverview",
-      "file": "projects.py"
+      "file": "projects.py",
+      "outputs": [0]
     },
     "get_project_contributors_metadata": {
       "returns_result": true,
       "dto": "ProjectContributorsMetadata",
-      "file": "projects.py"
+      "file": "projects.py",
+      "outputs": [1]
     },
     "list_contributing_projects_by_attribute": {
       "returns_result": true,
       "dto": "ProjectsMinimal",
-      "file": "projects.py"
+      "file": "projects.py",
+      "outputs": [1]
     },
     "revoke_project_user_access": {
       "returns_result": false,
       "dto": "None",
-      "file": "projects.py"
+      "file": "projects.py",
+      "write": true
     },
     "get_project_process_activity": {
       "returns_result": true,
       "dto": "ProjectActivity",
-      "file": "projects.py"
+      "file": "projects.py",
+      "outputs": [1]
     },
     "getIngestResources": {
       "returns_result": true,
       "dto": "Resources",
-      "file": "resources.py"
+      "file": "resources.py",
+      "native": true,
+      "outputs": [0]
     },
     "getDestinationResources": {
       "returns_result": true,
       "dto": "Resources",
-      "file": "resources.py"
+      "file": "resources.py",
+      "native": true,
+      "outputs": [0]
     },
     "get_collection_size_per_resource": {
       "returns_result": true,
       "dto": "CollectionSizes",
-      "file": "resources.py"
+      "file": "resources.py",
+      "outputs": [1]
     },
     "get_project_resource_availability": {
       "returns_result": true,
       "dto": "Boolean",
-      "file": "resources.py"
+      "file": "resources.py",
+      "outputs": [4]
     },
     "get_users": {
       "returns_result": true,
       "dto": "Users",
-      "file": "users.py"
+      "file": "users.py",
+      "outputs": [1]
     },
     "get_data_stewards": {
       "returns_result": true,
       "dto": "DataStewards",
-      "file": "users.py"
+      "file": "users.py",
+      "outputs": [0]
     },
     "get_user_attribute_value": {
       "returns_result": true,
       "dto": "AttributeValue",
-      "file": "users.py"
+      "file": "users.py",
+      "outputs": [3]
     },
     "set_user_attribute_value": {
       "returns_result": false,
       "dto": "None",
-      "file": "users.py"
+      "file": "users.py",
+      "write": true
     },
     "get_user_or_group_by_id": {
       "returns_result": true,
       "dto": "UserOrGroup",
-      "file": "users.py"
+      "file": "users.py",
+      "outputs": [1]
     },
     "get_user_internal_affiliation_status": {
       "returns_result": true,
       "dto": "Boolean",
-      "file": "users.py"
+      "file": "users.py",
+      "outputs": [1]
     },
     "get_temporary_password_lifetime": {
       "returns_result": true,
       "dto": "None",
-      "file": "users.py"
+      "file": "users.py",
+      "outputs": [0]
     },
     "get_expanded_user_group_information": {
       "returns_result": true,
       "dto": "UsersGroupsExpanded",
-      "file": "users.py"
+      "file": "users.py",
+      "outputs": [1]
     },
     "get_user_active_processes": {
       "returns_result": true,
       "dto": "ActiveProcesses",
-      "file": "users.py"
+      "file": "users.py",
+      "outputs": [3]
     },
     "get_groups": {
       "returns_result": true,
       "dto": "Groups",
-      "file": "groups.py"
+      "file": "groups.py",
+      "outputs": [1]
     },
     "get_user_group_memberships": {
       "returns_result": true,
       "dto": "Groups",
-      "file": "groups.py"
+      "file": "groups.py",
+      "outputs": [2]
     },
     "get_users_in_group": {
       "returns_result": true,
       "dto": "Users",
-      "file": "groups.py"
+      "file": "groups.py",
+      "outputs": [1]
     },
     "get_active_drop_zone": {
       "returns_result": true,
       "dto": "DropZone",
-      "file": "ingest.py"
+      "file": "ingest.py",
+      "outputs": [3]
     },
     "start_ingest": {
       "returns_result": false,
       "dto": "None",
-      "file": "ingest.py"
+      "file": "ingest.py",
+      "write": true
     },
     "create_drop_zone": {
       "returns_result": true,
       "dto": "Token",
-      "file": "ingest.py"
+      "file": "ingest.py",
+      "outputs": [6],
+      "write": true
     },
     "read_dropzone_metadata": {
       "returns_result": true,
       "dto": "None",
-      "file": "ingest.py"
+      "file": "ingest.py",
+      "outputs": [2]
     },
     "editIngest": {
       "returns_result": false,
       "dto": "None",
-      "file": "ingest.py"
+      "file": "ingest.py",
+      "write": true
     },
     "generate_token": {
       "returns_result": true,
       "dto": "Token",
-      "file": "ingest.py"
+      "file": "ingest.py",
+      "outputs": [0],
+      "write": true
     },
     "get_versioned_pids": {
       "returns_result": true,
       "dto": "MetadataPID",
-      "file": "ingest.py"
+      "file": "ingest.py",
+      "outputs": [3]
     },
     "create_ingest_metadata_snapshot": {
       "returns_result": false,
       "dto": "None",
-      "file": "ingest.py"
+      "file": "ingest.py",
+      "write": true
     },
     "get_dropzone_folders": {
       "returns_result": true,
       "dto": "None",
-      "file": "ingest.py"
+      "file": "ingest.py",
+      "outputs": [2]
     },
     "get_dropzone_files": {
       "returns_result": true,
       "dto": "None",
-      "file": "ingest.py"
+      "file": "ingest.py",
+      "outputs": [2]
     },
     "set_project_acl_to_dropzones": {
       "returns_result": false,
       "dto": "None",
-      "file": "ingest.py"
+      "file": "ingest.py",
+      "write": true
     },
     "set_project_acl_to_dropzone": {
       "returns_result": false,
       "dto": "None",
-      "file": "ingest.py"
+      "file": "ingest.py",
+      "write": true
     },
     "calculate_direct_dropzone_size_files": {
       "returns_result": true,
       "dto": "CollectionStats",
-      "file": "ingest.py"
+      "file": "ingest.py",
+      "outputs": [1]
     },
     "closeDropZone": {
       "returns_result": false,
       "dto": "None",
-      "file": "ingest.py"
+      "file": "ingest.py",
+      "native": true,
+      "write": true
     },
     "remove_users_dropzone_acl": {
       "returns_result": false,
       "dto": "None",
-      "file": "ingest.py"
+      "file": "ingest.py",
+      "write": true
     },
     "openProjectCollection": {
       "returns_result": false,
       "dto": "None",
-      "file": "collections.py"
+      "file": "collections.py",
+      "native": true,
+      "write": true
     },
     "close_project_collection": {
       "returns_result": false,
       "dto": "None",
-      "file": "collections.py"
+      "file": "collections.py",
+      "write": true
     },
     "setCollectionAVU": {
       "returns_result": false,
       "dto": "None",
-      "file": "collections.py"
+      "file": "collections.py",
+      "native": true,
+      "write": true
     },
     "list_collections": {
       "returns_result": true,
       "dto": "Collections",
-      "file": "collections.py"
+      "file": "collections.py",
+      "outputs": [1]
     },
     "detailsProjectCollection": {
       "returns_result": true,
       "dto": "CollectionDetails",
-      "file": "collections.py"
+      "file": "collections.py",
+      "native": true,
+      "outputs": [3]
     },
     "start_archive": {
       "returns_result": false,
       "dto": "None",
-      "file": "collections.py"
+      "file": "collections.py",
+      "write": true
     },
     "start_unarchive": {
       "returns_result": false,
       "dto": "None",
-      "file": "collections.py"
+      "file": "collections.py",
+      "write": true
     },
     "get_collection_attribute_value": {
       "returns_result": true,
       "dto": "AttributeValue",
-      "file": "collections.py"
+      "file": "collections.py",
+      "outputs": [2]
     },
     "setCollectionSize": {
       "returns_result": false,
       "dto": "None",
-      "file": "collections.py"
+      "file": "collections.py",
+      "native": true,
+      "write": true
     },
     "get_collection_tree": {
       "returns_result": true,
       "dto": "None",
-      "file": "collections.py"
+      "file": "collections.py",
+      "outputs": [1]
     },
     "create_collection_metadata_snapshot": {
       "returns_result": true,
       "dto": "Boolean",
-      "file": "collections.py"
+      "file": "collections.py",
+      "outputs": [2],
+      "write": true
     },
     "save_collection_metadata": {
       "returns_result": true,
       "dto": "Boolean",
-      "file": "collections.py"
+      "file": "collections.py",
+      "outputs": [3],
+      "write": true
     },
     "set_acl_for_metadata_snapshot": {
       "returns_result": false,
       "dto": "None",
-      "file": "collections.py"
+      "file": "collections.py",
+      "write": true
     },
     "revoke_project_collection_user_access": {
       "returns_result": false,
       "dto": "None",
-      "file": "collections.py"
+      "file": "collections.py",
+      "write": true
     },
     "get_project_collection_process_activity": {
       "returns_result": true,
       "dto": "Boolean",
-      "file": "collections.py"
+      "file": "collections.py",
+      "outputs": [1]
+    },
+    "admin_list_collections": {
+      "outputs": [1]
+    },
+    "remove_collection_attribute_value": {
+      "write": true
+    },
+    "delete_project_collection_data": {
+      "outputs": [2],
+      "write": true
+    },
+    "delete_project_data": {
+      "write": true
+    },
+    "restore_project_collection_user_access": {
+      "write": true
+    },
+    "restore_project_user_access": {
+      "write": true
+    },
+    "admin_unlock_direct_dropzone": {
+      "outputs": [1],
+      "write": true
+    },
+    "get_dropzone_validation_errors": {
+      "outputs": [2]
+    },
+    "calculate_all_dropzone_sizes": {
+      "write": true
+    },
+    "calculate_all_dropzone_sizes_delay": {
+      "write": true
+    },
+    "calculate_mounted_dropzone_sizes": {
+      "write": true
+    },
+    "restart_ingest": {
+      "write": true
+    },
+    "stop_ingest": {
+      "write": true
+    },
+    "set_ingestion_error_avu": {
+      "write": true
+    },
+    "set_ingest_maintenance_window": {
+      "write": true
+    },
+    "get_ingest_maintenance_window": {
+      "outputs": [0]
+    },
+    "get_projects_size": {
+      "outputs": [0]
+    },
+    "get_project_usage_report": {
+      "outputs": [0]
+    },
+    "get_resource_size_for_all_collections": {
+      "outputs": [0]
+    },
+    "get_resource_status": {
+      "outputs": [1]
+    },
+    "list_resources_detailed": {
+      "outputs": [0]
+    },
+    "modify_resource_status": {
+      "outputs": [2],
+      "write": true
+    },
+    "restart_archive": {
+      "write": true
+    },
+    "restart_unarchive": {
+      "write": true
+    },
+    "admin_get_user_active_processes": {
+      "outputs": [3]
+    },
+    "check_user_is_deletable": {
+      "outputs": [1]
+    },
+    "get_users_active_permissions": {
+      "outputs": [1]
+    },
+    "delete_user": {
+      "outputs": [1],
+      "write": true
+    },
+    "checkDropZoneACL": {
+      "native": true,
+      "outputs": [2]
+    },
+    "listActiveDropZones": {
+      "native": true,
+      "outputs": [1]
+    },
+    "calcCollectionFiles": {
+      "native": true,
+      "outputs": [1]
+    },
+    "calcCollectionFilesAcrossResc": {
+      "native": true,
+      "outputs": [1, 2, 3]
+    },
+    "calcCollectionSize": {
+      "native": true,
+      "outputs": [3]
+    },
+    "calcCollectionSizeAcrossResc": {
+      "native": true,
+      "outputs": [3, 4, 5]
+    },
+    "getCollectionAVU": {
+      "native": true,
+      "outputs": [2]
+    },
+    "getCollectionAVUTriple": {
+      "native": true,
+      "outputs": [4]
+    },
+    "getCollectionSize": {
+      "native": true,
+      "outputs": [3]
+    },
+    "getDataStewards": {
+      "native": true,
+      "outputs": [0]
+    },
+    "getResourceAVU": {
+      "native": true,
+      "outputs": [2]
+    },
+    "getResourcesInCollection": {
+      "native": true,
+      "outputs": [1]
+    },
+    "getUsers": {
+      "native": true,
+      "outputs": [1]
+    },
+    "getUsersInGroup": {
+      "native": true,
+      "outputs": [1]
+    },
+    "detailsProject": {
+      "native": true,
+      "outputs": [2]
+    },
+    "getProjectCost": {
+      "native": true,
+      "outputs": [1, 2, 3]
+    },
+    "listProjectContributors": {
+      "native": true,
+      "outputs": [2]
+    },
+    "listProjectManagers": {
+      "native": true,
+      "outputs": [1]
+    },
+    "listProjectViewers": {
+      "native": true,
+      "outputs": [2]
+    },
+    "reportProjects": {
+      "native": true,
+      "outputs": [0]
+    },
+    "estimateProjectCollection": {
+      "native": true,
+      "outputs": [2, 3]
     }
   },
   "api": [

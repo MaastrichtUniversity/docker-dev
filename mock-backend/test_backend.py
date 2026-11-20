@@ -1,9 +1,15 @@
 """Run inside the Flask image: python -m unittest test_backend."""
+import ast
 import copy
 import json
+import os
+import re
 import unittest
+from pathlib import Path
 
 from app import app, DATA, MANIFEST, FIXTURES
+
+RULESET = Path(os.environ.get("RULESET_ROOT", FIXTURES.parent.parent / "externals/irods-ruleset"))
 
 
 class BackendTests(unittest.TestCase):
@@ -25,6 +31,31 @@ class BackendTests(unittest.TestCase):
                         self.assertEqual(first.status_code, 403 if "error" in row else 200, first.data)
                         self.assertEqual(first.data, self.post("/rules/" + name, arguments, user).data)
 
+    def test_manifest_covers_ruleset_exports(self):
+        if not RULESET.is_dir():
+            self.skipTest("Set RULESET_ROOT to the irods-ruleset checkout")
+        public = set()
+        for source in (RULESET / "datahubirodsruleset").glob("*/__init__.py"):
+            text = source.read_text()
+            lines = text.splitlines()
+            for node in ast.parse(text).body:
+                if isinstance(node, ast.ImportFrom):
+                    sections = [line for line in lines[:node.lineno]
+                                if line in ("# Public rules", "# Private rules")]
+                    if sections and sections[-1] == "# Public rules":
+                        public.update(alias.asname or alias.name for alias in node.names)
+        native = set()
+        for source in (RULESET / "native_irods_ruleset").rglob("*.r"):
+            dummy = re.search(r"^irule_dummy\(\)\s*\{(.*?)^\}", source.read_text(), re.M | re.S)
+            if dummy:
+                native.update(re.findall(r"\bIRULE_(\w+)\s*\(", dummy[1]))
+        self.assertTrue(public and native)
+        contracts = MANIFEST["rules"]
+        self.assertEqual(native, {name for name, contract in contracts.items() if contract.get("native")})
+        self.assertEqual(contracts.keys(), public | native | {
+            name for name, contract in contracts.items() if "file" in contract
+        })
+
     def test_writes_do_not_change_reads_or_fixture_data(self):
         before = copy.deepcopy(DATA)
         projects = self.post("/rules/optimized_list_projects").data
@@ -34,6 +65,18 @@ class BackendTests(unittest.TestCase):
         self.assertEqual(projects, self.post("/rules/optimized_list_projects").data)
         self.assertEqual(before, DATA)
         self.assertFalse(self.post("/api/data_objects.exists", {"path": "/nlmumc/ingest/direct/mock-direct/new.txt"}).json)
+
+    def test_every_write_accepts_missing_and_invalid_arguments(self):
+        before = copy.deepcopy(DATA)
+        for name, contract in MANIFEST["rules"].items():
+            if contract.get("write"):
+                with self.subTest(rule=name):
+                    fixture, = [row for row in DATA["rules"][name] if not row["match"]]
+                    for arguments in ({}, {"*arg2": "missing,{invalid};(value)", "*arg3": "/missing"}):
+                        response = self.post("/rules/" + name, arguments, "minimalist")
+                        self.assertEqual(response.status_code, 200, response.data)
+                        self.assertEqual(response.json, fixture["result"])
+        self.assertEqual(before, DATA)
 
     def test_users_have_different_project_visibility(self):
         self.assertEqual(len(self.post("/rules/optimized_list_projects").json), 2)

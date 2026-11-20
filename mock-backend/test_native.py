@@ -10,6 +10,9 @@ from irods.models import Collection, DataObject
 from irods.rule import Rule
 from irods.session import iRODSSession
 
+from app import DATA, MANIFEST
+from test_backend import RULESET
+
 PROJECT = "/nlmumc/projects/P000000001"
 EXAMPLE = PROJECT + "/C000000001/example.txt"
 
@@ -53,6 +56,94 @@ class NativeClientTests(unittest.TestCase):
         answer = Rule(client, rule_file=script).execute()
         projects = json.loads(answer.MsParam_PI[0].inOutStruct.stdoutBuf.buf.rstrip(b"\0"))
         self.assertEqual([project["id"] for project in projects], ["P000000001"])
+
+    def test_added_rules_for_both_fixture_users(self):
+        for user in ("dlinssen", "minimalist"):
+            client = self.connect(user)
+            for name, contract in MANIFEST["rules"].items():
+                if "file" in contract:
+                    continue
+                with self.subTest(user=user, rule=name):
+                    fixture = max((row for row in DATA["rules"][name] if user in row["users"]),
+                                  key=lambda row: len(row["match"]))
+                    positions = contract.get("outputs", [])
+                    inputs = {int(key[4:]) - 2: value for key, value in fixture["match"].items()}
+                    arguments = [
+                        f"*p{i}" for i in range(max([*positions, *inputs], default=-1) + 1)
+                    ]
+                    params = {arguments[i]: json.dumps(value) for i, value in inputs.items()}
+                    labels = [arguments[i] for i in positions]
+                    body = f"{name}({', '.join(arguments)});"
+                    body += "".join(f' writeLine("stdout", {label});' for label in labels)
+                    output = "%".join(["ruleExecOut", *labels])
+                    answer = Rule(client, body=body, params=params, output=output).execute(session_cleanup=False)
+                    values = fixture["result"] if len(positions) > 1 else [fixture["result"]]
+                    expected = [value if isinstance(value, str) else json.dumps(value)
+                                for value in values] if positions else []
+                    self.assertEqual([p.label for p in answer.MsParam_PI], ["ruleExecOut", *labels])
+                    self.assertEqual([p.inOutStruct.myStr or "" for p in answer.MsParam_PI[1:]], expected)
+                    self.assertEqual(answer.MsParam_PI[0].inOutStruct.stdoutBuf.buf.rstrip(b"\0").decode(),
+                                     "".join(value + "\n" for value in expected))
+
+    def test_report_visibility_and_shared_zone_settings(self):
+        for user, projects in (
+            ("dlinssen", ["P000000001", "P000000002"]),
+            ("minimalist", ["P000000001"]),
+        ):
+            with self.subTest(user=user):
+                client = self.connect(user)
+                answer = Rule(client, body="reportProjects(*report);", output="*report").execute()
+                self.assertEqual([row["project"] for row in json.loads(answer.MsParam_PI[0].inOutStruct.myStr)],
+                                 projects)
+                answer = Rule(client, body="get_ingest_maintenance_window(*window);", output="*window").execute()
+                self.assertEqual(json.loads(answer.MsParam_PI[0].inOutStruct.myStr),
+                                 {"maintenanceStart": None, "maintenanceEnd": None})
+
+    def test_legacy_rule_file_and_raw_stdout(self):
+        client = self.connect()
+        script = io.BytesIO(b'''
+# IRULE_calcCollectionFiles(*mock, *ignored) is only a comment.
+irule_dummy() {
+    IRULE_getCollectionAVU(*path, "title", *value, "", 'false');
+    writeLine("stdout", *value);
+}
+IRULE_getCollectionAVU(*path, *attribute, *value, *default, *fatal) {
+    fake_unsupported_call(*value);
+}
+INPUT *path=""
+OUTPUT ruleExecOut
+''')
+        answer = Rule(client, rule_file=script, params={"*path": f"'{PROJECT}'"}).execute()
+        self.assertEqual(answer.MsParam_PI[0].inOutStruct.stdoutBuf.buf.rstrip(b"\0"),
+                         b"Shared microscopy study\n")
+
+    def test_native_rule_files_keep_entry_point_output(self):
+        if not RULESET.is_dir():
+            self.skipTest("Set RULESET_ROOT to the irods-ruleset checkout")
+        client = self.connect()
+        for filename, args, stdout in (
+            ("tapeArchive/estimateProjectCollection.r", {"*project": "P000000001", "*collection": "C000000001"},
+             b"0\n0\n"),
+            ("misc/getResourceAVU.r", {"*resourceName": "passRescUM01", "*attribute": "NCIT:C88193"},
+             b"0.130\n"),
+            ("projects/changeProjectPermissions.r", {"*project": "/missing", "*users": '(bad,"value");'},
+             b""),
+        ):
+            with self.subTest(rule_file=filename):
+                path = RULESET / "native_irods_ruleset" / filename
+                answer = Rule(client, rule_file=str(path), params=args).execute(session_cleanup=False)
+                self.assertEqual(answer.MsParam_PI[0].inOutStruct.stdoutBuf.buf.rstrip(b"\0"), stdout)
+
+    def test_named_writes_ignore_invalid_arguments_and_leave_reads_unchanged(self):
+        client = self.connect()
+        read = 'get_ingest_maintenance_window(*window);'
+        before = Rule(client, body=read, output="*window").execute().MsParam_PI[0].inOutStruct.myStr
+        write = 'set_ingest_maintenance_window("(invalid),value;", "wrong");'
+        self.assertFalse(Rule(client, body=write).execute().MsParam_PI)
+        answer = Rule(client, body='delete_user("/missing", *result);', output="*result").execute()
+        self.assertIs(json.loads(answer.MsParam_PI[0].inOutStruct.myStr)["success"], True)
+        after = Rule(client, body=read, output="*window").execute().MsParam_PI[0].inOutStruct.myStr
+        self.assertEqual(before, after)
 
     def test_writes_preserve_fixed_directory_and_files(self):
         client = self.connect()

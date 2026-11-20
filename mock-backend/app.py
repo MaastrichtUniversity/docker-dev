@@ -30,12 +30,19 @@ def identity(payload):
     return user
 
 
+def rule_name(name):
+    if name.startswith("IRULE_") and MANIFEST["rules"].get(name[6:], {}).get("native"):
+        return name[6:]
+    return name
+
+
 def select(name, arguments, user):
-    matches = [row for row in DATA["rules"].get(name, [])
-               if user in row["users"] and all(arguments.get(k) == v for k, v in row["match"].items())]
+    rows = DATA["rules"][name]
+    write = MANIFEST["rules"][name].get("write", False)
+    matching = [row for row in rows if all(arguments.get(k) == v for k, v in row["match"].items())]
+    matches = [row for row in matching if write or user in row["users"]]
     if not matches:
-        if any(all(arguments.get(k) == v for k, v in row["match"].items())
-               for row in DATA["rules"].get(name, [])):
+        if matching:
             raise FixtureError("Fixture is not visible to this user", "CAT_NO_ACCESS_PERMISSION", 403)
         raise FixtureError(f"No fixture for {user}/{name}: {arguments}")
     row = max(matches, key=lambda row: len(row["match"]))
@@ -52,8 +59,8 @@ def decode_params(params):
     # Match that syntax without evaluating rule code or arbitrary expressions.
     result = {}
     for key, value in params.items():
-        if isinstance(value, str) and value.startswith('"') and value.endswith('"'):
-            value = value[1:-1].replace('\\"', '"').replace('\\\\', '\\')
+        if isinstance(value, str) and len(value) >= 2 and value[0] in "\"'" and value[-1] == value[0]:
+            value = value[1:-1].replace("\\" + value[0], value[0]).replace("\\\\", "\\")
         result[key] = value
     return result
 
@@ -67,6 +74,7 @@ def health():
 def rule(name):
     payload = request.get_json()
     user = identity(payload)
+    name = rule_name(name)
     if name not in MANIFEST["rules"]:
         raise FixtureError(f"Unsupported rule: {name}")
     arguments = decode_params(payload.get("arguments", {}))

@@ -1902,6 +1902,16 @@
           "*arg2": "mounted"
         },
         "result": "mock-mounted"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": "mock-direct"
       }
     ],
     "generate_token": [
@@ -8792,6 +8802,5047 @@
           "error": [],
           "in_progress": []
         }
+      }
+    ],
+    "admin_unlock_direct_dropzone": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": {
+          "unlocked_replica_count": 1
+        }
+      }
+    ],
+    "calculate_all_dropzone_sizes": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": null
+      }
+    ],
+    "calculate_all_dropzone_sizes_delay": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": null
+      }
+    ],
+    "calculate_mounted_dropzone_sizes": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": null
+      }
+    ],
+    "delete_project_collection_data": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": {
+          "messages": [
+            "Data deletion completed successfully."
+          ]
+        }
+      }
+    ],
+    "delete_project_data": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": null
+      }
+    ],
+    "delete_user": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": {
+          "success": true,
+          "deleted_user": "mock-user"
+        }
+      }
+    ],
+    "modify_resource_status": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": {
+          "success": true,
+          "message": "Successfully set resource 'passRescUM01' status to 'up'"
+        }
+      }
+    ],
+    "remove_collection_attribute_value": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": null
+      }
+    ],
+    "restart_archive": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": null
+      }
+    ],
+    "restart_ingest": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": null
+      }
+    ],
+    "restart_unarchive": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": null
+      }
+    ],
+    "restore_project_collection_user_access": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": null
+      }
+    ],
+    "restore_project_user_access": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": null
+      }
+    ],
+    "set_ingest_maintenance_window": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": null
+      }
+    ],
+    "set_ingestion_error_avu": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": null
+      }
+    ],
+    "stop_ingest": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": null
+      }
+    ],
+    "getUsers": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": [
+          {
+            "userName": "auser",
+            "userId": "10084",
+            "displayName": "Additional User newly created in LDAP"
+          },
+          {
+            "userName": "dlinssen",
+            "userId": "10044",
+            "displayName": "Dean Linssen"
+          },
+          {
+            "userName": "dlinssen2",
+            "userId": "10049",
+            "displayName": "Dean Linssen (MUMC+)"
+          },
+          {
+            "userName": "dtheuniss",
+            "userId": "10034",
+            "displayName": "Daniël Theunissen"
+          },
+          {
+            "userName": "jmelius",
+            "userId": "10039",
+            "displayName": "Jonathan Mélius"
+          },
+          {
+            "userName": "kgusta",
+            "userId": "10064",
+            "displayName": "Kristine Gusta"
+          },
+          {
+            "userName": "minimalist",
+            "userId": "10074",
+            "displayName": "minimalist"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          },
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "pvanschay2",
+            "userId": "10054",
+            "displayName": "Paul van Schayck"
+          },
+          {
+            "userName": "rjuhasz",
+            "userId": "10029",
+            "displayName": "Ricardo Juhasz"
+          },
+          {
+            "userName": "rvoncken",
+            "userId": "10079",
+            "displayName": "Rickest Rick"
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "true"
+        },
+        "result": [
+          {
+            "userName": "auser",
+            "userId": "10084",
+            "displayName": "Additional User newly created in LDAP"
+          },
+          {
+            "userName": "dlinssen",
+            "userId": "10044",
+            "displayName": "Dean Linssen"
+          },
+          {
+            "userName": "dlinssen2",
+            "userId": "10049",
+            "displayName": "Dean Linssen (MUMC+)"
+          },
+          {
+            "userName": "dtheuniss",
+            "userId": "10034",
+            "displayName": "Daniël Theunissen"
+          },
+          {
+            "userName": "jmelius",
+            "userId": "10039",
+            "displayName": "Jonathan Mélius"
+          },
+          {
+            "userName": "kgusta",
+            "userId": "10064",
+            "displayName": "Kristine Gusta"
+          },
+          {
+            "userName": "minimalist",
+            "userId": "10074",
+            "displayName": "minimalist"
+          },
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          },
+          {
+            "userName": "psuppers",
+            "userId": "10059",
+            "displayName": "Pascal Suppers"
+          },
+          {
+            "userName": "pvanschay2",
+            "userId": "10054",
+            "displayName": "Paul van Schayck"
+          },
+          {
+            "userName": "rjuhasz",
+            "userId": "10029",
+            "displayName": "Ricardo Juhasz"
+          },
+          {
+            "userName": "rvoncken",
+            "userId": "10079",
+            "displayName": "Rickest Rick"
+          },
+          {
+            "userName": "service-disqover",
+            "userId": "10096",
+            "displayName": "service-disqover"
+          }
+        ]
+      }
+    ],
+    "getUsersInGroup": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "10108"
+        },
+        "result": [
+          {
+            "userName": "dlinssen",
+            "userId": "10044",
+            "displayName": "Dean Linssen"
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "10260"
+        },
+        "result": []
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "10105"
+        },
+        "result": []
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "10267"
+        },
+        "result": []
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "10114"
+        },
+        "result": []
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": []
+      }
+    ],
+    "getDataStewards": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": [
+          {
+            "userName": "opalmen",
+            "userId": "10069",
+            "displayName": "Olav Palmen"
+          },
+          {
+            "userName": "pvanschay2",
+            "userId": "10054",
+            "displayName": "Paul van Schayck"
+          }
+        ]
+      }
+    ],
+    "admin_list_collections": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001"
+        },
+        "result": [
+          {
+            "id": "C000000001",
+            "size": 406323.0,
+            "title": "Example dataset",
+            "creator": "dlinssen",
+            "PID": "21.T12996/P000000001C000000001",
+            "numFiles": 5,
+            "numUserFiles": 1,
+            "deletionState": ""
+          },
+          {
+            "id": "C000000002",
+            "size": 406327.0,
+            "title": "Archived dataset",
+            "creator": "dlinssen",
+            "PID": "21.T12996/P000000001C000000002",
+            "numFiles": 5,
+            "numUserFiles": 1,
+            "deletionState": ""
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002"
+        },
+        "result": [
+          {
+            "id": "C000000001",
+            "size": 406323.0,
+            "title": "Example dataset",
+            "creator": "dlinssen",
+            "PID": "21.T12996/P000000002C000000001",
+            "numFiles": 5,
+            "numUserFiles": 1,
+            "deletionState": ""
+          },
+          {
+            "id": "C000000002",
+            "size": 406327.0,
+            "title": "Archived dataset",
+            "creator": "dlinssen",
+            "PID": "21.T12996/P000000002C000000002",
+            "numFiles": 5,
+            "numUserFiles": 1,
+            "deletionState": ""
+          }
+        ]
+      },
+      {
+        "users": [
+          "minimalist"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002"
+        },
+        "result": []
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": []
+      }
+    ],
+    "admin_get_user_active_processes": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "true",
+          "*arg3": "true",
+          "*arg4": "true"
+        },
+        "result": {
+          "open": [
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "open",
+              "title": "Mock direct upload",
+              "token": "mock-direct",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "passRescUM01",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "open",
+              "title": "Mock mounted upload",
+              "token": "mock-mounted",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "passRescUM01",
+              "type": "mounted",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "warning-validation-incorrect",
+              "title": "Mock validation warning",
+              "token": "mock-validation",
+              "validateMsg": "Required metadata is missing.",
+              "validateState": "false",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ],
+          "completed": [
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "ingested",
+              "title": "Mock completed ingest",
+              "token": "mock-ingested",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "C000000001",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 100,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ],
+          "error": [
+            {
+              "repository": "UM",
+              "state": "error-unarchive-failed",
+              "collection_id": "C000000002",
+              "collection_title": "Archived dataset",
+              "project_id": "P000000001",
+              "project_title": "Shared microscopy study",
+              "process_id": "mock-error",
+              "process_type": "unarchive"
+            }
+          ],
+          "in_progress": [
+            {
+              "repository": "UM",
+              "state": "archive-in-progress 1/2",
+              "collection_id": "C000000002",
+              "collection_title": "Archived dataset",
+              "project_id": "P000000001",
+              "project_title": "Shared microscopy study",
+              "process_id": "mock-in_progress",
+              "process_type": "archive"
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "in-queue-for-maintenance-end",
+              "title": "Mock maintenance queue",
+              "token": "mock-maintenance",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "ingesting",
+              "title": "Mock ingest in progress",
+              "token": "mock-ingesting",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "250",
+              "destination": "C000000003",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 60,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ]
+        }
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "true",
+          "*arg3": "true",
+          "*arg4": "false"
+        },
+        "result": {
+          "open": [
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "open",
+              "title": "Mock direct upload",
+              "token": "mock-direct",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "passRescUM01",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "open",
+              "title": "Mock mounted upload",
+              "token": "mock-mounted",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "passRescUM01",
+              "type": "mounted",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "warning-validation-incorrect",
+              "title": "Mock validation warning",
+              "token": "mock-validation",
+              "validateMsg": "Required metadata is missing.",
+              "validateState": "false",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ],
+          "completed": [
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "ingested",
+              "title": "Mock completed ingest",
+              "token": "mock-ingested",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "C000000001",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 100,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ],
+          "error": [],
+          "in_progress": [
+            {
+              "repository": "UM",
+              "state": "archive-in-progress 1/2",
+              "collection_id": "C000000002",
+              "collection_title": "Archived dataset",
+              "project_id": "P000000001",
+              "project_title": "Shared microscopy study",
+              "process_id": "mock-in_progress",
+              "process_type": "archive"
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "in-queue-for-maintenance-end",
+              "title": "Mock maintenance queue",
+              "token": "mock-maintenance",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "ingesting",
+              "title": "Mock ingest in progress",
+              "token": "mock-ingesting",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "250",
+              "destination": "C000000003",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 60,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ]
+        }
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "true",
+          "*arg3": "false",
+          "*arg4": "true"
+        },
+        "result": {
+          "open": [
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "open",
+              "title": "Mock direct upload",
+              "token": "mock-direct",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "passRescUM01",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "open",
+              "title": "Mock mounted upload",
+              "token": "mock-mounted",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "passRescUM01",
+              "type": "mounted",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "warning-validation-incorrect",
+              "title": "Mock validation warning",
+              "token": "mock-validation",
+              "validateMsg": "Required metadata is missing.",
+              "validateState": "false",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ],
+          "completed": [
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "ingested",
+              "title": "Mock completed ingest",
+              "token": "mock-ingested",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "C000000001",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 100,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ],
+          "error": [
+            {
+              "repository": "UM",
+              "state": "error-unarchive-failed",
+              "collection_id": "C000000002",
+              "collection_title": "Archived dataset",
+              "project_id": "P000000001",
+              "project_title": "Shared microscopy study",
+              "process_id": "mock-error",
+              "process_type": "unarchive"
+            }
+          ],
+          "in_progress": [
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "in-queue-for-maintenance-end",
+              "title": "Mock maintenance queue",
+              "token": "mock-maintenance",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "ingesting",
+              "title": "Mock ingest in progress",
+              "token": "mock-ingesting",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "250",
+              "destination": "C000000003",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 60,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ]
+        }
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "true",
+          "*arg3": "false",
+          "*arg4": "false"
+        },
+        "result": {
+          "open": [
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "open",
+              "title": "Mock direct upload",
+              "token": "mock-direct",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "passRescUM01",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "open",
+              "title": "Mock mounted upload",
+              "token": "mock-mounted",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "passRescUM01",
+              "type": "mounted",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "warning-validation-incorrect",
+              "title": "Mock validation warning",
+              "token": "mock-validation",
+              "validateMsg": "Required metadata is missing.",
+              "validateState": "false",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ],
+          "completed": [
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "ingested",
+              "title": "Mock completed ingest",
+              "token": "mock-ingested",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "C000000001",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 100,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ],
+          "error": [],
+          "in_progress": [
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "in-queue-for-maintenance-end",
+              "title": "Mock maintenance queue",
+              "token": "mock-maintenance",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "ingesting",
+              "title": "Mock ingest in progress",
+              "token": "mock-ingesting",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "250",
+              "destination": "C000000003",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 60,
+              "sharedWithMe": "false",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ]
+        }
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "false",
+          "*arg3": "true",
+          "*arg4": "true"
+        },
+        "result": {
+          "open": [],
+          "completed": [],
+          "error": [
+            {
+              "repository": "UM",
+              "state": "error-unarchive-failed",
+              "collection_id": "C000000002",
+              "collection_title": "Archived dataset",
+              "project_id": "P000000001",
+              "project_title": "Shared microscopy study",
+              "process_id": "mock-error",
+              "process_type": "unarchive"
+            }
+          ],
+          "in_progress": [
+            {
+              "repository": "UM",
+              "state": "archive-in-progress 1/2",
+              "collection_id": "C000000002",
+              "collection_title": "Archived dataset",
+              "project_id": "P000000001",
+              "project_title": "Shared microscopy study",
+              "process_id": "mock-in_progress",
+              "process_type": "archive"
+            }
+          ]
+        }
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "false",
+          "*arg3": "true",
+          "*arg4": "false"
+        },
+        "result": {
+          "open": [],
+          "completed": [],
+          "error": [],
+          "in_progress": [
+            {
+              "repository": "UM",
+              "state": "archive-in-progress 1/2",
+              "collection_id": "C000000002",
+              "collection_title": "Archived dataset",
+              "project_id": "P000000001",
+              "project_title": "Shared microscopy study",
+              "process_id": "mock-in_progress",
+              "process_type": "archive"
+            }
+          ]
+        }
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "false",
+          "*arg3": "false",
+          "*arg4": "true"
+        },
+        "result": {
+          "open": [],
+          "completed": [],
+          "error": [
+            {
+              "repository": "UM",
+              "state": "error-unarchive-failed",
+              "collection_id": "C000000002",
+              "collection_title": "Archived dataset",
+              "project_id": "P000000001",
+              "project_title": "Shared microscopy study",
+              "process_id": "mock-error",
+              "process_type": "unarchive"
+            }
+          ],
+          "in_progress": []
+        }
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "false",
+          "*arg3": "false",
+          "*arg4": "false"
+        },
+        "result": {
+          "open": [],
+          "completed": [],
+          "error": [],
+          "in_progress": []
+        }
+      },
+      {
+        "users": [
+          "minimalist"
+        ],
+        "match": {
+          "*arg2": "true",
+          "*arg3": "true",
+          "*arg4": "true"
+        },
+        "result": {
+          "open": [
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "open",
+              "title": "Mock direct upload",
+              "token": "mock-direct",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "passRescUM01",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "open",
+              "title": "Mock mounted upload",
+              "token": "mock-mounted",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "passRescUM01",
+              "type": "mounted",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "warning-validation-incorrect",
+              "title": "Mock validation warning",
+              "token": "mock-validation",
+              "validateMsg": "Required metadata is missing.",
+              "validateState": "false",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ],
+          "completed": [
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "ingested",
+              "title": "Mock completed ingest",
+              "token": "mock-ingested",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "C000000001",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 100,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ],
+          "error": [
+            {
+              "repository": "UM",
+              "state": "error-unarchive-failed",
+              "collection_id": "C000000002",
+              "collection_title": "Archived dataset",
+              "project_id": "P000000001",
+              "project_title": "Shared microscopy study",
+              "process_id": "mock-error",
+              "process_type": "unarchive"
+            }
+          ],
+          "in_progress": [
+            {
+              "repository": "UM",
+              "state": "archive-in-progress 1/2",
+              "collection_id": "C000000002",
+              "collection_title": "Archived dataset",
+              "project_id": "P000000001",
+              "project_title": "Shared microscopy study",
+              "process_id": "mock-in_progress",
+              "process_type": "archive"
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "in-queue-for-maintenance-end",
+              "title": "Mock maintenance queue",
+              "token": "mock-maintenance",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "ingesting",
+              "title": "Mock ingest in progress",
+              "token": "mock-ingesting",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "250",
+              "destination": "C000000003",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 60,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ]
+        }
+      },
+      {
+        "users": [
+          "minimalist"
+        ],
+        "match": {
+          "*arg2": "true",
+          "*arg3": "true",
+          "*arg4": "false"
+        },
+        "result": {
+          "open": [
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "open",
+              "title": "Mock direct upload",
+              "token": "mock-direct",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "passRescUM01",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "open",
+              "title": "Mock mounted upload",
+              "token": "mock-mounted",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "passRescUM01",
+              "type": "mounted",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "warning-validation-incorrect",
+              "title": "Mock validation warning",
+              "token": "mock-validation",
+              "validateMsg": "Required metadata is missing.",
+              "validateState": "false",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ],
+          "completed": [
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "ingested",
+              "title": "Mock completed ingest",
+              "token": "mock-ingested",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "C000000001",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 100,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ],
+          "error": [],
+          "in_progress": [
+            {
+              "repository": "UM",
+              "state": "archive-in-progress 1/2",
+              "collection_id": "C000000002",
+              "collection_title": "Archived dataset",
+              "project_id": "P000000001",
+              "project_title": "Shared microscopy study",
+              "process_id": "mock-in_progress",
+              "process_type": "archive"
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "in-queue-for-maintenance-end",
+              "title": "Mock maintenance queue",
+              "token": "mock-maintenance",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "ingesting",
+              "title": "Mock ingest in progress",
+              "token": "mock-ingesting",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "250",
+              "destination": "C000000003",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 60,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ]
+        }
+      },
+      {
+        "users": [
+          "minimalist"
+        ],
+        "match": {
+          "*arg2": "true",
+          "*arg3": "false",
+          "*arg4": "true"
+        },
+        "result": {
+          "open": [
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "open",
+              "title": "Mock direct upload",
+              "token": "mock-direct",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "passRescUM01",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "open",
+              "title": "Mock mounted upload",
+              "token": "mock-mounted",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "passRescUM01",
+              "type": "mounted",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "warning-validation-incorrect",
+              "title": "Mock validation warning",
+              "token": "mock-validation",
+              "validateMsg": "Required metadata is missing.",
+              "validateState": "false",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ],
+          "completed": [
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "ingested",
+              "title": "Mock completed ingest",
+              "token": "mock-ingested",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "C000000001",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 100,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ],
+          "error": [
+            {
+              "repository": "UM",
+              "state": "error-unarchive-failed",
+              "collection_id": "C000000002",
+              "collection_title": "Archived dataset",
+              "project_id": "P000000001",
+              "project_title": "Shared microscopy study",
+              "process_id": "mock-error",
+              "process_type": "unarchive"
+            }
+          ],
+          "in_progress": [
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "in-queue-for-maintenance-end",
+              "title": "Mock maintenance queue",
+              "token": "mock-maintenance",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "ingesting",
+              "title": "Mock ingest in progress",
+              "token": "mock-ingesting",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "250",
+              "destination": "C000000003",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 60,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ]
+        }
+      },
+      {
+        "users": [
+          "minimalist"
+        ],
+        "match": {
+          "*arg2": "true",
+          "*arg3": "false",
+          "*arg4": "false"
+        },
+        "result": {
+          "open": [
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "open",
+              "title": "Mock direct upload",
+              "token": "mock-direct",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "passRescUM01",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "open",
+              "title": "Mock mounted upload",
+              "token": "mock-mounted",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "passRescUM01",
+              "type": "mounted",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "warning-validation-incorrect",
+              "title": "Mock validation warning",
+              "token": "mock-validation",
+              "validateMsg": "Required metadata is missing.",
+              "validateState": "false",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ],
+          "completed": [
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "ingested",
+              "title": "Mock completed ingest",
+              "token": "mock-ingested",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "C000000001",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 100,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ],
+          "error": [],
+          "in_progress": [
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "in-queue-for-maintenance-end",
+              "title": "Mock maintenance queue",
+              "token": "mock-maintenance",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "25",
+              "destination": "",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 0,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            },
+            {
+              "date": "1767268800",
+              "project": "P000000001",
+              "projectTitle": "Shared microscopy study",
+              "state": "ingesting",
+              "title": "Mock ingest in progress",
+              "token": "mock-ingesting",
+              "validateMsg": "",
+              "validateState": "",
+              "resourceStatus": "",
+              "totalSize": "250",
+              "destination": "C000000003",
+              "type": "direct",
+              "creator": "dlinssen",
+              "process_type": "drop_zone",
+              "percentage_ingested": 60,
+              "sharedWithMe": "true",
+              "enableDropzoneSharing": "true",
+              "size_ingested": 0
+            }
+          ]
+        }
+      },
+      {
+        "users": [
+          "minimalist"
+        ],
+        "match": {
+          "*arg2": "false",
+          "*arg3": "true",
+          "*arg4": "true"
+        },
+        "result": {
+          "open": [],
+          "completed": [],
+          "error": [
+            {
+              "repository": "UM",
+              "state": "error-unarchive-failed",
+              "collection_id": "C000000002",
+              "collection_title": "Archived dataset",
+              "project_id": "P000000001",
+              "project_title": "Shared microscopy study",
+              "process_id": "mock-error",
+              "process_type": "unarchive"
+            }
+          ],
+          "in_progress": [
+            {
+              "repository": "UM",
+              "state": "archive-in-progress 1/2",
+              "collection_id": "C000000002",
+              "collection_title": "Archived dataset",
+              "project_id": "P000000001",
+              "project_title": "Shared microscopy study",
+              "process_id": "mock-in_progress",
+              "process_type": "archive"
+            }
+          ]
+        }
+      },
+      {
+        "users": [
+          "minimalist"
+        ],
+        "match": {
+          "*arg2": "false",
+          "*arg3": "true",
+          "*arg4": "false"
+        },
+        "result": {
+          "open": [],
+          "completed": [],
+          "error": [],
+          "in_progress": [
+            {
+              "repository": "UM",
+              "state": "archive-in-progress 1/2",
+              "collection_id": "C000000002",
+              "collection_title": "Archived dataset",
+              "project_id": "P000000001",
+              "project_title": "Shared microscopy study",
+              "process_id": "mock-in_progress",
+              "process_type": "archive"
+            }
+          ]
+        }
+      },
+      {
+        "users": [
+          "minimalist"
+        ],
+        "match": {
+          "*arg2": "false",
+          "*arg3": "false",
+          "*arg4": "true"
+        },
+        "result": {
+          "open": [],
+          "completed": [],
+          "error": [
+            {
+              "repository": "UM",
+              "state": "error-unarchive-failed",
+              "collection_id": "C000000002",
+              "collection_title": "Archived dataset",
+              "project_id": "P000000001",
+              "project_title": "Shared microscopy study",
+              "process_id": "mock-error",
+              "process_type": "unarchive"
+            }
+          ],
+          "in_progress": []
+        }
+      },
+      {
+        "users": [
+          "minimalist"
+        ],
+        "match": {
+          "*arg2": "false",
+          "*arg3": "false",
+          "*arg4": "false"
+        },
+        "result": {
+          "open": [],
+          "completed": [],
+          "error": [],
+          "in_progress": []
+        }
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": {
+          "open": [],
+          "completed": [],
+          "error": [],
+          "in-progress": []
+        }
+      }
+    ],
+    "get_dropzone_validation_errors": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": {
+          "found": false,
+          "validation_errors": []
+        }
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "mock-ingesting",
+          "*arg3": "direct"
+        },
+        "result": {
+          "found": true,
+          "validation_errors": []
+        }
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "mock-validation",
+          "*arg3": "direct"
+        },
+        "result": {
+          "found": true,
+          "validation_errors": [
+            "Required metadata is missing."
+          ]
+        }
+      }
+    ],
+    "get_ingest_maintenance_window": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": {
+          "maintenanceStart": null,
+          "maintenanceEnd": null
+        }
+      }
+    ],
+    "listActiveDropZones": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": [
+          {
+            "token": "mock-direct",
+            "type": "direct",
+            "title": "Mock direct upload",
+            "state": "open",
+            "project": "P000000001",
+            "projectTitle": "Shared microscopy study",
+            "date": "1767268800",
+            "totalSize": "25",
+            "destination": "passRescUM01",
+            "creator": "dlinssen",
+            "sharedWithMe": "false",
+            "enableDropzoneSharing": "true",
+            "validateState": "N/A",
+            "validateMsg": "N/A",
+            "creationDate": "1767268800",
+            "modifyDate": "1767268800",
+            "dropzoneSize": "0",
+            "dropzoneSizeUpdated": "0"
+          },
+          {
+            "token": "mock-mounted",
+            "type": "mounted",
+            "title": "Mock mounted upload",
+            "state": "open",
+            "project": "P000000001",
+            "projectTitle": "Shared microscopy study",
+            "date": "1767268800",
+            "totalSize": "25",
+            "destination": "passRescUM01",
+            "creator": "dlinssen",
+            "sharedWithMe": "false",
+            "enableDropzoneSharing": "true",
+            "validateState": "N/A",
+            "validateMsg": "N/A",
+            "creationDate": "1767268800",
+            "modifyDate": "1767268800",
+            "dropzoneSize": "0",
+            "dropzoneSizeUpdated": "0"
+          },
+          {
+            "token": "mock-validation",
+            "type": "direct",
+            "title": "Mock validation warning",
+            "state": "warning-validation-incorrect",
+            "project": "P000000001",
+            "projectTitle": "Shared microscopy study",
+            "date": "1767268800",
+            "totalSize": "25",
+            "destination": "",
+            "creator": "dlinssen",
+            "sharedWithMe": "false",
+            "enableDropzoneSharing": "true",
+            "validateState": "false",
+            "validateMsg": "Required metadata is missing.",
+            "creationDate": "1767268800",
+            "modifyDate": "1767268800",
+            "dropzoneSize": "0",
+            "dropzoneSizeUpdated": "0"
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "true"
+        },
+        "result": [
+          {
+            "token": "mock-direct",
+            "type": "direct",
+            "title": "Mock direct upload",
+            "state": "open",
+            "project": "P000000001",
+            "projectTitle": "Shared microscopy study",
+            "date": "1767268800",
+            "totalSize": "25",
+            "destination": "passRescUM01",
+            "creator": "dlinssen",
+            "sharedWithMe": "false",
+            "enableDropzoneSharing": "true",
+            "validateState": "N/A",
+            "validateMsg": "N/A",
+            "creationDate": "1767268800",
+            "modifyDate": "1767268800",
+            "dropzoneSize": "0",
+            "dropzoneSizeUpdated": "0",
+            "userName": "N/A"
+          },
+          {
+            "token": "mock-mounted",
+            "type": "mounted",
+            "title": "Mock mounted upload",
+            "state": "open",
+            "project": "P000000001",
+            "projectTitle": "Shared microscopy study",
+            "date": "1767268800",
+            "totalSize": "25",
+            "destination": "passRescUM01",
+            "creator": "dlinssen",
+            "sharedWithMe": "false",
+            "enableDropzoneSharing": "true",
+            "validateState": "N/A",
+            "validateMsg": "N/A",
+            "creationDate": "1767268800",
+            "modifyDate": "1767268800",
+            "dropzoneSize": "0",
+            "dropzoneSizeUpdated": "0",
+            "userName": "N/A"
+          },
+          {
+            "token": "mock-validation",
+            "type": "direct",
+            "title": "Mock validation warning",
+            "state": "warning-validation-incorrect",
+            "project": "P000000001",
+            "projectTitle": "Shared microscopy study",
+            "date": "1767268800",
+            "totalSize": "25",
+            "destination": "",
+            "creator": "dlinssen",
+            "sharedWithMe": "false",
+            "enableDropzoneSharing": "true",
+            "validateState": "false",
+            "validateMsg": "Required metadata is missing.",
+            "creationDate": "1767268800",
+            "modifyDate": "1767268800",
+            "dropzoneSize": "0",
+            "dropzoneSizeUpdated": "0",
+            "userName": "N/A"
+          }
+        ]
+      },
+      {
+        "users": [
+          "minimalist"
+        ],
+        "match": {},
+        "result": [
+          {
+            "token": "mock-direct",
+            "type": "direct",
+            "title": "Mock direct upload",
+            "state": "open",
+            "project": "P000000001",
+            "projectTitle": "Shared microscopy study",
+            "date": "1767268800",
+            "totalSize": "25",
+            "destination": "passRescUM01",
+            "creator": "dlinssen",
+            "sharedWithMe": "true",
+            "enableDropzoneSharing": "true",
+            "validateState": "N/A",
+            "validateMsg": "N/A",
+            "creationDate": "1767268800",
+            "modifyDate": "1767268800",
+            "dropzoneSize": "0",
+            "dropzoneSizeUpdated": "0"
+          },
+          {
+            "token": "mock-mounted",
+            "type": "mounted",
+            "title": "Mock mounted upload",
+            "state": "open",
+            "project": "P000000001",
+            "projectTitle": "Shared microscopy study",
+            "date": "1767268800",
+            "totalSize": "25",
+            "destination": "passRescUM01",
+            "creator": "dlinssen",
+            "sharedWithMe": "true",
+            "enableDropzoneSharing": "true",
+            "validateState": "N/A",
+            "validateMsg": "N/A",
+            "creationDate": "1767268800",
+            "modifyDate": "1767268800",
+            "dropzoneSize": "0",
+            "dropzoneSizeUpdated": "0"
+          },
+          {
+            "token": "mock-validation",
+            "type": "direct",
+            "title": "Mock validation warning",
+            "state": "warning-validation-incorrect",
+            "project": "P000000001",
+            "projectTitle": "Shared microscopy study",
+            "date": "1767268800",
+            "totalSize": "25",
+            "destination": "",
+            "creator": "dlinssen",
+            "sharedWithMe": "true",
+            "enableDropzoneSharing": "true",
+            "validateState": "false",
+            "validateMsg": "Required metadata is missing.",
+            "creationDate": "1767268800",
+            "modifyDate": "1767268800",
+            "dropzoneSize": "0",
+            "dropzoneSizeUpdated": "0"
+          }
+        ]
+      },
+      {
+        "users": [
+          "minimalist"
+        ],
+        "match": {
+          "*arg2": "true"
+        },
+        "result": [
+          {
+            "token": "mock-direct",
+            "type": "direct",
+            "title": "Mock direct upload",
+            "state": "open",
+            "project": "P000000001",
+            "projectTitle": "Shared microscopy study",
+            "date": "1767268800",
+            "totalSize": "25",
+            "destination": "passRescUM01",
+            "creator": "dlinssen",
+            "sharedWithMe": "true",
+            "enableDropzoneSharing": "true",
+            "validateState": "N/A",
+            "validateMsg": "N/A",
+            "creationDate": "1767268800",
+            "modifyDate": "1767268800",
+            "dropzoneSize": "0",
+            "dropzoneSizeUpdated": "0",
+            "userName": "N/A"
+          },
+          {
+            "token": "mock-mounted",
+            "type": "mounted",
+            "title": "Mock mounted upload",
+            "state": "open",
+            "project": "P000000001",
+            "projectTitle": "Shared microscopy study",
+            "date": "1767268800",
+            "totalSize": "25",
+            "destination": "passRescUM01",
+            "creator": "dlinssen",
+            "sharedWithMe": "true",
+            "enableDropzoneSharing": "true",
+            "validateState": "N/A",
+            "validateMsg": "N/A",
+            "creationDate": "1767268800",
+            "modifyDate": "1767268800",
+            "dropzoneSize": "0",
+            "dropzoneSizeUpdated": "0",
+            "userName": "N/A"
+          },
+          {
+            "token": "mock-validation",
+            "type": "direct",
+            "title": "Mock validation warning",
+            "state": "warning-validation-incorrect",
+            "project": "P000000001",
+            "projectTitle": "Shared microscopy study",
+            "date": "1767268800",
+            "totalSize": "25",
+            "destination": "",
+            "creator": "dlinssen",
+            "sharedWithMe": "true",
+            "enableDropzoneSharing": "true",
+            "validateState": "false",
+            "validateMsg": "Required metadata is missing.",
+            "creationDate": "1767268800",
+            "modifyDate": "1767268800",
+            "dropzoneSize": "0",
+            "dropzoneSizeUpdated": "0",
+            "userName": "N/A"
+          }
+        ]
+      }
+    ],
+    "checkDropZoneACL": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": "false"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "dlinssen"
+        },
+        "result": "true"
+      },
+      {
+        "users": [
+          "minimalist"
+        ],
+        "match": {
+          "*arg2": "minimalist",
+          "*arg3": "direct"
+        },
+        "result": "true"
+      }
+    ],
+    "check_user_is_deletable": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": {
+          "is_deletable": false,
+          "reasons": [
+            "This user does not have a pending deletion procedure"
+          ]
+        }
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "dlinssen"
+        },
+        "result": {
+          "is_deletable": false,
+          "reasons": [
+            "This user does not have a pending deletion procedure",
+            "dlinssen is the OBI:0000103 for project /nlmumc/projects/P000000002"
+          ]
+        }
+      }
+    ],
+    "get_users_active_permissions": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": []
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "dlinssen"
+        },
+        "result": [
+          {
+            "project": "/nlmumc/projects/P000000001",
+            "username": "dlinssen",
+            "user_id": "10044",
+            "access": "own"
+          },
+          {
+            "project": "/nlmumc/projects/P000000002",
+            "username": "dlinssen",
+            "user_id": "10044",
+            "access": "own"
+          }
+        ]
+      },
+      {
+        "users": [
+          "minimalist"
+        ],
+        "match": {
+          "*arg2": "dlinssen"
+        },
+        "result": [
+          {
+            "project": "/nlmumc/projects/P000000001",
+            "username": "dlinssen",
+            "user_id": "10044",
+            "access": "own"
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "minimalist"
+        },
+        "result": [
+          {
+            "project": "/nlmumc/projects/P000000001",
+            "username": "minimalist",
+            "user_id": "10074",
+            "access": "read"
+          }
+        ]
+      }
+    ],
+    "list_resources_detailed": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": [
+          {
+            "name": "arcRescSURF01",
+            "type": "unixfilesystem",
+            "status": "",
+            "context": ""
+          },
+          {
+            "name": "ires-hnas-azmResource",
+            "type": "unixfilesystem",
+            "status": "",
+            "context": ""
+          },
+          {
+            "name": "ires-hnas-umResource",
+            "type": "unixfilesystem",
+            "status": "",
+            "context": ""
+          },
+          {
+            "name": "passRescUM01",
+            "type": "passthru",
+            "status": "",
+            "context": ""
+          },
+          {
+            "name": "replRescAZM02",
+            "type": "replication",
+            "status": "",
+            "context": ""
+          },
+          {
+            "name": "replRescUMCeph01",
+            "type": "replication",
+            "status": "down",
+            "context": ""
+          }
+        ]
+      }
+    ],
+    "get_resource_status": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": ""
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "replRescUMCeph01"
+        },
+        "result": "down"
+      }
+    ],
+    "getResourceAVU": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": ""
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "passRescUM01",
+          "*arg3": "NCIT:C88193"
+        },
+        "result": "0.130"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "replRescAZM02",
+          "*arg3": "NCIT:C88193"
+        },
+        "result": "0"
+      }
+    ],
+    "getProjectCost": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "P000000001"
+        },
+        "result": [
+          0.00010564450000000001,
+          [
+            {
+              "collection": "C000000001",
+              "dataSizeGiB": "0.0003784177824854851",
+              "detailsPerResource": [
+                {
+                  "resource": "2369145673",
+                  "dataSizeGBOnResource": "0.000406323",
+                  "pricePerGBPerYear": "0.130",
+                  "storageCostOnResource": "5.282199e-05"
+                }
+              ],
+              "collectionStorageCost": "5.282199e-05"
+            },
+            {
+              "collection": "C000000002",
+              "dataSizeGiB": "0.00037842150777578354",
+              "detailsPerResource": [
+                {
+                  "resource": "2369145673",
+                  "dataSizeGBOnResource": "0.000406327",
+                  "pricePerGBPerYear": "0.130",
+                  "storageCostOnResource": "5.2822510000000005e-05"
+                }
+              ],
+              "collectionStorageCost": "5.2822510000000005e-05"
+            }
+          ],
+          0.0007568392902612686
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "P000000002"
+        },
+        "result": [
+          0.00010564450000000001,
+          [
+            {
+              "collection": "C000000001",
+              "dataSizeGiB": "0.0003784177824854851",
+              "detailsPerResource": [
+                {
+                  "resource": "2369145673",
+                  "dataSizeGBOnResource": "0.000406323",
+                  "pricePerGBPerYear": "0.130",
+                  "storageCostOnResource": "5.282199e-05"
+                }
+              ],
+              "collectionStorageCost": "5.282199e-05"
+            },
+            {
+              "collection": "C000000002",
+              "dataSizeGiB": "0.00037842150777578354",
+              "detailsPerResource": [
+                {
+                  "resource": "2369145673",
+                  "dataSizeGBOnResource": "0.000406327",
+                  "pricePerGBPerYear": "0.130",
+                  "storageCostOnResource": "5.2822510000000005e-05"
+                }
+              ],
+              "collectionStorageCost": "5.2822510000000005e-05"
+            }
+          ],
+          0.0007568392902612686
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": [
+          0,
+          [],
+          0
+        ]
+      }
+    ],
+    "detailsProject": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "P000000001"
+        },
+        "result": {
+          "project": "P000000001",
+          "projectStorageCost": "0.00010564450000000001",
+          "collections": [
+            {
+              "collection": "C000000001",
+              "dataSizeGiB": "0.0003784177824854851",
+              "detailsPerResource": [
+                {
+                  "resource": "2369145673",
+                  "dataSizeGBOnResource": "0.000406323",
+                  "pricePerGBPerYear": "0.130",
+                  "storageCostOnResource": "5.282199e-05"
+                }
+              ],
+              "collectionStorageCost": "5.282199e-05"
+            },
+            {
+              "collection": "C000000002",
+              "dataSizeGiB": "0.00037842150777578354",
+              "detailsPerResource": [
+                {
+                  "resource": "2369145673",
+                  "dataSizeGBOnResource": "0.000406327",
+                  "pricePerGBPerYear": "0.130",
+                  "storageCostOnResource": "5.2822510000000005e-05"
+                }
+              ],
+              "collectionStorageCost": "5.2822510000000005e-05"
+            }
+          ],
+          "resource": "passRescUM01",
+          "dataSizeGiB": "0.0007568392902612686",
+          "storageQuotaGiB": "10",
+          "respCostCenter": "UM-01234567890X",
+          "dataSteward": "dlinssen",
+          "principalInvestigator": "dlinssen",
+          "managers": {
+            "users": [
+              "dlinssen"
+            ],
+            "groups": [],
+            "userObjects": [
+              {
+                "userName": "dlinssen",
+                "userId": "10044",
+                "displayName": "Dean Linssen"
+              }
+            ],
+            "groupObjects": []
+          },
+          "contributors": {
+            "users": [
+              "minimalist"
+            ],
+            "groups": [],
+            "userObjects": [
+              {
+                "userName": "minimalist",
+                "userId": "10074",
+                "displayName": "minimalist"
+              }
+            ],
+            "groupObjects": []
+          },
+          "viewers": {
+            "users": [],
+            "groups": [],
+            "userObjects": [],
+            "groupObjects": []
+          },
+          "title": "Shared microscopy study"
+        }
+      },
+      {
+        "users": [
+          "minimalist"
+        ],
+        "match": {
+          "*arg2": "P000000001"
+        },
+        "result": {
+          "project": "P000000001",
+          "projectStorageCost": "0",
+          "collections": {},
+          "resource": "passRescUM01",
+          "dataSizeGiB": "0.0007568392902612686",
+          "storageQuotaGiB": "10",
+          "respCostCenter": "UM-01234567890X",
+          "dataSteward": "dlinssen",
+          "principalInvestigator": "dlinssen",
+          "managers": {
+            "users": [
+              "dlinssen"
+            ],
+            "groups": [],
+            "userObjects": [
+              {
+                "userName": "dlinssen",
+                "userId": "10044",
+                "displayName": "Dean Linssen"
+              }
+            ],
+            "groupObjects": []
+          },
+          "contributors": {
+            "users": [
+              "minimalist"
+            ],
+            "groups": [],
+            "userObjects": [
+              {
+                "userName": "minimalist",
+                "userId": "10074",
+                "displayName": "minimalist"
+              }
+            ],
+            "groupObjects": []
+          },
+          "viewers": {
+            "users": [],
+            "groups": [],
+            "userObjects": [],
+            "groupObjects": []
+          },
+          "title": "Shared microscopy study"
+        }
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "P000000002"
+        },
+        "result": {
+          "project": "P000000002",
+          "projectStorageCost": "0.00010564450000000001",
+          "collections": [
+            {
+              "collection": "C000000001",
+              "dataSizeGiB": "0.0003784177824854851",
+              "detailsPerResource": [
+                {
+                  "resource": "2369145673",
+                  "dataSizeGBOnResource": "0.000406323",
+                  "pricePerGBPerYear": "0.130",
+                  "storageCostOnResource": "5.282199e-05"
+                }
+              ],
+              "collectionStorageCost": "5.282199e-05"
+            },
+            {
+              "collection": "C000000002",
+              "dataSizeGiB": "0.00037842150777578354",
+              "detailsPerResource": [
+                {
+                  "resource": "2369145673",
+                  "dataSizeGBOnResource": "0.000406327",
+                  "pricePerGBPerYear": "0.130",
+                  "storageCostOnResource": "5.2822510000000005e-05"
+                }
+              ],
+              "collectionStorageCost": "5.2822510000000005e-05"
+            }
+          ],
+          "resource": "passRescUM01",
+          "dataSizeGiB": "0.0007568392902612686",
+          "storageQuotaGiB": "10",
+          "respCostCenter": "UM-01234567890X",
+          "dataSteward": "dlinssen",
+          "principalInvestigator": "dlinssen",
+          "managers": {
+            "users": [
+              "dlinssen"
+            ],
+            "groups": [],
+            "userObjects": [
+              {
+                "userName": "dlinssen",
+                "userId": "10044",
+                "displayName": "Dean Linssen"
+              }
+            ],
+            "groupObjects": []
+          },
+          "contributors": {
+            "users": [],
+            "groups": [],
+            "userObjects": [],
+            "groupObjects": []
+          },
+          "viewers": {
+            "users": [],
+            "groups": [],
+            "userObjects": [],
+            "groupObjects": []
+          },
+          "title": "Administrator research project"
+        }
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": {}
+      }
+    ],
+    "reportProjects": [
+      {
+        "users": [
+          "minimalist"
+        ],
+        "match": {},
+        "result": [
+          {
+            "project": "P000000001",
+            "projectStorageCost": "0",
+            "collections": {},
+            "resource": "passRescUM01",
+            "dataSizeGiB": "0.0007568392902612686",
+            "storageQuotaGiB": "10",
+            "respCostCenter": "UM-01234567890X",
+            "dataSteward": "dlinssen",
+            "principalInvestigator": "dlinssen",
+            "managers": {
+              "users": [
+                "dlinssen"
+              ],
+              "groups": [],
+              "userObjects": [
+                {
+                  "userName": "dlinssen",
+                  "userId": "10044",
+                  "displayName": "Dean Linssen"
+                }
+              ],
+              "groupObjects": []
+            },
+            "contributors": {
+              "users": [
+                "minimalist"
+              ],
+              "groups": [],
+              "userObjects": [
+                {
+                  "userName": "minimalist",
+                  "userId": "10074",
+                  "displayName": "minimalist"
+                }
+              ],
+              "groupObjects": []
+            },
+            "viewers": {
+              "users": [],
+              "groups": [],
+              "userObjects": [],
+              "groupObjects": []
+            },
+            "title": "Shared microscopy study"
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": [
+          {
+            "project": "P000000001",
+            "projectStorageCost": "0.00010564450000000001",
+            "collections": [
+              {
+                "collection": "C000000001",
+                "dataSizeGiB": "0.0003784177824854851",
+                "detailsPerResource": [
+                  {
+                    "resource": "2369145673",
+                    "dataSizeGBOnResource": "0.000406323",
+                    "pricePerGBPerYear": "0.130",
+                    "storageCostOnResource": "5.282199e-05"
+                  }
+                ],
+                "collectionStorageCost": "5.282199e-05"
+              },
+              {
+                "collection": "C000000002",
+                "dataSizeGiB": "0.00037842150777578354",
+                "detailsPerResource": [
+                  {
+                    "resource": "2369145673",
+                    "dataSizeGBOnResource": "0.000406327",
+                    "pricePerGBPerYear": "0.130",
+                    "storageCostOnResource": "5.2822510000000005e-05"
+                  }
+                ],
+                "collectionStorageCost": "5.2822510000000005e-05"
+              }
+            ],
+            "resource": "passRescUM01",
+            "dataSizeGiB": "0.0007568392902612686",
+            "storageQuotaGiB": "10",
+            "respCostCenter": "UM-01234567890X",
+            "dataSteward": "dlinssen",
+            "principalInvestigator": "dlinssen",
+            "managers": {
+              "users": [
+                "dlinssen"
+              ],
+              "groups": [],
+              "userObjects": [
+                {
+                  "userName": "dlinssen",
+                  "userId": "10044",
+                  "displayName": "Dean Linssen"
+                }
+              ],
+              "groupObjects": []
+            },
+            "contributors": {
+              "users": [
+                "minimalist"
+              ],
+              "groups": [],
+              "userObjects": [
+                {
+                  "userName": "minimalist",
+                  "userId": "10074",
+                  "displayName": "minimalist"
+                }
+              ],
+              "groupObjects": []
+            },
+            "viewers": {
+              "users": [],
+              "groups": [],
+              "userObjects": [],
+              "groupObjects": []
+            },
+            "title": "Shared microscopy study"
+          },
+          {
+            "project": "P000000002",
+            "projectStorageCost": "0.00010564450000000001",
+            "collections": [
+              {
+                "collection": "C000000001",
+                "dataSizeGiB": "0.0003784177824854851",
+                "detailsPerResource": [
+                  {
+                    "resource": "2369145673",
+                    "dataSizeGBOnResource": "0.000406323",
+                    "pricePerGBPerYear": "0.130",
+                    "storageCostOnResource": "5.282199e-05"
+                  }
+                ],
+                "collectionStorageCost": "5.282199e-05"
+              },
+              {
+                "collection": "C000000002",
+                "dataSizeGiB": "0.00037842150777578354",
+                "detailsPerResource": [
+                  {
+                    "resource": "2369145673",
+                    "dataSizeGBOnResource": "0.000406327",
+                    "pricePerGBPerYear": "0.130",
+                    "storageCostOnResource": "5.2822510000000005e-05"
+                  }
+                ],
+                "collectionStorageCost": "5.2822510000000005e-05"
+              }
+            ],
+            "resource": "passRescUM01",
+            "dataSizeGiB": "0.0007568392902612686",
+            "storageQuotaGiB": "10",
+            "respCostCenter": "UM-01234567890X",
+            "dataSteward": "dlinssen",
+            "principalInvestigator": "dlinssen",
+            "managers": {
+              "users": [
+                "dlinssen"
+              ],
+              "groups": [],
+              "userObjects": [
+                {
+                  "userName": "dlinssen",
+                  "userId": "10044",
+                  "displayName": "Dean Linssen"
+                }
+              ],
+              "groupObjects": []
+            },
+            "contributors": {
+              "users": [],
+              "groups": [],
+              "userObjects": [],
+              "groupObjects": []
+            },
+            "viewers": {
+              "users": [],
+              "groups": [],
+              "userObjects": [],
+              "groupObjects": []
+            },
+            "title": "Administrator research project"
+          }
+        ]
+      }
+    ],
+    "listProjectManagers": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "P000000001"
+        },
+        "result": {
+          "users": [
+            "dlinssen"
+          ],
+          "groups": [],
+          "userObjects": [
+            {
+              "userName": "dlinssen",
+              "userId": "10044",
+              "displayName": "Dean Linssen"
+            }
+          ],
+          "groupObjects": []
+        }
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "P000000002"
+        },
+        "result": {
+          "users": [
+            "dlinssen"
+          ],
+          "groups": [],
+          "userObjects": [
+            {
+              "userName": "dlinssen",
+              "userId": "10044",
+              "displayName": "Dean Linssen"
+            }
+          ],
+          "groupObjects": []
+        }
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": {
+          "users": [],
+          "groups": [],
+          "userObjects": [],
+          "groupObjects": []
+        }
+      }
+    ],
+    "listProjectContributors": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "P000000001"
+        },
+        "result": {
+          "users": [
+            "minimalist"
+          ],
+          "groups": [],
+          "userObjects": [
+            {
+              "userName": "minimalist",
+              "userId": "10074",
+              "displayName": "minimalist"
+            }
+          ],
+          "groupObjects": []
+        }
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "P000000002"
+        },
+        "result": {
+          "users": [],
+          "groups": [],
+          "userObjects": [],
+          "groupObjects": []
+        }
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": {
+          "users": [],
+          "groups": [],
+          "userObjects": [],
+          "groupObjects": []
+        }
+      }
+    ],
+    "listProjectViewers": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "P000000001"
+        },
+        "result": {
+          "users": [],
+          "groups": [],
+          "userObjects": [],
+          "groupObjects": []
+        }
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "P000000002"
+        },
+        "result": {
+          "users": [],
+          "groups": [],
+          "userObjects": [],
+          "groupObjects": []
+        }
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": {
+          "users": [],
+          "groups": [],
+          "userObjects": [],
+          "groupObjects": []
+        }
+      }
+    ],
+    "getCollectionAVU": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001",
+          "*arg3": "title"
+        },
+        "result": "Shared microscopy study"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001",
+          "*arg3": "responsibleCostCenter"
+        },
+        "result": "UM-01234567890X"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001",
+          "*arg3": "resource"
+        },
+        "result": "passRescUM01"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001",
+          "*arg3": "storageQuotaGb"
+        },
+        "result": "10"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001",
+          "*arg3": "OBI:0000103"
+        },
+        "result": "dlinssen"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001",
+          "*arg3": "dataSteward"
+        },
+        "result": "dlinssen"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000001",
+          "*arg3": "title"
+        },
+        "result": "Example dataset"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000001",
+          "*arg3": "creator"
+        },
+        "result": "dlinssen"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000001",
+          "*arg3": "PID"
+        },
+        "result": "21.T12996/P000000001C000000001"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000001",
+          "*arg3": "dcat:byteSize"
+        },
+        "result": "406323"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000001",
+          "*arg3": "numFiles"
+        },
+        "result": "5"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000002",
+          "*arg3": "title"
+        },
+        "result": "Archived dataset"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000002",
+          "*arg3": "creator"
+        },
+        "result": "dlinssen"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000002",
+          "*arg3": "PID"
+        },
+        "result": "21.T12996/P000000001C000000002"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000002",
+          "*arg3": "dcat:byteSize"
+        },
+        "result": "406327"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000002",
+          "*arg3": "numFiles"
+        },
+        "result": "5"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002",
+          "*arg3": "title"
+        },
+        "result": "Administrator research project"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002",
+          "*arg3": "responsibleCostCenter"
+        },
+        "result": "UM-01234567890X"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002",
+          "*arg3": "resource"
+        },
+        "result": "passRescUM01"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002",
+          "*arg3": "storageQuotaGb"
+        },
+        "result": "10"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002",
+          "*arg3": "OBI:0000103"
+        },
+        "result": "dlinssen"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002",
+          "*arg3": "dataSteward"
+        },
+        "result": "dlinssen"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000001",
+          "*arg3": "title"
+        },
+        "result": "Example dataset"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000001",
+          "*arg3": "creator"
+        },
+        "result": "dlinssen"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000001",
+          "*arg3": "PID"
+        },
+        "result": "21.T12996/P000000002C000000001"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000001",
+          "*arg3": "dcat:byteSize"
+        },
+        "result": "406323"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000001",
+          "*arg3": "numFiles"
+        },
+        "result": "5"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000002",
+          "*arg3": "title"
+        },
+        "result": "Archived dataset"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000002",
+          "*arg3": "creator"
+        },
+        "result": "dlinssen"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000002",
+          "*arg3": "PID"
+        },
+        "result": "21.T12996/P000000002C000000002"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000002",
+          "*arg3": "dcat:byteSize"
+        },
+        "result": "406327"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000002",
+          "*arg3": "numFiles"
+        },
+        "result": "5"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": ""
+      }
+    ],
+    "getCollectionAVUTriple": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001",
+          "*arg3": "title"
+        },
+        "result": [
+          {
+            "attribute": "title",
+            "value": "Shared microscopy study",
+            "unit": ""
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001",
+          "*arg3": "responsibleCostCenter"
+        },
+        "result": [
+          {
+            "attribute": "responsibleCostCenter",
+            "value": "UM-01234567890X",
+            "unit": ""
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001",
+          "*arg3": "resource"
+        },
+        "result": [
+          {
+            "attribute": "resource",
+            "value": "passRescUM01",
+            "unit": ""
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001",
+          "*arg3": "storageQuotaGb"
+        },
+        "result": [
+          {
+            "attribute": "storageQuotaGb",
+            "value": "10",
+            "unit": ""
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001",
+          "*arg3": "OBI:0000103"
+        },
+        "result": [
+          {
+            "attribute": "OBI:0000103",
+            "value": "dlinssen",
+            "unit": ""
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001",
+          "*arg3": "dataSteward"
+        },
+        "result": [
+          {
+            "attribute": "dataSteward",
+            "value": "dlinssen",
+            "unit": ""
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000001",
+          "*arg3": "title"
+        },
+        "result": [
+          {
+            "attribute": "title",
+            "value": "Example dataset",
+            "unit": ""
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000002",
+          "*arg3": "title"
+        },
+        "result": [
+          {
+            "attribute": "title",
+            "value": "Archived dataset",
+            "unit": ""
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002",
+          "*arg3": "title"
+        },
+        "result": [
+          {
+            "attribute": "title",
+            "value": "Administrator research project",
+            "unit": ""
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002",
+          "*arg3": "responsibleCostCenter"
+        },
+        "result": [
+          {
+            "attribute": "responsibleCostCenter",
+            "value": "UM-01234567890X",
+            "unit": ""
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002",
+          "*arg3": "resource"
+        },
+        "result": [
+          {
+            "attribute": "resource",
+            "value": "passRescUM01",
+            "unit": ""
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002",
+          "*arg3": "storageQuotaGb"
+        },
+        "result": [
+          {
+            "attribute": "storageQuotaGb",
+            "value": "10",
+            "unit": ""
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002",
+          "*arg3": "OBI:0000103"
+        },
+        "result": [
+          {
+            "attribute": "OBI:0000103",
+            "value": "dlinssen",
+            "unit": ""
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002",
+          "*arg3": "dataSteward"
+        },
+        "result": [
+          {
+            "attribute": "dataSteward",
+            "value": "dlinssen",
+            "unit": ""
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000001",
+          "*arg3": "title"
+        },
+        "result": [
+          {
+            "attribute": "title",
+            "value": "Example dataset",
+            "unit": ""
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000002",
+          "*arg3": "title"
+        },
+        "result": [
+          {
+            "attribute": "title",
+            "value": "Archived dataset",
+            "unit": ""
+          }
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": []
+      }
+    ],
+    "getCollectionSize": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001"
+        },
+        "result": 812650
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001",
+          "*arg3": "GiB",
+          "*arg4": "none"
+        },
+        "result": 0.0007568392902612686
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000001"
+        },
+        "result": 406323
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000001",
+          "*arg3": "GiB",
+          "*arg4": "none"
+        },
+        "result": 0.0003784177824854851
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000002"
+        },
+        "result": 406327
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000002",
+          "*arg3": "GiB",
+          "*arg4": "none"
+        },
+        "result": 0.00037842150777578354
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002"
+        },
+        "result": 812650
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002",
+          "*arg3": "GiB",
+          "*arg4": "none"
+        },
+        "result": 0.0007568392902612686
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000001"
+        },
+        "result": 406323
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000001",
+          "*arg3": "GiB",
+          "*arg4": "none"
+        },
+        "result": 0.0003784177824854851
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000002"
+        },
+        "result": 406327
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000002",
+          "*arg3": "GiB",
+          "*arg4": "none"
+        },
+        "result": 0.00037842150777578354
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": 0
+      }
+    ],
+    "calcCollectionSize": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001"
+        },
+        "result": 812650
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001",
+          "*arg3": "GiB",
+          "*arg4": "none"
+        },
+        "result": 0.0007568392902612686
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000001"
+        },
+        "result": 406323
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000001",
+          "*arg3": "GiB",
+          "*arg4": "none"
+        },
+        "result": 0.0003784177824854851
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000002"
+        },
+        "result": 406327
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000002",
+          "*arg3": "GiB",
+          "*arg4": "none"
+        },
+        "result": 0.00037842150777578354
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002"
+        },
+        "result": 812650
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002",
+          "*arg3": "GiB",
+          "*arg4": "none"
+        },
+        "result": 0.0007568392902612686
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000001"
+        },
+        "result": 406323
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000001",
+          "*arg3": "GiB",
+          "*arg4": "none"
+        },
+        "result": 0.0003784177824854851
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000002"
+        },
+        "result": 406327
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000002",
+          "*arg3": "GiB",
+          "*arg4": "none"
+        },
+        "result": 0.00037842150777578354
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": 0
+      }
+    ],
+    "calcCollectionFiles": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001"
+        },
+        "result": 10
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000001"
+        },
+        "result": 5
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000002"
+        },
+        "result": 5
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002"
+        },
+        "result": 10
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000001"
+        },
+        "result": 5
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000002"
+        },
+        "result": 5
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": 0
+      }
+    ],
+    "calcCollectionFilesAcrossResc": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001"
+        },
+        "result": [
+          {
+            "numFilesPerResc": [
+              {
+                "resourceID": "2369145673",
+                "numFiles": "10"
+              },
+              {
+                "resourceID": "262213902",
+                "numFiles": "10"
+              }
+            ]
+          },
+          [
+            "2369145673",
+            "262213902"
+          ],
+          [
+            10,
+            10
+          ]
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000001"
+        },
+        "result": [
+          {
+            "numFilesPerResc": [
+              {
+                "resourceID": "2369145673",
+                "numFiles": "5"
+              }
+            ]
+          },
+          [
+            "2369145673"
+          ],
+          [
+            5
+          ]
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000002"
+        },
+        "result": [
+          {
+            "numFilesPerResc": [
+              {
+                "resourceID": "2369145673",
+                "numFiles": "5"
+              },
+              {
+                "resourceID": "262213902",
+                "numFiles": "5"
+              }
+            ]
+          },
+          [
+            "2369145673",
+            "262213902"
+          ],
+          [
+            5,
+            5
+          ]
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002"
+        },
+        "result": [
+          {
+            "numFilesPerResc": [
+              {
+                "resourceID": "2369145673",
+                "numFiles": "10"
+              },
+              {
+                "resourceID": "262213902",
+                "numFiles": "10"
+              }
+            ]
+          },
+          [
+            "2369145673",
+            "262213902"
+          ],
+          [
+            10,
+            10
+          ]
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000001"
+        },
+        "result": [
+          {
+            "numFilesPerResc": [
+              {
+                "resourceID": "2369145673",
+                "numFiles": "5"
+              }
+            ]
+          },
+          [
+            "2369145673"
+          ],
+          [
+            5
+          ]
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000002"
+        },
+        "result": [
+          {
+            "numFilesPerResc": [
+              {
+                "resourceID": "2369145673",
+                "numFiles": "5"
+              },
+              {
+                "resourceID": "262213902",
+                "numFiles": "5"
+              }
+            ]
+          },
+          [
+            "2369145673",
+            "262213902"
+          ],
+          [
+            5,
+            5
+          ]
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": [
+          {
+            "numFilesPerResc": []
+          },
+          [],
+          []
+        ]
+      }
+    ],
+    "calcCollectionSizeAcrossResc": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001"
+        },
+        "result": [
+          {
+            "sizePerResc": [
+              {
+                "resourceID": "2369145673",
+                "dataSize": "812650"
+              },
+              {
+                "resourceID": "262213902",
+                "dataSize": "812650"
+              }
+            ]
+          },
+          [
+            "2369145673",
+            "262213902"
+          ],
+          [
+            812650,
+            812650
+          ]
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000001"
+        },
+        "result": [
+          {
+            "sizePerResc": [
+              {
+                "resourceID": "2369145673",
+                "dataSize": "406323"
+              }
+            ]
+          },
+          [
+            "2369145673"
+          ],
+          [
+            406323
+          ]
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000002"
+        },
+        "result": [
+          {
+            "sizePerResc": [
+              {
+                "resourceID": "2369145673",
+                "dataSize": "406327"
+              },
+              {
+                "resourceID": "262213902",
+                "dataSize": "406327"
+              }
+            ]
+          },
+          [
+            "2369145673",
+            "262213902"
+          ],
+          [
+            406327,
+            406327
+          ]
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002"
+        },
+        "result": [
+          {
+            "sizePerResc": [
+              {
+                "resourceID": "2369145673",
+                "dataSize": "812650"
+              },
+              {
+                "resourceID": "262213902",
+                "dataSize": "812650"
+              }
+            ]
+          },
+          [
+            "2369145673",
+            "262213902"
+          ],
+          [
+            812650,
+            812650
+          ]
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000001"
+        },
+        "result": [
+          {
+            "sizePerResc": [
+              {
+                "resourceID": "2369145673",
+                "dataSize": "406323"
+              }
+            ]
+          },
+          [
+            "2369145673"
+          ],
+          [
+            406323
+          ]
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000002"
+        },
+        "result": [
+          {
+            "sizePerResc": [
+              {
+                "resourceID": "2369145673",
+                "dataSize": "406327"
+              },
+              {
+                "resourceID": "262213902",
+                "dataSize": "406327"
+              }
+            ]
+          },
+          [
+            "2369145673",
+            "262213902"
+          ],
+          [
+            406327,
+            406327
+          ]
+        ]
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": [
+          {
+            "sizePerResc": []
+          },
+          [],
+          []
+        ]
+      }
+    ],
+    "getResourcesInCollection": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001"
+        },
+        "result": "KeyValue[2]:2369145673=orphan;262213902=orphan;"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000001"
+        },
+        "result": "KeyValue[1]:2369145673=orphan;"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000001/C000000002"
+        },
+        "result": "KeyValue[2]:2369145673=orphan;262213902=orphan;"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002"
+        },
+        "result": "KeyValue[2]:2369145673=orphan;262213902=orphan;"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000001"
+        },
+        "result": "KeyValue[1]:2369145673=orphan;"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {
+          "*arg2": "/nlmumc/projects/P000000002/C000000002"
+        },
+        "result": "KeyValue[2]:2369145673=orphan;262213902=orphan;"
+      },
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": "KeyValue[0]:"
+      }
+    ],
+    "get_projects_size": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": {
+          "P000000001": 0.0007568392902612686,
+          "P000000002": 0.0007568392902612686
+        }
+      },
+      {
+        "users": [
+          "minimalist"
+        ],
+        "match": {},
+        "result": {
+          "P000000001": 0.0007568392902612686
+        }
+      }
+    ],
+    "get_resource_size_for_all_collections": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": {
+          "passRescUM01": {
+            "size": 1625300,
+            "cost_per_year": 0.0,
+            "cost_per_month": 0.0
+          }
+        }
+      },
+      {
+        "users": [
+          "minimalist"
+        ],
+        "match": {},
+        "result": {
+          "passRescUM01": {
+            "size": 812650,
+            "cost_per_year": 0.0,
+            "cost_per_month": 0.0
+          }
+        }
+      }
+    ],
+    "get_project_usage_report": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": [
+          {
+            "budget_number": "UM-01234567890X",
+            "data_steward": "dlinssen",
+            "principal_investigator": "dlinssen",
+            "id": "P000000001_passRescUM01",
+            "project_id": "P000000001",
+            "title": "Shared microscopy study",
+            "resource": {
+              "cost_per_month": 0.0,
+              "cost_per_year": 0.0,
+              "size": 812650,
+              "resource": "passRescUM01"
+            }
+          },
+          {
+            "budget_number": "UM-01234567890X",
+            "data_steward": "dlinssen",
+            "principal_investigator": "dlinssen",
+            "id": "P000000002_passRescUM01",
+            "project_id": "P000000002",
+            "title": "Administrator research project",
+            "resource": {
+              "cost_per_month": 0.0,
+              "cost_per_year": 0.0,
+              "size": 812650,
+              "resource": "passRescUM01"
+            }
+          }
+        ]
+      },
+      {
+        "users": [
+          "minimalist"
+        ],
+        "match": {},
+        "result": [
+          {
+            "budget_number": "UM-01234567890X",
+            "data_steward": "dlinssen",
+            "principal_investigator": "dlinssen",
+            "id": "P000000001_passRescUM01",
+            "project_id": "P000000001",
+            "title": "Shared microscopy study",
+            "resource": {
+              "cost_per_month": 0.0,
+              "cost_per_year": 0.0,
+              "size": 812650,
+              "resource": "passRescUM01"
+            }
+          }
+        ]
+      }
+    ],
+    "estimateProjectCollection": [
+      {
+        "users": [
+          "admin",
+          "dlinssen",
+          "minimalist",
+          "service-disqover"
+        ],
+        "match": {},
+        "result": [
+          "0",
+          "0"
+        ]
       }
     ]
   },
