@@ -32,7 +32,10 @@ services:
       context: externals/dh-irods/irods-base/
       dockerfile: Dockerfile
       target: icat
+      additional_contexts:
+        ruleset: ./externals/irods-ruleset
       args:
+        - IRODS_BASE_STAGE=irods-rules
         - ENV_IRODS_VERSION
         - ENV_IRODS_PYTHON_PLUGIN_VERSION
         - ENV_FILEBEAT_VERSION
@@ -112,7 +115,10 @@ services:
       context: externals/dh-irods/irods-base/
       dockerfile: Dockerfile
       target: ires-hnas
+      additional_contexts:
+        ruleset: ./externals/irods-ruleset
       args:
+        - IRODS_BASE_STAGE=irods-rules
         - ENV_IRODS_VERSION
         - ENV_IRODS_PYTHON_PLUGIN_VERSION
         - ENV_FILEBEAT_VERSION
@@ -199,7 +205,10 @@ services:
       context:  externals/dh-irods/irods-base/
       dockerfile: Dockerfile
       target: ires-hnas
+      additional_contexts:
+        ruleset: ./externals/irods-ruleset
       args:
+        - IRODS_BASE_STAGE=irods-rules
         - ENV_IRODS_VERSION
         - ENV_IRODS_PYTHON_PLUGIN_VERSION
         - ENV_FILEBEAT_VERSION

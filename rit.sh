@@ -187,10 +187,17 @@ fi
 if [[ $1 == "make" ]]; then
    if [[ $2 == "rules" ]]; then
       set +e
-      docker exec -u irods ${COMPOSE_PROJECT_NAME}-icat-1 make -C /rules
-      docker exec -u irods ${COMPOSE_PROJECT_NAME}-ires-hnas-um-1 make -C /rules
-      docker exec -u irods ${COMPOSE_PROJECT_NAME}-ires-hnas-azm-1 make -C /rules
-      exit 0
+      rules_status=0
+      for service in icat ires-hnas-um ires-hnas-azm; do
+         docker exec -u irods "${COMPOSE_PROJECT_NAME}-${service}-1" bash -c '
+            if [[ "${IRODS_RULES_PREINSTALLED:-false}" == true ]]; then
+               python3 /opt/irods/lib/install_rules.py /rules --force
+            else
+               make -C /rules
+            fi
+         ' || rules_status=$?
+      done
+      exit "$rules_status"
    fi
 fi
 
