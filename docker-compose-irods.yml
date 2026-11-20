@@ -58,6 +58,8 @@ services:
     depends_on:
        - irods-db
     hostname: icat.dh.local
+    extra_hosts:
+      - "help.mdr.local.dh.unimaas.nl=172.21.1.100"
     ports:
       - "1247:1247"
       - "1248:1248"
@@ -145,6 +147,10 @@ services:
     ulimits:
       nofile: 65536
     hostname: ires-hnas-um.dh.local
+    extra_hosts:
+      - "help.mdr.local.dh.unimaas.nl=172.21.1.100"
+      # Fictitious address avoids DNS retries for the isolated AZM host.
+      - "ires-hnas-azm.dh.local=172.0.0.1"
     env_file:
       - .env
       - irods/s3.env
@@ -228,6 +234,12 @@ services:
     ulimits:
       nofile: 65536
     hostname: ires-hnas-azm.dh.local
+    extra_hosts:
+      - "help.mdr.local.dh.unimaas.nl=172.21.1.100"
+      # Fictitious addresses avoid DNS retries for isolated resource hosts.
+      - "ires-hnas-um.dh.local=172.0.0.1"
+      - "ires-ceph-ac.dh.local=172.0.0.2"
+      - "ires-ceph-gl.dh.local=172.0.0.3"
     env_file:
       - .env
       - irods.secrets.cfg
