@@ -596,20 +596,27 @@ cmd_dev_up() {
   if minikube ip >/dev/null 2>&1; then
     echo "    already running"
   else
-    # Stale 'minikube*' docker networks (leftover from interrupted
-    # minikube delete) can keep the 192.168.49.0/24 subnet, forcing the new
-    # node onto a different subnet (e.g. 192.168.58.x). Such an IP is outside
-    # the corporate no_proxy lists, so the kubelet's apiserver traffic goes
-    # through the proxy and the node never registers (the proxy answers
-    # '403 Forbidden'). Remove the stale networks before start - safe here
-    # because the node is not running.
-    local stale_net
-    while IFS= read -r stale_net; do
-      [ -n "$stale_net" ] || continue
-      echo "    removing stale docker network '$stale_net'"
-      docker network rm "$stale_net" >/dev/null 2>&1 \
-        || echo "    WARNING: could not remove docker network '$stale_net' (still in use?)" >&2
-    done < <(docker network ls --format '{{.Name}}' 2>/dev/null | grep -i '^minikube' || true)
+    # Guarantee the 'minikube' docker network is on 192.168.49.0/24 BEFORE
+    # start: minikube reuses an existing 'minikube' network. If that network
+    # was created by docker's pool allocator on a different subnet (e.g.
+    # 192.168.58.0/24, when the .49 subnet was transiently unavailable), the
+    # node gets an IP outside the corporate no_proxy lists and the kubelet's
+    # apiserver traffic dies in the proxy (it answers '403 Forbidden').
+    # Only touch the network of OUR profile; leave 'minikube-<other>' alone.
+    local minikube_net_subnet
+    minikube_net_subnet=$(docker network inspect minikube \
+      --format '{{(index .IPAM.Config 0).Subnet}}' 2>/dev/null || true)
+    case "$minikube_net_subnet" in
+      192.168.49.0/24) : ;;
+      "") docker network create --subnet 192.168.49.0/24 minikube >/dev/null 2>&1 \
+          || echo "    WARNING: could not pre-create docker network minikube@192.168.49.0/24" >&2 ;;
+      *)  echo "    docker network 'minikube' is on $minikube_net_subnet (want 192.168.49.0/24) - recreating it"
+          docker network rm minikube >/dev/null 2>&1 \
+            || { echo "    WARNING: network 'minikube' is in use - start may land on the wrong subnet" >&2; }
+          docker network create --subnet 192.168.49.0/24 minikube >/dev/null 2>&1 \
+            || echo "    ERROR: could not create docker network minikube@192.168.49.0/24 (subnet in use by another network? - check: docker network ls)" >&2
+          ;;
+    esac
     # Corporate proxy (UM): the node container inherits the docker daemon's
     # proxy env, whose NO_PROXY lacks the cluster-local ranges - so the
     # kubelet routes its apiserver traffic (192.168.49.2:6443) through the
@@ -624,6 +631,19 @@ cmd_dev_up() {
       --docker-env https_proxy="http://proxy.unimaas.nl:3128/" \
       --docker-env no_proxy="localhost,127.0.0.1,192.168.49.0/24,10.96.0.0/12,10.244.0.0/16,.dh.local,.unimaas.nl,.datahubmaastricht.nl,epic-pid.storage.surfsara.nl"
   fi
+
+  # Hard fail if the node ended up on a different subnet - the metallb pool,
+  # /etc/hosts LB IP and the no_proxy lists all assume 192.168.49.x.
+  local node_ip
+  node_ip=$(minikube ip 2>/dev/null || true)
+  case "$node_ip" in
+    192.168.49.*) ;;
+    *) echo "ERROR: minikube node IP is '$node_ip' (expected 192.168.49.x)." >&2
+       echo "      The 'minikube' docker network is likely on another subnet. Fix:" >&2
+       echo "      minikube delete && docker network rm minikube" >&2
+       echo "      docker network create --subnet 192.168.49.0/24 minikube && dev-up" >&2
+       exit 1 ;;
+  esac
 
   current_context=$(kubectl config current-context 2>/dev/null || true)
   if [ "$current_context" != "$expected_context" ]; then
