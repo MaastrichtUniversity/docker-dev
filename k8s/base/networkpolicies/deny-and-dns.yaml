@@ -1,0 +1,39 @@
+# NetworkPolicies for the datahub namespace.
+#
+# TODO(namespaces): written assuming a single namespace. The stack now spans
+# irods/external/public/internal, so these need to be reworked (per-namespace
+# default-deny + explicit cross-namespace flows) before they can be applied.
+#
+# NOT applied by default: k3s does not enforce NetworkPolicies unless started
+# with `--network-policy`. To enable, add `networkpolicies/` to an overlay's
+# resources and restart k3s with the flag. Default-deny is applied first, so
+# only the flows listed below are allowed.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+# Every pod may resolve DNS
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-egress
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53

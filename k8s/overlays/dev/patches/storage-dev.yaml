@@ -1,0 +1,214 @@
+# dev/minikube storage patches: retarget every volume from Longhorn to
+# minikube's standard StorageClass and shrink sizes (dev data is
+# disposable - every bring-up starts clean). Total ~50Gi, so run minikube
+# with at least --disk-size 80 (the standard hostpath provisioner has no quota: a heavy faker run
+# grows into the VM disk).
+# Minikube's `storage-provisioner` addon provides the `standard` class.
+# NOTE: staging-zones is only kept as a valid (bound, unused) claim - the
+# iress pods and faker use the hostPath /staging-data volume instead
+# (see kustomization.yaml patches).
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: elastic-data
+  namespace: external
+spec:
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mdr-static
+  namespace: external
+spec:
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: garage1-data
+  namespace: irods
+spec:
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: garage2-data
+  namespace: irods
+spec:
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: garage1-meta
+  namespace: irods
+spec:
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: garage2-meta
+  namespace: irods
+spec:
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: staging-zones
+  namespace: irods
+spec:
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: icat
+  namespace: irods
+spec:
+  volumeClaimTemplates:
+    - metadata:
+        name: vault
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 5Gi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ires-hnas-um
+  namespace: irods
+spec:
+  volumeClaimTemplates:
+    - metadata:
+        name: vault
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 5Gi
+    - metadata:
+        name: mnt
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 5Gi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ires-hnas-azm
+  namespace: irods
+spec:
+  volumeClaimTemplates:
+    - metadata:
+        name: vault
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 5Gi
+    - metadata:
+        name: mnt
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 5Gi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: irods-db
+  namespace: irods
+spec:
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 2Gi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mdr-db
+  namespace: external
+spec:
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 2Gi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: admin-tools-db
+  namespace: internal
+spec:
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ldap-data
+  namespace: internal
+spec:
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 1Gi

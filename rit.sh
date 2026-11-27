@@ -172,6 +172,46 @@ fi
 
 if [[ $1 == "make" ]]; then
    if [[ $2 == "rules" ]]; then
+      if [[ $3 == "k8s" ]]; then
+         namespace=${K8S_NAMESPACE:-irods}
+         rules_dir=externals/irods-ruleset
+         snapshot=k8s/base/irods/ruleset/irods-ruleset.tar.gz.b64
+
+         if [[ ! -f "$rules_dir/Makefile" ]]; then
+            echo "Could not find the ruleset at $rules_dir"
+            exit 1
+         fi
+
+         set -o pipefail
+         tar --exclude=.git -czf - -C "$rules_dir" . \
+           | base64 -w 0 > "$snapshot"
+         kubectl create configmap irods-ruleset-source \
+           --namespace="$namespace" \
+           --from-file="ruleset.tar.gz.b64=$snapshot" \
+           --dry-run=client -o yaml \
+           | kubectl apply -f -
+
+         for pod_container in "icat-0:icat" "ires-hnas-um-0:ires" "ires-hnas-azm-0:ires"; do
+            pod=${pod_container%%:*}
+            container=${pod_container#*:}
+            kubectl -n "$namespace" wait --for=condition=Ready "pod/$pod" --timeout=120s
+
+            tar --exclude=.git -cf - -C "$rules_dir" . \
+              | kubectl -n "$namespace" exec -i "$pod" -c "$container" -- bash -c '
+                  set -euo pipefail
+                  stage=$(mktemp -d /tmp/irods-rules.XXXXXX)
+                  trap '\''rm -rf "$stage"'\'' EXIT
+                  tar -xf - -C "$stage"
+                  test -f "$stage/Makefile"
+                  find /rules -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
+                  cp -a "$stage"/. /rules/
+                  chown -R 999:999 /rules
+                  su irods -c "make -C /rules"
+                '
+         done
+         exit 0
+      fi
+
       set +e
       docker exec -u irods ${COMPOSE_PROJECT_NAME}-icat-1 make -C /rules
       docker exec -u irods ${COMPOSE_PROJECT_NAME}-ires-hnas-um-1 make -C /rules

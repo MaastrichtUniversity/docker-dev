@@ -1,0 +1,346 @@
+# React dev-server frontends (CRA dev target, port 3000), as in docker compose.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: help-center
+  namespace: public
+  labels:
+    app.kubernetes.io/name: help-center
+    app.kubernetes.io/part-of: datahub
+    datahub.dh/profile: full
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: help-center
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: help-center
+        app.kubernetes.io/part-of: datahub
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: registry-credentials
+      securityContext:
+        runAsNonRoot: false
+        appArmorProfile:
+          type: Unconfined
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: help-center
+          # Overlay rewrites this to <registry>/docker-dev/help-center:<tag>
+          image: registry.prod.dh.unimaas.nl/docker-dev/help-center:latest
+          env:
+            - name: TZ
+              value: Europe/Amsterdam
+          envFrom:
+            - configMapRef:
+                name: help-center-env
+            - secretRef:
+                name: frontend-public-config # REACT_APP_CAPTCHA_SITE_KEY
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+          startupProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            failureThreshold: 20
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 15
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 60
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: help-center
+  namespace: public
+  labels:
+    app.kubernetes.io/name: help-center
+    app.kubernetes.io/part-of: datahub
+    datahub.dh/profile: full
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: help-center
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dh-home
+  namespace: public
+  labels:
+    app.kubernetes.io/name: dh-home
+    app.kubernetes.io/part-of: datahub
+    datahub.dh/profile: full
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: dh-home
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: dh-home
+        app.kubernetes.io/part-of: datahub
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: registry-credentials
+      securityContext:
+        runAsNonRoot: false
+        appArmorProfile:
+          type: Unconfined
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: dh-home
+          # Overlay rewrites this to <registry>/docker-dev/dh-home:<tag>
+          image: registry.prod.dh.unimaas.nl/docker-dev/dh-home:latest
+          env:
+            - name: TZ
+              value: Europe/Amsterdam
+          envFrom:
+            - configMapRef:
+                name: dh-home-env
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+          startupProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            failureThreshold: 20
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 15
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 60
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dh-home
+  namespace: public
+  labels:
+    app.kubernetes.io/name: dh-home
+    app.kubernetes.io/part-of: datahub
+    datahub.dh/profile: full
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: dh-home
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mdr-home
+  namespace: external
+  labels:
+    app.kubernetes.io/name: mdr-home
+    app.kubernetes.io/part-of: datahub
+    datahub.dh/profile: full
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mdr-home
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: mdr-home
+        app.kubernetes.io/part-of: datahub
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: registry-credentials
+      securityContext:
+        runAsNonRoot: false
+        appArmorProfile:
+          type: Unconfined
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: mdr-home
+          # Overlay rewrites this to <registry>/docker-dev/dh-mdr-home:<tag>
+          image: registry.prod.dh.unimaas.nl/docker-dev/dh-mdr-home:latest
+          env:
+            - name: TZ
+              value: Europe/Amsterdam
+          envFrom:
+            - configMapRef:
+                name: mdr-home-env
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+          startupProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            failureThreshold: 20
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 15
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 60
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mdr-home
+  namespace: external
+  labels:
+    app.kubernetes.io/name: mdr-home
+    app.kubernetes.io/part-of: datahub
+    datahub.dh/profile: full
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: mdr-home
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-tools
+  namespace: internal
+  labels:
+    app.kubernetes.io/name: admin-tools
+    app.kubernetes.io/part-of: datahub
+    datahub.dh/profile: full
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: admin-tools
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: admin-tools
+        app.kubernetes.io/part-of: datahub
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: registry-credentials
+      securityContext:
+        runAsNonRoot: false
+        appArmorProfile:
+          type: Unconfined
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: admin-tools
+          # Overlay rewrites this to <registry>/docker-dev/admin-tools:<tag>
+          image: registry.prod.dh.unimaas.nl/docker-dev/admin-tools:latest
+          env:
+            - name: TZ
+              value: Europe/Amsterdam
+          envFrom:
+            - configMapRef:
+                name: admin-tools-env
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+          startupProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            failureThreshold: 20
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 15
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 60
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-tools
+  namespace: internal
+  labels:
+    app.kubernetes.io/name: admin-tools
+    app.kubernetes.io/part-of: datahub
+    datahub.dh/profile: full
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: admin-tools
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+      protocol: TCP

@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mdr
+  namespace: external
+  labels:
+    app.kubernetes.io/name: mdr
+    app.kubernetes.io/part-of: datahub
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mdr
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: mdr
+        app.kubernetes.io/part-of: datahub
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: registry-credentials
+      securityContext:
+        runAsNonRoot: false
+        appArmorProfile:
+          type: Unconfined
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: mdr
+          # Overlay rewrites this to <registry>/docker-dev/mdr:<tag>
+          image: registry.prod.dh.unimaas.nl/docker-dev/mdr:latest
+          env:
+            - name: TZ
+              value: Europe/Amsterdam
+            - name: ELASTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: elastic-secrets
+                  key: ELASTIC_PASSWORD
+          envFrom:
+            - configMapRef:
+                name: mdr-env
+            - secretRef:
+                name: mdr-app-secrets
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          # gunicorn + bootstrap.sh (migrations) on first boot
+          startupProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            failureThreshold: 40
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 15
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 60
+            failureThreshold: 3
+          volumeMounts:
+            - name: static
+              mountPath: /opt/staticfiles
+      volumes:
+        - name: static
+          persistentVolumeClaim:
+            claimName: mdr-static
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mdr-static
+  namespace: external
+  labels:
+    app.kubernetes.io/name: mdr
+    app.kubernetes.io/part-of: datahub
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: longhorn-rwo
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mdr
+  namespace: external
+  labels:
+    app.kubernetes.io/name: mdr
+    app.kubernetes.io/part-of: datahub
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: mdr
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+      protocol: TCP

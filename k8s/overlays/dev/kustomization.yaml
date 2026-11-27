@@ -1,0 +1,259 @@
+# Dev overlay: env-specific values, image tags and the (file-based) secrets.
+#
+# Build with:
+#   kubectl kustomize k8s/overlays/dev --load-restrictor LoadRestrictionsNone
+# (the load-restrictor flag is needed because base/overlay generator files
+# reference the repo's irods/, keycloak/, ldap/ and externals/ trees).
+#
+# NOTE: building this overlay requires an externals/ checkout at the repo
+# root (epicpid SURF credentials): run `k8s/bin/dhdev.sh externals`
+# (externals/ is gitignored; the SURF .pem files are NOT in the public
+# epicpid-microservice repo - the script says where to get them).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Stable generator names (no hash suffix); see base/kustomization.yaml for
+# the restart-on-change trade-off.
+generatorOptions:
+  disableNameSuffixHash: true
+
+resources:
+  - ../../base
+  - namespaces.yaml
+  - gateway.yaml
+
+# dev runs on a local minikube: Longhorn SCs/sizes don't apply there -
+# retarget all volumes to minikube's standard class, shrink them, make
+# the shared zones a hostPath, and reduce CPU/memory (see patches/).
+patches:
+  - path: patches/storage-dev.yaml
+  - path: patches/resources-dev.yaml
+  - path: patches/images-dev.yaml
+  # the shared ingest zones (staging-zones PVC is RWX - standard can't
+  # do that) become a hostPath volume: single node, so this is the
+  # compose-era host-dir behavior. /staging-data is created in the minikube
+  # VM on demand (to share the host folder instead: minikube start --mount
+  # --mount-string=$PWD/staging-data:/staging-data).
+  - target:
+      kind: StatefulSet
+      name: ires-hnas-um
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/volumes/9
+        value:
+          name: zones
+          hostPath:
+            path: /staging-data
+            type: DirectoryOrCreate
+  - target:
+      kind: StatefulSet
+      name: ires-hnas-azm
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/volumes/5
+        value:
+          name: zones
+          hostPath:
+            path: /staging-data
+            type: DirectoryOrCreate
+
+# Per-env ConfigMap env files (consumed via envFrom by the base manifests).
+configMapGenerator:
+  - name: irods-common-env
+    namespace: irods
+    envs: [config/irods-common.env]
+  - name: icat-env
+    namespace: irods
+    envs: [config/icat.env]
+  - name: ires-um-env
+    namespace: irods
+    envs: [config/ires-um.env]
+  - name: ires-azm-env
+    namespace: irods
+    envs: [config/ires-azm.env]
+  - name: irods-db-env
+    namespace: irods
+    envs: [config/irods-db.env]
+  - name: epicpid-env
+    namespace: irods
+    envs: [config/epicpid.env]
+  - name: sram-sync-env
+    namespace: irods
+    envs: [config/sram-sync.env]
+  - name: faker-env
+    namespace: irods
+    envs: [config/faker.env]
+  - name: mdr-env
+    namespace: external
+    envs: [config/mdr.env]
+  - name: mdr-db-env
+    namespace: external
+    envs: [config/mdr-db.env]
+  - name: elastic-env
+    namespace: external
+    envs: [config/elastic.env]
+  - name: davrods-env
+    namespace: external
+    envs: [config/davrods.env]
+  - name: davrods-upload-env
+    namespace: external
+    envs: [config/davrods-upload.env]
+  - name: mdr-home-env
+    namespace: external
+    envs: [config/mdr-home.env]
+  - name: help-center-backend-env
+    namespace: public
+    envs: [config/help-center-backend.env]
+  - name: help-center-env
+    namespace: public
+    envs: [config/help-center.env]
+  - name: dh-home-env
+    namespace: public
+    envs: [config/dh-home.env]
+  - name: admin-tools-backend-env
+    namespace: internal
+    envs: [config/admin-tools-backend.env]
+  - name: admin-tools-db-env
+    namespace: internal
+    envs: [config/admin-tools-db.env]
+  - name: admin-tools-env
+    namespace: internal
+    envs: [config/admin-tools.env]
+  - name: ldap-env
+    namespace: internal
+    envs: [config/ldap.env]
+  - name: keycloak-env
+    namespace: internal
+    envs: [config/keycloak.env]
+  # Concrete realm export for this overlay (replaces the RIT_ENV sed in
+  # import.sh, which becomes a no-op); mounted over the baked-in file.
+  - name: keycloak-realm-export
+    namespace: internal
+    files: [keycloak-realm-export.json]
+
+# Secrets - dev sources them from committed files (no Vault). tst/acc/prd
+# use ExternalSecrets -> Vault instead (k8s/README.md section 7).
+#
+# Secrets are scoped by namespace/consumer. Never replicate the complete
+# credential sets into namespaces that do not need them.
+secretGenerator:
+  - name: icat-app-secrets
+    namespace: irods
+    envs: [secrets/icat-app-secrets.env]
+  - name: garage-secrets
+    namespace: irods
+    envs: [secrets/garage-secrets.env]
+  - name: epicpid-app-secrets
+    namespace: irods
+    envs: [secrets/epicpid-app-secrets.env]
+  - name: sram-sync-secrets
+    namespace: irods
+    envs: [secrets/sram-sync-secrets.env]
+  - name: dh-irods-secrets-cfg
+    namespace: irods
+    envs: [secrets/irods-secrets-cfg.env]
+    files:
+      - irods.secrets.cfg=secrets/irods-secrets-cfg.env
+  - name: elastic-secrets
+    namespace: external
+    envs: [secrets/elastic-secrets.env]
+  - name: mdr-app-secrets
+    namespace: external
+    envs: [secrets/mdr-app-secrets.env]
+  - name: keycloak-secrets
+    namespace: internal
+    envs: [secrets/keycloak-secrets.env]
+  - name: ldap-secrets
+    namespace: internal
+    envs: [secrets/ldap-secrets.env]
+  - name: admin-tools-secrets
+    namespace: internal
+    envs: [secrets/admin-tools-secrets.env]
+  - name: help-center-secrets
+    namespace: public
+    envs: [secrets/help-center-secrets.env]
+  - name: frontend-public-config
+    namespace: public
+    envs: [secrets/frontend-public-config.env]
+  # SURF handle-server client credentials (committed in epicpid-microservice)
+  - name: epicpid-credentials
+    namespace: irods
+    files:
+      - 305_21_T12996_USER01_UM_privkey.pem=../../../externals/epicpid-microservice/credentials/305_21_T12996_USER01_UM_privkey.pem
+      - 305_21_T12996_USER01_UM_certificate_only.pem=../../../externals/epicpid-microservice/credentials/305_21_T12996_USER01_UM_certificate_only.pem
+  # iRODS + garage TLS. Secret KEYS keep the historical file names
+  # (ENV_IRODS_SSL_* / nginx confs reference them); the CONTENT is the
+  # k8s material with Service-FQDN SANs (bin/gen-irods-tls.sh).
+  - name: icat-tls
+    namespace: irods
+    files:
+      - icat.dh.local.crt=../../../irods/k8s-ssl-certs/icat.crt
+      - icat.dh.local.key=../../../irods/k8s-ssl-certs/icat.key
+      - dhparams.pem=../../../irods/k8s-ssl-certs/dhparams.pem
+      - test_only_dev_irods_dh_ca_cert.pem=../../../irods/k8s-ssl-certs/ca.pem
+  - name: ires-um-tls
+    namespace: irods
+    files:
+      - ires-hnas-um.dh.local.crt=../../../irods/k8s-ssl-certs/ires-hnas-um.crt
+      - ires-hnas-um.dh.local.key=../../../irods/k8s-ssl-certs/ires-hnas-um.key
+      - dhparams.pem=../../../irods/k8s-ssl-certs/dhparams.pem
+      - test_only_dev_irods_dh_ca_cert.pem=../../../irods/k8s-ssl-certs/ca.pem
+  - name: ires-azm-tls
+    namespace: irods
+    files:
+      - ires-hnas-azm.dh.local.crt=../../../irods/k8s-ssl-certs/ires-hnas-azm.crt
+      - ires-hnas-azm.dh.local.key=../../../irods/k8s-ssl-certs/ires-hnas-azm.key
+      - dhparams.pem=../../../irods/k8s-ssl-certs/dhparams.pem
+      - test_only_dev_irods_dh_ca_cert.pem=../../../irods/k8s-ssl-certs/ca.pem
+  - name: garage1-tls
+    namespace: irods
+    files:
+      - garage1.dh.local.crt=../../../irods/k8s-ssl-certs/garage1.crt
+      - garage1.dh.local.key=../../../irods/k8s-ssl-certs/garage1.key
+  - name: garage2-tls
+    namespace: irods
+    files:
+      - garage2.dh.local.crt=../../../irods/k8s-ssl-certs/garage2.crt
+      - garage2.dh.local.key=../../../irods/k8s-ssl-certs/garage2.key
+
+# Keep the registry.prod.dh.unimaas.nl/docker-dev/<svc>:latest names/tags so
+# images built locally in minikube can be pushed when needed; patches/images-dev.yaml
+# strips imagePullSecrets and sets imagePullPolicy: Never across all workloads
+# so minikube uses the locally built and pre-pulled images.
+images:
+  - name: registry.prod.dh.unimaas.nl/docker-dev/icat
+    newTag: latest
+  - name: registry.prod.dh.unimaas.nl/docker-dev/ires-hnas
+    newTag: latest
+  - name: registry.prod.dh.unimaas.nl/docker-dev/mdr
+    newTag: latest
+  - name: registry.prod.dh.unimaas.nl/docker-dev/keycloak
+    newTag: latest
+  - name: registry.prod.dh.unimaas.nl/docker-dev/elastic
+    newTag: latest
+  - name: registry.prod.dh.unimaas.nl/docker-dev/faker
+    newTag: latest
+  - name: registry.prod.dh.unimaas.nl/docker-dev/davrods
+    newTag: latest
+  - name: registry.prod.dh.unimaas.nl/docker-dev/davrods-upload
+    newTag: latest
+  - name: registry.prod.dh.unimaas.nl/docker-dev/epicpid
+    newTag: latest
+  - name: registry.prod.dh.unimaas.nl/docker-dev/sram-sync
+    newTag: latest
+  - name: registry.prod.dh.unimaas.nl/docker-dev/help-center-backend
+    newTag: latest
+  - name: registry.prod.dh.unimaas.nl/docker-dev/help-center
+    newTag: latest
+  - name: registry.prod.dh.unimaas.nl/docker-dev/dh-home
+    newTag: latest
+  - name: registry.prod.dh.unimaas.nl/docker-dev/dh-mdr-home
+    newTag: latest
+  - name: registry.prod.dh.unimaas.nl/docker-dev/admin-tools-backend
+    newTag: latest
+  - name: registry.prod.dh.unimaas.nl/docker-dev/admin-tools
+    newTag: latest
+# External base images (postgres, garage, openldap, nginx) keep their
+# docker.io names in the base manifests and are pulled from there in dev
+# (local minikube has internet access, like the compose stack). tst+
+# mirror them into the registry instead.

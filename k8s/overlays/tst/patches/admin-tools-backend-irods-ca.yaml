@@ -1,0 +1,34 @@
+# The admin-tools-backend image only trusts the compose dev iRODS CA (baked
+# in at build time, see backend/Dockerfile SSL_ENV). The k8s cluster's icat
+# presents a cert signed by the k8s test CA (gen-irods-tls.sh -> Vault
+# tst-k3s/icat-tls -> irods-client-ca here), so every python-irodsclient call
+# fails with SSLCertVerificationError (self-signed certificate in chain).
+# Mount the CA read-only and add it to the system trust store before
+# bootstrap: python-irodsclient falls back to the default SSL context
+# (system CA bundle) when no explicit ssl_ca_cert is configured.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-tools-backend
+  namespace: internal
+spec:
+  template:
+    spec:
+      containers:
+        - name: admin-tools-backend
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              cp /opt/irods-ca/test_only_tst_irods_dh_ca_cert.pem \
+                 /usr/local/share/ca-certificates/irods-k8s-ca.crt
+              update-ca-certificates
+              exec /opt/bootstrap.sh
+          volumeMounts:
+            - name: irods-ca
+              mountPath: /opt/irods-ca
+              readOnly: true
+      volumes:
+        - name: irods-ca
+          secret:
+            secretName: irods-client-ca

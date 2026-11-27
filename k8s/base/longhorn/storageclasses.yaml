@@ -1,0 +1,35 @@
+# Longhorn StorageClasses (3-node k3s cluster).
+# - longhorn-rwo: default for all RWO workloads
+# - longhorn-rwx: NFS-backed RWX, needed for `staging-zones` (shared by both
+#   iRES pods + faker) and the garage meta volumes (shared with the
+#   ires-hnas-um bootstrap init container).
+# If your Longhorn lacks RWX support: see k8s/README.md "Risks" (same-node
+# fallback for the garage meta volumes).
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: longhorn-rwo
+  labels:
+    app.kubernetes.io/part-of: datahub
+provisioner: driver.longhorn.io
+allowVolumeExpansion: true
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+parameters:
+  numberOfReplicas: "2"
+  staleReplicaTimeout: "30"
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: longhorn-rwx
+  labels:
+    app.kubernetes.io/part-of: datahub
+provisioner: driver.longhorn.io
+allowVolumeExpansion: true
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+parameters:
+  numberOfReplicas: "2"
+  numberOfReplicasRwx: "2"
+  staleReplicaTimeout: "30"

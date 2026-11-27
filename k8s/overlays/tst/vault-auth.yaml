@@ -1,0 +1,68 @@
+# Vault kubernetes-auth wiring for the tst cluster (mount `tst-k3s`).
+#
+# How it works with a central ServiceAccount:
+# 1. The ExternalSecrets operator (installed in ns `external-secrets`)
+#    mints a short-lived token for `vault-auth` via the TokenRequest API
+#    and presents it to Vault.
+# 2. Because the ClusterSecretStore specifies `namespace: external-secrets`,
+#    the operator always authenticates via this single central ServiceAccount,
+#    regardless of which target namespace an ExternalSecret belongs to.
+# 3. Vault reviews the incoming token against the Kubernetes TokenReview API
+#    (authorized by the vault-auth-tokenreview ClusterRoleBinding below).
+#
+# Vault side (configured on vault.prod.dh.unimaas.nl):
+#   - kubernetes auth mount `tst-k3s` with kubernetes_host
+#     and cluster CA.
+#   - role `external-secrets` bound to bound_service_account_names=[vault-auth, external-secrets]
+#     and bound_service_account_namespaces=[external-secrets], audience="k3s",
+#     policy="external-secrets".
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: external-secrets
+  labels:
+    app.kubernetes.io/part-of: datahub
+    datahub.env: tst
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vault-auth
+  namespace: external-secrets
+---
+# Lets Vault's TokenReview calls succeed (Vault authenticates to the
+# API server using the client's token with TokenReview API permissions).
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: vault-auth-tokenreview
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:auth-delegator
+subjects:
+  - kind: ServiceAccount
+    name: vault-auth
+    namespace: external-secrets
+  - kind: ServiceAccount
+    name: external-secrets
+    namespace: external-secrets
+---
+apiVersion: external-secrets.io/v1
+kind: ClusterSecretStore
+metadata:
+  name: dh-vault
+spec:
+  provider:
+    vault:
+      server: "https://vault.prod.dh.unimaas.nl"
+      path: "tst"
+      version: "v2"
+      auth:
+        kubernetes:
+          mountPath: "tst-k3s"
+          role: "external-secrets"
+          serviceAccountRef:
+            name: "vault-auth"
+            namespace: "external-secrets"

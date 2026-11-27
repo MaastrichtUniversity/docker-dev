@@ -1,0 +1,130 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ldap
+  namespace: internal
+  labels:
+    app.kubernetes.io/name: ldap
+    app.kubernetes.io/part-of: datahub
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ldap
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ldap
+        app.kubernetes.io/part-of: datahub
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: false
+        appArmorProfile:
+          type: Unconfined
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: chown-data
+          image: osixia/openldap:1.3.0
+          command:
+            - /bin/sh
+            - -c
+            - rm -rf /container/service/data/lost+found && chown -R "$(id -u openldap):$(id -g openldap)" /container/service/data && cp -L /container/ldif-cm/*.ldif /custom-ldif/
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: data
+              mountPath: /container/service/data
+            - name: ldif
+              mountPath: /container/ldif-cm
+              readOnly: true
+            - name: custom-ldif
+              mountPath: /custom-ldif
+      containers:
+        - name: ldap
+          # Overlay rewrites this to the mirrored registry image
+          image: osixia/openldap:1.3.0
+          args: ["--copy-service"]
+          env:
+            - name: TZ
+              value: Europe/Amsterdam
+          envFrom:
+            - configMapRef:
+                name: ldap-env
+            - secretRef:
+                name: ldap-secrets
+          ports:
+            - name: ldap
+              containerPort: 389
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          # NOTE: persistence added vs docker compose (data used to be ephemeral);
+          # bootstrap LDIFs still only apply to an empty data dir, sram-sync keeps
+          # the tree in sync afterwards.
+          readinessProbe:
+            tcpSocket:
+              port: ldap
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 12
+          livenessProbe:
+            tcpSocket:
+              port: ldap
+            periodSeconds: 30
+            failureThreshold: 4
+          volumeMounts:
+            - name: custom-ldif
+              mountPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
+            - name: data
+              mountPath: /container/service/data
+      volumes:
+        - name: ldif
+          configMap:
+            name: ldap-ldif
+        - name: custom-ldif
+          emptyDir: {}
+        - name: data
+          persistentVolumeClaim:
+            claimName: ldap-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ldap-data
+  namespace: internal
+  labels:
+    app.kubernetes.io/name: ldap
+    app.kubernetes.io/part-of: datahub
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: longhorn-rwo
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ldap
+  namespace: internal
+  labels:
+    app.kubernetes.io/name: ldap
+    app.kubernetes.io/part-of: datahub
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: ldap
+  ports:
+    - name: ldap
+      port: 389
+      targetPort: 389
+      protocol: TCP

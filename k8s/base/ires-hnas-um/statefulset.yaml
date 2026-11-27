@@ -1,0 +1,377 @@
+# iRODS resource server HNAS-UM (passthru resource passRescUM01 + S3 resources).
+# See icat/statefulset.yaml for the shared iRODS-on-k8s notes (hostname, headless
+# service, state file, PSS deviations).
+#
+# Storage:
+#  - vault  (RWO)  : /var/lib/irods  (+ subPath state file, pre-ingest log dir)
+#  - mnt    (RWO)  : /mnt            (UM-hnas-4k, /mnt/stagingResc01, ...)
+#  - zones  (RWX)  : /mnt/ingest/zones -- shared with ires-hnas-azm and the faker job
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ires-hnas-um
+  namespace: irods
+  labels:
+    app.kubernetes.io/name: ires-hnas-um
+    app.kubernetes.io/part-of: datahub
+    app.kubernetes.io/component: irods
+spec:
+  serviceName: ires-hnas-um
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ires-hnas-um
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ires-hnas-um
+        app.kubernetes.io/part-of: datahub
+        app.kubernetes.io/component: irods
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: registry-credentials
+      hostname: ires-hnas-um
+      # compose had shm_size: 500mb (Docker default /dev/shm is 64Mi)
+      subdomain: ires-hnas-um
+      securityContext:
+        runAsNonRoot: false
+        fsGroup: 999
+        appArmorProfile:
+          type: Unconfined
+        seccompProfile:
+          type: RuntimeDefault
+        sysctls:
+          - name: net.ipv4.tcp_keepalive_intvl
+            value: "75"
+          - name: net.ipv4.tcp_keepalive_probes
+            value: "9"
+          - name: net.ipv4.tcp_keepalive_time
+            value: "600"
+      initContainers:
+        # iRODS leaks its named shared-memory segments in /dev/shm whenever
+        # irodsServer is killed (e.g. by a failing liveness probe) instead of
+        # shutting down gracefully. Over repeated in-pod restarts the stale
+        # segments fill the 512Mi dshm emptyDir and the next irodsServer start
+        # aborts with "boost::interprocess::interprocess_exception: No space
+        # left on device". Wipe them before every container start.
+        - name: clean-shm
+          # same image as the main container (kustomize rewrites both)
+          image: registry.prod.dh.unimaas.nl/docker-dev/ires-hnas:latest
+          command:
+            - bash
+            - -c
+            - |
+              rm -f /dev/shm/irods_* /dev/shm/sem.irods_stdout_ipc_sink
+              echo "INFO: cleaned stale iRODS segments from /dev/shm"
+          volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
+        # iCAT (incl. its dev mock env) must be up before this pod's bootstrap
+        # (whose built-in dockerize wait is only 200s). Waits up to an hour.
+        - name: wait-icat
+          # same image as the main container (kustomize rewrites both)
+          image: registry.prod.dh.unimaas.nl/docker-dev/ires-hnas:latest
+          command:
+            - bash
+            - -c
+            - |
+              if [ ! -e /vault-pvc/.irods_installed ] || [ ! -e /vault-pvc/.etc-irods/server_config.json ]; then
+                echo "INFO: initializing /var/lib/irods and /etc/irods on vault PVC..."
+                rm -rf /vault-pvc/.irods_installed /vault-pvc/version.json /vault-pvc/.etc-irods /vault-pvc/.irods
+                mkdir -p /vault-pvc/.etc-irods
+                cp -a /etc/irods/. /vault-pvc/.etc-irods/ && cp -a /var/lib/irods/. /vault-pvc/ && cp -a /var/lib/irods/scripts/setup_irods.py /vault-pvc/scripts/setup_irods.py.orig && chown -R 999:999 /vault-pvc || exit 1
+              fi
+              dockerize -wait tcp://${ENV_IRODS_ICAT_HOST:-icat.irods.svc.cluster.local}:1247 -timeout 3600s
+          envFrom:
+            - configMapRef:
+                name: irods-common-env
+          volumeMounts:
+            - name: vault
+              mountPath: /vault-pvc
+        # One-time garage setup (layout/bucket/keys). Idempotent (see the guard in
+        # irods/garage/bootstrap.sh); needs the garage meta dirs to read node ids.
+        - name: garage-setup
+          # Overlay rewrites this to <registry>/docker-dev/garage-init:<tag>
+          image: registry.prod.dh.unimaas.nl/docker-dev/garage-init:latest
+          command: ["/bin/sh", "/opt/garage/bootstrap.sh"]
+          env:
+            - name: GARAGE_RPC_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: GARAGE_RPC_SECRET
+            - name: GARAGE_ADMIN_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: GARAGE_ADMIN_TOKEN
+            - name: ENV_S3_ACCESS_KEY_AC
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: S3_ACCESS_KEY_AC
+            - name: ENV_S3_SECRET_KEY_AC
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: S3_SECRET_KEY_AC
+            - name: ENV_S3_ACCESS_KEY_GL
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: S3_ACCESS_KEY_GL
+            - name: ENV_S3_SECRET_KEY_GL
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: S3_SECRET_KEY_GL
+          envFrom:
+            - configMapRef:
+                name: ires-um-env
+          volumeMounts:
+            - name: garage-bootstrap
+              mountPath: /opt/garage
+              readOnly: true
+            - name: garage-config
+              mountPath: /etc/garage
+              readOnly: true
+            - name: garage1-meta
+              mountPath: /var/lib/garage1/meta
+              readOnly: true
+            - name: garage2-meta
+              mountPath: /var/lib/garage2/meta
+              readOnly: true
+        - name: install-ruleset
+          image: registry.prod.dh.unimaas.nl/docker-dev/ires-hnas:latest
+          command:
+            - bash
+            - -c
+            - |
+              set -euo pipefail
+              base64 -d /ruleset-source/ruleset.tar.gz.b64 | tar -xz -C /rules
+              chown -R 999:999 /rules
+          volumeMounts:
+            - name: irods-ruleset-source
+              mountPath: /ruleset-source
+              readOnly: true
+            - name: rules
+              mountPath: /rules
+      containers:
+        - name: ires
+          # Overlay rewrites this to <registry>/docker-dev/ires-hnas:<tag>
+          image: registry.prod.dh.unimaas.nl/docker-dev/ires-hnas:latest
+          command:
+            - /bin/bash
+            - -c
+            - rm -rf /var/lib/irods/irods_installed /var/run/irods_installed /etc/irods && ln -s /var/lib/irods/.irods_installed /var/run/irods_installed && ln -s /var/lib/irods/.etc-irods /etc/irods && chown 999:999 /var/run/irods && (awk -v h="${HOSTNAME}" '{for(i=2;i<=NF;i++) if($i==h) f=1} END{exit !f}' /etc/hosts || { sed "s/$(hostname)/${HOSTNAME} $(hostname)/" /etc/hosts > /tmp/hosts && cp /tmp/hosts /etc/hosts && rm -f /tmp/hosts; }) && if [ ! -e /var/lib/irods/.irods_installed ] && [ -e /var/lib/irods/scripts/setup_irods.py.orig ]; then rm -f /var/lib/irods/version.json && cp -a /var/lib/irods/scripts/setup_irods.py.orig /var/lib/irods/scripts/setup_irods.py; fi && /opt/irods/init.sh || { status=$?; echo 'iRES bootstrap failed; tailing iRODS log' >&2; if [[ -r /var/log/irods/irods.log ]]; then tail -n 100 /var/log/irods/irods.log >&2; fi; exit "$status"; }
+          env:
+            - name: HOSTNAME
+              value: ires-hnas-um.irods.svc.cluster.local
+            - name: TZ
+              value: Europe/Amsterdam
+            - name: ENV_IRODS_PASSWORD_ADMIN
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_PASSWORD_ADMIN
+            - name: IRODS_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_PASS
+            - name: ENV_IRODS_KEY_SERVER_ZONE
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_KEY_SERVER_ZONE
+            - name: ENV_IRODS_KEY_SERVER_NEGOTIATION
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_KEY_SERVER_NEGOTIATION
+            - name: ENV_IRODS_KEY_CONTROL_PLANE
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_KEY_CONTROL_PLANE
+            - name: ENV_IRODS_PASSWORDS_SALT
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_PASSWORDS_SALT
+            - name: ENV_IRODS_DB_IRODS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: IRODS_DB_IRODS_PASSWORD
+            - name: ENV_S3_ACCESS_KEY_AC
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: S3_ACCESS_KEY_AC
+            - name: ENV_S3_SECRET_KEY_AC
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: S3_SECRET_KEY_AC
+            - name: ENV_S3_ACCESS_KEY_GL
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: S3_ACCESS_KEY_GL
+            - name: ENV_S3_SECRET_KEY_GL
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: S3_SECRET_KEY_GL
+            - name: ENV_EPICPID_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: epicpid-app-secrets
+                  key: PASSWORD
+            - name: ENV_ELASTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: icat-app-secrets
+                  key: ELASTIC_PASSWORD
+          envFrom:
+            - configMapRef:
+                name: irods-common-env
+            - configMapRef:
+                name: ires-um-env
+            - secretRef:
+                name: dh-irods-secrets-cfg
+          ports:
+            - name: irods
+              containerPort: 1247
+              protocol: TCP
+            - name: irods-ctrl
+              containerPort: 1248
+              protocol: TCP
+            - name: irods-data
+              containerPort: 20000
+              protocol: TCP
+          resources:
+            requests:
+              cpu: "1"
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          startupProbe:
+            exec:
+              command: ["/dh_is_ready.sh"]
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 120
+          readinessProbe:
+            exec:
+              command: ["/dh_is_ready.sh"]
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            exec:
+              command: ["/bin/bash", "-c", "su irods -c 'ils >/dev/null'"]
+            periodSeconds: 30
+            timeoutSeconds: 15
+            failureThreshold: 6
+          volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
+            - name: vault
+              mountPath: /var/lib/irods
+            - name: rules
+              mountPath: /rules
+            - name: irods-helpers
+              mountPath: /helpers
+              readOnly: true
+            # flight_checks() requires this dir; it is created by the (skipped on
+            # re-bootstrap) pre-hook, so persist it on the vault PVC
+            - name: vault
+              mountPath: /var/log/irods-pre-ingest
+              subPath: irods-pre-ingest
+            - name: mnt
+              mountPath: /mnt
+            - name: zones
+              mountPath: /mnt/ingest/zones
+            # k8s equivalents of the compose bind mounts
+            - name: ires-um-bootstrap
+              mountPath: /opt/irods/bootstrap.sh
+              subPath: bootstrap.sh
+            - name: ires-um-hooks
+              mountPath: /opt/irods/hooks
+              readOnly: true
+            - name: ires-um-tls
+              mountPath: /opt/irods_ssl_staging
+              readOnly: true
+            # irods-helper-cmd expects /etc/secrets
+            - name: irods-secrets-cfg
+              mountPath: /etc/secrets
+              subPath: irods.secrets.cfg
+      volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 512Mi
+        - name: ires-um-bootstrap
+          configMap:
+            name: ires-um-bootstrap
+            defaultMode: 0755
+        - name: ires-um-hooks
+          configMap:
+            name: ires-um-hooks
+            defaultMode: 0755
+        - name: ires-um-tls
+          secret:
+            secretName: ires-um-tls
+            defaultMode: 0644
+        - name: irods-secrets-cfg
+          secret:
+            secretName: dh-irods-secrets-cfg
+            defaultMode: 0644
+        - name: garage-bootstrap
+          configMap:
+            name: garage-bootstrap
+            defaultMode: 0755
+        - name: garage-config
+          configMap:
+            name: garage-config
+        - name: garage1-meta
+          persistentVolumeClaim:
+            claimName: garage1-meta
+        - name: garage2-meta
+          persistentVolumeClaim:
+            claimName: garage2-meta
+        - name: zones
+          persistentVolumeClaim:
+            claimName: staging-zones
+        - name: irods-ruleset-source
+          configMap:
+            name: irods-ruleset-source
+            defaultMode: 0444
+        - name: rules
+          emptyDir: {}
+        - name: irods-helpers
+          configMap:
+            name: irods-helpers
+            defaultMode: 0755
+  volumeClaimTemplates:
+    - metadata:
+        name: vault
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn-rwo
+        resources:
+          requests:
+            storage: 2Gi
+    - metadata:
+        name: mnt
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn-rwo
+        resources:
+          requests:
+            storage: 5Gi

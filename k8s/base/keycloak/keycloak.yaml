@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: internal
+  labels:
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/part-of: datahub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: keycloak
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: keycloak
+        app.kubernetes.io/part-of: datahub
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: registry-credentials
+      securityContext:
+        runAsNonRoot: false
+        appArmorProfile:
+          type: Unconfined
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: keycloak
+          # Built from ./keycloak in THIS repo (see Jenkinsfile.build).
+          # Realm export, users, import.sh, startup.sh and the theme are baked in.
+          image: registry.prod.dh.unimaas.nl/docker-dev/keycloak:latest
+          env:
+            - name: TZ
+              value: Europe/Amsterdam
+            - name: LDAP_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ldap-secrets
+                  key: LDAP_ADMIN_PASSWORD
+          envFrom:
+            - configMapRef:
+                name: keycloak-env
+            - secretRef:
+                name: keycloak-secrets
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          # startup.sh kicks off import.sh in the background; the import writes
+          # /var/run/dh_import_state=completed when done (checked by the probe).
+          startupProbe:
+            exec:
+              command: ["/dh_is_ready.sh"]
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 60
+          readinessProbe:
+            exec:
+              command: ["/dh_is_ready.sh"]
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 30
+            failureThreshold: 4
+          volumeMounts:
+            # Per-overlay realm export (configMapGenerator in each overlay),
+            # shadowing the RIT_ENV-templated file baked into the image.
+            # import.sh reads exactly this path.
+            - name: realm-export
+              mountPath: /tmp/realm-export.json
+              subPath: keycloak-realm-export.json
+      volumes:
+        - name: realm-export
+          configMap:
+            name: keycloak-realm-export
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  namespace: internal
+  labels:
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/part-of: datahub
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: keycloak
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP

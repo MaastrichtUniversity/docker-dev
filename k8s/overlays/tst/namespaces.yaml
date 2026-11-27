@@ -1,0 +1,32 @@
+# Namespaces for the tst environment. (monitoring is pre-existing: ELK.)
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: irods
+  labels:
+    app.kubernetes.io/part-of: datahub
+    datahub.env: tst
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: external
+  labels:
+    app.kubernetes.io/part-of: datahub
+    datahub.env: tst
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: public
+  labels:
+    app.kubernetes.io/part-of: datahub
+    datahub.env: tst
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: internal
+  labels:
+    app.kubernetes.io/part-of: datahub
+    datahub.env: tst

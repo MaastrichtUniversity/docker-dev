@@ -49,12 +49,15 @@ else
 fi
 
 
-# Hacky! This is to prevent the ires trying to resolve an address that it does not have access to, resulting in very poor performance in dev
+# Hacky! This is to prevent the ires trying to resolve an address that it does not have access to, resulting in very poor performance in compose dev.
 # These values are fictive, the server in question cannot access the server anyway.
-if [[ "$ENV_IRODS_COOR_RESC_NAME" =~ "UM" ]]; then
-    echo "172.0.0.1 ires-hnas-azm.dh.local" >> /etc/hosts
-elif [[ "$ENV_IRODS_COOR_RESC_NAME" =~ "AZM" ]]; then
-    echo "172.0.0.1 ires-hnas-um.dh.local" >> /etc/hosts
-    echo "172.0.0.2 ires-ceph-ac.dh.local" >> /etc/hosts
-    echo "172.0.0.3 ires-ceph-gl.dh.local" >> /etc/hosts
+# On k8s: intentionally skipped because pods reach each other natively and legitimate replication is allowed.
+if [[ -z "${KUBERNETES_SERVICE_HOST:-}" && "$HOSTNAME" =~ \.dh\.local$ ]]; then
+    if [[ "$ENV_IRODS_COOR_RESC_NAME" =~ "UM" ]]; then
+        echo "172.0.0.1 ires-hnas-azm.dh.local" >> /etc/hosts
+    elif [[ "$ENV_IRODS_COOR_RESC_NAME" =~ "AZM" ]]; then
+        echo "172.0.0.1 ires-hnas-um.dh.local" >> /etc/hosts
+        echo "172.0.0.2 ires-ceph-ac.dh.local" >> /etc/hosts
+        echo "172.0.0.3 ires-ceph-gl.dh.local" >> /etc/hosts
+    fi
 fi
