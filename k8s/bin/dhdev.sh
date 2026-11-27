@@ -28,8 +28,11 @@
 #                                (4 CPU / 8Gi / 80Gi), external image pulls +
 #                                local image build (skip with --no-build),
 #                                loadbalancer addon, Traefik with Gateway API
-#                                (minikube-traefik.sh), apply of the dev overlay,
-#                                readiness checks. Idempotent - re-run
+#                                (minikube-traefik.sh), apply of the dev overlay
+#                                (with the real ATLASSIAN_API_* credentials
+#                                from irods.secrets.cfg injected into the dev
+#                                secrets - local, gitignored), readiness checks.
+#                                Idempotent - re-run
 #                                after a git pull to roll out changes.
 #
 #                                --profile <full|minimal> (default full):
@@ -124,14 +127,15 @@ EOF
 check_minikube_size() {
   command -v jq >/dev/null || return 0
   local profile=${MINIKUBE_PROFILE:-minikube} spec
+  # minikube >= 1.38: {invalid:[], valid:[{Name, Config:{CPUs, Memory, DiskSize(MB)}, ...}]}
   spec=$(minikube profile list -o json 2>/dev/null \
-    | jq -r --arg p "$profile" '.[].Profile | select(.Name==$p) | "\(.CPUs) \(.Memory) \(.DiskSize)"' 2>/dev/null || true)
+    | jq -r --arg p "$profile" '.valid[] | select(.Name==$p) | "\(.Config.CPUs) \(.Config.Memory) \(.Config.DiskSize)"' 2>/dev/null || true)
   [ -n "$spec" ] || return 0   # no profile yet - start flags will apply
   local cpus mem disk
   read -r cpus mem disk <<< "$spec"
-  if [ "${cpus:-0}" -lt 4 ] || [ "${mem:-0}" -lt 8192 ] || [ "${disk:-0}" -lt 80 ]; then
+  if [ "${cpus:-0}" -lt 4 ] || [ "${mem:-0}" -lt 8192 ] || [ "${disk:-0}" -lt 81920 ]; then
     cat >&2 <<EOF
-minikube profile '$profile' is ${cpus} CPU / ${mem}Mi / ${disk}Gi, but the
+minikube profile '$profile' is ${cpus} CPU / ${mem}Mi / $(( ${disk:-0} / 1024 ))Gi, but the
 dev overlay needs at least 4 CPU / 8192Mi / 80Gi (sum of pod requests:
 2.45 CPU / 6Gi). 'start' does not resize an existing profile, so delete it
 and re-run:
@@ -215,10 +219,22 @@ EOF
 
   if _wants_bake sram-sync; then
     echo "==> baking source into $reg/docker-dev/sram-sync:$tag"
-    docker build -t "$reg/docker-dev/sram-sync:$tag" -f - "$REPO_ROOT/externals/sram-sync" <<EOF
+    # irods-rule-wrapper@2026.1 was deleted upstream, so the compose build
+    # (locally patched requirements.txt) no longer installs it - install it
+    # here from the local externals checkout instead.
+    local sram_stage
+    sram_stage=$(mktemp -d)
+    mkdir -p "$sram_stage"
+    cp -a "$REPO_ROOT/externals/sram-sync" "$sram_stage/sram-sync"
+    cp -a "$REPO_ROOT/externals/irods-rule-wrapper" "$sram_stage/irods-rule-wrapper"
+    rm -rf "$sram_stage/irods-rule-wrapper/.git"
+    docker build -t "$reg/docker-dev/sram-sync:$tag" -f - "$sram_stage" <<EOF
 FROM $reg/docker-dev/sram-sync:$tag
-COPY *.py /opt/app/
+COPY sram-sync/*.py /opt/app/
+COPY irods-rule-wrapper/ /tmp/irods-rule-wrapper/
+RUN pip3 install --no-cache-dir /tmp/irods-rule-wrapper && rm -rf /tmp/irods-rule-wrapper
 EOF
+    rm -rf "$sram_stage"
   fi
 
   if _wants_bake faker; then
@@ -241,6 +257,10 @@ EOF
     docker build -t "$reg/docker-dev/mdr:$tag" -f - "$mdr_stage" <<EOF
 FROM $reg/docker-dev/mdr:$tag
 COPY irods-rule-wrapper/ /opt/src/irods-rule-wrapper/
+# irods-rule-wrapper@2026.1 was deleted upstream, so the compose build (locally
+# patched requirements.txt) no longer pip-installs it - install it from the
+# local source here (pulls its pinned git deps from GitHub too).
+RUN pip install --no-cache-dir /opt/src/irods-rule-wrapper
 COPY dhpythonirodsutils/ /usr/local/lib/python3.11/site-packages/dhpythonirodsutils/
 EOF
     rm -rf "$mdr_stage"
@@ -353,7 +373,7 @@ cmd_build() {
 
   local tmp_env
   tmp_env=$(mktemp)
-  trap 'rm -f "$tmp_env"' RETURN
+  trap 'rm -f "${tmp_env:-}"' RETURN
   cat "$REPO_ROOT/.env" > "$tmp_env"
   printf '\n' >> "$tmp_env"
   cat "$secrets_src" >> "$tmp_env"
@@ -374,6 +394,69 @@ cmd_build() {
       "${profile_flags[@]}" build "${services[@]}"
     bake_k8s_sources "$reg" "$tag" "${services[@]}"
   )
+}
+
+# Stages a copy of the dev overlay (generator file references stay valid via
+# repo symlinks). inject_atlassian_secrets replaces the ATLASSIAN_API_*
+# values in the staged secret env files with the real ones from
+# irods.secrets.cfg (local, gitignored via *.secrets.cfg); the committed
+# files keep their placeholders, so real credentials never land in git.
+# build_dev_overlay prints the kustomize build on stdout and sets
+# dev_overlay_injected=1 (in the caller's shell) if anything was replaced.
+stage_dev_overlay() {
+  # Sets STAGE_DIR in the caller's shell. No cleanup trap here: a RETURN
+  # trap fires at the return of *every* function it is active in, which
+  # would delete the stage before build_dev_overlay is done with it.
+  local t
+  STAGE_DIR=$(mktemp -d "${TMPDIR:-/tmp}/dhdev-overlay.XXXXXX")
+  mkdir -p "$STAGE_DIR/k8s/overlays"
+  cp -a "$REPO_ROOT/k8s/overlays/dev" "$STAGE_DIR/k8s/overlays/dev"
+  # The dev kustomization resolves ../../base to $STAGE_DIR/k8s/base, and
+  # base/ generator files resolve ../../ (resp. ../../../ from the overlay)
+  # to the repo root - symlink the trees they read.
+  ln -s "$REPO_ROOT/k8s/base" "$STAGE_DIR/k8s/base"
+  for t in externals irods keycloak; do
+    ln -s "$REPO_ROOT/$t" "$STAGE_DIR/$t"
+  done
+}
+
+# Runs in the caller's shell so the dev_overlay_injected flag survives.
+inject_atlassian_secrets() {
+  local overlay_dir="$1"
+  local src k v file
+  dev_overlay_injected=0
+  src=$REPO_ROOT/irods.secrets.cfg
+  if [ ! -f "$src" ]; then
+    echo "WARNING: irods.secrets.cfg not found at the repo root - building with the committed placeholder secrets." >&2
+    return 0
+  fi
+  for k in ATLASSIAN_API_USERNAME ATLASSIAN_API_KEY; do
+    v=$(grep -E "^${k}=" "$src" | head -1 | cut -d= -f2- | tr -d '\r')
+    if [ -z "$v" ]; then
+      echo "WARNING: $k missing from irods.secrets.cfg - keeping committed placeholder." >&2
+      continue
+    fi
+    for file in "$overlay_dir"/secrets/*.env; do
+      grep -qE "^${k}=" "$file" || continue
+      awk -v k="$k" -v v="$v" 'index($0, k "=") == 1 { print k "=" v; next } { print }' \
+        "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+      echo "    injected real $k into $(basename "$file")" >&2
+      dev_overlay_injected=1
+    done
+  done
+}
+
+# Writes the kustomize build of the staged dev overlay to $1 (a file the
+# caller passes in). Runs in the main shell so the dev_overlay_injected
+# flag set by inject_atlassian_secrets survives for the caller.
+build_dev_overlay() {
+  local out_file="$1" rc=0
+  stage_dev_overlay
+  inject_atlassian_secrets "$STAGE_DIR/k8s/overlays/dev"
+  kubectl kustomize "$STAGE_DIR/k8s/overlays/dev" --load-restrictor LoadRestrictionsNone > "$out_file" || rc=$?
+  rm -rf "$STAGE_DIR"
+  STAGE_DIR=
+  return "$rc"
 }
 
 cmd_dev_up() {
@@ -419,7 +502,7 @@ cmd_dev_up() {
   if minikube ip >/dev/null 2>&1; then
     echo "    already running"
   else
-    minikube start --cpus 4 --memory 8192 --disk-size 80
+    minikube start --cpus 4 --memory 8192 --disk-size 80g
   fi
 
   current_context=$(kubectl config current-context 2>/dev/null || true)
@@ -449,9 +532,12 @@ cmd_dev_up() {
   fi
 
   echo "==> applying dev overlay (profile: $deploy_profile)"
-  local build
-  build=$(kubectl kustomize "$REPO_ROOT/k8s/overlays/dev" \
-      --load-restrictor LoadRestrictionsNone)
+  local build_manifest build
+  build_manifest=$(mktemp "${TMPDIR:-/tmp}/dhdev-manifest.XXXXXX")
+  trap 'rm -f "${tmp_env:-}" "${build_manifest:-}"' RETURN
+  build_dev_overlay "$build_manifest"
+  build=$(<"$build_manifest")
+  rm -f "$build_manifest"
   if [ "$deploy_profile" = minimal ]; then
     # workloads (and their Services) that only the 'full' profile needs
     # carry the label datahub.dh/profile=full
@@ -462,6 +548,20 @@ cmd_dev_up() {
       | grep -v '^service/' | sed 's/^/      /'
   else
     printf '%s\n' "$build" | kubectl apply -f -
+  fi
+
+  if [ "${dev_overlay_injected:-0}" = 1 ]; then
+    # env is snapshotted into pods at start - roll the consumers so the
+    # injected secrets take effect.
+    echo "==> rolling workloads that consume the injected secrets"
+    kubectl -n internal rollout restart deploy/admin-tools-backend
+    kubectl -n public rollout restart deploy/help-center-backend
+    kubectl -n external rollout restart deploy/mdr
+    cat <<'NOTE'
+    NOTE: the irods-secrets-cfg secret also feeds icat/ires-hnas. Do NOT
+    restart them mid-bootstrap; once iRODS is up:
+      kubectl -n irods rollout restart statefulset/icat statefulset/ires-hnas-um statefulset/ires-hnas-azm
+NOTE
   fi
 
   echo "==> waiting for PVCs to bind (standard)"

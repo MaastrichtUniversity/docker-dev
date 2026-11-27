@@ -16,6 +16,10 @@ spec:
       initContainers:
         - name: wait-db
           imagePullPolicy: Never
+        - name: clean-shm
+          imagePullPolicy: Never
+        - name: install-ruleset
+          imagePullPolicy: Never
       containers:
         - name: icat
           imagePullPolicy: Never
@@ -36,6 +40,10 @@ spec:
           imagePullPolicy: Never
         - name: garage-setup
           imagePullPolicy: Never
+        - name: clean-shm
+          imagePullPolicy: Never
+        - name: install-ruleset
+          imagePullPolicy: Never
       containers:
         - name: ires
           imagePullPolicy: Never
@@ -53,6 +61,10 @@ spec:
         - $patch: delete
       initContainers:
         - name: wait-icat
+          imagePullPolicy: Never
+        - name: clean-shm
+          imagePullPolicy: Never
+        - name: install-ruleset
           imagePullPolicy: Never
       containers:
         - name: ires

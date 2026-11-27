@@ -19,8 +19,10 @@
 #   4. traefik Deployment + LoadBalancer Service on :80/:443.
 #      Traefik creates the GatewayClass named 'traefik' itself, which is
 #      what the dev gateway.yaml's gatewayClassName references.
-#   5. CoreDNS rewrite for *.local.dh.unimaas.nl -> traefik.default.svc.cluster.local
+#   5. CoreDNS hosts entries for the dev public hosts -> traefik ClusterIP
 #      so pods inside minikube (e.g. mdr -> keycloak) resolve dev hostnames.
+#   4b. GatewayClass 'traefik' (the overlay's Gateway objects reference it;
+#       Traefik does not auto-create it in this setup)
 #
 # The dev Gateway objects are HTTP-only, so :443 is a placeholder until
 # an https listener is added for local TLS work.
@@ -31,6 +33,23 @@ TRAEFIK_DOC_TAG=v3.7   # docs/manifest branch for the 3.7 line (official URL)
 TRAEFIK_IMAGE=traefik:v3.7
 NS=default
 
+# Keep in sync with the listener hostnames in k8s/overlays/dev/gateway.yaml.
+dev_hosts=(
+  app.mdr.local.dh.unimaas.nl
+  elastic.local.dh.unimaas.nl
+  download.local.dh.unimaas.nl
+  upload.local.dh.unimaas.nl
+  mdr.local.dh.unimaas.nl
+  epicpid.local.dh.unimaas.nl
+  help.mdr.local.dh.unimaas.nl
+  helpbackend.local.dh.unimaas.nl
+  local.dh.unimaas.nl
+  keycloak.local.dh.unimaas.nl
+  auth.local.dh.unimaas.nl
+  admin.local.dh.unimaas.nl
+  admintoolsbackend.local.dh.unimaas.nl
+)
+
 ctx=$(kubectl config current-context 2>/dev/null || true)
 expected_context=${MINIKUBE_PROFILE:-minikube}
 if [ "$ctx" != "$expected_context" ]; then
@@ -39,12 +58,37 @@ if [ "$ctx" != "$expected_context" ]; then
 fi
 
 echo "==> 1/4 loadbalancer addon (metallb)"
-if minikube addons enable loadbalancer 2>/dev/null; then
+if minikube addons enable metallb 2>/dev/null; then
   echo "    enabled"
+elif minikube addons enable loadbalancer 2>/dev/null; then
+  echo "    enabled (legacy 'loadbalancer' addon name)"
 else
   echo "    NOT available on this minikube driver - the traefik Service" >&2
   echo "    will stay Pending; use 'minikube tunnel' (see README) or the" >&2
   echo "    docker driver instead." >&2
+fi
+# Some minikube versions ship the metallb addon configmap with an empty
+# addresses list (broken template) - the controller then never allocates
+# an IP. If the pool is missing, point it at the minikube node /24.
+node_ip=$(minikube ip 2>/dev/null || true)
+if [ -n "$node_ip" ] && kubectl get ns metallb-system >/dev/null 2>&1 \
+    && ! kubectl -n metallb-system get cm config -o jsonpath='{.data.config}' 2>/dev/null \
+    | grep -Eq '^[[:space:]]*-[[:space:]]+[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+'; then
+  echo "    metallb addon configmap has no address pool - patching it"
+  kubectl apply -f - <<EOF
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config
+  namespace: metallb-system
+data:
+  config: |
+    address-pools:
+    - name: default
+      protocol: layer2
+      addresses:
+      - ${node_ip%.*}.100-${node_ip%.*}.250
+EOF
 fi
 
 echo "==> 2/4 Gateway API CRDs ($GATEWAY_API_VER, standard channel)"
@@ -55,6 +99,15 @@ kubectl apply -f "https://raw.githubusercontent.com/traefik/traefik/${TRAEFIK_DO
 kubectl create serviceaccount -n "$NS" traefik-controller --dry-run=client -o yaml | kubectl apply -f -
 
 echo "==> 4/4 Traefik Deployment + Service"
+kubectl apply -f - <<EOF
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: traefik
+spec:
+  # gateway-api v1.7.0 CRD uses the singular controllerName field
+  controllerName: traefik.io/gateway-controller
+EOF
 kubectl apply -f - <<EOF
 apiVersion: apps/v1
 kind: Deployment
@@ -123,27 +176,35 @@ EOF
 echo "==> waiting for traefik to be ready"
 kubectl -n "$NS" rollout status deploy/traefik --timeout=180s
 
-echo "==> 5/5 CoreDNS rewrite for *.local.dh.unimaas.nl -> traefik"
+echo "==> 5/5 CoreDNS hosts entries for the dev public hosts -> traefik"
+# The coredns v1.13.1 hosts plugin does exact-name lookups only (no
+# wildcards), and a rewrite-based rule is invalid (the answer rule cannot
+# reference the name rule capture groups). So map each dev hostname
+# explicitly to the traefik ClusterIP.
 corefile_json=$(kubectl -n kube-system get configmap coredns -o json)
+traefik_ip=$(kubectl -n "$NS" get svc traefik -o jsonpath='{.spec.clusterIP}')
 updated_corefile=$(printf '%s' "$corefile_json" | python3 -c '
-import json, sys
+import json, re, sys
+ip = sys.argv[1]
+names = sys.argv[2].split()
 cm = json.load(sys.stdin)
 corefile = cm["data"]["Corefile"]
-rule = (
-    "    rewrite stop {\n"
-    "        name regex (.*)\\.local\\.dh\\.unimaas\\.nl traefik.default.svc.cluster.local\n"
-    "        answer name traefik.default.svc.cluster.local {1}.local.dh.unimaas.nl\n"
-    "    }\n"
-)
-if "traefik.default.svc.cluster.local" in corefile:
+names_joined = " ".join(names)
+entry = ip + " " + names_joined
+if entry in corefile:
     sys.exit(0)
-target = "    kubernetes cluster.local"
-if target not in corefile:
-    sys.stderr.write("WARNING: could not find '\''kubernetes cluster.local'\'' in CoreDNS Corefile; skipping rewrite.\n")
+# Drop the old rewrite-based block and any stale lines (previous ClusterIP
+# or the old wildcard entry) that mention one of the dev hostnames.
+corefile = re.sub(r"\n    rewrite stop \{\n.*?\n    \}\n", "\n", corefile, count=1, flags=re.S)
+for n in names:
+    corefile = re.sub(r"^[ \t]+[^\n]*" + re.escape(n) + r"[^\n]*\n", "", corefile, flags=re.M)
+anchor = "host.minikube.internal\n"
+if anchor not in corefile:
+    sys.stderr.write("WARNING: could not find the minikube hosts block in CoreDNS Corefile; skipping.\n")
     sys.exit(0)
-cm["data"]["Corefile"] = corefile.replace(target, rule + target, 1)
+cm["data"]["Corefile"] = corefile.replace(anchor, anchor + f"       {entry}\n", 1)
 print(json.dumps(cm))
-')
+' "$traefik_ip" "${dev_hosts[*]}")
 if [ -n "$updated_corefile" ]; then
   printf '%s' "$updated_corefile" | kubectl apply -f -
   kubectl -n kube-system rollout restart deploy/coredns
@@ -176,21 +237,7 @@ echo
 echo "==> Traefik is up. Add these lines to /etc/hosts, e.g.:"
 echo
 echo "    sudo tee -a /etc/hosts <<'EOF'"
-# Keep in sync with the listener hostnames in k8s/overlays/dev/gateway.yaml
-for host in \
-  app.mdr.local.dh.unimaas.nl \
-  elastic.local.dh.unimaas.nl \
-  download.local.dh.unimaas.nl \
-  upload.local.dh.unimaas.nl \
-  mdr.local.dh.unimaas.nl \
-  epicpid.local.dh.unimaas.nl \
-  help.mdr.local.dh.unimaas.nl \
-  helpbackend.local.dh.unimaas.nl \
-  local.dh.unimaas.nl \
-  keycloak.local.dh.unimaas.nl \
-  auth.local.dh.unimaas.nl \
-  admin.local.dh.unimaas.nl \
-  admintoolsbackend.local.dh.unimaas.nl
+for host in "${dev_hosts[@]}"
 do
   echo "    ${LB_IP} ${host}"
 done

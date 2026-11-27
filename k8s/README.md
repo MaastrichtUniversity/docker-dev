@@ -4,10 +4,12 @@ Kubernetes deployment for the stack previously run with `docker compose`
 (`docker-compose.yml` + `docker-compose-irods.yml`). Target: a 3-node
 **k3s** cluster with **Traefik** (Gateway API) and **Longhorn** storage.
 
-**Status:** `dev` and `tst` overlays are complete and build-validated.
-Still to come: `acc`/`prd` overlays (thin variants of tst), the
-`Jenkinsfile.build`/`Jenkinsfile.deploy` pipelines, and the helper scripts
-in `k8s/bin/` (see _Risks / open items_).
+**Status:** the `dev` overlay is deployed and validated end-to-end on a
+local **minikube** cluster (see _Local dev on minikube_); the `tst`
+overlay is build-validated for k3s. Still to come: `acc`/`prd` overlays
+(thin variants of tst), the `Jenkinsfile.build`/`Jenkinsfile.deploy`
+pipelines, and the remaining `k8s/bin/` helpers (`faker.sh`,
+`ruleset-sync.sh`, `irods-reset.sh`, ...; see _Risks / open items_).
 
 ## How it works (30-second version)
 
@@ -40,10 +42,13 @@ pods in 4 namespaces:  irods / external / public / internal
   become ConfigMaps and are injected with `envFrom` — the same variables
   the compose services used, with k8s FQDNs where `.dh.local` used to be.
 - **Secrets:**
-  - **dev** — no Vault: kustomize generates the k8s Secrets at build time
-    from scoped files in `overlays/dev/secrets/` (only each workload's
-    required keys; secret vendor values remain placeholders until copied
-    from local gitignored config).
+  - **dev** — no Vault: kustomize generates the k8s Secrets at build
+    time from scoped files in `overlays/dev/secrets/` (only each
+    workload's required keys). Committed values are test values / `<set-
+    from-local-...>` placeholders; `k8s/bin/dhdev.sh dev-up` injects the
+    real `ATLASSIAN_API_USERNAME`/`ATLASSIAN_API_KEY` pair from the local
+    gitignored `irods.secrets.cfg` into a temp copy of the overlay at
+    build time, so the real values never land in git.
   - **tst (later acc/prd)** — the **ExternalSecrets operator** creates and
     keeps the same k8s Secrets in sync with Vault
     (`secret/datahub/<env>/...`). See _Deploying_, step 2.
@@ -99,7 +104,10 @@ k8s/
       gateway.yaml           # + https listeners (multi-SAN cert via Vault)
     acc/ prd/                # TODO: thin variants of tst
   irods/k8s-ssl-certs/       # iRODS test certs (dev/tst), from bin/gen-irods-tls.sh
+  bin/dhdev.sh               # local dev flow: externals, build, dev-up
+  bin/minikube-traefik.sh    # minikube Traefik + Gateway API + metallb + CoreDNS
   bin/gen-irods-tls.sh       # iRODS TLS generator (test material only)
+  minikube-dev-deploy-status.md  # live handoff/verification notes for the local cluster
   Jenkinsfile.build          # TODO: build & push all images (pinned externals)
   Jenkinsfile.deploy         # TODO: kustomize build | kubectl apply
 ```
@@ -119,45 +127,93 @@ clone — those creds come from Vault.
 
 ## Local dev on minikube (dev overlay)
 
-The dev overlay targets a **local minikube cluster** (not k3s).
-`overlays/dev/patches/` retargets every volume to minikube's `standard`
-StorageClass, shrinks them (~50Gi total), lowers CPU/memory (sum of all
-pod requests: 2.45 CPU / 6.0Gi), and turns the shared ingest zones into a
-hostPath `/staging-data` volume (single node = the compose-era host-dir
-behavior). It is for validation and feature development, not load.
+The dev overlay targets a **local minikube cluster** (not k3s) and is the
+supported way to run the stack on your own machine. It is for validation
+and feature development, not load. `overlays/dev/patches/` retargets
+every volume to minikube's `standard` StorageClass (the hostpath-backed
+`storage-provisioner` addon), shrinks them (~50Gi total), lowers
+CPU/memory (sum of all pod requests: 2.45 CPU / 6.0Gi), and turns the
+shared ingest zones into a hostPath `/staging-data` volume (single node =
+the compose-era host-dir behavior). **Longhorn is not involved** — the
+Longhorn StorageClass objects ship but are unused in dev.
 
-### Spin up
+### What you need (once)
+
+- **Docker, minikube (1.38+ tested), kubectl** in `PATH`, minikube on the
+  docker driver.
+- A machine that can give minikube **4 CPU / 8192 MiB / 80 GiB disk**
+  (the pod requests sum to ~51Gi). The script refuses to start on a
+  smaller node and re-checks an existing one.
+- This repo at the repo root. `dev-up` creates/pulls the `externals/`
+  trees itself (the epicpid SURF credentials note is in Step 1).
+- A local **`irods.secrets.cfg` at the repo root** (gitignored via
+  `*.secrets.cfg`) with the real Atlassian Cloud credentials:
+
+  ```
+  ATLASSIAN_API_USERNAME=<your service account email>
+  ATLASSIAN_API_KEY=<api token>
+  ```
+
+  `dev-up` injects these into the dev overlay **at build time**, into a
+  temp copy — the committed files keep their placeholders, so real
+  values never reach git. Without it the stack comes up, but
+  `admin-tools-backend` and `help-center-backend` crash-loop with Jira
+  `401 Unauthorized`.
+- **sudo** for the one `/etc/hosts` edit (step 2 below).
+
+### Step 1 — spin up (one command)
 
 ```
 k8s/bin/dhdev.sh dev-up
 ```
 
-That is the whole flow:
+That is the whole flow. In order it:
 
-1. `externals/` at the repo root — created/cloned/pulled if needed
-   (same repo list as the compose repo's `rit.sh`; see the SURF note
-   below)
-2. minikube started if not running: `--cpus 4 --memory 8192
---disk-size 80` (docker driver)
-3. the `storage-provisioner` and `default-storageclass` addons are enabled;
-   the script verifies the `standard` StorageClass before applying PVCs
-4. `k8s/bin/minikube-traefik.sh`: minikube loadbalancer addon (metallb),
-   Gateway API CRDs (v1.7.0), Traefik v3.7 with the Gateway API provider
-   - LoadBalancer Service, CoreDNS rewrite for `*.local.dh.unimaas.nl`,
-   and it prints an `/etc/hosts` block for all 13 dev public hosts
-5. `k8s/bin/dhdev.sh pull-external` and `k8s/bin/dhdev.sh build`: `pull-external`
-   pre-pulls upstream external images (`postgres`, `garage`, `openldap`, `nginx`,
-   `traefik`) into minikube's Docker daemon, and `build` builds all compose
-   images directly inside minikube's Docker daemon using
-   `registry.prod.dh.unimaas.nl/docker-dev/*:latest` tags (matching `rit.sh`), so
-   images can be pushed when needed without pulling from the remote registry
-   (`patches/images-dev.yaml` sets `imagePullPolicy: Never` across all workloads
-   and removes `imagePullSecrets`). Pass `--no-build` to `dev-up` to skip
-   building, or run `k8s/bin/dhdev.sh build [service...]` to rebuild individual
-   images.
-6. the dev overlay is applied and the PVCs are checked
+1. **`externals/`** at the repo root — created/cloned/pulled if needed
+   (same repo list as the compose repo's `rit.sh`). The epicpid SURF
+   credentials (`externals/epicpid-microservice/credentials/*.pem`) are
+   **not in the public epicpid-microservice repo** — the script detects
+   when they are missing and tells you to copy them from an existing
+   checkout (e.g. your compose tree). `k8s/bin/dhdev.sh externals` alone
+   just (re)creates `externals/`.
+2. **minikube** started if not running (`--cpus 4 --memory 8192
+   --disk-size 80g`, docker driver). The script refuses to run against a
+   kubectl context that is not the minikube profile.
+3. the **`storage-provisioner`** and **`default-storageclass`** addons are
+   enabled; the script verifies the `standard` StorageClass exists before
+   anything with a PVC is applied.
+4. **external base images** (`postgres`, `garage`, `openldap`, `nginx`,
+   `traefik`) are pulled into minikube's Docker daemon (`pull-external`).
+5. **`k8s/bin/minikube-traefik.sh`**: the metallb addon (with a guard
+   that patches the addon's shipped empty address pool), the Gateway API
+   CRDs (v1.7.0), the `traefik` GatewayClass, Traefik v3.7 (Gateway API
+   provider) with its LoadBalancer Service, explicit CoreDNS `hosts`
+   entries for all 13 dev hostnames → the Traefik ClusterIP (so pods
+   inside minikube can reach each other by the public names), and it
+   prints an `/etc/hosts` block with the metallb LB IP.
+6. **images are built inside minikube's Docker daemon** (`docker compose
+   build` over the local `externals/` sources), tagged
+   `registry.prod.dh.unimaas.nl/docker-dev/*:latest`, with the k8s iRODS
+   CA baked into the client images (sram-sync, faker, mdr, admin-tools-
+   backend, davrods, davrods-upload). `patches/images-dev.yaml` sets
+   `imagePullPolicy: Never` on every locally built container and removes
+   `imagePullSecrets`, so nothing ever contacts the real registry. Pass
+   `--no-build` to `dev-up` to skip building, or run
+   `k8s/bin/dhdev.sh build [service...]` to rebuild individual images.
+7. **the dev overlay is built and applied** — from a temp copy of
+   `overlays/dev/` with the real `ATLASSIAN_API_*` values injected
+   (see _What you need_). If any value was injected, the consuming
+   workloads (`admin-tools-backend`, `help-center-backend`, `mdr`) are
+   rolled so the new env actually reaches the pods; the note also says
+   to roll `icat`/`ires-hnas-*` yourself once iRODS is up (their env
+   comes from the same `irods-secrets-cfg` secret).
+8. **PVCs are waited for** (all must bind to `standard`) and
+   `/etc/hosts` resolution is checked.
 
-Then add the printed /etc/hosts block:
+### Step 2 — point the dev names at the LB IP
+
+Add the block the script printed (the LB IP is what metallb assigned,
+usually `192.168.49.x`):
 
 ```
 sudo tee -a /etc/hosts <<'EOF'
@@ -166,21 +222,114 @@ sudo tee -a /etc/hosts <<'EOF'
 EOF
 ```
 
-Steps 4-5 of "Deploying (step by step)" then apply (iRODS bootstrap,
-verify). Re-run `dev-up` after a `git pull` to roll out changes.
-
-`k8s/bin/dhdev.sh externals` alone just (re)creates `externals/`. Note:
-the epicpid SURF credentials
-(`externals/epicpid-microservice/credentials/*.pem`) are **not in the
-public epicpid-microservice repo** — the script detects when they are
-missing and tells you to copy them from an existing checkout (e.g. your
-compose tree).
-
 Alternative to the LB IP: `minikube tunnel` (needs sudo, docker driver)
 serves cluster LoadBalancer traffic on `127.0.0.1` — then use
-`127.0.0.1` in /etc/hosts. Note the Vite frontends enforce
-`allowedHosts` = the public host name, so always access them through the
-/etc/hosts names (a `localhost` Host header is rejected).
+`127.0.0.1` in /etc/hosts. The Vite frontends enforce
+`allowedHosts` = the public host name, so always access them through
+the /etc/hosts names (a `localhost` Host header is rejected).
+
+### Step 3 — first deployment: the iRODS bootstrap (~30 min)
+
+The first apply includes a full iRODS bootstrap (DB init,
+`setup_irods.py`, ruleset compile, dev mockup data). Watch it:
+
+```
+kubectl get pods -A -w
+kubectl -n irods logs icat-0 --all-containers     # once icat-0 starts
+```
+
+`icat-0` becomes Ready first; the two `ires-hnas-*` pods wait on it and
+come up afterwards. During this window `sram-sync` may sit in
+CrashLoopBackOff — it needs iCAT and recovers by itself (roll it with
+`kubectl -n irods rollout restart deploy/sram-sync` if it doesn't).
+Pod restarts during the window are fine — the bootstrap is idempotent
+(guarded by a state file on the PVC + iCAT DB AVUs). If it gets stuck,
+check the `irods-db` pod.
+
+### Step 4 — verify
+
+```
+kubectl get pods -A | grep -v Running        # should print nothing
+kubectl get pvc -A | grep -v Bound           # should print nothing
+```
+
+| check | command | expected |
+| ----- | ------- | -------- |
+| MDR frontend | `curl -s -o /dev/null -w '%{http_code}\n' http://mdr.local.dh.unimaas.nl/` | `200` |
+| MDR app (auth redirect) | same for `http://app.mdr.local.dh.unimaas.nl/` | `302` |
+| Keycloak / admin tools | same for `http://keycloak.local...`, `http://admin.local...`, `http://help.mdr.local...` | `200` |
+| auth-required APIs | `http://elastic.local...`, `http://download.local...`, `http://upload.local...`, `http://epicpid.local...` | `401` (expected: no session yet) |
+| iRODS client health | `kubectl -n irods get pods` → `sram-sync` | `1/1 Running`, 0 restarts |
+
+`sram-sync` is the reliable iRODS client health check: it is a real
+python-irodsclient consumer that connects to iCAT over TLS on every
+start. iRODS admin commands from inside the icat pod need the C client's
+env set (the client looks up the CA via
+`IRODS_SSL_CA_CERTIFICATE_FILE`, not `ENV_IRODS_SSL_CA_CERTIFICATE`):
+
+```
+kubectl -n irods exec icat-0 -- sh -c 'cp /opt/irods_ssl_staging/test_only_dev_irods_dh_ca_cert.pem /etc/irods/ && export IRODS_HOST=icat.irods.svc.cluster.local IRODS_ZONE=nlmumc IRODS_USER=rods IRODS_PORT=1247 IRODS_SSL_CA_CERTIFICATE_FILE=/etc/irods/test_only_dev_irods_dh_ca_cert.pem IRODS_CLIENT_SERVER_POLICY=CS_NEG_REQUIRE; iadmin whoami'
+```
+
+(If the TLS handshake succeeds but the C client then stops on an
+`irodsEncryption` "key size ... is 0" error, that is a client-side env
+mapping detail — trust the python clients above instead.)
+
+Re-run `dev-up` after a `git pull` to roll out changes — it is
+idempotent.
+
+### Day-2 operations (dev)
+
+```
+# after a git pull:
+k8s/bin/dhdev.sh dev-up
+
+# changed a config/*.env value: re-run dev-up, then roll the consumers
+# (generated ConfigMaps have stable names, so a config change does NOT
+# restart pods automatically):
+kubectl -n <ns> rollout restart deploy/<svc>
+
+# talk to a database
+kubectl -n irods port-forward svc/irods-db 5432
+kubectl -n external port-forward svc/mdr-db 5432
+```
+
+**iRODS TLS material.** Test-only certs for every iRODS service
+(SANs = the k8s FQDNs, valid for every env):
+
+```
+k8s/bin/gen-irods-tls.sh
+#   - keeps ca.key if present (re-issues the leaves under the same CA);
+#     delete irods/k8s-ssl-certs/ca.key + ca.pem for a brand-new CA
+#   - ca.pem is a committed file on purpose (clients need the CA);
+#     ca.key is gitignored
+#   - certs carry SKI/AKI extensions required by Python >= 3.10
+#     X509_STRICT clients (python-irodsclient); without them clients die
+#     with 'Missing Authority Key Identifier'
+```
+
+After regenerating, re-apply and roll the TLS consumers (the iRODS pods
+re-sync the staging secret into `/etc/irods/SSL` on every start, so cert
+rotation takes effect on pod restart):
+
+```
+k8s/bin/dhdev.sh dev-up --no-build
+kubectl -n irods rollout restart statefulset/icat statefulset/ires-hnas-um statefulset/ires-hnas-azm
+kubectl -n irods rollout restart deploy/garage1 deploy/garage2 deploy/garage1-s3-tls deploy/garage2-s3-tls
+```
+
+**Troubleshooting** (signatures seen in the wild):
+
+| symptom | cause / fix |
+| ------- | ----------- |
+| `Requested disk size 80 is less than minimum of 2000` | minikube parsed a unit-less disk size as bytes; the script now passes `80g` |
+| metallb crashloops / no LB IP on Traefik | the addon's configmap ships with an empty address list; the traefik script patches it (check `kubectl -n metallb-system get cm config`) |
+| pod `ErrImagePull` / `no basic auth credentials` | a container without `imagePullPolicy: Never` tried the real registry; check the image exists in minikube's daemon and `patches/images-dev.yaml` covers that container |
+| `sram-sync` crashloops `Missing Authority Key Identifier` | stale iRODS TLS chain (old CA without SKI); regenerate certs, re-apply, roll the iRODS pods |
+| icat serves the old cert after a TLS secret change | restart the iRODS pods (they re-sync SSL from the staging secret on start) |
+| iRODS bootstrap stuck | `kubectl -n irods logs <pod> --all-containers`, then check the `irods-db` pod |
+| frontend `400` / `allowedHosts` error | you hit it via `localhost` or an IP; use the /etc/hosts names |
+| Jira `401` on admin-tools/help-center backends | `irods.secrets.cfg` missing or empty; fix it and re-run `dev-up` (it re-injects and rolls the consumers) |
 
 ### Deploy profiles
 
@@ -205,7 +354,7 @@ re-run `dev-up` without `--profile` to bring them back.
 
 ### Staging data (zones)
 
-Both iress pods (and faker jobs, see below) share the minikube-VM
+Both iRES pods (and faker jobs, see below) share the minikube-VM
 directory `/staging-data` via hostPath. Fresh cluster = empty, i.e. the
 compose behavior of a clean `staging-data/`. To start from existing data
 instead:
@@ -216,26 +365,31 @@ minikube start ... --mount --mount-string=$PWD/staging-data:/staging-data
 
 ### faker jobs on minikube
 
-The faker job template mounts the `staging-zones` PVC; on minikube the
-zones live on the hostPath, so apply it with the volume replaced
-(`k8s/bin/faker.sh` will do this automatically for dev):
-
-```
-sed -e 's|^          persistentVolumeClaim:$|          hostPath:|' \
-    -e 's|^            claimName: staging-zones$|            path: /staging-data\n            type: DirectoryOrCreate|' \
-    k8s/base/faker/job-template.yaml | kubectl apply -f -
-```
+**Not dev-ready yet (known gap).** The faker Job template
+(`base/faker/job-template.yaml`) still mounts the `staging-zones` PVC
+and assumes registry image pulls — neither matches the minikube dev
+patching (zones live on the hostPath; images are local). The planned
+`k8s/bin/faker.sh` will apply the template with the volume replaced by
+hostPath `/staging-data`, `imagePullPolicy: Never`, and no
+`imagePullSecrets`. Until then, faker runs against the (unused, but
+bound) `staging-zones` PVC — data written there is invisible to the
+iRES pods.
 
 ### dev secrets
 
-The dev secrets files contain `<set-from-local-...>` placeholders for
-vendor credentials (Atlassian API token, BioPortal key, reCAPTCHA secret)
-instead of real values. They are split by consumer across
-`irods-secrets-cfg.env`, `mdr-app-secrets.env`,
-`admin-tools-secrets.env`, and `help-center-secrets.env`. Copy the real
-values from the local gitignored `irods.secrets.cfg` / `.env` (main tree)
-into each relevant file before relying on those integrations; don't commit
-local credential values.
+The dev secret env files in `overlays/dev/secrets/` are committed with
+test values / `<set-from-local-...>` placeholders for vendor
+credentials, split by consumer across `irods-secrets-cfg.env`,
+`mdr-app-secrets.env`, `admin-tools-secrets.env`, and
+`help-center-secrets.env`. `dev-up` injects the **Atlassian pair**
+(`ATLASSIAN_API_USERNAME` / `ATLASSIAN_API_KEY`) automatically from the
+local gitignored `irods.secrets.cfg` — see _Step 1_ (nothing to do
+manually, committed files stay placeholder). The remaining placeholders
+(`BIOPORTAL_API_KEY`, `REACT_APP_CAPTCHA_SECRET_KEY`) only matter if you
+need those integrations: fill them from the local gitignored
+`irods.secrets.cfg` / `.env` (main tree) in the relevant file, then
+re-run `dev-up` and roll the consumers. Never commit local credential
+values.
 
 ## Deploying (step by step)
 
@@ -383,7 +537,9 @@ hostnames).
 
 ```
 kubectl get pods -A | grep -v ' Running'        # should (eventually) print nothing
-# iRODS sanity (inside the icat pod):
+# iRODS sanity (inside the icat pod) - the C client needs its env set
+# (host/zone/user/port + IRODS_SSL_CA_CERTIFICATE_FILE for the CA;
+# full recipe: "Step 4 — verify" in _Local dev on minikube_):
 kubectl -n irods exec icat-0 -- iadmin whoami
 ```
 
@@ -566,8 +722,14 @@ Notes:
   and `secrets/*.yaml` references each path.
 - iRODS TLS: dev uses the committed test certs; `bin/gen-irods-tls.sh`
   generates the material (SANs = the k8s FQDNs, valid for every env; the
-  `<ca>.pem` key name must match `ENV_IRODS_SSL_CA_CERTIFICATE`). prd:
-  real PKI material.
+  `<ca>.pem` key name must match `ENV_IRODS_SSL_CA_CERTIFICATE`). The
+  generator adds `subjectKeyIdentifier` (CA) and
+  `authorityKeyIdentifier` (leaves) — required by Python >= 3.10
+  `X509_STRICT` clients (python-irodsclient). iRODS pods re-sync the
+  staging secret into `/etc/irods/SSL` on every start
+  (`install_env_irods_ssl_files` in the dh-irods base), so a cert
+  rotation takes effect on pod restart; clients pick up the new CA via
+  the bake step in `dhdev.sh build`. prd: real PKI material.
 - Gateway (public) TLS: dev is HTTP-only. tst uses the real multi-SAN
   `*.tst.dh.unimaas.nl` cert, stored in Vault under `gateway-tls` and
   materialized in the Gateway namespaces by the `gateway-tls`
@@ -646,10 +808,19 @@ Two StorageClasses: `longhorn-rwo` (default) and `longhorn-rwx`
 - **iRODS on k8s is still the fragile part**; first bring-up may need hook
   tweaks (the reset tooling + worklist ship for exactly that).
 - **Not written yet:** `acc`/`prd` overlays (thin variants of tst),
-  `Jenkinsfile.build`/`Jenkinsfile.deploy`, `k8s/bin/` helpers
-  (`dhdev`, `faker.sh`, `ruleset-sync.sh`, `irods-reset.sh`,
+  `Jenkinsfile.build`/`Jenkinsfile.deploy`, the remaining `k8s/bin/`
+  helpers (`faker.sh`, `ruleset-sync.sh`, `irods-reset.sh`,
   `seed-staging.sh`, `gen-gateway-tls.sh`), `k8s/images/irods/` finalize
   Dockerfiles, networkpolicy rework for the multi-namespace layout.
+  (Written and in use: `dhdev.sh`, `minikube-traefik.sh`,
+  `gen-irods-tls.sh`.)
+- **faker on minikube (dev):** the Job template still mounts the
+  `staging-zones` PVC + registry image assumptions instead of the dev
+  hostPath/local-image patching — see "faker jobs on minikube".
+- **C-CLI iRODS clients** (e.g. `iadmin` via `kubectl exec`) need the
+  client env set manually, including `IRODS_SSL_CA_CERTIFICATE_FILE` for
+  the CA; the python clients (sram-sync, iRES) are the reliable health
+  check — see "Step 4 — verify" in _Local dev on minikube_.
 - Longhorn RWX: verify `numberOfReplicasRwx` works on your Longhorn version
   before relying on `staging-zones` (fallback: separate zone PVCs per ires).
 - acc/prd TLS (iRODS CA + public cert) must come from real PKI; the scripts
