@@ -596,6 +596,20 @@ cmd_dev_up() {
   if minikube ip >/dev/null 2>&1; then
     echo "    already running"
   else
+    # Stale 'minikube*' docker networks (leftover from interrupted
+    # minikube delete) can keep the 192.168.49.0/24 subnet, forcing the new
+    # node onto a different subnet (e.g. 192.168.58.x). Such an IP is outside
+    # the corporate no_proxy lists, so the kubelet's apiserver traffic goes
+    # through the proxy and the node never registers (the proxy answers
+    # '403 Forbidden'). Remove the stale networks before start - safe here
+    # because the node is not running.
+    local stale_net
+    while IFS= read -r stale_net; do
+      [ -n "$stale_net" ] || continue
+      echo "    removing stale docker network '$stale_net'"
+      docker network rm "$stale_net" >/dev/null 2>&1 \
+        || echo "    WARNING: could not remove docker network '$stale_net' (still in use?)" >&2
+    done < <(docker network ls --format '{{.Name}}' 2>/dev/null | grep -i '^minikube' || true)
     # Corporate proxy (UM): the node container inherits the docker daemon's
     # proxy env, whose NO_PROXY lacks the cluster-local ranges - so the
     # kubelet routes its apiserver traffic (192.168.49.2:6443) through the
