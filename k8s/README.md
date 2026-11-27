@@ -322,6 +322,7 @@ kubectl -n irods rollout restart deploy/garage1 deploy/garage2 deploy/garage1-s3
 
 | symptom | cause / fix |
 | ------- | ----------- |
+| `minikube start` crashes `GUEST_START` / `kubeadm init ... nodes "minikube" not found` (behind a corporate proxy) | the node container inherits the docker daemon's proxy env whose `NO_PROXY` lacks the cluster-local ranges, so the kubelet routes its apiserver traffic (192.168.49.x:6443) through the proxy and never registers. `dhdev.sh` passes `--docker-env http_proxy/https_proxy/no_proxy` (no_proxy incl. `localhost,127.0.0.1,192.168.49.0/24,10.96.0.0/12,10.244.0.0/16` + corporate domains) at start — but it only applies at node creation: run `minikube delete` and re-run `dev-up` (minikube has no `config set http-proxy` — env vars/`--docker-env` only; see the minikube handbook VPN-and-proxy). Verify with `kubectl get nodes` |
 | `Requested disk size 80 is less than minimum of 2000` | minikube parsed a unit-less disk size as bytes; the script now passes `80g` |
 | metallb crashloops / no LB IP on Traefik | the addon's configmap ships with an empty address list; the traefik script patches it (check `kubectl -n metallb-system get cm config`) |
 | pod `ErrImagePull` / `no basic auth credentials` | a container without `imagePullPolicy: Never` tried the real registry; check the image exists in minikube's daemon and `patches/images-dev.yaml` covers that container |

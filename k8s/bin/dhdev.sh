@@ -46,6 +46,13 @@
 #                                previous profile.
 #
 # Usage:  k8s/bin/dhdev.sh <externals|pull-external|build [--profile full|minimal] [svc...]|dev-up [--profile full|minimal] [--no-build]|help>
+#
+# Dependencies: minikube and kubectl are checked on every run and installed
+# automatically (user-local, into ~/.local/bin, no sudo) when missing; set
+# DHDEV_NO_INSTALL=1 for check-only. docker and git are check-only.
+# `minikube start` passes the corporate proxy to the node container via
+# --docker-env with a no_proxy covering the cluster-local ranges (see the
+# start block in cmd_dev_up and the Troubleshooting row in k8s/README.md).
 set -euo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
@@ -54,6 +61,104 @@ EXTERNALS_DIR=$REPO_ROOT/externals
 SURF_DIR=$EXTERNALS_DIR/epicpid-microservice/credentials
 SURF_FILES="305_21_T12996_USER01_UM_privkey.pem
 305_21_T12996_USER01_UM_certificate_only.pem"
+
+# --- dependency checks / installs --------------------------------------------
+# dhdev does not install system packages. What it CAN install without root
+# are the minikube and kubectl single binaries (into $DHDEV_BIN_DIR, default
+# ~/.local/bin). Docker and git are check-only: they need a package manager
+# / service setup that must not run unattended.
+# Set DHDEV_NO_INSTALL=1 for check-only behavior.
+
+_http_get() {
+  if command -v curl >/dev/null 2>&1; then curl -fsSL "$1"
+  elif command -v wget >/dev/null 2>&1; then wget -qO- "$1"
+  else echo "    $0: need curl or wget to download $1" >&2; return 1; fi
+}
+
+_install_tool() {
+  local tool="$1" dest="${2:-$HOME/.local/bin}" os arch ver url
+  os=$(uname -s | tr '[:upper:]' '[:lower:]')
+  case "$(uname -m)" in
+    x86_64|amd64) arch=amd64 ;;
+    aarch64|arm64) arch=arm64 ;;
+    *) echo "    $0: unsupported architecture: $(uname -m)" >&2; return 1 ;;
+  esac
+  case "$os" in linux|darwin) ;; *) echo "    $0: unsupported OS: $os" >&2; return 1 ;; esac
+  mkdir -p "$dest" || return 1
+  case "$tool" in
+    minikube)
+      ver=$(_http_get "https://api.github.com/repos/kubernetes/minikube/releases/latest" 2>/dev/null \
+        | grep -oE '"tag_name":\s*"v[0-9]+\.[0-9]+\.[0-9]+"' | head -1 | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+')
+      [ -n "$ver" ] || { echo "    $0: could not determine the latest minikube release" >&2; return 1; }
+      url="https://github.com/kubernetes/minikube/releases/download/${ver}/minikube-${os}-${arch}.tar.gz"
+      # the binary sits top-level in older releases and under out/ in newer
+      # ones (e.g. out/minikube-linux-amd64) - extract and find it
+      local tmpd bin
+      tmpd=$(mktemp -d) || return 1
+      _http_get "$url" | tar -xz -C "$tmpd" || { rm -rf "$tmpd"; return 1; }
+      bin=$(find "$tmpd" -type f -name 'minikube*' ! -name '*.sha256' | head -1)
+      [ -n "$bin" ] || { echo "    $0: minikube binary not found in the archive" >&2; rm -rf "$tmpd"; return 1; }
+      mv "$bin" "$dest/minikube" && rm -rf "$tmpd"
+      ;;
+    kubectl)
+      # dl.k8s.io/stable.txt is gone; the latest tag comes from the GitHub release
+      ver=$(_http_get "https://api.github.com/repos/kubernetes/kubernetes/releases/latest" 2>/dev/null \
+        | grep -oE '"tag_name":\s*"v[0-9]+\.[0-9]+\.[0-9]+"' | head -1 | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+')
+      [ -n "$ver" ] || { echo "    $0: could not determine the latest kubernetes release" >&2; return 1; }
+      url="https://dl.k8s.io/${ver}/bin/${os}/${arch}/kubectl"
+      _http_get "$url" > "$dest/kubectl" || return 1
+      ;;
+    *) echo "    $0: no auto-install for '$tool'" >&2; return 1 ;;
+  esac
+  chmod +x "$dest/$tool" || return 1
+  # version-check without a cluster: minikube 'version' is standalone;
+  # kubectl needs --client (plain 'version' or '--version' fail without one)
+  local ver_cmd="$dest/$tool version"
+  [ "$tool" = kubectl ] && ver_cmd="$dest/$tool version --client"
+  if ! $ver_cmd >/dev/null 2>&1; then
+    echo "    $0: installed $tool binary failed its version check - removing it" >&2
+    rm -f "$dest/$tool"; return 1
+  fi
+  echo "    installed $tool $ver -> $dest"
+}
+
+# ensure_deps TOOL...: verify the given tools are available. minikube and
+# kubectl are auto-installed (user-local, no sudo) when missing unless
+# DHDEV_NO_INSTALL=1; everything else is check-only with a clear message.
+ensure_deps() {
+  local dest="${DHDEV_BIN_DIR:-$HOME/.local/bin}" tool ok=0
+  for tool in "$@"; do
+    if command -v "$tool" >/dev/null 2>&1; then continue; fi
+    case "$tool" in
+      minikube|kubectl)
+        if [ "${DHDEV_NO_INSTALL:-0}" = "1" ]; then
+          echo "    MISSING: $tool (auto-install disabled by DHDEV_NO_INSTALL=1)" >&2
+          ok=1; continue
+        fi
+        echo "==> $tool not found - installing to $dest (no sudo needed)"
+        _install_tool "$tool" "$dest" || ok=1
+        ;;
+      *)
+        case "$tool" in
+          docker) echo "    MISSING: docker - install Docker Engine/CLI for your OS first (no auto-install)" >&2 ;;
+          git)    echo "    MISSING: git - install it with your package manager first (no auto-install)" >&2 ;;
+          *)      echo "    MISSING: $tool - install it first (no auto-install)" >&2 ;;
+        esac
+        ok=1 ;;
+    esac
+  done
+  if [ "$ok" = 1 ]; then
+    echo "    Fix the missing tools above and re-run '$(basename "$0").'" >&2
+    return 1
+  fi
+  # make this run see the freshly installed binaries
+  if [ -d "$dest" ] && [[ ":$PATH:" != *":$dest:"* ]]; then
+    export PATH="$dest:$PATH"
+    echo "    note: $dest was added to PATH for this run; add it to your shell profile to use the tools outside this script"
+  fi
+  return 0
+}
+
 
 # Same list as the compose repo's rit.sh (its `externals=` variable).
 EXTERNALS="irods-helper-cmd https://github.com/MaastrichtUniversity/irods-helper-cmd.git
@@ -148,12 +253,7 @@ EOF
 }
 
 cmd_pull_external() {
-  command -v minikube >/dev/null || {
-    echo "minikube not found in PATH - install it first: https://minikube.sigs.k8s.io/docs/start/" >&2
-    exit 1; }
-  command -v docker >/dev/null || {
-    echo "docker not found in PATH - install Docker CLI first" >&2
-    exit 1; }
+  ensure_deps minikube docker || exit 1
 
   local profile=${MINIKUBE_PROFILE:-minikube}
   if ! minikube -p "$profile" ip >/dev/null 2>&1; then
@@ -348,12 +448,11 @@ cmd_build() {
     *) echo "unknown profile: '$deploy_profile' (use: full|minimal)" >&2; exit 1 ;;
   esac
 
-  command -v minikube >/dev/null || {
-    echo "minikube not found in PATH - install it first: https://minikube.sigs.k8s.io/docs/start/" >&2
-    exit 1; }
-  command -v docker >/dev/null || {
-    echo "docker not found in PATH - install Docker CLI first" >&2
-    exit 1; }
+  ensure_deps minikube docker || exit 1
+  if ! docker compose version >/dev/null 2>&1; then
+    echo "docker compose (v2 plugin) not found - install it first: https://docs.docker.com/compose/install/" >&2
+    exit 1
+  fi
 
   local profile=${MINIKUBE_PROFILE:-minikube}
   if ! minikube -p "$profile" ip >/dev/null 2>&1; then
@@ -476,12 +575,7 @@ cmd_dev_up() {
     *) echo "unknown profile: '$deploy_profile' (use: full|minimal)" >&2; exit 1 ;;
   esac
 
-  command -v minikube >/dev/null || {
-    echo "minikube not found in PATH - install it first: https://minikube.sigs.k8s.io/docs/start/" >&2
-    exit 1; }
-  command -v kubectl  >/dev/null || {
-    echo "kubectl not found in PATH - install it first: https://kubernetes.io/docs/tasks/tools/" >&2
-    exit 1; }
+  ensure_deps minikube kubectl docker git || exit 1
 
   echo "==> externals"
   if ! cmd_externals; then
@@ -502,7 +596,19 @@ cmd_dev_up() {
   if minikube ip >/dev/null 2>&1; then
     echo "    already running"
   else
-    minikube start --cpus 4 --memory 8192 --disk-size 80g
+    # Corporate proxy (UM): the node container inherits the docker daemon's
+    # proxy env, whose NO_PROXY lacks the cluster-local ranges - so the
+    # kubelet routes its apiserver traffic (192.168.49.2:6443) through the
+    # proxy, never registers the node, and kubeadm init dies with
+    # 'nodes "minikube" not found' (GUEST_START). --docker-env sets the node
+    # container env explicitly: 192.168.49.0/24 = node/LB range,
+    # 10.96.0.0/12 = service CIDR, 10.244.0.0/16 = pod CIDR, plus the
+    # corporate bypass domains. NOTE: --docker-env only applies at node
+    # creation - if these values change, run `minikube delete` first.
+    minikube start --cpus 4 --memory 8192 --disk-size 80g --driver=docker \
+      --docker-env http_proxy="http://proxy.unimaas.nl:3128/" \
+      --docker-env https_proxy="http://proxy.unimaas.nl:3128/" \
+      --docker-env no_proxy="localhost,127.0.0.1,192.168.49.0/24,10.96.0.0/12,10.244.0.0/16,.dh.local,.unimaas.nl,.datahubmaastricht.nl,epic-pid.storage.surfsara.nl"
   fi
 
   current_context=$(kubectl config current-context 2>/dev/null || true)
